@@ -1,0 +1,2888 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-22 Mon 13:43 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Memory</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Memory</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orge503de6">1. 高速缓存(CACHE)</a>
+<ul>
+<li><a href="#org8be2dcd">1.1. 介绍</a></li>
+<li><a href="#org7b233a2">1.2. 运行原理</a></li>
+<li><a href="#org9ee39cc">1.3. 通用的高速缓存存储器组织结构</a>
+<ul>
+<li><a href="#org414b178">1.3.1. 高速缓存通用组织形式</a></li>
+<li><a href="#org58c3d71">1.3.2. 直接映射高速缓存</a></li>
+<li><a href="#orgaf1c50f">1.3.3. 组相连高速缓存</a></li>
+<li><a href="#org863a228">1.3.4. 全相连高速缓存</a></li>
+<li><a href="#org0abb31e">1.3.5. 写的问题</a></li>
+</ul>
+</li>
+<li><a href="#org0b1eb28">1.4. 一个真实的高速缓存层次结构的剖析</a></li>
+<li><a href="#org86e682b">1.5. 高速缓存参数的性能影响</a></li>
+<li><a href="#orgec52b66">1.6. 编写高速缓存友好的代码</a></li>
+</ul>
+</li>
+<li><a href="#org19493b8">2. 虚拟内存</a>
+<ul>
+<li><a href="#orgd37c3a9">2.1. 物理寻址和虚拟寻址</a></li>
+<li><a href="#org7c64eb8">2.2. 地址空间</a></li>
+<li><a href="#orgd2adf5a">2.3. 虚拟内存作为缓存的工具</a>
+<ul>
+<li><a href="#org9f51b6e">2.3.1. DRAM缓存的组织结构</a></li>
+<li><a href="#org9e1cd33">2.3.2. 页表</a></li>
+<li><a href="#orga98d591">2.3.3. 页命中</a></li>
+<li><a href="#org329a917">2.3.4. 缺页</a></li>
+<li><a href="#org4e71246">2.3.5. 分配页面</a></li>
+<li><a href="#org3116a94">2.3.6. 局部性</a></li>
+</ul>
+</li>
+<li><a href="#orgef9dd9c">2.4. 虚拟内存作为内存管理的工具</a></li>
+<li><a href="#org32722cb">2.5. 虚拟内存作为内存保护的工具</a></li>
+<li><a href="#org7e05fb8">2.6. 地址翻译</a>
+<ul>
+<li><a href="#org0880c75">2.6.1. 结合高速缓存和虚拟内存</a></li>
+<li><a href="#orged52e77">2.6.2. 利用TLB加速地址翻译</a></li>
+<li><a href="#orgcbede0c">2.6.3. 多级页表</a></li>
+<li><a href="#org4223682">2.6.4. 地址翻译的示例</a></li>
+</ul>
+</li>
+<li><a href="#org7f0da99">2.7. Intel Core i7/Linux 内存系统</a>
+<ul>
+<li><a href="#org3632aff">2.7.1. Core i7地址翻译</a></li>
+<li><a href="#org1962ab8">2.7.2. linux虚拟内存系统</a>
+<ul>
+<li><a href="#org8f14ff9">2.7.2.1. Linux 虚拟内存区域</a></li>
+<li><a href="#org10249f8">2.7.2.2. Linux缺页异常处理程序</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org7e09bb1">2.8. 内存映射</a></li>
+<li><a href="#org8f614a2">2.9. 动态内存分配</a></li>
+<li><a href="#orgf363a0f">2.10. C程序中常见内存错误</a></li>
+</ul>
+</li>
+<li><a href="#org1a3e7f2">3. Linux内存代码学习</a>
+<ul>
+<li><a href="#org9d32117">3.1. 页表</a></li>
+<li><a href="#orgdcee647">3.2. 内存初始化</a>
+<ul>
+<li><a href="#orgdf37cc8">3.2.1. 节点和内存域初始化</a></li>
+<li><a href="#org827dedc">3.2.2. 内核在内存中的布局</a></li>
+<li><a href="#org9ce1c45">3.2.3. 初始化步骤</a></li>
+<li><a href="#org2bf4551">3.2.4. 分页机制的初始化</a>
+<ul>
+<li><a href="#org8be8b1c">3.2.4.1. 内核地址空间的划分</a></li>
+<li><a href="#orgca056e2">3.2.4.2. 划分虚拟地址空间</a></li>
+</ul>
+</li>
+<li><a href="#orga1fcad3">3.2.5. 注册活动内存区</a></li>
+<li><a href="#orgcd7d107">3.2.6. AMD64地址空间的设置</a></li>
+<li><a href="#org0e9898c">3.2.7. end</a></li>
+</ul>
+</li>
+<li><a href="#org26bfc49">3.3. 启动过程中的内存管理</a>
+<ul>
+<li><a href="#orgf8911dc">3.3.1. 数据结构</a></li>
+<li><a href="#orgb6dbd96">3.3.2. 初始化</a></li>
+<li><a href="#org4c8c3d4">3.3.3. 提供的内核接口</a>
+<ul>
+<li><a href="#orgaac515c">3.3.3.1. 分配内存</a></li>
+<li><a href="#org8da601a">3.3.3.2. 释放内存</a></li>
+</ul>
+</li>
+<li><a href="#org2f2b197">3.3.4. 停用bootmem分配器</a></li>
+<li><a href="#orgd155ea5">3.3.5. 释放初始化数据</a></li>
+</ul>
+</li>
+<li><a href="#orgdd10159">3.4. 物理内存的管理</a>
+<ul>
+<li><a href="#org11a3d42">3.4.1. 伙伴系统结构</a></li>
+<li><a href="#orgd106985">3.4.2. 避免碎片</a>
+<ul>
+<li><a href="#org46134fb">3.4.2.1. 依据可移动性组织页</a></li>
+<li><a href="#orge22dfca">3.4.2.2. 初始化内存域和节点数据结构</a></li>
+<li><a href="#orge04a9a9">3.4.2.3. 分配器API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="org-center">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">类型</th>
+<th scope="col" class="org-left">缓存什么</th>
+<th scope="col" class="org-left">被缓存在何处</th>
+<th scope="col" class="org-right">延迟(周期数)</th>
+<th scope="col" class="org-left">由谁管理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">CPU 寄存器</td>
+<td class="org-left">4字节或8字节</td>
+<td class="org-left">芯片上的CPU寄存器</td>
+<td class="org-right">0</td>
+<td class="org-left">编译器</td>
+</tr>
+
+<tr>
+<td class="org-left">TLB</td>
+<td class="org-left">地址翻译</td>
+<td class="org-left">芯片上的TLB</td>
+<td class="org-right">0</td>
+<td class="org-left">硬件MMU</td>
+</tr>
+
+<tr>
+<td class="org-left">L1高速缓存</td>
+<td class="org-left">64字节块</td>
+<td class="org-left">芯片上的L1高速缓存</td>
+<td class="org-right">4</td>
+<td class="org-left">硬件</td>
+</tr>
+
+<tr>
+<td class="org-left">L2高速缓存</td>
+<td class="org-left">64字节块</td>
+<td class="org-left">芯片上的L2高速缓存</td>
+<td class="org-right">10</td>
+<td class="org-left">硬件</td>
+</tr>
+
+<tr>
+<td class="org-left">L3高速缓存</td>
+<td class="org-left">64字节块</td>
+<td class="org-left">芯片上的L3高速缓存</td>
+<td class="org-right">50</td>
+<td class="org-left">硬件</td>
+</tr>
+
+<tr>
+<td class="org-left">虚拟内存</td>
+<td class="org-left">4KB页</td>
+<td class="org-left">主存</td>
+<td class="org-right">200</td>
+<td class="org-left">硬件+OS</td>
+</tr>
+
+<tr>
+<td class="org-left">缓冲区缓存</td>
+<td class="org-left">部分文件</td>
+<td class="org-left">主存</td>
+<td class="org-right">200</td>
+<td class="org-left">OS</td>
+</tr>
+
+<tr>
+<td class="org-left">磁盘缓存</td>
+<td class="org-left">硬盘扇区</td>
+<td class="org-left">磁盘控制器</td>
+<td class="org-right">100 0000</td>
+<td class="org-left">控制器固件</td>
+</tr>
+
+<tr>
+<td class="org-left">网络缓存</td>
+<td class="org-left">部分文件</td>
+<td class="org-left">本地磁盘</td>
+<td class="org-right">10 000 000</td>
+<td class="org-left">NFS客户</td>
+</tr>
+
+<tr>
+<td class="org-left">浏览器缓存</td>
+<td class="org-left">Web页</td>
+<td class="org-left">本地磁盘</td>
+<td class="org-right">10 000 000</td>
+<td class="org-left">Web浏览器</td>
+</tr>
+
+<tr>
+<td class="org-left">Web缓存</td>
+<td class="org-left">Web页</td>
+<td class="org-left">远程服务器磁盘</td>
+<td class="org-right">1 000 000 000</td>
+<td class="org-left">Web代理服务器</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+<div id="outline-container-orge503de6" class="outline-2">
+<h2 id="orge503de6"><span class="section-number-2">1</span> 高速缓存(CACHE)</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org8be2dcd" class="outline-3">
+<h3 id="org8be2dcd"><span class="section-number-3">1.1</span> 介绍</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+根据机械原理, 较大的存储设备要比较小的存储设备运行的慢, 典型的例如磁盘和内存, 磁盘容量要比内存大的多, 但是, cpu从内存读取数据的开销, 要比从磁盘大的多.
+</p>
+
+<p>
+高速缓存的设计用于存储cpu近期可能会需要的信息, 用于缓解内存数度慢跟不上cpu读写速度要求的矛盾. 将cpu最近可能会用到的信息(数据或者指令)从内存复制到高速缓存中, 当cpu下次访问时, 直接从高速缓存读取, 提高读取速度, 使得cpu运行更加高效.
+</p>
+
+<p>
+高速缓存远远小于内存的容量, 那么高速缓存中就只能容纳内存的一小部分信息. cpu有多大的概率可以从高速缓存中得到原本应当从内存中获取的信息, 是评价高速缓存运行性能的关键指标, 被称为cache的命中率.
+</p>
+
+<p>
+为了提高命中率, 必须找出一套方案, 从cache的读写原理, cache的容量设置, 确定cache存储单元与内存哪一个单元是对应关系, 内存和cache每次交换数据的单位量, 交换的时刻, cache介入计算机系统中的方式等多方面, 来解决cache速度、命中率等一系列问题.
+</p>
+
+<p>
+L1, L2, L3三级缓存. L1高速缓存的容量最小, 位于cpu芯片上, 其访问速度和寄存器相当. L2高速缓存容量
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7b233a2" class="outline-3">
+<h3 id="org7b233a2"><span class="section-number-3">1.2</span> 运行原理</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+高速缓冲存储器的运行原理, 与内存的运行原理有很大区别. 内存存储器, 是建立在每个内存地址对应内存的一个存储单元这一关系之上的. 在计算机程序中, 要使用内存某单元中的数据, 必须在指令中给出该单元的地址. 读操作时, 给出这一地址后, 通过译码电路, 就选中主存中欲读的一个存储单元, 执行读操作. 而高速缓冲存储器的运行原理则完全不同，由于其存储容量很小, 无法通过对原本用于读内存的地址直接进行译码来选择一个CACHE单元. 那该用什么办法找到该内存单元所对应的CACHE单元呢? 也许最简单的办法, 是合理设计CACHE存储器的组织形式.
+</p>
+
+<p>
+例如将cache存储单元分为三部分:
+</p>
+<ul class="org-ul">
+<li>cache的数据字段
+保存从内存中复制过来的数据, 由cpu第一次读取内存是完成, 在读取内存的同时, 顺便将该内容写入高速缓存.</li>
+
+<li>cache的标志字段
+保存相应的内存单元的地址内容, 在复制内存的数据时, 把内存地址保存在此字段, 当cpu要读取内存时, 先从高速缓存查找.</li>
+
+<li>cache的有效位
+用来标识数据字段的内容是否有效, 为0表明cache单元数据无效, 为1表明该单元已被占用, 内容有效.</li>
+</ul>
+
+<p>
+以上只是简单描述的高速缓存的简单原理.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9ee39cc" class="outline-3">
+<h3 id="org9ee39cc"><span class="section-number-3">1.3</span> 通用的高速缓存存储器组织结构</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+把内存单元的数据复制到cache中时, 还要把内存单元的地址, 经过某种函数处理关系后写进cache的标志字段, 这一过程被称为cnache的地址映射.
+</p>
+
+<p>
+cache存储器通常使用3种映射方式, 分别是全相连映射、直接映射、组相连映射.
+</p>
+
+<p>
+考虑一个计算机系统, 其中每个存储器地址由m位, 则总地址数量为 M=2^m个, 这样高速缓存被组织成一个有 S=2^s个高速缓存组的数组. 每个组包行E个高速缓存行(cache line). 每个行由一个B=2^b字节的数据块(block)组成, 一个有效位表明此行的数据是否有效, 还有t(t=m-(b+s))个标记位(tag bit)(内存地址位数的一个子集), 他们唯一的标识高速缓存的块.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">参数</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">S=2<sup>s</sup></td>
+<td class="org-left">缓存组的组数量</td>
+</tr>
+
+<tr>
+<td class="org-left">E</td>
+<td class="org-left">每个组的行数</td>
+</tr>
+
+<tr>
+<td class="org-left">B=2<sup>b</sup></td>
+<td class="org-left">每个缓存行的块大小(字节)</td>
+</tr>
+
+<tr>
+<td class="org-left">m=log<sub>2</sub>(M)</td>
+<td class="org-left">内存物理地址位数</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">衍生参数</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">M=2<sup>m</sup></td>
+<td class="org-left">内存地址的数量</td>
+</tr>
+
+<tr>
+<td class="org-left">s=log<sub>2</sub>(S)</td>
+<td class="org-left">组索引的位数</td>
+</tr>
+
+<tr>
+<td class="org-left">b=lob<sub>2</sub>(B)</td>
+<td class="org-left">块偏移的位数</td>
+</tr>
+
+<tr>
+<td class="org-left">t=m-(s+b)</td>
+<td class="org-left">标记位的位数</td>
+</tr>
+
+<tr>
+<td class="org-left">C=BxExS</td>
+<td class="org-left">去除有效位和标记位的高速缓存的大小</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+<div id="outline-container-org414b178" class="outline-4">
+<h4 id="org414b178"><span class="section-number-4">1.3.1</span> 高速缓存通用组织形式</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<div id="org437e967" class="figure">
+<p><img src="./image/memory/cache.png" alt="cache.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>高速缓存组织形式</p>
+</div>
+
+<ul class="org-ul">
+<li>高速缓存(S,E,B,m)的通用组织:
+<ul class="org-ul">
+<li>高速缓存是一个高速缓存的数组. 每个组包含一个或多个行, 每个行包含一个有效位, t个标记位, B个字节的数据块;</li>
+<li>高速缓存的结构将m个地址位划分为 t个标记位, s个索引位, b个块偏移位</li>
+</ul></li>
+</ul>
+
+<p>
+高速缓存结构可以用元组(S,E,B,m)来描述. 高速缓存的大小C, 指的是所有块大小的总和. 不包含有效位和标记位, C=SxExB.
+</p>
+
+<ul class="org-ul">
+<li>内存地址位m位, S和B将内存地址分为三个字段:
+<ul class="org-ul">
+<li>s个索引位: 组索引位解释为一个无符号整数, 标识内存应该在哪个组中.</li>
+<li>t个标记位: 标识应当在组中的哪一行.</li>
+<li>b个块偏移: 标识B个字节中的数据块的偏移位置</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org58c3d71" class="outline-4">
+<h4 id="org58c3d71"><span class="section-number-4">1.3.2</span> 直接映射高速缓存</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+高速缓存组中每个组只有一行(E=1)时成为直接映射高速缓存.  结构如下:
+</p>
+
+
+<div id="orga1cbbc1" class="figure">
+<p><img src="./image/memory/cache_dm.png" alt="cache_dm.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>直接映射高速缓存</p>
+</div>
+
+<p>
+现在假设由一个系统包含一个CPU,一个寄存器, 一个L1高速缓存,一个内存.cpu读取内存的大致逻辑如下:
+</p>
+
+
+<div id="org5ae93ec" class="figure">
+<p><img src="./plantuml/memory/cache_read.png" alt="cache_read.png" />
+</p>
+</div>
+
+
+<div id="org0d94191" class="figure">
+<p><img src="./plantuml/memory/cache_read.png" alt="cache_read.png" />
+</p>
+</div>
+
+<p>
+高速缓存确定一个请求是否命中, 然后取出被请求的字的过程分为三步: 组选择、行匹配、字抽取。
+</p>
+
+<ol class="org-ol">
+<li><p>
+组选择
+</p>
+
+<p>
+高速缓存从w的地址中抽取s个组索引位, 然后解释为对应于组号的无符号整数. 如下图所示.
+</p>
+
+
+<div id="org86bbee2" class="figure">
+<p><img src="./image/memory/cache_dm_g.png" alt="cache_dm_g.png" />
+</p>
+</div></li>
+
+<li><p>
+行匹配
+</p>
+
+<p>
+在上一步中, 已经选定了一个组, 接下来确定组中是否有包含w的缓存行. 因为直接映射中, 每个组只有一行, 如果设置了有效位, 且缓存行中的标记位与w地址中的标记位相匹配时, 即缓存命中.
+</p>
+
+
+<div id="org6a7f1b6" class="figure">
+<p><img src="./image/memory/cache_dm_l.png" alt="cache_dm_l.png" />
+</p>
+</div></li>
+
+<li><p>
+字选择
+</p>
+
+<p>
+如果缓存命中, 则w的副本就在缓存行块中的某个位置. 通过w地址中的块偏移找到w副本在缓存行块中的位置.
+</p></li>
+
+<li><p>
+直接映射高速缓存中不命中时的行替换
+</p>
+
+<p>
+缓存不命中时, 需要从存储器层次结构中的下一层取出被请求的块. 用新取出的行替换高速缓存行.
+</p></li>
+
+<li><p>
+直接映高速缓存中的冲突不命中
+</p>
+
+<p>
+高速缓存反复的加载和驱逐相同的高速缓存块的组, 这种现象称为术语 "抖动". 其原因是这些块被映射到的同义个高速缓存组. 这种抖动一般至少会导致速度下降2-3倍.
+</p>
+
+<p>
+如果我们意识到此问题, 可以很容易的修复抖动问题. 一个简单方法是可以在数组或者结构的结尾放置B字节的填充.
+</p></li>
+
+<li><p>
+为何使用地址中间的位作索引
+</p>
+
+<p>
+如下图所时, 如果使用高位作索引, 那么一些连续的内存块就会映射到相同的高速缓存块.
+</p>
+
+<p>
+如果一个程序有良好的空间局部性, 顺序的扫描一个数组元素, 那么在任意时刻, 高速缓存都只保存着一个块的大小的数组内容, 使用效率降低. 相比较而言, 以中间位作索引, 相邻的块总是映射到不同的高速缓存行.
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgaf1c50f" class="outline-4">
+<h4 id="orgaf1c50f"><span class="section-number-4">1.3.3</span> 组相连高速缓存</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+直接映射高速缓存中冲突不命中的问题源于每个组只有一行这个限制. 组相连高速缓存放松了这个限制, 每个组都保存有超过一个的高速缓存行.  一个 1&lt;E&lt;C/B的高速缓存通常称为E路组相连高速缓存.
+</p>
+
+
+<div id="orgb4e008d" class="figure">
+<p><img src="./image/memory/cache_sa.png" alt="cache_sa.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li><p>
+组相连高速缓存中的组选择
+</p>
+
+<p>
+与直接映射高速缓存的组选择相同.
+</p>
+
+
+<div id="org4deb481" class="figure">
+<p><img src="./image/memory/cache_sa_g.png" alt="cache_sa_g.png" />
+</p>
+</div></li>
+</ol>
+
+
+<ol class="org-ol">
+<li><p>
+组相连高速缓存中的行匹配和字选择
+</p>
+
+<p>
+组相连高速缓存的行匹配需要检查多个行的标记位和有效位, 以确定请求的字是否在缓存行集合中.
+</p>
+
+<p>
+组中的任何一行都可以包含任何映射到这个组的内存块, 所以高速缓存必须搜索组中的每一行, 以寻找匹配行.  如果找到则命中, 根据块偏移在缓存行的块中选择一个字.
+</p>
+
+
+<div id="org5387318" class="figure">
+<p><img src="./image/memory/cache_sa_l.png" alt="cache_sa_l.png" />
+</p>
+</div></li>
+
+<li><p>
+组相连高速缓存中不命中时的行替换
+</p>
+
+<p>
+如果缓存不命中时, 从内存中取出块后应该放入高速缓存组的哪一行呢? 如果有空行, 选择空行, 如果没有空行, 那么选择一个cpu不会很快引用的行来替换.
+</p>
+
+<p>
+简单的策略时随机替换,还有一些副在的策略, 最不常使用策略, 最近最少使用策略&#x2026;&#x2026;
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org863a228" class="outline-4">
+<h4 id="org863a228"><span class="section-number-4">1.3.4</span> 全相连高速缓存</h4>
+<div class="outline-text-4" id="text-1-3-4">
+<p>
+全相连高速缓存是由一个包含所有高速缓存行的组(E=C/B)组成.
+</p>
+
+
+<div id="org6e56853" class="figure">
+<p><img src="./image/memory/cache_fa.png" alt="cache_fa.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li><p>
+全相连高速缓存的组选择
+</p>
+
+<p>
+只有一组, 不用选. 地址中没有索引位, 只有标记位和块偏移.
+</p>
+
+
+<div id="orgce36f6b" class="figure">
+<p><img src="./image/memory/cache_fa_g.png" alt="cache_fa_g.png" />
+</p>
+</div></li>
+
+<li><p>
+全相连高速缓存的行匹配和字选择
+</p>
+
+<p>
+与组相连高速缓存相同.
+</p>
+
+
+<div id="orgb081c2f" class="figure">
+<p><img src="./image/memory/cache_fa_l.png" alt="cache_fa_l.png" />
+</p>
+</div>
+
+<p>
+由于高速缓存电路需要并行的搜索许多相匹配的标记, 构造一个又大又快的相连高速缓存很困难, 而且比较昂贵. 因此, 全相连高速缓存只适合做小的高速缓存, 例如虚拟内存系统中的翻译备用缓冲器(TLB), 用以缓存页表项.
+</p></li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-org0abb31e" class="outline-4">
+<h4 id="org0abb31e"><span class="section-number-4">1.3.5</span> 写的问题</h4>
+<div class="outline-text-4" id="text-1-3-5">
+<p>
+如果写一个已经缓存了w的高速缓存. 在高速缓存更新后如何更新低一层的层次结构的副本呢. 最简单的方法就是直写,缺点是每次写都会引起总线流量. 另一种方法是write-back, 尽可能推迟更新, 只有当替换算法要驱逐这个修改过的块时, 才把他写入紧接着的第一层中, 可以显著的减少总线流量, 缺点时增加了复杂性. 高速缓存必须为每个缓存行维护一个额外的修改位, 表明是否被修改.
+</p>
+
+<p>
+如何处理写不命中呢. 一种方法是写分配, 加载相应的低一层中的块到高速缓存中, 然后更新高速缓存块. 写分配试图利用写的空间局部性, 缺点是每次不命中都会导致一个块从低一层传送到高速缓存. 另一种方法是非写分配, 避开高速缓存, 直接写入低一层中. 直写通常是非写分配, write-back通常是写分配.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0b1eb28" class="outline-3">
+<h3 id="org0b1eb28"><span class="section-number-3">1.4</span> 一个真实的高速缓存层次结构的剖析</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+以上只介绍了高速缓存只保存数据. 实际上, 高速缓存既保存数据, 也保存指令. 只保存指令的称为i-cache. 只保存程序数据的为d-cache. 既保存指令也保存数据的高速缓存称为统一的高速缓存. 现代处理器包括独立的i-cache和d-cache. 两个独立的高速缓存能够同时读取指令和数据.
+</p>
+
+<p>
+下图给出了 Intel Corei7处理器的高速缓存层次结构. 每个cpu有4个核. 每个核有自己私有的L1 i-cache、L1 d-cache和L2统一高速缓存。 所有高速缓存共享L3统一高速缓存。 这个层次结构所有的SRAM高速缓存存储器都在CPU芯片上。
+</p>
+
+
+<div id="org3f2de19" class="figure">
+<p><img src="./image/memory/cache_core_i7.png" alt="cache_core_i7.png" />
+</p>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-center">高速缓存类型</th>
+<th scope="col" class="org-center">访问时间（周期）</th>
+<th scope="col" class="org-center">高速缓存大小（C）</th>
+<th scope="col" class="org-center">相连度（E）</th>
+<th scope="col" class="org-center">块大小（B）</th>
+<th scope="col" class="org-center">组数（S）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-center">L1 i-cache</td>
+<td class="org-center">4</td>
+<td class="org-center">32KB</td>
+<td class="org-center">8</td>
+<td class="org-center">64B</td>
+<td class="org-center">64</td>
+</tr>
+
+<tr>
+<td class="org-center">L1 d-cache</td>
+<td class="org-center">4</td>
+<td class="org-center">32KB</td>
+<td class="org-center">8</td>
+<td class="org-center">64B</td>
+<td class="org-center">64</td>
+</tr>
+
+<tr>
+<td class="org-center">L2 统一高速缓存</td>
+<td class="org-center">10</td>
+<td class="org-center">256KB</td>
+<td class="org-center">8</td>
+<td class="org-center">64B</td>
+<td class="org-center">512</td>
+</tr>
+
+<tr>
+<td class="org-center">L3 统一高速缓存</td>
+<td class="org-center">40～75</td>
+<td class="org-center">8MB</td>
+<td class="org-center">16</td>
+<td class="org-center">64B</td>
+<td class="org-center">8192</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org86e682b" class="outline-3">
+<h3 id="org86e682b"><span class="section-number-3">1.5</span> 高速缓存参数的性能影响</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+衡量指标有：
+</p>
+<ul class="org-ul">
+<li>不命中率</li>
+<li>命中率</li>
+<li>命中时间</li>
+<li>不命中处罚</li>
+</ul>
+<ol class="org-ol">
+<li>高速缓存大小的影响
+较大的高速缓存可能会提高命中率，但是通常大存储器运行要慢一些，所以会增加命中时间。这就是为什么 L1高速缓存比L2高速缓存小， L2小于L3的原因。</li>
+
+<li>块大小的影响
+较大的块能利用程序中可能存在的空间局部性， 提高命中率。对于给定的高速缓存大小， 块越大意味着高速缓存行越少。会损害时间局部性比空间局部性更好的程序的命中率。较大的块对不命中处罚也有负面影响， 块越大传送时间越长。</li>
+
+<li>相连度的影响
+E代表高速缓存组中的缓存行数。较高的相连度会降低高速缓存由于冲突不命中出现抖动的可能性。 但较高的相连度会造成较高的成本。实现较昂贵，且很难使速度变快。每一行需要更多的标记位，LRY状态位和额外的控制逻辑。较高的相连度还会增加命中时间和不命中处罚。</li>
+
+<li>写策略的影响
+直写高速缓存比较容易实现，而且能使用独立于高速缓存的写缓冲区， 用来更新内存。此外读不命中开销没那么大，因为不会触发内存写。另一方面，写回高速缓存引起的传送比较少，它允许更多的到内存的带宽用于执行DMA的I/O设备。此外，越往层次结构下面走， 传送时间增加，减少传送的数量就变得更加重要。一般而言，高速缓存越往下层，越可能使用写回而不是直写。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgec52b66" class="outline-3">
+<h3 id="orgec52b66"><span class="section-number-3">1.6</span> 编写高速缓存友好的代码</h3>
+<div class="outline-text-3" id="text-1-6">
+<ol class="org-ol">
+<li>让最常见的情况运行的快。程序通常把大部分时间都花在少量的核心函数上，而这些函数通常把是大部分时间都花在了少量循环上。所以把注意力集中在核心函数里的循环上，而忽略其他部分。</li>
+
+<li>尽量减少每个循环内部的缓存不命中数量。在其它条件相同情况下，不命中率较低的循环运行的更快。</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">sumvec</span> (<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">v</span>[N])
+{
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">i</span>, <span style="color: #FF8C00; font-weight: bold;">sum</span> = 0;
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; N; i++)
+		sum += v[i];
+	<span style="color: #FF1493;">return</span> sum;
+}
+</pre>
+</div>
+
+<p>
+假设一个高速缓存的块大小位B字节， 那么一个步长位k的引用模式（k以字位单位）平均每次循环迭代会有min(1, (wordsize*k)/B)次缓存不命中。 当k=1时取最小值， 所以v步长为1却是时高速缓存友好的。例如假设v是块对齐的，字位4字节，高速缓存块为4个字，高速缓存初始为空。然后，无论什么杨的高速缓存结构， 对v的引用都会得到下面的命中和不命中模式：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">v[i]</th>
+<th scope="col" class="org-left">i=0</th>
+<th scope="col" class="org-left">i=1</th>
+<th scope="col" class="org-left">i=2</th>
+<th scope="col" class="org-left">i=3</th>
+<th scope="col" class="org-left">i=4</th>
+<th scope="col" class="org-left">i=5</th>
+<th scope="col" class="org-left">i=6</th>
+<th scope="col" class="org-left">i=7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">访问顺序，h命中，m不命中</td>
+<td class="org-left">1[m]</td>
+<td class="org-left">2[h]</td>
+<td class="org-left">3[h]</td>
+<td class="org-left">4[h]</td>
+<td class="org-left">5[m]</td>
+<td class="org-left">6[h]</td>
+<td class="org-left">7[h]</td>
+<td class="org-left">8[h]</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+这个例子中，对v[0]的引用不命中，然后包含v[0]~v[3]的块被从内存load到高速缓存中。因此接下来三个引用都会命中。加载v[4]时也是如此。
+</p>
+
+<p>
+上述示例说明了编写高速缓存友好代码的两个重要问题：
+</p>
+<ul class="org-ul">
+<li>对局部变量的反复引用是好的，因为编译器能够将他们缓存在寄存器文件中（时间局部性）。</li>
+<li>步长为1的引用模式是好的，因为存储器层次结构中所有层次上的缓存都是将数据存储为连续的块（空间局部性）。</li>
+</ul>
+
+<p>
+在对多为数据进行操作的程序中，空间局部性尤为重要。如下面的例子：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">sumarrayrows</span> (<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">a</span>[M][N])
+{
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">i</span>, <span style="color: #FF8C00; font-weight: bold;">j</span>, <span style="color: #FF8C00; font-weight: bold;">sum</span> = 0;
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; M; i++) {
+		<span style="color: #FF1493;">for</span> (j = 0; j &lt; N; j++) {
+			sum += a[i][j];
+		}
+	}
+	<span style="color: #FF1493;">return</span> sum;
+}
+</pre>
+</div>
+
+<p>
+由于C语言以行优先顺序存储数组，所以这个行数中的内循环有与上一个例子（sumvec）一样好的步长为1的访问模式。假设我们对这个高速缓存做对sumvec一样的假设。那么对数组a的引用会得到下面的命中和不命中模式：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">a[i][j]</th>
+<th scope="col" class="org-left">j=0</th>
+<th scope="col" class="org-left">j=1</th>
+<th scope="col" class="org-left">j=2</th>
+<th scope="col" class="org-left">j=3</th>
+<th scope="col" class="org-left">j=4</th>
+<th scope="col" class="org-left">j=5</th>
+<th scope="col" class="org-left">j=6</th>
+<th scope="col" class="org-left">j=7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">i = 0</td>
+<td class="org-left">1[m]</td>
+<td class="org-left">2[h]</td>
+<td class="org-left">3[h]</td>
+<td class="org-left">4[h]</td>
+<td class="org-left">5[m]</td>
+<td class="org-left">6[h]</td>
+<td class="org-left">7[h]</td>
+<td class="org-left">8[h]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 1</td>
+<td class="org-left">9[m]</td>
+<td class="org-left">10[h]</td>
+<td class="org-left">11[h]</td>
+<td class="org-left">12[h]</td>
+<td class="org-left">13[m]</td>
+<td class="org-left">14[h]</td>
+<td class="org-left">15[h]</td>
+<td class="org-left">16[h]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 2</td>
+<td class="org-left">17[m]</td>
+<td class="org-left">18[h]</td>
+<td class="org-left">19[h]</td>
+<td class="org-left">20[h]</td>
+<td class="org-left">21[m]</td>
+<td class="org-left">22[h]</td>
+<td class="org-left">23[h]</td>
+<td class="org-left">24[h]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 3</td>
+<td class="org-left">25[m]</td>
+<td class="org-left">26[h]</td>
+<td class="org-left">27[h]</td>
+<td class="org-left">28[h]</td>
+<td class="org-left">29[m]</td>
+<td class="org-left">30[h]</td>
+<td class="org-left">31[h]</td>
+<td class="org-left">32[h]</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+如果我们稍稍修改以下循环的次序：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">sumarraycols</span> (<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">a</span>[M][N])
+{
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">i</span>, <span style="color: #FF8C00; font-weight: bold;">j</span>, <span style="color: #FF8C00; font-weight: bold;">sum</span> = 0;
+	<span style="color: #FF1493;">for</span> (j = 0; j &lt; M; j++) {
+		<span style="color: #FF1493;">for</span> (i = 0; i &lt; N; i++) {
+			sum += a[i][j];
+		}
+	}
+	<span style="color: #FF1493;">return</span> sum;
+}
+</pre>
+</div>
+<p>
+这种情况下，我们是一列一列的扫描数组。 如果幸运的话，整个数组都在高速缓存中，那么也会有相同的不命中率（1/4）。不过，如果数组比高速缓存要大， 那么每次对a[j][i]的访问都不会命中！
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">a[i][j]</th>
+<th scope="col" class="org-left">j=0</th>
+<th scope="col" class="org-left">j=1</th>
+<th scope="col" class="org-left">j=2</th>
+<th scope="col" class="org-left">j=3</th>
+<th scope="col" class="org-left">j=4</th>
+<th scope="col" class="org-left">j=5</th>
+<th scope="col" class="org-left">j=6</th>
+<th scope="col" class="org-left">j=7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">i = 0</td>
+<td class="org-left">1[m]</td>
+<td class="org-left">2[m]</td>
+<td class="org-left">3[m]</td>
+<td class="org-left">4[m]</td>
+<td class="org-left">5[m]</td>
+<td class="org-left">6[m]</td>
+<td class="org-left">7[m]</td>
+<td class="org-left">8[m]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 1</td>
+<td class="org-left">9[m]</td>
+<td class="org-left">10[m]</td>
+<td class="org-left">11[m]</td>
+<td class="org-left">12[m]</td>
+<td class="org-left">13[m]</td>
+<td class="org-left">14[m]</td>
+<td class="org-left">15[m]</td>
+<td class="org-left">16[m]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 2</td>
+<td class="org-left">17[m]</td>
+<td class="org-left">18[m]</td>
+<td class="org-left">19[m]</td>
+<td class="org-left">20[m]</td>
+<td class="org-left">21[m]</td>
+<td class="org-left">22[m]</td>
+<td class="org-left">23[m]</td>
+<td class="org-left">24[m]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 3</td>
+<td class="org-left">25[m]</td>
+<td class="org-left">26[m]</td>
+<td class="org-left">27[m]</td>
+<td class="org-left">28[m]</td>
+<td class="org-left">29[m]</td>
+<td class="org-left">30[m]</td>
+<td class="org-left">31[m]</td>
+<td class="org-left">32[m]</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+较高的不命中率对运行时间有显著影响。例如在桌面机器上，sumarrayrows运行速度比sumarraycols快25倍。总之，我们应当注意程序中的局部性，试着编写利用局部性的程序。
+</p>
+
+<p>
+在程序中利用局部性的技术：
+</p>
+<ul class="org-ul">
+<li>将注意力集中在内循环上，大部分计算和内存访问都发生在这里。</li>
+<li>通过按照数据对象存储在内存中的顺序、以步长为1来读取数据，从而使得程序中的空间局部性最大。</li>
+<li>一旦从存储器中读入了一个数据对象，就尽可能的多使用它，从而使得程序中的时间局部性最大。</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org19493b8" class="outline-2">
+<h2 id="org19493b8"><span class="section-number-2">2</span> 虚拟内存</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+虚拟内存是硬件异常、硬件地址翻译、主存、磁盘文件和内核软件的完美交互， 为每个进程提供了一个大的、一致的且私有的地址空间。
+</p>
+
+<p>
+虚拟内存提供了三个重要的能力：
+</p>
+<ul class="org-ul">
+<li>将主存看做一个存储在磁盘上的地址空间的高速缓存，在主存中只保留活动区域，并根据需要在磁盘和主存之间来回传送数据，通过这种方式高效的使用主存。</li>
+<li>为每个进程提供了一致的地址空间，简化了内存管理。</li>
+<li>保护了每个进程的地址空间不被其他进程破坏。</li>
+</ul>
+</div>
+
+
+<div id="outline-container-orgd37c3a9" class="outline-3">
+<h3 id="orgd37c3a9"><span class="section-number-3">2.1</span> 物理寻址和虚拟寻址</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+cpu使用物理地址的方式访问主存的方式称为物理寻址。
+</p>
+
+
+<div id="orgc021d42" class="figure">
+<p><img src="./image/memory/vm_pa.png" alt="vm_pa.png" />
+</p>
+<p><span class="figure-number">Figure 14: </span>物理寻址</p>
+</div>
+
+<p>
+cpu通过生成一个虚拟地址（VA）来访问主存，虚拟地址被送到内存之前先转化成物理地址。虚拟地址转换物理地址的任务称作地址翻译。由CPU芯片中的内存管理单元（MMU）来完成，利用存放在主存中的查询表来动态翻译虚拟地址，表的内容由操作系统管理。
+</p>
+
+
+<div id="orgf8b48bb" class="figure">
+<p><img src="./image/memory/vm_va.png" alt="vm_va.png" />
+</p>
+<p><span class="figure-number">Figure 15: </span>虚拟寻址</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7c64eb8" class="outline-3">
+<h3 id="org7c64eb8"><span class="section-number-3">2.2</span> 地址空间</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+地址空间是一个非负整数地址的有序集合，如果地址空间中的整数是连续的，称之为线性地址空间。一个带有虚拟内存的系统中，cpu从一个 N=2<sup>n</sup> 个地址空间中生成虚拟地址，这个地址空间称为虚拟地址空间， 其大小由地址的位数（n）决定。现代系统通常支持32位或者64位的虚拟地址空间， 即2<sup>32</sup>或2<sup>64</sup>的地址空间。
+</p>
+
+<p>
+地址空间的概念清楚的区分了数据对象（字节）和它们的属性（地址）。 每个数据对象可以由多个独立的地址，每个地址选自不同的地址空间。 这就是虚拟地址空间的基本思想。 主存中的每个字节都有一个选自虚拟地址空间的虚拟地址和选自物理地址空间的物理地址。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd2adf5a" class="outline-3">
+<h3 id="orgd2adf5a"><span class="section-number-3">2.3</span> 虚拟内存作为缓存的工具</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+概念上来说，虚拟内存被组织为一个由存放在磁盘上的N个连续的字节大小的单元组成的数组。每个字节都以一个唯一的虚拟地址，作为到数组的索引。磁盘上的内存被缓存在主存中。磁盘上的数据被分割成块（block），作为和主存之间的传输单元。VM系统将虚拟内存分割为固定大小块的虚拟页来与之对应。虚拟页大小P=2<sup>p</sup>字节，物理内存也被分割为物理页（页帧），页大小也是P字节。 虚拟页的大小一般为4KB～2MB。
+</p>
+
+<p>
+任意时刻，虚拟页面的集合都分为三个不相交的子集：
+</p>
+<ul class="org-ul">
+<li>未分配：VM系统还没有分配（或创建）的页。不占用磁盘空间。</li>
+<li>缓存的：当前以缓存在物理内存中的已分配页。</li>
+<li>未缓存：未缓存在物理内存的已分配页。</li>
+</ul>
+
+
+<div id="org4414f17" class="figure">
+<p><img src="./image/memory/vm_v_page.png" alt="vm_v_page.png" />
+</p>
+<p><span class="figure-number">Figure 16: </span>VM使用主存作为缓存</p>
+</div>
+</div>
+
+<div id="outline-container-org9f51b6e" class="outline-4">
+<h4 id="org9f51b6e"><span class="section-number-4">2.3.1</span> DRAM缓存的组织结构</h4>
+<div class="outline-text-4" id="text-2-3-1">
+<p>
+以下使用SRAM标识CPU和主存之间的L1、L2和L3高速缓存， DRAM表示虚拟内存系统的缓存，在主存中缓存虚拟页。
+</p>
+
+<p>
+由于DRAM缓存的不命中需要由磁盘来提供服务，开销很大， 所以DRAM缓存设计为全相连的，即任何虚拟页都可以放置在任何的物理页中， 由于大的不命中处罚，在不命中时的替换策略也很重要，其替换策略相比SRAM缓存来说，更加复杂和精密。由于对磁盘的访问时间很长，DRAM使用写回（write-back）而不是直写。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9e1cd33" class="outline-4">
+<h4 id="org9e1cd33"><span class="section-number-4">2.3.2</span> 页表</h4>
+<div class="outline-text-4" id="text-2-3-2">
+<p>
+虚拟内存系统需要通过某种方法判定一个虚拟页是否缓存在DRAM中并确定存放在那个物理页中，或者不命中时确定虚拟页所存放的磁盘位置，并从物理内存选择一个物理页来存放虚拟页。 这个功能由软硬将联合提供， 包括操作系统软件、MMU和存放在物理内存的页表，页表将虚拟页映射到物理页。每次地址翻译硬件将虚拟地址转换为物理地址时，都会读取页表。操作系统负责维护页表的内容以及在磁盘和DRAM之间来回传送页。
+</p>
+
+
+<p>
+页表就是一个页表项（page table entry）的数组。虚拟地址空间中的每个页在页表固定偏移量出都有一个PTE。
+假设每个PTE由一个有效位和一个n位地址字段组成。如果有效，则地址字段标识DRAM中物理页的起始位置，如果无效，则表示该页位分配或者指向虚拟页在磁盘的起始位置。
+下图展示了页表的 <b>基本组织结构</b> ：
+</p>
+
+<div id="org4c39f2e" class="figure">
+<p><img src="./dot/memory/vm_page_table.png" alt="vm_page_table.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>VP1、VP2、VP4和VP7被缓存在DRAM中。</li>
+<li>VP0、VP5未分配。</li>
+<li>VP3、VP6已分配，未被缓存。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orga98d591" class="outline-4">
+<h4 id="orga98d591"><span class="section-number-4">2.3.3</span> 页命中</h4>
+<div class="outline-text-4" id="text-2-3-3">
+
+<div id="org2e12eea" class="figure">
+<p><img src="./dot/memory/vm_page_hit.png" alt="vm_page_hit.png" />
+</p>
+<p><span class="figure-number">Figure 18: </span>页命中</p>
+</div>
+
+<div id="org5815d99" class="figure">
+<p><img src="./dot/memory/vm_page_hit.png" alt="vm_page_hit.png" />
+</p>
+</div>
+
+<p>
+cpu读取VP2中虚拟内存中的一个字时，在页表通过虚拟地址定位到PTE2。由于该页表项有效，说明VP2已经缓存在主存中，通过PTE中的物理内存地址构造出要读取的字的物理地址。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org329a917" class="outline-4">
+<h4 id="org329a917"><span class="section-number-4">2.3.4</span> 缺页</h4>
+<div class="outline-text-4" id="text-2-3-4">
+<p>
+虚拟内存中，DRAM缓存不命中称为却页（page fault）。
+</p>
+
+
+<div id="org4fab6e2" class="figure">
+<p><img src="./dot/memory/vm_page_fault.png" alt="vm_page_fault.png" />
+</p>
+<p><span class="figure-number">Figure 20: </span>缺页处理</p>
+</div>
+
+<div id="orgf9b39bf" class="figure">
+<p><img src="./dot/memory/vm_page_fault.png" alt="vm_page_fault.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>cpu引用VP3中的一个字;</li>
+<li>地址翻译硬件从内存中读取PTE3，由于未被缓存，引发缺页异常;</li>
+<li>缺页异常调用系统的缺页处理程序，选择一个牺牲页（VP4），如果牺牲页被修改，则写回到磁盘;</li>
+<li>将磁盘的VP3复制到物理内存的PP3，更新PTE3。</li>
+<li>缺页处理程序返回后，重新执行导致缺页的指令，该指令将导致缺页的虚拟地址发送到地址翻译硬件。</li>
+<li>此时页命中，正常处理。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org4e71246" class="outline-4">
+<h4 id="org4e71246"><span class="section-number-4">2.3.5</span> 分配页面</h4>
+<div class="outline-text-4" id="text-2-3-5">
+
+<div id="org5db43d2" class="figure">
+<p><img src="./dot/memory/vm_page_alloc.png" alt="vm_page_alloc.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3116a94" class="outline-4">
+<h4 id="org3116a94"><span class="section-number-4">2.3.6</span> 局部性</h4>
+<div class="outline-text-4" id="text-2-3-6">
+<p>
+在程序的整个运行过程中，其引用的页面总数可能超过了物理内存的大小，但由于局部性原则，在任意时刻，程序趋向与在一个较小的页面集合中工作，这个集合叫做工作集或者常驻集合。在开始的时候将工作集页面调度到内存中后，接下来对这个工作集的引用导致页面命中，不会产生额外的磁盘开销。
+</p>
+
+<p>
+如果程序有良好的时间局部性，虚拟内存就可以工作的很好。但是如果工作集超过了物理内存大小，就会产生抖动状态，这时页面不断的换入换出。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgef9dd9c" class="outline-3">
+<h3 id="orgef9dd9c"><span class="section-number-3">2.4</span> 虚拟内存作为内存管理的工具</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+目前为止，都假设有一个单独的页表，将虚拟地址空间映射到物理地址空间。实际上，操作系统为进程提供了独立的页表，即独立的虚拟地址空间。其 <b>基本思想</b> 如下：
+</p>
+
+
+<div id="orgf917105" class="figure">
+<p><img src="./dot/memory/vm_process_vms.png" alt="vm_process_vms.png" />
+</p>
+<p><span class="figure-number">Figure 23: </span>进程独立的进程空间</p>
+</div>
+
+<div id="org1aa0999" class="figure">
+<p><img src="./dot/memory/vm_process_vms.png" alt="vm_process_vms.png" />
+</p>
+</div>
+
+<p>
+<b>按需页面调度</b> 和 <b>独立的虚拟地址空间</b> 的结合，对系统中内存的使用和管理造成了深远的影响。 VM简化了链接和加载、代码和数据共享，以及应用程序的内存分配。
+</p>
+
+<dl class="org-dl">
+<dt>简化链接</dt><dd><p>
+独立的地址空间允许每个进程的内存映像使用相同的基本格式，无需关心代码和数据实际存放到物理内存的什么位置。
+</p>
+
+<p>
+例如在linux系统上的每个进程都使用类似的内存格式，对于64位地址空间，代码段总是从虚拟地址0x400000开始。数据段跟在代码段之后，中间有一段符合要求的对齐空白，栈在用户进程地址空间最高的位置，并向下生长。
+</p></dd>
+<dt>简化加载</dt><dd>虚拟内存使得很容易向内存中加载可执行文件和共享对象文件。要把目标文件中的.text和.data段加载到新创建的进程中，linux加载器位代码段和数据段分配虚拟页，并标记位无效（未缓存），将页表项指向目标文件中适当的位置。 加载器不会立即从磁盘向内存复制数据。每个页的初次引用都是由于当cpu读取指令引用，或者一条正在执行的指令引用一个内存而引用的，虚拟内存系统会按照需要自动的调入数据页。</dd>
+
+<dt>简化共享</dt><dd><p>
+独立地址空间为操作系统提供了一个管理用户进程和操作系统自身之间共享的相同机制。一般而言，进程都有自己的私有的代码、数据、堆栈等区域，进程之间彼此不共享。这种情况下，系统创建页表，并将相应的虚拟页映射到不连续的物理页面。
+</p>
+
+<p>
+进程之间也需要共享某些代码和数据。 例如，每个进程必须调用相同的操作系统内核代码，c程序的标准库。系统通过将不同进程中的时当的虚拟页面映射到相同的物理页面，从而使得进程共享这部分代码的副本，而无需在每个进程中都包含单独的内核和c标准库的副本。
+</p></dd>
+
+<dt>简化内存分配</dt><dd>虚拟内存为用户进程提供了一个简单的分配额外内存的机制。例如用户进程要分配堆空间（malloc调用），系统分配适合的连续虚拟内存页，并将其映射至任意位置的物理内存页，而无需连续的物理内存页，这要归功于页表的工作方式。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org32722cb" class="outline-3">
+<h3 id="org32722cb"><span class="section-number-3">2.5</span> 虚拟内存作为内存保护的工具</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+操作系统中，不应当允许用户进程修改它的只读代码段，也不允许其读取或者修改任何内核中的代码和数据，也不允许读取或者修改其他进程的私有内存， 而且也不允许修改和其他进程共享的虚拟页，除非所有的共享者都明确允许修改。
+</p>
+
+<p>
+独立的地址空间使得区分不同进程的私有内存变得容易。地址翻译机制通过扩展虚拟地址提供了更好的访问控制机制。当CPU生成一个地址时，地址翻译硬件都会读取一个PTE，通过在在PTE中添加额外的许可位来控制对虚拟页的访问。以下展示了 <b>大致逻辑</b> ：
+</p>
+
+
+<div id="orga376f87" class="figure">
+<p><img src="./dot/memory/vm_page_protect.png" alt="vm_page_protect.png" />
+</p>
+<p><span class="figure-number">Figure 25: </span>利用虚拟内存提供页面的内存保护</p>
+</div>
+
+<div id="org7e35638" class="figure">
+<p><img src="./dot/memory/vm_page_protect.png" alt="vm_page_protect.png" />
+</p>
+</div>
+
+<p>
+这个示例中，每个PTE中添加了三个许可标志位。SUP标识是否只有超级用户可以访问该页。内核中的进程可以访问任何页面，用户进程只能访问SUP为0的页面。 READ和WRITE分别读和写。上图中，如果进程i运行在用户态，对VP0只读，VP1可以读写，VP2不能访问。
+</p>
+
+<p>
+如果一条指令违反了许可条件，CPU触发一个一般保护故障，将控制权传递给内核的一场处理程序。linux shell中称为“段错误（segmentation fault）”
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7e05fb8" class="outline-3">
+<h3 id="org7e05fb8"><span class="section-number-3">2.6</span> 地址翻译</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+本节讨论地址翻译的基础知识，目的是了解硬件在支持虚拟内存中的角色，其中省略了大量的细节。
+</p>
+
+<p>
+以下概括了后续讨论中的所有符号：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> 基本参数</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">符号</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">N=2<sup>n</sup></td>
+<td class="org-left">虚拟地址空间中的地址数量</td>
+</tr>
+
+<tr>
+<td class="org-left">M=2<sup>m</sup></td>
+<td class="org-left">物理地址空间的地址数量</td>
+</tr>
+
+<tr>
+<td class="org-left">P=2<sup>p</sup></td>
+<td class="org-left">页的大小（字节）</td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> 虚拟地址（VA）的组成部分</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">符号</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">VPO</td>
+<td class="org-left">虚拟页面偏移量（字节）</td>
+</tr>
+
+<tr>
+<td class="org-left">VPN</td>
+<td class="org-left">虚拟页号</td>
+</tr>
+
+<tr>
+<td class="org-left">TLBI</td>
+<td class="org-left">TLB索引</td>
+</tr>
+
+<tr>
+<td class="org-left">TLBT</td>
+<td class="org-left">TLB标记</td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> 物理地址（PA）的组成部分</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">符号</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">PPO</td>
+<td class="org-left">物理页面偏移量（字节）</td>
+</tr>
+
+<tr>
+<td class="org-left">PPN</td>
+<td class="org-left">物理页号</td>
+</tr>
+
+<tr>
+<td class="org-left">CO</td>
+<td class="org-left">缓冲区内的字节偏移量</td>
+</tr>
+
+<tr>
+<td class="org-left">CI</td>
+<td class="org-left">高速缓存索引</td>
+</tr>
+
+<tr>
+<td class="org-left">CT</td>
+<td class="org-left">高速缓存标记</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+下图展示了MMU如何利用页表实现虚拟地址到物理地址的映射：
+</p>
+
+
+<div id="orgedde60d" class="figure">
+<p><img src="./image/memory/vm_pt_addr_trans.png" alt="vm_pt_addr_trans.png" />
+</p>
+<p><span class="figure-number">Figure 27: </span>使用页表进行地址翻译</p>
+</div>
+
+<p>
+cpu中的一个控制寄存器，页表基址寄存器（PTBR）指向当前页表。n位的虚拟地址包含两部分：p位的虚拟页面偏移（VPO）和n-p位的虚拟页号（VPN）。MMU利用VPN选择PTE，然后将页表中的物理页号（PPN）和虚拟页面偏移（VPO）组合得到相应的物理地址。
+</p>
+
+
+<p>
+下图分别展示了页面命中和缺页时的步骤：
+</p>
+
+
+<div id="org8baf74f" class="figure">
+<p><img src="./image/memory/vm_page_hit_fault.png" alt="vm_page_hit_fault.png" />
+</p>
+<p><span class="figure-number">Figure 28: </span>页面命中和缺页的操作图（VA：虚拟地址 PA：物理地址 PTEA：页表项地址 PTE：页表项）</p>
+</div>
+
+<p>
+<b>页面命中：</b>
+</p>
+<ol class="org-ol">
+<li>cpu生成虚拟地址，送给MMU。</li>
+<li>MMU生成PTE地址，读取高速缓存/主存。</li>
+<li>高速缓存/主存向MMU返回PTE。</li>
+<li>MMU构造物理地址并传送给高速缓存/主存。</li>
+<li>高速缓存/主存返回所请求的数据给CPU。</li>
+</ol>
+
+<p>
+<b>缺页：</b>
+</p>
+<ol class="org-ol">
+<li>cpu生成虚拟地址，送给MMU。</li>
+<li>MMU生成PTE地址，读取高速缓存/主存。</li>
+<li>高速缓存/主存向MMU返回PTE。</li>
+<li>PTE中有效位为0，MMU触发一次异常，并将cpu控制权交给操作系统内核的缺页处理程序。</li>
+<li>缺页处理程序确定物理内存中的牺牲页，如果牺牲页被修改，则写回到磁盘。</li>
+<li>缺页处理程序调入新的页面，并更新内存中的PTE。</li>
+<li>缺页处理程序返回到原先的进程，再次执行导致缺页的指令。cpu重新将缺页的地址发送给MMU。由于此时已经缓存，会继续上述的页面命中的逻辑。</li>
+</ol>
+</div>
+
+
+<div id="outline-container-org0880c75" class="outline-4">
+<h4 id="org0880c75"><span class="section-number-4">2.6.1</span> 结合高速缓存和虚拟内存</h4>
+<div class="outline-text-4" id="text-2-6-1">
+<p>
+大部分系统的高速缓存采用物理寻址的方式，这样多个进程同时在高速缓存中存放存储块或者共享来自相同虚拟页面的块就变得很容易，并且高速缓存无需处理保护问题，地址翻译过程中会进行权限检查。
+</p>
+
+<p>
+以下是物理寻址的高速缓存和虚拟地址结合的场景。地址翻译发生在高速缓存查找之前。
+注意：页表项也是可以缓存的。
+</p>
+
+
+<div id="org8cb3606" class="figure">
+<p><img src="./image/memory/vm_vm_cache.png" alt="vm_vm_cache.png" />
+</p>
+<p><span class="figure-number">Figure 29: </span>VM和物理寻址的高速缓存结合（VA：虚拟地址 PA：物理地址 PTEA：页表项地址 PTE：页表项）</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orged52e77" class="outline-4">
+<h4 id="orged52e77"><span class="section-number-4">2.6.2</span> 利用TLB加速地址翻译</h4>
+<div class="outline-text-4" id="text-2-6-2">
+<p>
+每次cpu产生一个虚拟地址，MMU就需要查阅一个PTE，以便将虚拟地址翻译为物理地址，为了消除这个开销，很多系统在其MMU中包含一个存放PTE的缓存，称为 <b>翻译后备缓冲器</b> (Translation Lookaside Buffer, TLB)。
+</p>
+
+<p>
+TLB是一个小的、虚拟寻址的缓存，其每行保存这一个由单个PTE组成的块。 TLB通常由较高的相连度。
+</p>
+
+<p>
+如下图所示，用于组选择和行匹配的索引和标记字段是从虚拟地址的虚拟页号（VPN）中提取的， 如果TLB有 T=2<sup>t</sup>个组，那么TLB索引（TLBI）就是VPN的t个最低位组成，TLB标记位由VPN的剩余位组成。
+</p>
+
+
+<div id="orgb6f5d5d" class="figure">
+<p><img src="dot/memory/vm_tlb_trans.png" alt="vm_tlb_trans.png" />
+</p>
+</div>
+
+<p>
+下图展示了TLB命中和不命中的步骤。注意：所有的地址翻译工作都在MMU中进行，速度很快。
+</p>
+
+
+<div id="orgf92bdab" class="figure">
+<p><img src="./image/memory/vm_tlb_hit_mis.png" alt="vm_tlb_hit_mis.png" />
+</p>
+<p><span class="figure-number">Figure 31: </span>TLB命中和不命中的操作图</p>
+</div>
+
+<p>
+<b>TLB命中</b> :
+</p>
+<ol class="org-ol">
+<li>CPU产生一个虚拟地址。</li>
+<li>MMU从TLB中取出对应的PTE。</li>
+<li>同上。</li>
+<li>MMU将虚拟地址翻译为物理地址，并发送至高速缓存/主存。</li>
+<li>高速缓存/主存将所请求的数据返回给CPU。</li>
+</ol>
+
+<p>
+当TLB不命中时，需要从L1高速缓存中取出相应的PTE，并存储到TLB中。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgcbede0c" class="outline-4">
+<h4 id="orgcbede0c"><span class="section-number-4">2.6.3</span> 多级页表</h4>
+<div class="outline-text-4" id="text-2-6-3">
+<p>
+上述讨论都假设系统使用一个单独的页表， 考虑以下32位的地址空间、4KB的页面和4字节的PTE，即使只引用虚拟地址空间的一小部分，也总是需要4MB的页表驻留在内存中，64位地址空间更加复杂。
+</p>
+
+<p>
+为解决上述的问题，系统中一般使用多级页表。
+</p>
+
+<p>
+假设32位的地址空间被分为4K的页，每个页表项为4字节，还假设此刻虚拟地址空间中，前2K个页面分配给了代码和数据，接下来的6K页面未分配，紧接着的1023个页也未分配，紧接着的1个页面分配给了用户栈。下图展示了这种情况下的结构：
+</p>
+
+
+<div id="org8edb19a" class="figure">
+<p><img src="./dot/memory/vm_2level_page.png" alt="vm_2level_page.png" />
+</p>
+</div>
+
+<p>
+一级页表中的每个PTE负责映射虚拟地址空间中的一个4MB的片（chunk）,这里的每个片都是由1024个连续的页面组成。比如PTE0映射第一片，PTE1映射接下来的一片，32位的地址可以寻址4GB地址空间, 1024个PTE足够覆盖整个空间了. 如果片i中的每个页面都未分配,那么一级页表中的PTEi就为空, 如果片i中至少一个页被分配,那么PTEi就指向一个二级页表的基址。二级页表中的每个PTE都负责映射一个4KB的虚拟内存页。
+</p>
+
+<p>
+这种方法从两个方面减少了内存要求：
+</p>
+<ol class="org-ol">
+<li>如果一级页表的PTE是空的，那么相应的二级页表就不会存在。</li>
+<li>只有一级页表需要在主存中，二级页表可以在需要的时候再创建、页面调入和调出，只要常用的二级页表会在主存中。</li>
+</ol>
+
+<p>
+对于k级页表的地址翻译：
+  虚拟地址被划分为k个VPN和一个VPO
+  每个VPN i都对应第i级页表的索引， 1 &lt;= i &lt;= k。
+  第j级页表的PTE都指向j+1级页表的基址， 1 &lt;= j &lt;= k-1。
+  第k集页表的每个PTE包含某个物理页面的PPN或者磁盘块的地址。
+  为了构造物理地址，在确定PPN之前，需要访问k个PTE。
+</p>
+
+<p>
+访问k个PTE看上去很昂贵，但是由于TLB缓存了PTE，实际上多级页表不会比单级页表慢很多。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4223682" class="outline-4">
+<h4 id="org4223682"><span class="section-number-4">2.6.4</span> 地址翻译的示例</h4>
+<div class="outline-text-4" id="text-2-6-4">
+<p>
+假设：
+</p>
+<ul class="org-ul">
+<li>内存按字节寻址</li>
+<li>内存访问是针对1字节（非4字节）</li>
+<li>虚拟地址14位长 （n=14）</li>
+<li>物理地址12位长 （m=12）</li>
+<li>页面大小64字节 （P=64）</li>
+<li>TLB四路组相连，16个条目</li>
+<li>L1 d-cache物理寻址，直接映射，行大小4字节，共有16个组</li>
+</ul>
+
+
+<div id="org842a601" class="figure">
+<p><img src="./dot/memory/vm_exam_va_pa.png" alt="vm_exam_va_pa.png" />
+</p>
+</div>
+
+<p>
+如上图所示， 由于页面大小为64=2<sup>6</sup>, 则物理地址和虚拟地址的低六位分别用作PPO和VPO。虚拟地址高8位为VPN，物理地址高6位为PPN。
+</p>
+
+
+<p>
+下图展示了一个小内存系统的快照，TLB、部分页表、L1高速缓存。
+</p>
+
+
+<div id="org876e9f8" class="figure">
+<p><img src="./dot/memory/vm_exam_mm_snap.png" alt="vm_exam_mm_snap.png" />
+</p>
+</div>
+
+<p>
+在这种假定情况下，当cpu执行一条读取地址0x03d4处的指令会执行以下过程：
+</p>
+
+<p>
+注意：我们假设cpu读取1字节的字，而非4字节。
+</p>
+
+
+<div id="orgb9086ad" class="figure">
+<p><img src="./image/memory/vm_exam_va.png" alt="vm_exam_va.png" />
+</p>
+</div>
+
+<p>
+首先MMU从地址中抽取出VPN（0x0f），并检查TLB看是否有PTE 0x0f的副本。 TLB从VPN中分别抽取出TLB索引（0x03）和TLB标记（0x3）， 组3中的第二个条目匹配且有效，所以TLB命中，将缓存的PPN（0x0D）返回给MMU。 如果TLB不命中，则MMU需要从主存中读取PTE。
+</p>
+
+<p>
+现在，我们得到了PTE的PPN（0x0D）以及虚拟地址的VPO（0x14），这就组成了物理地址0x354。
+</p>
+
+<p>
+接着MMU将物理地址发送给高速缓存， 高速缓存从地址中抽取出缓存偏移CO（0x0）和缓存索引CI（0x5）以及缓存标记CT（0x0D）。
+</p>
+
+
+<div id="orgd2433f2" class="figure">
+<p><img src="./image/memory/vm_exam_pa.png" alt="vm_exam_pa.png" />
+</p>
+</div>
+
+<p>
+因为组0x5中的标记和CT（0x0D）相匹配，缓存命中，从偏移量CO（0x0 即块0）处读取数据字节（0x36），并将其返回给MMU，MMU在将其返回给CPU。
+</p>
+
+<p>
+翻译过程中也可能是其他情况，例如TLB不命中，MMU从页表的PTE中读取PPN，如果PTE无效，将产生缺页，内核需要调入页面，而后重新执行该指令。另一种情况是PTE是有效的，但是高速缓存不命中。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7f0da99" class="outline-3">
+<h3 id="org7f0da99"><span class="section-number-3">2.7</span> Intel Core i7/Linux 内存系统</h3>
+<div class="outline-text-3" id="text-2-7">
+
+<div id="org121ad8b" class="figure">
+<p><img src="./image/memory/vm_corei7_ms.png" alt="vm_corei7_ms.png" />
+</p>
+</div>
+
+<p>
+上图是Core i7内存系统的重要部分。处理器封装包括四个核、一个大的被所有核共享的L3高速缓存，以及一个DDR3内存控制器。每个核包含各异层次结构的TLB、一个层次结构的数据和指令高速缓存，以及彝族快速的点到点链路，这种链路基于QuickPath技术，是为了让一个核与其他核和外部I/O桥直接通信。TLB是虚拟寻址的，四路组相连。L1、L2和L3高速缓存是物理寻址的，块大小为64字节。L1和L2是8路组相连，L3是16路组相连。页大小可以在启动时被配置为4KB或4Mb。Linux使用4KB的页。
+</p>
+</div>
+
+<div id="outline-container-org3632aff" class="outline-4">
+<h4 id="org3632aff"><span class="section-number-4">2.7.1</span> Core i7地址翻译</h4>
+<div class="outline-text-4" id="text-2-7-1">
+
+<div id="orgff1315b" class="figure">
+<p><img src="./image/memory/vm_corei7_trans.png" alt="vm_corei7_trans.png" />
+</p>
+</div>
+
+<p>
+上图总结了完整的Core i7地址翻译过程（从CPU产生虚拟地址开始一直到来自内存的数据字到达CPU）。Core i7采用四级页表层次结构。每个进程有自己私有的页表层次结构。当Linux进程在运行时，虽然Core i7体系结构允许页表换入换出，但是已分配页相关联的页表都是驻留在内存中的。CR3控制寄存器指向第一级页表的起始位置。CR3的值是每个进程上下文的一部分，每次上下文切换时，CR3的值都会被恢复。
+</p>
+
+
+
+<div id="orga4cfa31" class="figure">
+<p><img src="./image/memory/vm_pt123_format.png" alt="vm_pt123_format.png" />
+</p>
+</div>
+
+<p>
+上图给出了第一级、第二级和第三级页表条目的格式。当P=1时（linux中总是如此），地址字段包含一个40位物理页号（PPN），它指向适当的页表起始处。注意，这要求物理页表4KB对齐。
+</p>
+
+
+<div id="orgf0dceba" class="figure">
+<p><img src="./image/memory/vm_pt4_format.png" alt="vm_pt4_format.png" />
+</p>
+</div>
+
+<p>
+上图给出了第四级页表条目的格式。当P=1时，地址字段包括了一个40位的物理页号（PPN），它指向物理内存中的某一页的基地址。这要求物理页4KB对齐。
+</p>
+
+
+<p>
+PTE有三个权限位，控制对页的访问。R/W位确定页的读写权限。U/S位确定是否能在用户模式中访问该页，从而保护操作系统内核中的代码和数据不被用户程序访问。XD（禁止执行）位是在64位系统中引入，可以用来禁止从某些内存页读取指令，通过限制只能执行只读代码段，使得操作系统内核降低缓冲区溢出攻击的风险。
+</p>
+
+<p>
+当MMU对虚拟地址翻译时，还会更新两个内核缺页处理程序会使用的位，每次访问一个页时，MMU会设置A位（引用位），内核使用这个位实现页面置换算法。每次对一个页写后，MMU会设置D位，称为修改位或者脏位， 这个位高速内核在复制替换页之前是否必须写回牺牲页。内核可以通过调用特殊指令来清除引用位和修改位。
+</p>
+
+
+<div id="orga5fca0b" class="figure">
+<p><img src="./image/memory/vm_corei7_pt4_trans.png" alt="vm_corei7_pt4_trans.png" />
+</p>
+</div>
+
+<p>
+上图给出了Core i7的MMU使用四级页表将虚拟地址翻译为物理地址的过程，36位的VPN被划分为4个9位的片，每个片被用作到一个页表的偏移量。CR3保存了一级页表的物理地址，VPN1提供了一级页表中的PTE的偏移量，这个PTE包含了二级页表的基地址。VPN2提供了二级页表中的PTE的偏移量，以此类推。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1962ab8" class="outline-4">
+<h4 id="org1962ab8"><span class="section-number-4">2.7.2</span> linux虚拟内存系统</h4>
+<div class="outline-text-4" id="text-2-7-2">
+<p>
+linux为每个进程维护了一个单独的虚拟地址空间，如下图所示
+</p>
+
+
+<div id="orge08a022" class="figure">
+<p><img src="./image/memory/vm_linux_vm.png" alt="vm_linux_vm.png" />
+</p>
+</div>
+
+<p>
+内核虚拟内存包含内核中的代码和数据结构。内核虚拟内存的某些内存区域映射到所有进程共享的物理页面。例如，每个进程共享内核的代码和全局数据结构。Linux也将一组连续的虚拟页面（大小等于系统中的DRAM的总量）映射到相应的一组连续的物理页面。这为内核提供了一种便利的方法来访问物理内存中任何特定的位置，例如当内核需要访问页表或在某些设备上执行内存映射的I/O操作，而这些设备被映射到特定的物理内存位置。
+</p>
+</div>
+
+<div id="outline-container-org8f14ff9" class="outline-5">
+<h5 id="org8f14ff9"><span class="section-number-5">2.7.2.1</span> Linux 虚拟内存区域</h5>
+<div class="outline-text-5" id="text-2-7-2-1">
+<p>
+Linux将虚拟内存组织为一些区域（段）的集合。一个区域就是已经存在的（被分配的）虚拟内存的连续片，这些页以某种方式相关联。 例如，代码段、数据段、堆、共享库段以及用户栈都是不同的区域。每个存在的虚拟页面都必定保存在某个区域中，不属于区域内部的虚拟页不存在，且不能被进程引用。 区域的概念允许虚拟地址空间有间隙。内核无需记录不存在的虚拟页。
+</p>
+
+<p>
+以下是一个进程中虚拟内存区域的内核数据结构。内核为系统中的每个进程维护了一个单独的任务结构。任务结构中的一个条目指向mm_struct，他描述了虚拟内存的当前状态。其中pgd指向一级页表（页全局目录）的基址，而mmap指向一个vm_area_structs结构的链表，其中每个vm_area_structs都描述了当前虚拟地址空间的一个区域。内核切换到该进程时就将pgd存放在CR3控制寄存器中。
+</p>
+
+<p>
+vm_area_struct 成员描述：
+</p>
+<ul class="org-ul">
+<li>vm_start: 区域的起始位置</li>
+<li>vm_end: 区域的结束位置</li>
+<li>vm_prot: 区域内的页的读写权限</li>
+<li>vm_flags: 区域内页面的属性（共享，私有&#x2026;）</li>
+<li>vm_next: 链表中的下一个区域结构</li>
+</ul>
+
+
+<div id="org340be72" class="figure">
+<p><img src="./image/memory/vm_linux_vm_organize.png" alt="vm_linux_vm_organize.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org10249f8" class="outline-5">
+<h5 id="org10249f8"><span class="section-number-5">2.7.2.2</span> Linux缺页异常处理程序</h5>
+<div class="outline-text-5" id="text-2-7-2-2">
+<p>
+假设当MMU翻译某个虚拟地址A时，触发缺页，导致控制权转移到内核的缺页处理程序，然后执行以下步骤：
+</p>
+<ol class="org-ol">
+<li>虚拟地址A是否合法？也就是说A是否属于某个区域结构（vm_area_struct）定义的区域内？ 首先程序搜索区域结构的链表，将A和区域结构的vm_start和vm_end作比较（实际上内核通过在链表中构建树，在树中搜索）。如果没找到，则触发段错误，终止进程。</li>
+
+<li>进程是否有读、写或者执行这个区域页面的权限。</li>
+<li>如果是合法地址，则选择一个牺牲页，如果这个牺牲页被修改过，则将此页面交换出去，换入新的页面，并更新页表，当缺页程序返回时，CPU重新启动引起缺页的指令。</li>
+</ol>
+
+
+<div id="orgfb1443a" class="figure">
+<p><img src="./image/memory/vm_linux_pagefault.png" alt="vm_linux_pagefault.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7e09bb1" class="outline-3">
+<h3 id="org7e09bb1"><span class="section-number-3">2.8</span> 内存映射</h3>
+</div>
+<div id="outline-container-org8f614a2" class="outline-3">
+<h3 id="org8f614a2"><span class="section-number-3">2.9</span> 动态内存分配</h3>
+</div>
+<div id="outline-container-orgf363a0f" class="outline-3">
+<h3 id="orgf363a0f"><span class="section-number-3">2.10</span> C程序中常见内存错误</h3>
+</div>
+</div>
+
+<div id="outline-container-org1a3e7f2" class="outline-2">
+<h2 id="org1a3e7f2"><span class="section-number-2">3</span> Linux内存代码学习</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+内存划分为节点,  表示为数据结构  pg_data_t, 各个节点保存在一个单链表中, 供内核遍历.
+节点划分为不同的内存域:
+</p>
+<ul class="org-ul">
+<li>ZONE_DMA  标记适合DMA的内存域</li>
+<li>ZONE_DMA32  标记了使用32为地址寻址、适合DMA的内存域(32位计算机为空)</li>
+<li>ZONE_NORMAL  可以直接映射内核段的普通内存域</li>
+<li>ZONE_HIGHMEM  超出内核段的物理内存</li>
+<li>ZONE_MOVABLE  在防止无力内存碎片时使用</li>
+</ul>
+
+
+<p>
+冷热页
+struct zone 的 pageset成员用于实现冷热页分配器. 热页代表页在高速缓存中, 冷页不在高速缓存中.
+</p>
+
+<p>
+页帧
+</p>
+</div>
+
+<div id="outline-container-org9d32117" class="outline-3">
+<h3 id="org9d32117"><span class="section-number-3">3.1</span> 页表</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+linux上使用四级页表
+虚拟内存地址划分为5个部分, 四个表项用于选择页, 一个索引表示页内偏移.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text">| &lt;------------- BITS_PER_LONG ------------&gt; |
+|  PGD  |  PUD  |  PMD  |  PTE  |   Offset   |
+				| PAGE_SHIFT |
+			| &lt;---PMD_SHIFT ---&gt; |
+		| &lt;------- PUD_SHIFT ------&gt; |
+	| &lt;--------- PGDIR_SHIFT ----------&gt; |
+
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>PTRS_PER_PGD 全局页目录中的项数</li>
+<li>PTRS_PER_PUD 上层页目录中的项数</li>
+<li>PTRS_PER_PMD 中间页目录中的项数</li>
+<li>PTRS_PER_PTE 页表中的项数</li>
+</ul>
+
+<p>
+两级页表的体系结构会将 PERS_PER_PMD 和 PTRS_PER_PUD 定义为1.
+</p>
+
+<ul class="org-ul">
+<li>pgd_t 全局页目录项</li>
+<li>pud_t 上层页目录项</li>
+<li>pmd_t 中间页目录项</li>
+<li>pte_t 页表项</li>
+</ul>
+
+<p>
+特定与PTE的信息
+页表项包含了指向页内存位置的指针, 在其多余的比特位上包含了与页有关的附加信息.
+</p>
+<ul class="org-ul">
+<li>_PAGE_PRESENT 指定虚拟内存页是否在内存中(可能被换出到交换区&#x2026;)</li>
+<li>_PAGE_ACCESSED cpu访问页或读写页时自动设置(标识页的活跃程度, 用于换出页)</li>
+<li>_PAGE_DIRTY 脏页,需要回写</li>
+<li>_PAGE_USER 允许用户空间访问该页,否则只有内核可以访问</li>
+<li>_PAGE_READ、_PAGE_WRITE、_PAGE_EXECUTE 指定普通用户进程读、写、执行页中内容</li>
+<li>_PAGE_BIT_NX(IA-32和AMD64) 将页标记为不可执行(可用于防止执行栈页上的代码)</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgdcee647" class="outline-3">
+<h3 id="orgdcee647"><span class="section-number-3">3.2</span> 内存初始化</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-text">start_kernel
+
+	1. setup_arch
+
+	2. setup_per_cpu_areas
+
+	3. build_all_aonelists
+
+	4. mem_init
+
+	5. kmem_cache_init
+
+	6. setup_per_cpu_pageset
+1. &#29305;&#23450;&#20110;&#20307;&#31995;&#32467;&#26500;&#30340;&#35774;&#32622;&#20989;&#25968;, &#20854;&#20013;&#26377;&#19968;&#39033;&#36127;&#36131;&#21021;&#22987;&#21270;&#33258;&#20030;&#20998;&#37197;&#22120;
+2. &#20026;&#31995;&#32479;&#20013;&#30340;&#21508;&#20010;cpu&#21019;&#24314;&#27599;cpu&#21464;&#37327;&#30340;&#21103;&#26412;
+3. &#24314;&#31435;&#33410;&#28857;&#21644;&#20869;&#23384;&#22495;&#30340;&#25968;&#25454;&#32467;&#26500;
+4. &#20572;&#29992;bootmem&#20998;&#37197;&#22120;&#24182;&#36801;&#31227;&#21040;&#23454;&#38469;&#30340;&#20869;&#23384;&#31649;&#29702;&#20989;&#25968;(&#29305;&#23450;&#20307;&#31995;&#32467;&#26500;&#30340;&#20989;&#25968;)
+5. &#21021;&#22987;&#21270;&#20869;&#26680;&#20869;&#37096;&#29992;&#20110;&#23567;&#22359;&#20869;&#23384;&#21306;&#30340;&#20998;&#37197;&#22120;
+6. &#20026; zone &#32467;&#26500;&#20013;&#30340;pageset&#25968;&#32452;&#30340;&#31532;&#19968;&#20010;&#25968;&#32452;&#20803;&#32032;&#20998;&#37197;&#20869;&#23384;(&#20026;&#31995;&#32479;&#31532;&#19968;&#20010;&#22788;&#29702;&#22120;&#20998;&#37197;&#20869;&#23384;)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgdf37cc8" class="outline-4">
+<h4 id="orgdf37cc8"><span class="section-number-4">3.2.1</span> 节点和内存域初始化</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<p>
+build_all_zonelists建立管理节点及其内存域所需的数据结构.
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-fundamental">
+build_all_zonelists
+	__build_all_zonelists {
+		int nid;
+		for_each_online_node(nid) {
+			pg_data_t *pgdat = NODE_DATA(nid);
+			build_zonelists(pgdat);
+		}
+
+	}
+
+</pre>
+</div>
+
+<p>
+for_each_online_node 遍历系统中所有活动节点.
+build_zonelists 需要一个指向 pgdata_t 实例的指针作为参数, 此函数在当前处理节点和系统中其他节点的内存域之间建立一种等级次序(内存域的次序和节点之间的次序), 用于内存分配次序.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org827dedc" class="outline-4">
+<h4 id="org827dedc"><span class="section-number-4">3.2.2</span> 内核在内存中的布局</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<div class="org-src-container">
+<pre class="src src-fundamental">|(0x0) &lt;--4KB--&gt; |(0x1000) &lt;--640KB--&gt; |(0x9e800) &lt;--ROM--&gt; |(0x100000) &lt;--text--&gt; | &lt;--data--&gt; |
+</pre>
+</div>
+
+<p>
+以一个页帧保留, 接下来有640KB的区域, 之后紧邻的区域由系统保留, 用于映射各种ROM(通常是系统BIOS和显卡ROM), 不可能向映射ROM的区域写入数据. 由于内核总是会装载到一段连续的区域中, 如果要装载到之前的640KB区域中, 则要求内核必须小于640KB.
+</p>
+
+<p>
+IA-32内核使用0x100000作为起始地址, 对应于内存的第2MB开始处.
+</p>
+
+
+<p>
+AMD64系统上, 内核从内存的第3MB的起始处开始.
+</p>
+
+<p>
+编译内核之后, 会生成 System.map 文件, 包含内核全局变量 内核定义的函数和例程的地址, 内核代码段 数据段 初始化数据段的地址信息.
+</p>
+
+<p>
+也可以通过一下命令查看物理内存划分出的各个段的信息:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">cat /proc/iomem
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9ce1c45" class="outline-4">
+<h4 id="org9ce1c45"><span class="section-number-4">3.2.3</span> 初始化步骤</h4>
+<div class="outline-text-4" id="text-3-2-3">
+<div class="org-src-container">
+<pre class="src src-fundamental">IA-32
+setup_arch
+	1. machine_specific_memory_setup
+	2. parse_early_param
+	3. setup_memory
+	4. paging_init
+		pagetable_init
+	5. zone_sizes_init
+		add_active_range
+		free_area_init_nodes
+
+1. &#21019;&#24314;&#19968;&#20010;&#21015;&#34920;, &#21253;&#21547;&#31995;&#32479;&#21344;&#25454;&#30340;&#20869;&#23384;&#21435;&#21644;&#31354;&#38386;&#20869;&#23384;&#21306;. (BIOS-provided physical RAM map:)
+2. &#35299;&#26512;&#21629;&#20196;&#34892;(mem=XXX, highmem=XXX, memmap=XXX ......)
+3. &#30830;&#23450;&#33410;&#28857;&#21487;&#29992;&#30340;&#29289;&#29702;&#20869;&#23384;&#39029;&#30340;&#25968;&#30446;
+   &#21021;&#22987;&#21270;bootmem&#20998;&#37197;&#22120;
+   &#20998;&#37197;&#21508;&#31181;&#20869;&#23384;&#21306;(&#20363;&#22914;, &#36816;&#34892;&#31532;&#19968;&#20010;&#29992;&#25143;&#31354;&#38388;&#36807;&#31243;&#25152;&#38656;&#30340;&#26368;&#21021;&#30340;RAM&#30913;&#30424;
+
+4. &#21021;&#22987;&#21270;&#20869;&#26680;&#39029;&#34920;,&#24182;&#21551;&#29992;&#20869;&#23384;&#20998;&#39029;
+   &#36890;&#36807;&#35843;&#29992;pagetable_init, &#30830;&#20445;&#20102;&#30452;&#25509;&#26144;&#23556;&#21040;&#20869;&#26680;&#22320;&#22336;&#31354;&#38388;&#30340;&#29289;&#29702;&#20869;&#23384;&#34987;&#21021;&#22987;&#21270;.
+5. &#21021;&#22987;&#21270;&#31995;&#32479;&#20013;&#25152;&#26377;&#33410;&#28857;&#30340;pgdat_t&#23454;&#20363;
+   &#35843;&#29992;add_active_range&#23545;&#21487;&#29992;&#30340;&#29289;&#29702;&#20869;&#23384;&#24314;&#31435;&#19968;&#20010;&#21015;&#34920;;
+   free_area_init_nodes&#20351;&#29992;&#19978;&#36848;&#20449;&#24687;&#24314;&#31435;&#23436;&#22791;&#30340;&#20869;&#26680;&#25968;&#25454;&#32467;&#26500;&#12290;
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-fundamental">AMD64
+
+setup_arch
+	1. setup_memory_region
+	2. parse_early_param
+	3. e820_register_active_region
+		add_active_range
+	4. init_memory_mapping
+	5. config_initmem_init
+	6. paging_init
+		free_area_init_nodes
+
+1. &#23436;&#25104;&#22522;&#26412;&#30340;&#20869;&#23384;&#35774;&#32622;, &#21487;&#29992;&#30340;&#20869;&#23384;&#20449;&#24687;&#30001;BIOS&#25552;&#20379;&#30340;E820&#26144;&#23556;&#32473;&#20986;.
+2. &#35299;&#26512;&#21629;&#20196;&#34892;.
+3. e820_register_active_region&#36890;&#36807;&#20998;&#26512;&#19978;&#36848;&#30340;E820&#26144;&#23556;&#24471;&#21040;&#30456;&#20851;&#20449;&#24687;&#21518;, &#35843;&#29992;add_active&#21019;&#24314;&#21487;&#29992;&#20869;&#23384;&#30340;&#19968;&#20010;&#31616;&#21333;&#21015;&#34920;.
+4. &#23558;&#21487;&#29992;&#30340;&#29289;&#29702;&#20869;&#23384;&#30452;&#25509;&#26144;&#23556;&#21040;&#34394;&#25311;&#22320;&#22336;&#31354;&#38388;&#20013;&#20174;PAGE_OFFSET&#24320;&#22987;&#30340;&#20869;&#26680;&#22320;&#22336;&#31354;&#38388;.
+5. &#28608;&#27963;bootmen&#20998;&#37197;&#22120;.
+6. &#22788;&#29702;&#19968;&#20123;&#31232;&#30095;&#20869;&#23384;&#31995;&#32479;&#30340;&#35774;&#32622;&#20363;&#31243;,
+
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org2bf4551" class="outline-4">
+<h4 id="org2bf4551"><span class="section-number-4">3.2.4</span> 分页机制的初始化</h4>
+<div class="outline-text-4" id="text-3-2-4">
+<p>
+paging_init负责建立只能用于内核的页表, 用户空间无法访问.
+</p>
+
+<p>
+IA-32系统上内核通常将4GB可用的虚拟地址空间按3:1的比例划分. 低端3GB用于用户状态的应用程序, 高端1GB用于内核空间.
+</p>
+
+<p>
+如此划分地址空间的动机如下:
+</p>
+
+<ul class="org-ul">
+<li>在用户应用程序从用户态切换到核心态时, 内核必须装载在一个可靠的环境中, 因此有必要将地址空间的一部分分配给内核专用.</li>
+<li>物理内存页映射到内核地址空间的起始处, 以便内核直接访问, 而无需复杂的页表操作.</li>
+</ul>
+</div>
+
+
+<div id="outline-container-org8be8b1c" class="outline-5">
+<h5 id="org8be8b1c"><span class="section-number-5">3.2.4.1</span> 内核地址空间的划分</h5>
+<div class="outline-text-5" id="text-3-2-4-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">
+&#29992;&#26469;&#31649;&#29702;&#34394;&#25311;&#22320;&#22336;&#31354;&#38388;&#30340;&#31532;4GB&#39029;&#34920;&#30340;&#32467;&#26500;, &#26631;&#26126;&#20102;&#22320;&#22336;&#31354;&#38388;&#30340;&#21508;&#20010;&#21306;&#22495;&#30340;&#29992;&#36884;, &#19982;&#29289;&#29702;&#20869;&#23384;&#30340;&#20998;&#37197;&#26080;&#20851;
+
+1                         2      3          4   5        6        7
+|_________________________|______|__________|___|________|________|
+   &#30452;&#25509;&#26144;&#23556;&#30340;&#25152;&#26377;&#29289;&#29702;&#39029;&#24103;      8MB     VMALLOC       &#25345;&#20037;&#26144;&#23556;   &#22266;&#23450;&#26144;&#23556;
+
+1: PAGE_OFFSET(0xC0000000)
+2: high_memory
+3: VMALLOC_START
+4: VMALLOC_END
+5: PKMAP_BASE
+6: FIXADDR_START
+7: 4GB
+</pre>
+</div>
+<blockquote>
+<ul class="org-ul">
+<li>第一段将系统的所有物理内存页映射到内核的虚拟地址空间中. 内核地址空间从偏移量0xC0000000(3GB)开始, 即每个虚拟地址x对应于物理地址(x-0xC0000000).</li>
+<li>直接映射区域从0xC0000000到和high_memory地址, 如果物理内存超过896MB, 无法直接映射全部的物理内存. 此值小于1GB是由于内核要保留128MB的地址空间用于其他目的.</li>
+</ul>
+</blockquote>
+
+
+
+
+<p>
+内核中经常使用缩写normal和highmem来区分是否可以直接映射的页帧
+</p>
+
+<blockquote>
+<p>
+内核移植的每个体系结构都必须提供两个宏, 用于一致映射的内核虚拟内存部分, 进行无力和虚拟地址之间的转换.
+</p>
+
+<ul class="org-ul">
+<li>__pa(vaddr) 返回与虚拟地址vaddr相关的物理地址</li>
+<li>__va(paddr) 计算出对应于物理地址paddr的虚拟地址</li>
+</ul>
+
+<p>
+这些函数不使用与处理虚拟地址空间中的任意地址, 只能用于其中的一致映射部分.
+</p>
+</blockquote>
+
+<p>
+内核地址空间的最后128MB的用途:
+</p>
+<ol class="org-ol">
+<li>虚拟内存中连续, 但物理内存不连续的内存区, 可以在vmalloc区域中分配.</li>
+<li>持久映射用于将高端内存域中的非持久页映射到内核中.</li>
+<li>固定映射是与物理地址空间中的固定页关联的虚拟地址空间项, 但具体关联的页帧可以自由选择. 与直接映射页相反, 虚拟固定映射地址与物理内存位置之间的关联可以自行定义, 关联建立后内核总是会注意到.</li>
+</ol>
+
+
+
+<p>
+VMALLOC_OFFSET使得在直接映射的所有内存页和用于非连续分配的区域之间保留"空洞", 可以用作访问越界地址异常.
+同理VMALLOC_START 至 VMALLOC_END区域中的vmalloc区域之间也会保留4KB的"空洞".
+</p>
+
+<p>
+固定映射区域可以指向物理内存的随机位置, 该映射内部的虚拟地址和物理地址之间的关联不需要预设, 可以自由定义, 定义之后不可改变, 固定映射区域会一直延伸到虚拟地址空间的顶端.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgca056e2" class="outline-5">
+<h5 id="orgca056e2"><span class="section-number-5">3.2.4.2</span> 划分虚拟地址空间</h5>
+</div>
+</div>
+
+
+<div id="outline-container-orga1fcad3" class="outline-4">
+<h4 id="orga1fcad3"><span class="section-number-4">3.2.5</span> 注册活动内存区</h4>
+<div class="outline-text-4" id="text-3-2-5">
+<p>
+活动内存区就是不包含空洞的内存区. 必须使用add_active_range在全局变量early_node_map中注册内存区.
+</p>
+
+<p>
+当前注册的内存区数目记载在 nr_nodemap_entries中.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">node_active_region</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#27492;&#20869;&#23384;&#21306;&#20013;&#30340;&#31532;&#19968;&#20010;&#39029;&#24103; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">start_pfn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#27492;&#20869;&#23384;&#21306;&#20013;&#30340;&#26368;&#21518;&#19968;&#20010;&#39029;&#24103; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">end_pfn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20869;&#23384;&#21306;&#25152;&#23646;&#33410;&#28857;&#30340;NUMA ID </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">nid</span>;
+};
+</pre>
+</div>
+
+<p>
+活动内存区使用 add_active_range 注册.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgcd7d107" class="outline-4">
+<h4 id="orgcd7d107"><span class="section-number-4">3.2.6</span> AMD64地址空间的设置</h4>
+<div class="outline-text-4" id="text-3-2-6">
+<p>
+由于64位地址空间跨度太大, 当前只使用了48位的地址空间, 48位宽的地址字可以寻址256TB的地址空间.
+尽管物理地址字位宽被限制在48位, 但在寻址虚拟地址空间是仍然使用了64位指针, 因而虚拟地址空间形式上仍然会跨越2<sup>64</sup>字节.
+</p>
+
+<blockquote>
+<p>
+AMD64计算机上虚拟地址到物理地址空间映射方式:
+虚拟地址的第47位([0,46])可以任意设置,而比特位[47,63]的之总是相同的: 或者全0, 或者全1. 因此整个地址空间划分位3部分: 下半部、上半部、中间禁用的区域. 上下两部分共同构成跨越2<sup>48</sup>字节的地址空间.
+</p>
+
+<p>
+下半部地址空间:  0x0,                   0x0000 7FFF FFFF FFFF
+上半部地址空间:  0xFFFF 8000 0000 0000, 0xFFFF FFFF FFFF FFFF
+</p>
+
+
+<p>
+可访问的地址空间的整个下半部作为用户空间, 上半部专用于内核.
+</p>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-org0e9898c" class="outline-4">
+<h4 id="org0e9898c"><span class="section-number-4">3.2.7</span> end</h4>
+</div>
+</div>
+
+
+<div id="outline-container-org26bfc49" class="outline-3">
+<h3 id="org26bfc49"><span class="section-number-3">3.3</span> 启动过程中的内存管理</h3>
+<div class="outline-text-3" id="text-3-3">
+<blockquote>
+<p>
+bootmem分配器用于在启动阶段早期分配内存.该分配器用一个位图来管理页, 位图比特位数目与系统中的物理内存页的数目相同.需要内存时逐个扫描位图, 直至找到一个能够提供连续内存的位置.
+</p>
+</blockquote>
+</div>
+
+
+<div id="outline-container-orgf8911dc" class="outline-4">
+<h4 id="orgf8911dc"><span class="section-number-4">3.3.1</span> 数据结构</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">bootmem_data</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20445;&#23384;&#31995;&#32479;&#20013;&#31532;&#19968;&#20010;&#39029;&#30340;&#32534;&#21495; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">node_boot_start</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21487;&#20197;&#30452;&#25509;&#31649;&#29702;&#30340;&#29289;&#29702;&#22320;&#22336;&#31354;&#38388;&#30340;&#26368;&#21518;&#19968;&#39029;&#30340;&#32534;&#21495; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">node_low_pfn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25351;&#21521;&#23384;&#20648;&#20998;&#37197;&#20301;&#22270;&#30340;&#25351;&#38024; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">node_bootmem_map</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#19978;&#27425;&#20998;&#37197;&#30340;&#39029;&#20869;&#20559;&#31227; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">last_offset</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#19978;&#19968;&#27425;&#20998;&#37197;&#39029;&#30340;&#32534;&#21495; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">last_pos</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#19978;&#19968;&#27425;&#25104;&#21151;&#20998;&#37197;&#20869;&#23384;&#30340;&#20301;&#32622; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">last_success</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Previous allocation point.  To speed</span>
+<span style="color: #8B8878; font-style: italic;">                                         * up searching </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878; font-style: italic;">         * &#20869;&#23384;&#19981;&#36830;&#32493;&#30340;&#31995;&#32479;&#38656;&#35201;&#22810;&#20010;bootmem&#20998;&#37197;&#22120;</span>
+<span style="color: #8B8878; font-style: italic;">         * &#38142;&#34920;&#22836;&#26159;&#20840;&#23616;&#21464;&#37327; bdata_list</span>
+<span style="color: #8B8878; font-style: italic;">         </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">list_head</span> <span style="color: #FF8C00; font-weight: bold;">list</span>;
+} <span style="color: #5FD7FF; font-weight: bold;">bootmem_data_t</span>;
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb6dbd96" class="outline-4">
+<h4 id="orgb6dbd96"><span class="section-number-4">3.3.2</span> 初始化</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<ul class="org-ul">
+<li>IA-32</li>
+</ul>
+<p class="verse">
+setup_memory<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;确定可用的低端内存页帧<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;setup_bootmem_allocator<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;inti_bootmem<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;register_bootmen_low_pages<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;reserve_bootmen(bootmap, bootmap_size)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;调用reserve_bootmem分配特定的内存区<br />
+</p>
+
+<ul class="org-ul">
+<li>AMD64</li>
+</ul>
+<p class="verse">
+contig_initmem<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;bootmem_bootmap_pages<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;找到适当的内存区<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;init_bootmem<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;register_bootmem_with_active_regions<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;reserve_bootmem(bootmap, bootmap_size)<br />
+<br />
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4c8c3d4" class="outline-4">
+<h4 id="org4c8c3d4"><span class="section-number-4">3.3.3</span> 提供的内核接口</h4>
+<div class="outline-text-4" id="text-3-3-3">
+</div>
+<div id="outline-container-orgaac515c" class="outline-5">
+<h5 id="orgaac515c"><span class="section-number-5">3.3.3.1</span> 分配内存</h5>
+<div class="outline-text-5" id="text-3-3-3-1">
+<ol class="org-ol">
+<li>从ZONE_NORMAL区域分配</li>
+</ol>
+<p>
+alloc_bootmem
+alloc_bootmem_pages
+</p>
+
+
+<ol class="org-ol">
+<li>从ZONE_DMA区域分配</li>
+</ol>
+<p>
+alloc_bootmem_low
+alloc_bootmem_low_pages
+</p>
+
+
+<p>
+上述函数都是 __alloc_bootmem的前端, 实际工作委托给 __alloc_bootmem_nopanic. 此函数遍历bootmem分配器, 直至成功为止.
+</p>
+
+
+<p>
+__alloc_bootmem_nopanic 遍历调用 __alloc_bootmem_core 在bootmem分配器上进行分配.
+__alloc_bootmem_core函数执行的操作如下:
+</p>
+
+<ul class="org-ul">
+<li>从goal开始, 扫描位图, 查找满足分配请求的空闲内存区.</li>
+<li>如果目标页紧接着上一次分配的页, 检查last_offset 判断所需的内存是否能在上一页分配.</li>
+<li>新分配的页位图置位, 更新last_pos last_offset成员</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8da601a" class="outline-5">
+<h5 id="org8da601a"><span class="section-number-5">3.3.3.2</span> 释放内存</h5>
+<div class="outline-text-5" id="text-3-3-3-2">
+<p>
+free_bootmem函数用来释放内存
+__free_bootmem_core 用来释放整页.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2f2b197" class="outline-4">
+<h4 id="org2f2b197"><span class="section-number-4">3.3.4</span> 停用bootmem分配器</h4>
+<div class="outline-text-4" id="text-3-3-4">
+<p>
+free_all_bootmem 扫描bootmem分配器的页位图, 释放未使用的页. 最终会调用__free_page. 使得这些页并入伙伴系统的数据结构.扫描完成后,释放其占用的内存空间.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd155ea5" class="outline-4">
+<h4 id="orgd155ea5"><span class="section-number-4">3.3.5</span> 释放初始化数据</h4>
+<div class="outline-text-4" id="text-3-3-5">
+<p>
+许多内核代码块和数据表只在系统初始化阶段需要, 在结构建立之后,这些例程就不再需要了.(例如: 链接到内核的驱动程序,驱动程序用于检测其设备的硬件数据库等)
+</p>
+
+<p>
+内核提供两个属性 __init 和 __initcall, 用于标记初始化函数和数据. 这些必须至于函数或数据声明之前.
+__init 和 __init_initcall 借助特殊的GNU C编译器语句来实现.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__init</span>          <span style="color: #FF1493;">__attribute__</span> ((__section__ (<span style="color: #CDC673;">".init.text"</span>))) __cold
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__initdata</span>      <span style="color: #FF1493;">__attribute__</span> ((__section__ (<span style="color: #CDC673;">".init.data"</span>)))
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__exitdata</span>      <span style="color: #FF1493;">__attribute__</span> ((__section__(<span style="color: #CDC673;">".exit.data"</span>)))
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__exit_call</span>     __attribute_used__ <span style="color: #FF1493;">__attribute__</span> ((__section__ (<span style="color: #CDC673;">".exitcall.exit"</span>)))
+
+</pre>
+</div>
+
+<p>
+通过 <span class="underline"><span class="underline">attribute</span></span> 关键字使用 <span class="underline"><span class="underline">section</span></span> 属性通知编译器将随后的数据分别写入二进制文件的 .init.text和 .init.data段.
+</p>
+
+
+<p>
+readelf工具可以用来查看elf文件的各个段
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">readelf --sections vmlinux
+</pre>
+</div>
+
+<p>
+内核定义了两个变量, __init_begin 和  __init_end.   free_initmem利用此变量来释放用于初始化的内存.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdd10159" class="outline-3">
+<h3 id="orgdd10159"><span class="section-number-3">3.4</span> 物理内存的管理</h3>
+<div class="outline-text-3" id="text-3-4">
+</div>
+<div id="outline-container-org11a3d42" class="outline-4">
+<h4 id="org11a3d42"><span class="section-number-4">3.4.1</span> 伙伴系统结构</h4>
+<div class="outline-text-4" id="text-3-4-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">zone</span> {
+...
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#19981;&#21516;&#38271;&#24230;&#30340;&#31354;&#38386;&#21306;&#22495; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">1 2 4 8 ...... </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> free_area free_area[MAX_ORDER];
+...
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">free_area</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">list_head</span> <span style="color: #FF8C00; font-weight: bold;">free_list</span>[MIGRATE_TYPES];
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25351;&#23450;&#24403;&#21069;&#20869;&#23384;&#21306;&#20013;&#31354;&#38386;&#39029;&#22359;&#30340;&#25968;&#30446; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">nr_free</span>;
+};
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd106985" class="outline-4">
+<h4 id="orgd106985"><span class="section-number-4">3.4.2</span> 避免碎片</h4>
+<div class="outline-text-4" id="text-3-4-2">
+<p>
+现代cpu都提供了使用巨型页的可能性, 比普通页大得多. 使用大页时, 地址转换后备缓冲器只需处理较少的项, 降低TLB缓存失效的可能性.
+</p>
+</div>
+
+<div id="outline-container-org46134fb" class="outline-5">
+<h5 id="org46134fb"><span class="section-number-5">3.4.2.1</span> 依据可移动性组织页</h5>
+<div class="outline-text-5" id="text-3-4-2-1">
+<p>
+已分配页可以划分为3种类型:
+</p>
+<ul class="org-ul">
+<li>不可移动页: 在内存中有固定位置, 不能移动到其他地方. 核心内核分配的大多数内存属于该类别.</li>
+<li>可回收页: 不能直接移动, 可以删除,其内容可以从某些源重新生成.例如映射自文件的数据属于该类别.</li>
+<li>可移动页: 可以随意移动. 用户空间应用程序的页属于该类别.</li>
+</ul>
+
+<p>
+内核定义页的迁移类型:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">PAGE_ALLOC_COSTLY_ORDER</span> 3
+
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">MIGRATE_UNMOVABLE</span>     0
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">MIGRATE_RECLAIMABLE</span>   1
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">MIGRATE_MOVABLE</span>       2
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">MIGRATE_RESERVE</span>       3
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">MIGRATE_ISOLATE</span>       4 <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">can't allocate from here </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">MIGRATE_TYPES</span>         5
+
+</pre>
+</div>
+
+<p>
+当内核无法满足针对某一给定迁移类型的内存分配请求时, 内核提供了备用列表, 规定了接下来使用哪种迁移类型的页:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878; font-style: italic;"> * This array describes the order lists are fallen back to when</span>
+<span style="color: #8B8878; font-style: italic;"> * the free lists for the desirable migrate type are depleted</span>
+<span style="color: #8B8878; font-style: italic;"> </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fallbacks</span>[MIGRATE_TYPES][MIGRATE_TYPES-1] = {
+	[MIGRATE_UNMOVABLE]   = { MIGRATE_RECLAIMABLE, MIGRATE_MOVABLE,   MIGRATE_RESERVE },
+	[MIGRATE_RECLAIMABLE] = { MIGRATE_UNMOVABLE,   MIGRATE_MOVABLE,   MIGRATE_RESERVE },
+	[MIGRATE_MOVABLE]     = { MIGRATE_RECLAIMABLE, MIGRATE_UNMOVABLE, MIGRATE_RESERVE },
+	[MIGRATE_RESERVE]     = { MIGRATE_RESERVE,     MIGRATE_RESERVE,   MIGRATE_RESERVE }, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Never used </span><span style="color: #8B8878;">*/</span>
+};
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge22dfca" class="outline-5">
+<h5 id="orge22dfca"><span class="section-number-5">3.4.2.2</span> 初始化内存域和节点数据结构</h5>
+<div class="outline-text-5" id="text-3-4-2-2">
+<p>
+体系结构代码在启动时需要建立一下信息:
+</p>
+<ul class="org-ul">
+<li>系统中各个内存域的页帧边界, 保存在max_zone_pfn数组</li>
+<li>各节点页帧的分配情况, 保存在全局变量early_node_map中.</li>
+</ul>
+
+
+
+<blockquote>
+<p>
+
+</p>
+
+<p>
+free_area_init_nodes
+	确定内存域边界
+	free_area_init_node
+		calculate_node_totalpages
+		alloc_node_mem_map
+		free_area_init_core
+	check_for_reqular_memory
+</p>
+</blockquote>
+</div>
+</div>
+
+
+<div id="outline-container-orge04a9a9" class="outline-5">
+<h5 id="orge04a9a9"><span class="section-number-5">3.4.2.3</span> 分配器API</h5>
+<div class="outline-text-5" id="text-3-4-2-3">
+<p>
+GFP(Get Free Page)
+</p>
+
+<p>
+内存分配掩码:
+</p>
+<ul class="org-ul">
+<li>__GFP_DMA</li>
+<li>__GFP_HIGHMEM</li>
+<li>__GFP_DMA32</li>
+<li>__GFP_MOVABLE 不表示物理内存域, 通知内核应该在特殊的虚拟内存域ZONE_MOVABLE进行分配</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">zone_type</span> <span style="color: #87D700; font-weight: bold;">gfp_zone</span>(<span style="color: #5FD7FF; font-weight: bold;">gfp_t</span> <span style="color: #FF8C00; font-weight: bold;">flags</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">base</span> = 0;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#22914;&#26524;&#37197;&#32622;&#20102; __GFP_THISNODE, &#21017;&#21482;&#33021;&#20174;&#26412;NUMA&#33410;&#28857;&#20998;&#37197; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NUMA
+	<span style="color: #FF1493;">if</span> (flags &amp; __GFP_THISNODE)
+		base = MAX_NR_ZONES;
+<span style="color: #FF1493;">#endif</span>
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_ZONE_DMA
+	<span style="color: #FF1493;">if</span> (flags &amp; __GFP_DMA)
+		<span style="color: #FF1493;">return</span> base + ZONE_DMA;
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_ZONE_DMA32
+	<span style="color: #FF1493;">if</span> (flags &amp; __GFP_DMA32)
+		<span style="color: #FF1493;">return</span> base + ZONE_DMA32;
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">if</span> ((flags &amp; (__GFP_HIGHMEM | __GFP_MOVABLE)) ==
+			(__GFP_HIGHMEM | __GFP_MOVABLE))
+		<span style="color: #FF1493;">return</span> base + ZONE_MOVABLE;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_HIGHMEM
+	<span style="color: #FF1493;">if</span> (flags &amp; __GFP_HIGHMEM)
+		<span style="color: #FF1493;">return</span> base + ZONE_HIGHMEM;
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">return</span> base + ZONE_NORMAL;
+}
+
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_WAIT</span>      ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x10u)  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Can wait and reschedule? </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_HIGH</span>      ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x20u)  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Should access emergency pools? </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_IO</span>        ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x40u)  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Can start physical IO? </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_FS</span>        ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x80u)  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Can call down to low-level FS? </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_COLD</span>      ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x100u) <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Cache-cold page required </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_NOWARN</span>    ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x200u) <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Suppress page allocation failure warning </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_REPEAT</span>    ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x400u) <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Retry the allocation.  Might fail </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_NOFAIL</span>    ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x800u) <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Retry for ever.  Cannot fail </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_NORETRY</span>   ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x1000u)<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Do not retry.  Might fail </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_COMP</span>      ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x4000u)<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Add compound page metadata </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_ZERO</span>      ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x8000u)<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Return zeroed page on success </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_NOMEMALLOC</span> ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x10000u) <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Don't use emergency reserves </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_HARDWALL</span>   ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x20000u) <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Enforce hardwall cpuset memory allocs </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_THISNODE</span>  ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x40000u)<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">No fallback, no policies </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_RECLAIMABLE</span> ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x80000u) <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Page is reclaimable </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">__GFP_MOVABLE</span>   ((__force <span style="color: #5FD7FF; font-weight: bold;">gfp_t</span>)0x100000u)  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Page is movable </span><span style="color: #8B8878;">*/</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>__GFP_WAIT 表示分配内存的请求可以中断</li>
+<li>__GFP_HIGH 表示内核急切的需要内存, 在分配内存失败可能给内核带来严重后果是, 使用此标志</li>
+<li>__GFP_IO 在查找空闲内存期间内核可以进行I/O操作</li>
+<li>__GFP_FS 允许内核执行VFS操作, 在与VFS层有联系的内核子系统中必须禁用, 因为这可能引起循环递归调用</li>
+<li>__GFP_COLD 分配不需要在CPU高速缓存中的'冷'页时使用</li>
+<li>__GFP_NOWARN 分配失败时 禁止内核故障警告</li>
+<li>__GFP_REPEAT 分配失败 自动重试有限的次数</li>
+<li>__GFP_NOFALL 分配失败 一直重试</li>
+<li>__GFP_ZERO 分配成功时, 将页填充为0</li>
+<li>__GFP_HARDWALL 限制当前进程只能在允许运行的各个cpu关联的节点上分配内存(NUMA系统才有意义)</li>
+<li>__GFP_THISNODE 分配失败时 不允许从其他备用节点分配</li>
+<li>__GFP_RECLAIMABLE和__GFP_MOVABLE  页迁移机制使用的标志, 分别将分配的内存标记为可回收的或可移动的</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-22 Mon 13:43</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-22 Mon 12:44 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KVM</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">KVM</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org2a62898">1. 安装过程</a></li>
+<li><a href="#org0f27804">2. vrish操作</a></li>
+<li><a href="#org448a99d">3. 硬件直通</a>
+<ul>
+<li><a href="#orge14e6dd">3.1. PCI直通</a>
+<ul>
+<li><a href="#orga000870">3.1.1. 前期准备</a></li>
+<li><a href="#orgc7ee530">3.1.2. 直通nvme步骤</a></li>
+<li><a href="#org2aac883">3.1.3. nvme 引导(设备中存在系统)</a></li>
+</ul>
+</li>
+<li><a href="#org2f2792e">3.2. 显卡直通</a></li>
+</ul>
+</li>
+<li><a href="#org88a054f">4. 问题记录</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2a62898" class="outline-2">
+<h2 id="org2a62898"><span class="section-number-2">1</span> 安装过程</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>安装命令</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-shell">sudo apt install qemu qemu-kvm qemu-utils libvirt-clients libvirt-daemon-system bridge-utils libguestfs-tools virtinst libosinfo-bin
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>添加用户权限</li>
+</ul>
+
+<p>
+添加用户到 libvirt libvirt-qemu 组中
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">sudo usermod -a -G libvirt  username
+sudo usermod -a -G libvirt-qemu username
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>添加默认nat网络</li>
+</ul>
+
+<p>
+配置文件位置: /etc/libvirt/qemu/networks/default.xml
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">sudo virsh net-start default
+sudo virsh net-autostart default
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0f27804" class="outline-2">
+<h2 id="org0f27804"><span class="section-number-2">2</span> vrish操作</h2>
+</div>
+
+
+<div id="outline-container-org448a99d" class="outline-2">
+<h2 id="org448a99d"><span class="section-number-2">3</span> 硬件直通</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orge14e6dd" class="outline-3">
+<h3 id="orge14e6dd"><span class="section-number-3">3.1</span> PCI直通</h3>
+<div class="outline-text-3" id="text-3-1">
+</div>
+<div id="outline-container-orga000870" class="outline-4">
+<h4 id="orga000870"><span class="section-number-4">3.1.1</span> 前期准备</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+在bios中开启 <code>VT-d或者AMD-Vi</code>, 并且开启内核的 <code>iommu</code>.
+</p>
+
+<dl class="org-dl">
+<dt>VT-d</dt><dd>英特尔支持直接 I/O 访问的 VT虚拟化技术</dd>
+
+<dt>AMD-Vi</dt><dd>实现虚拟机直接设备访问，绕过了超级监管VMM，提高应用的性能和虚拟机的隔离性，从而提高完整性和安全性</dd>
+
+<dt>(no term)</dt><dd><p>
+IOMMU
+添加内核启动参数, 以开启iommu, 通过修改 <code>GRUB_CMDLINE_LINUX_DEFAULT</code> 变量, 来添加参数, 格式为 <code>name=value</code> .
+</p>
+
+<p>
+intel cpu 添加: <code>intel_iommu=on</code>
+amd cpu 添加: <code>amd_iommu=on</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo vim /etc/default/grub
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fundamental"># If you change this file, run 'update-grub' afterwards to update
+# /boot/grub/grub.cfg.
+# For full documentation of the options in this file, see:
+#   info -f grub -n 'Simple configuration'
+
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR=`lsb_release -i -s 2&gt; /dev/null || echo Debian`
+GRUB_CMDLINE_LINUX_DEFAULT=<span style="color: #CDC673;">"quiet amd_iommu=on"</span>
+GRUB_CMDLINE_LINUX=<span style="color: #CDC673;">""</span>
+</pre>
+</div>
+
+<p>
+更新guub
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo update-grub
+</pre>
+</div></dd>
+</dl>
+<p>
+或者
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc7ee530" class="outline-4">
+<h4 id="orgc7ee530"><span class="section-number-4">3.1.2</span> 直通nvme步骤</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<ul class="org-ul">
+<li>首先查找设备的pci</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo nvme list-subsys                 <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#26174;&#31034;&#20449;&#24687;&#20013;&#21253;&#21547;&#20102;pic&#21495;</span>
+$ virsh nodedev-list --tree |grep pci   <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#20174;&#21015;&#34920;&#20013;&#25214;&#21040;&#23545;&#24212;&#30340;pic, &#22797;&#21046;&#21517;&#31216; e.g. pci_xxxx_xx_xx_x</span>
+  +- pci_0000_00_00_0
+  +- pci_0000_00_00_2
+  +- pci_0000_00_01_0
+  +- pci_0000_00_01_1
+  |   +- pci_0000_01_00_0
+  +- pci_0000_00_18_0
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>通过virsh获取设备的xml</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">$ virsh nodedev-dumpxml pci_0000_01_00_0
+&lt;device&gt;
+  &lt;name&gt;pci_0000_01_00_0&lt;/name&gt;
+  &lt;path&gt;/sys/devices/pci0000:00/0000:00:01.1/0000:01:00.0&lt;/path&gt;
+  &lt;parent&gt;pci_0000_00_01_1&lt;/parent&gt;
+  &lt;driver&gt;
+    &lt;name&gt;vfio-pci&lt;/name&gt;
+  &lt;/driver&gt;
+  &lt;capability <span style="color: #FF8C00; font-weight: bold;">type</span>=<span style="color: #CDC673;">'pci'</span>&gt;
+    &lt;domain&gt;0&lt;/domain&gt;
+    &lt;bus&gt;1&lt;/bus&gt;
+    &lt;slot&gt;0&lt;/slot&gt;
+    &lt;<span style="color: #FF1493;">function</span>&gt;0&lt;/function&gt;
+    &lt;product <span style="color: #FF8C00; font-weight: bold;">id</span>=<span style="color: #CDC673;">'0x5013'</span> /&gt;
+    &lt;vendor <span style="color: #FF8C00; font-weight: bold;">id</span>=<span style="color: #CDC673;">'0x1987'</span> /&gt;
+    &lt;iommuGroup <span style="color: #FF8C00; font-weight: bold;">number</span>=<span style="color: #CDC673;">'12'</span>&gt;
+      &lt;address <span style="color: #FF8C00; font-weight: bold;">domain</span>=<span style="color: #CDC673;">'0x0000'</span> <span style="color: #FF8C00; font-weight: bold;">bus</span>=<span style="color: #CDC673;">'0x01'</span> <span style="color: #FF8C00; font-weight: bold;">slot</span>=<span style="color: #CDC673;">'0x00'</span> <span style="color: #FF8C00; font-weight: bold;">function</span>=<span style="color: #CDC673;">'0x0'</span>/&gt;
+    &lt;/iommuGroup&gt;
+    &lt;numa <span style="color: #FF8C00; font-weight: bold;">node</span>=<span style="color: #CDC673;">'0'</span>/&gt;
+  &lt;/capability&gt;
+&lt;/device&gt;
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>通过virsh dettach设备</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">$ virsh nodedev-dettach pci_0000_01_00_0
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>修改虚拟机的xml文件</li>
+</ul>
+<p>
+路径默认位置: /etc/libvirt/qemu/xxxx.xml
+在deveices配置块中增加下列内容, 将address替换为上面查到的address
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">&lt;devices&gt;
+  ......
+  &lt;hostdev mode='subsystem' type='pci' managed='yes'&gt;
+   &lt;source&gt;
+     &lt;address domain='0x0000' bus='0x01' slot='0x00' function='0x0'/&gt;
+   &lt;/source&gt;
+  &lt;/hostdev&gt;
+  ......
+&lt;/devices&gt;
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li>使虚拟机的xml配置生效</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">$ virsh define --file /etc/libvirt/qemu/xxxx.xml
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>启动虚拟机</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2aac883" class="outline-4">
+<h4 id="org2aac883"><span class="section-number-4">3.1.3</span> nvme 引导(设备中存在系统)</h4>
+<div class="outline-text-4" id="text-3-1-3">
+<p>
+如果nvme中存在系统, 则无需重新安装, 直接引导启动, 通过 <code>virt-manager</code> 设置刚刚添加的 pci作为boot 引导, 或者修改xml配置文件
+</p>
+
+
+<div id="org4aa5f05" class="figure">
+<p><img src="./image/kvm-nvme_boot.png" alt="kvm-nvme_boot.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>uefi</li>
+</ul>
+<p>
+如果需要 <code>uefi</code>  支持, 需要安装 <code>ovmf</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo apt install ovmf                         <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">debian or ubuntu</span>
+</pre>
+</div>
+
+<p>
+kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添加一行
+<img src="./image/kvm-uefi_xml.png" alt="kvm-uefi_xml.png" />
+</p>
+
+<p>
+注意: x86_64:  <code>/usr/share/OVMF/OVMF_CODE.fd</code> 或者  <code>/usr/share/OVMF/OVMF_VARS.fd</code>
+</p>
+
+<ul class="org-ul">
+<li>启动虚拟机, 进入boot menu</li>
+</ul>
+
+<p>
+如何开启boot menu
+</p>
+
+
+<div id="orgf694522" class="figure">
+<p><img src="./image/kvm-boot_menu.png" alt="kvm-boot_menu.png" />
+</p>
+</div>
+
+<p>
+进入boot menu, 选择 <code>Boot Maintenance Manager</code>
+</p>
+
+
+<div id="org73397aa" class="figure">
+<p><img src="./image/kvm-boot0.png" alt="kvm-boot0.png" />
+</p>
+</div>
+
+<p>
+选择 <code>Boot From File</code>
+</p>
+
+
+<div id="org242def4" class="figure">
+<p><img src="./image/kvm-boot1.png" alt="kvm-boot1.png" />
+</p>
+</div>
+
+<p>
+选择nvme设备
+</p>
+
+
+<div id="org40d7e04" class="figure">
+<p><img src="./image/kvm-boot2.png" alt="kvm-boot2.png" />
+</p>
+</div>
+
+<p>
+选择引导文件
+</p>
+
+
+<div id="orgc118eae" class="figure">
+<p><img src="./image/kvm-boot3.png" alt="kvm-boot3.png" />
+</p>
+</div>
+
+<p>
+<code>Enter</code> 启动系统
+</p>
+
+
+<div id="orgba4ed4c" class="figure">
+<p><img src="./image/kvm-boot4.png" alt="kvm-boot4.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>修改引导顺序</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ efibootmgr                  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#21015;&#20986;boot&#24341;&#23548;&#39034;&#24207;&#21015;&#34920;</span>
+$ efibootmgr -0 xxxx,xxxx,xxxx.......   <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#35843;&#25972;&#24341;&#23548;&#39034;&#24207;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2f2792e" class="outline-3">
+<h3 id="org2f2792e"><span class="section-number-3">3.2</span> 显卡直通</h3>
+</div>
+</div>
+
+
+<div id="outline-container-org88a054f" class="outline-2">
+<h2 id="org88a054f"><span class="section-number-2">4</span> 问题记录</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

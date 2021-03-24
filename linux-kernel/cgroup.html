@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-22 Mon 12:44 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CGROUP</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">CGROUP</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org3fa0293">1. cgroup介绍</a>
+<ul>
+<li><a href="#org0ef5877">1.1. 概述</a></li>
+<li><a href="#orgb2416a3">1.2. 功能</a></li>
+<li><a href="#org295a410">1.3. 基础概念</a></li>
+</ul>
+</li>
+<li><a href="#org262ee4a">2. cgroup使用</a>
+<ul>
+<li><a href="#org50d22db">2.1. 挂载</a></li>
+<li><a href="#org06e0915">2.2. hierarchy和subsystem关联规则</a></li>
+<li><a href="#orgd121aaa">2.3. hierarchy和cgorup操作</a>
+<ul>
+<li><a href="#org52a78d9">2.3.1. hierarchy</a></li>
+</ul>
+</li>
+<li><a href="#org32da0b4">2.4. ?</a></li>
+<li><a href="#org1064cd7">2.5. ?</a></li>
+<li><a href="#org900d25e">2.6. cgroups挂载</a></li>
+<li><a href="#org18422d9">2.7. 系统支持的subsystem</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org3fa0293" class="outline-2">
+<h2 id="org3fa0293"><span class="section-number-2">1</span> cgroup介绍</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org0ef5877" class="outline-3">
+<h3 id="org0ef5877"><span class="section-number-3">1.1</span> 概述</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+CGroup 是 Control Groups 的缩写，是 Linux 内核提供的一种可以限制、记录、隔离进程组 (process groups) 所使用的物力资源 (如 cpu memory i/o 等等) 的机制。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb2416a3" class="outline-3">
+<h3 id="orgb2416a3"><span class="section-number-3">1.2</span> 功能</h3>
+<div class="outline-text-3" id="text-1-2">
+<ul class="org-ul">
+<li>Resource limitation: 限制进程组可以使用的资源数量。 比如 磁盘、内存、网络等。</li>
+<li>Prioritization: 进程组的优先级控制。</li>
+<li>Accounting: 记录进程组使用的资源。</li>
+<li>Isolation: 进程组隔离。</li>
+<li>Control: 进程组控制。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org295a410" class="outline-3">
+<h3 id="org295a410"><span class="section-number-3">1.3</span> 基础概念</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+cgroup是linux下的一种将进程按照组进行管理的机制， 从用户层面来看，cgroup将系统中的所有进程组织成一棵或者多棵独立的树，每棵树都包含系统中所有的进程，树的节点是进程组， 每棵树可以和一个或者多个subsystem关联， 树的作用是将进程分组， subsystem作用于进程组。
+</p>
+
+<ul class="org-ul">
+<li>subsystem 子系统作为资源控制器，用来调度资源或者控制资源的使用上限， 可以是要作用于进程组的任意对象，例如虚拟化子系统。</li>
+
+<li>hierarchy 一个hierarchy可以理解为一棵cgroup树， 树的每个节点为一个进程组， 每棵树会与零到多个subsystem关联。 一棵树中会包含linux系统中的所有进程， 每个进程在一棵树中只能属于一个节点（进程组）。 系统中可以有多棵cgroup树，即一个进程可以属于多个进程组，进程组和不同的subsystem相关联。 目前linux支持12种subsystem， 因此最多支持12棵cgroup树， 每棵树关联一个subsystem。 当一棵树不和任何subsystem关联时， cgroup树只是将进程分组，有应用程序决定在分组之上做什么， systemd就是这样的例子。</li>
+
+<li></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org262ee4a" class="outline-2">
+<h2 id="org262ee4a"><span class="section-number-2">2</span> cgroup使用</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+cgroup相关的操作都是基于内核中的cgroup virtual filesystem， 使用cgroup很简单， 挂载这个文件系统就可以。一般挂载到/sys/fs/cgroup目录下。
+</p>
+
+<p>
+下面用到的xxx可以为任意字符串， 取一个有意义的名称就可以， 使用mount查看时， xxx会显示在第一列。
+</p>
+</div>
+
+<div id="outline-container-org50d22db" class="outline-3">
+<h3 id="org50d22db"><span class="section-number-3">2.1</span> 挂载</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+在很多使用systemd的系统中， systemd已经帮我们将各个subsystem和cgroup树关联并挂在好了
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$  mount -l | grep cgroup
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,<span style="color: #FF8C00; font-weight: bold;">mode</span>=755)
+cgroup2 on /sys/fs/cgroup/unified type cgroup2 (rw,nosuid,nodev,noexec,relatime,nsdelegate)
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,<span style="color: #FF8C00; font-weight: bold;">name</span>=systemd)
+cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpu,cpuacct)
+cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,net_cls,net_prio)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset,clone_children)
+cgroup on /sys/fs/cgroup/rdma type cgroup (rw,nosuid,nodev,noexec,relatime,rdma)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,perf_event)
+cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,devices)
+cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
+cgroup on /sys/fs/cgroup/pids type cgroup (rw,nosuid,nodev,noexec,relatime,pids)
+cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,freezer)
+</pre>
+</div>
+
+
+
+<ul class="org-ul">
+<li>挂载一棵和所有subsystem关联的cgroup树到/sys/fs/cgroup</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">mount -t cgroup xxx /sys/fs/cgroup
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>挂载一棵和cpuset subsystem关联的cgroup树到 /sys/fs/cgroup/cpuset</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">mkdir  /sys/fs/cgroup/cpuset
+mount -t cgroup -o cpuset xxx /sys/fs/cgroup/cpuset
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>挂载一棵与cpu和cpuacct sybsystem关联的cgroup树到/sys/fs/cgroup/cpu,cpuacct</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">mkdir /sys/fs/cgroup/cpu,cpuacct
+mount -t cgroup -o cpu,cpuacct xxx /sys/fs/cgroup/cpu,cpuacct
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>挂载一棵与cgroup树， 但不关联任何subsystem， 下面就是systemd所用到的方式</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">mkdir /sys/fs/cgroup/systemd
+mount -t cgroup -o none,<span style="color: #FF8C00; font-weight: bold;">name</span>=systemd xxx /sys/fs/cgroup/systemd
+</pre>
+</div>
+
+<p>
+创建并挂载好一棵cgroup树之后， 就有了树的根节点， 即根cgroup，这时候就可以通过创建文件夹的方式创建子cgroup， 然后再往每个子cgroup中添加进程。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org06e0915" class="outline-3">
+<h3 id="org06e0915"><span class="section-number-3">2.2</span> hierarchy和subsystem关联规则</h3>
+<div class="outline-text-3" id="text-2-2">
+<ol class="org-ol">
+<li>同一个hierarchy能够附加一个或多个subsystem。</li>
+<li>一个subsystem可以附加到多个hierarchy， 当且仅当这些hierarchy只关联此subsystem。</li>
+<li>系统每次新建一个hierarchy时， 该系统上的所有task默认构成了这个新建的hierarchy的初始化cgroup， 这个cgroup也称为root cgroup。 在每个hierarchy中， task只能存在与其中一个cgroup中， 即一个task不能存在于同一个hierarchy中的不同cgroup中。 如果将task添加到同一个hierarchy中的另一个cgroup中， 则会从第一个cgorup中移除。</li>
+<li>进程（task）在fork时创建的子任务（child task）默认与原task在同一个cgroup中， 但是child task允许被移动到不同的cgroup中。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgd121aaa" class="outline-3">
+<h3 id="orgd121aaa"><span class="section-number-3">2.3</span> hierarchy和cgorup操作</h3>
+<div class="outline-text-3" id="text-2-3">
+</div>
+<div id="outline-container-org52a78d9" class="outline-4">
+<h4 id="org52a78d9"><span class="section-number-4">2.3.1</span> hierarchy</h4>
+<div class="outline-text-4" id="text-2-3-1">
+<ul class="org-ul">
+<li>新建hierarchy</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">mkdir ~/cgroup/test_hierarchy
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>挂载hierarchy, 并附加cpu、memory到该hierarchy上</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">mount -t cgroup -o cpu,cpuset,memory hy_cpu_mem cgroup/test_hierarchy
+</pre>
+</div>
+
+<ul class="org-ul">
+<li></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>卸载hierarchy</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">umount  cgroup/test_hierarchy
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org32da0b4" class="outline-3">
+<h3 id="org32da0b4"><span class="section-number-3">2.4</span> ?</h3>
+</div>
+
+<div id="outline-container-org1064cd7" class="outline-3">
+<h3 id="org1064cd7"><span class="section-number-3">2.5</span> ?</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+cgexec 可以用来指定control group 来运行程序
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org900d25e" class="outline-3">
+<h3 id="org900d25e"><span class="section-number-3">2.6</span> cgroups挂载</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+cgroups文件系统挂载
+</p>
+
+<p>
+cgroups一般挂载到/sys/fs/cgroup目录下， 也可以指定其他的挂载目录。
+</p>
+
+<p>
+Linux中，用户可以使用mount命令挂载 cgroups 文件系统，格式为: mount -t cgroup -o subsystems name /cgroup/name，其中 subsystems 表示需要挂载的 cgroups 子系统， /cgroup/name 表示挂载点，如上文所提，这条命令同时在内核中创建了一个cgroups 层级结构。
+</p>
+
+<p>
+比如挂载 cpuset, cpu, cpuacct, memory 4个subsystem到/cgroup/cpu_and_mem 目录下，就可以使用 mount -t cgroup -o remount,cpu,cpuset,memory cpu_and_mem /cgroup/cpu_and_mem
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org18422d9" class="outline-3">
+<h3 id="org18422d9"><span class="section-number-3">2.7</span> 系统支持的subsystem</h3>
+<div class="outline-text-3" id="text-2-7">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">#subsys_name</th>
+<th scope="col" class="org-right">hierarchy</th>
+<th scope="col" class="org-right">num_cgroups</th>
+<th scope="col" class="org-right">enabled</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">cpuset</td>
+<td class="org-right">5</td>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">cpu</td>
+<td class="org-right">3</td>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">cpuacct</td>
+<td class="org-right">3</td>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">blkio</td>
+<td class="org-right">9</td>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">memory</td>
+<td class="org-right">2</td>
+<td class="org-right">124</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">devices</td>
+<td class="org-right">8</td>
+<td class="org-right">36</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">freezer</td>
+<td class="org-right">11</td>
+<td class="org-right">10</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">net_cls</td>
+<td class="org-right">4</td>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">perf_event</td>
+<td class="org-right">7</td>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">net_prio</td>
+<td class="org-right">4</td>
+<td class="org-right">3</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">pids</td>
+<td class="org-right">10</td>
+<td class="org-right">40</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-left">rdma</td>
+<td class="org-right">6</td>
+<td class="org-right">1</td>
+<td class="org-right">1</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+字段含义：
+</p>
+<ol class="org-ol">
+<li>subsystem名称</li>
+<li>subsystem所关联到的cgroup树的ID， 如果多个subsystem关联到同一棵cgroup树，则该字段值相同。
+如果出现下列情况，此字段为0：
+<ul class="org-ul">
+<li>当前subsystem没有和任何cgroup树绑定</li>
+<li>当前subsystem已经和cgroupv2的树绑定</li>
+<li>当前subsystem没有被内核开启</li>
+</ul></li>
+<li>subsystem所关联的cgroup树中进程组的个数， 即树上节点的个数</li>
+<li>值 1 表示开启， 0 表示没有被开启。（可以通过设置内核的启动参数“cgroup_disable”来控制subsystem的开启）。</li>
+
+<li>cpu</li>
+<li>cpuacct</li>
+<li>cpuset</li>
+<li>memory</li>
+<li>devices</li>
+<li>freezer</li>
+<li>net_cls</li>
+<li>blkio</li>
+<li>perf_event</li>
+<li>net_prio</li>
+<li>hugetlb</li>
+<li>pids</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

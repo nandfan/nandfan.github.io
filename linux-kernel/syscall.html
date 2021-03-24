@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-22 Mon 12:44 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>系统调用</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">系统调用</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org62894d7">1. 进程</a>
+<ul>
+<li><a href="#orgd0cdacb">1.1. 跳转 setjmp longjmp</a></li>
+<li><a href="#orgeaf1033">1.2. 进程创建和退出时的回调</a></li>
+</ul>
+</li>
+<li><a href="#org16a6eba">2. 进程间通讯</a></li>
+<li><a href="#org5d0abcf">3. 线程</a></li>
+<li><a href="#org7fe90ed">4. 内存</a>
+<ul>
+<li><a href="#org1140acd">4.1. 内存分配</a></li>
+<li><a href="#org9b8d032">4.2. 内存调试</a></li>
+</ul>
+</li>
+<li><a href="#org4fb68c9">5. proc 文件系统</a>
+<ul>
+<li><a href="#org814d484">5.1. pagemap</a></li>
+</ul>
+</li>
+<li><a href="#orgba15c49">6. 资源</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org62894d7" class="outline-2">
+<h2 id="org62894d7"><span class="section-number-2">1</span> 进程</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgd0cdacb" class="outline-3">
+<h3 id="orgd0cdacb"><span class="section-number-3">1.1</span> 跳转 setjmp longjmp</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+函数 setjmp 和 longjmp 可以实现进程的非局部跳转, 也就是可以跳转到函数之外的某个位置开始执行. 类似 goto 操作, 但是 goto 只能在函数内部跳转.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;setjmp.h&gt;</span>
+
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">setjmp</span>(<span style="color: #5FD7FF; font-weight: bold;">jmp_buf</span> <span style="color: #FF8C00; font-weight: bold;">env</span>);
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">longjmp</span>(<span style="color: #5FD7FF; font-weight: bold;">jmp_buf</span> <span style="color: #FF8C00; font-weight: bold;">env</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">val</span>);
+</pre>
+</div>
+
+<p>
+setjmp 设定一个跳转目标, 即当前执行位置, longjmp 函数可以根据 setjmp 保存的参数, 跳转回 setjmp 调用位置.
+</p>
+
+<p>
+setjmp 函数的返回值
+</p>
+
+<p>
+setjmp 函数把当前进程的当前运行环境保存到参数 env 中,
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgeaf1033" class="outline-3">
+<h3 id="orgeaf1033"><span class="section-number-3">1.2</span> 进程创建和退出时的回调</h3>
+<div class="outline-text-3" id="text-1-2">
+<dl class="org-dl">
+<dt>pthread_atfork</dt><dd><p>
+注册fork时的父子进程回调函数，prepare函数在fork处理之前调用，fork函数处理完成后，由父进程调用parent，子进程调用child。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;pthread.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">pthread_atfork</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> (*<span style="color: #87D700; font-weight: bold;">prepare</span>)(<span style="color: #5FD7FF; font-weight: bold;">void</span>), <span style="color: #5FD7FF; font-weight: bold;">void</span> (*<span style="color: #87D700; font-weight: bold;">parent</span>)(<span style="color: #5FD7FF; font-weight: bold;">void</span>), <span style="color: #5FD7FF; font-weight: bold;">void</span> (*<span style="color: #87D700; font-weight: bold;">child</span>)(<span style="color: #5FD7FF; font-weight: bold;">void</span>));
+</pre>
+</div></dd>
+
+<dt>atexit/on_exit</dt><dd><p>
+注册一个回调函数，当进程正常退出（exit或者main函数返回）时被调用。子进程继承父进程注册的回调，如果子进程执行exec族函数，则所有注册函数被移除。同一函数可以注册多次，每次注册都会被调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdlib.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">atexit</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> (*<span style="color: #87D700; font-weight: bold;">function</span>)(<span style="color: #5FD7FF; font-weight: bold;">void</span>));
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">on_exit</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> (*<span style="color: #87D700; font-weight: bold;">function</span>)(<span style="color: #5FD7FF; font-weight: bold;">int</span> , <span style="color: #5FD7FF; font-weight: bold;">void</span> *), <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">arg</span>);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#31034;&#20363;&#31243;&#24207;</span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdio.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdlib.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;unistd.h&gt;</span>
+
+<span style="color: #5FD7FF; font-weight: bold;">void</span>
+<span style="color: #87D700; font-weight: bold;">bye</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	printf(<span style="color: #CDC673;">"That was all, folks\n"</span>);
+}
+
+<span style="color: #5FD7FF; font-weight: bold;">int</span>
+<span style="color: #87D700; font-weight: bold;">main</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">a</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">i</span>;
+
+	a = sysconf(_SC_ATEXIT_MAX);
+	printf(<span style="color: #CDC673;">"ATEXIT_MAX = %ld\n"</span>, a);
+
+	i = atexit(bye);
+	<span style="color: #FF1493;">if</span> (i != 0) {
+		fprintf(stderr, <span style="color: #CDC673;">"cannot set exit function\n"</span>);
+		exit(EXIT_FAILURE);
+	}
+
+	exit(EXIT_SUCCESS);
+}
+</pre>
+</div></dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org16a6eba" class="outline-2">
+<h2 id="org16a6eba"><span class="section-number-2">2</span> 进程间通讯</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+eventfd(unsigned int initval, int flags);
+创建可以用于事件通知(select poll epoll)的文件描述符
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5d0abcf" class="outline-2">
+<h2 id="org5d0abcf"><span class="section-number-2">3</span> 线程</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+#include &lt;pthread.h&gt;
+</p>
+
+<p>
+int pthread_mutexattr_getrobust(const pthread_mutexattr_t *attr,
+				int *robustness);
+int pthread_mutexattr_setrobust(const pthread_mutexattr_t *attr,
+				int robustness);
+</p>
+
+<p>
+#include &lt;pthread.h&gt;
+</p>
+
+<p>
+int pthread_condattr_getpshared(const pthread_condattr_t *restrict attr,
+    int *restrict pshared);
+int pthread_condattr_setpshared(pthread_condattr_t *attr,
+    int pshared);
+</p>
+
+<p>
+#include &lt;pthread.h&gt;
+</p>
+
+<p>
+int pthread_mutex_lock(pthread_mutex_t *mutex);
+int pthread_mutex_trylock(pthread_mutex_t *mutex);
+int pthread_mutex_unlock(pthread_mutex_t *mutex);
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org7fe90ed" class="outline-2">
+<h2 id="org7fe90ed"><span class="section-number-2">4</span> 内存</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org1140acd" class="outline-3">
+<h3 id="org1140acd"><span class="section-number-3">4.1</span> 内存分配</h3>
+<div class="outline-text-3" id="text-4-1">
+<dl class="org-dl">
+<dt>brk()和sbrk()</dt><dd><p>
+用来修改 <code>program break（代表堆的当前边界）</code> 的位置，该位置定义了进程数据段的末尾位置。 program break位于未初始化数据段之后的位置。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;unistd.h&gt;</span>
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#23558; =program break= &#35843;&#25972;&#20026;addr&#25351;&#23450;&#30340;&#20301;&#32622;&#65292;&#30001;&#20110;&#34394;&#25311;&#20869;&#23384;&#20197;&#39029;&#20026;&#21333;&#20301;&#65292;addr&#20250;&#20869;&#23384;&#39029;&#30340;&#36793;&#30028;&#22788;&#12290; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">brk</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">addr</span>);
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#23558;&#36827;&#31243;&#30340;&#25968;&#25454;&#27573;&#22823;&#23567;&#22686;&#21152; increment &#23383;&#33410;&#12290;&#21442;&#25968;&#20026;0&#26102;&#65292;&#21487;&#29992;&#20110;&#26597;&#25214;&#36827;&#31243;&#30340; =program break= &#20301;&#32622; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">sbrk</span>(<span style="color: #5FD7FF; font-weight: bold;">intptr_t</span> <span style="color: #FF8C00; font-weight: bold;">increment</span>);
+</pre>
+</div>
+<p>
+在linux <code>program break</code> 增加后，程序可以访问新增加的内存区域内的任何地址，首次访问时由于物理内存尚未分配，引发缺页，内核自动分配物理页。
+</p></dd>
+<dt>malloc()/calloc()/realloc()</dt><dd>申请内存/申请内存并清0/扩展内存</dd>
+
+<dt>memalign()</dt><dd><p>
+分配内存时，起始地址和2的整数次幂对齐。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20998;&#37197;size&#20010;&#23383;&#33410;&#30340;&#20869;&#23384;&#65292;&#36215;&#22987;&#22320;&#22336;&#26159;alignment&#65288;alignment&#26159;2&#30340;&#25972;&#25968;&#27425;&#24130;&#65289;&#30340;&#25972;&#25968;&#20493;&#65292;&#36820;&#22238;&#20869;&#23384;&#22320;&#22336;</span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;malloc.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">memalign</span>(<span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">alignment</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>);
+</pre>
+</div></dd>
+
+<dt>posix_memalign()</dt><dd><p>
+分配内存时，起始地址和2的整数次幂对齐
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#31867;&#20284;memalign&#20989;&#25968;&#65292;&#20294;&#26159;&#20998;&#37197;&#30340;&#20869;&#23384;&#36890;&#36807;memptr&#36820;&#22238;&#65292;&#20869;&#23384;&#19982;alignment&#65288;alignment&#24517;&#39035;&#26159;&#26159;sizeof(void*)&#21644;2&#30340;&#25972;&#25968;&#27425;&#24130;&#30340;&#20493;&#25968;&#65289;&#30340;&#25972;&#25968;&#20493;&#23545;&#40784;&#12290; &#20986;&#38169;&#26159;&#36820;&#22238;errno </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdlib.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">posix_memalign</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> **<span style="color: #FF8C00; font-weight: bold;">memptr</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">alignment</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>);
+</pre>
+</div></dd>
+
+<dt>alloca()</dt><dd><p>
+通过增加栈针的大小从栈上分配内存
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#27492;&#20989;&#25968;&#20998;&#37197;&#30340;&#20869;&#23384;&#26080;&#38656;&#37322;&#25918;&#65292; &#38656;&#35201;&#27880;&#24847;&#38450;&#27490;&#26632;&#28322;&#20986; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;alloca.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">alloca</span>(<span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>);
+</pre>
+</div></dd>
+
+<dt>memfd_create()</dt><dd><p>
+创建匿名文件, 返回文件描述符. 存在于内存中. 可以进行修改、等等.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/memfd.h&gt;</span>
+
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">main</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fd</span> = memfd_create(<span style="color: #CDC673;">"test_memfd"</span>, MFD_HUGETLB);
+}
+</pre>
+</div></dd>
+
+<dt>mmap()</dt><dd>创建一段连续的虚拟地址空间</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">mmap</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">addr</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">length</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">prot</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">flags</span>,
+		  <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fd</span>, <span style="color: #5FD7FF; font-weight: bold;">off_t</span> <span style="color: #FF8C00; font-weight: bold;">offset</span>);
+
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">munmap</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">addr</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">length</span>);
+</pre>
+</div>
+
+
+<dl class="org-dl">
+<dt>mlock()和mlock2()</dt><dd>锁定一部分或者全部的虚拟地址空间, 防止被换出到交换分区.</dd>
+
+<dt>move_pages()</dt><dd>移动页面至指定的node</dd>
+
+<dt>dl_iterate_phdr()</dt><dd>允许应用查询已经加载了哪些动态库,以及动态库的加载顺序.</dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-org9b8d032" class="outline-3">
+<h3 id="org9b8d032"><span class="section-number-3">4.2</span> 内存调试</h3>
+<div class="outline-text-3" id="text-4-2">
+<dl class="org-dl">
+<dt>mtrace()和muntrace()</dt><dd><p>
+分别在内存中打开和关闭对内存分配调用进行跟踪的功能，需要与MALLOC_TRACE环境变量（定义了写入跟踪信息的文件名）搭配使用。文件中跟踪记录了所有对malloc函数包中的函数调用。可以使用mtrace命令对文件进行分析，生成易于理解的报告。程序编译时打开调试选项(-g)更加有利于mtrace进行跟踪。注意，带有 set-user-ID 和 set-group-ID 的程序, MALLOC_TRACE被忽略，mtrace()没有作用。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;mcheck.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">mtrace</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>);
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">muntrace</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>);
+</pre>
+</div></dd>
+
+<dt>mcheck()和mprobe()</dt><dd><p>
+mcheck可以检测对内存多次释放或者破坏内存块之前的记录内存分配的结构等之类的错误。 mprobe()函数对参数ptr指定的地址进行一致性检查，调用之前首先需要调用mcheck()函数，否则mprobe返回MCHECK_DISABLED的错误。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;mcheck.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">mcheck</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> (*<span style="color: #87D700; font-weight: bold;">abortfunc</span>)(<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">mcheck_status</span> <span style="color: #FF8C00; font-weight: bold;">mstatus</span>));
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">mcheck_pedantic</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> (*<span style="color: #87D700; font-weight: bold;">abortfunc</span>)(<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">mcheck_status</span> <span style="color: #FF8C00; font-weight: bold;">mstatus</span>));
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">mcheck_check_all</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>);
+<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">mcheck_status</span> <span style="color: #87D700; font-weight: bold;">mprobe</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">ptr</span>);
+</pre>
+</div>
+
+<p>
+以下值作为mprobe的返回值，或者作为函数abortfunc被调用时的参数（mstatus）：
+</p>
+<ul class="org-ul">
+<li>MCHECK_DISABLED (mprobe() only)
+在调用内存分配函数前为调用mcheck函数。</li>
+
+<li>MCHECK_OK (mprobe() only)
+检测通过</li>
+
+<li>MCHECK_HEAD
+已分配块的前面的内存被破坏</li>
+
+<li>MCHECK_TAIL
+已分配块的后面的内存被坡缓</li>
+
+<li>MCHECK_FREE
+内存块被释放两次</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdlib.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdio.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;mcheck.h&gt;</span>
+
+<span style="color: #5FD7FF; font-weight: bold;">int</span>
+<span style="color: #87D700; font-weight: bold;">main</span>(<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">argc</span>, <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">argv</span>[])
+{
+    <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">p</span>;
+
+    <span style="color: #FF1493;">if</span> (mcheck(<span style="color: #AF87FF;">NULL</span>) != 0) {
+	fprintf(stderr, <span style="color: #CDC673;">"mcheck() failed\n"</span>);
+
+	exit(EXIT_FAILURE);
+    }
+
+    p = malloc(1000);
+
+    fprintf(stderr, <span style="color: #CDC673;">"About to free\n"</span>);
+    free(p);
+    fprintf(stderr, <span style="color: #CDC673;">"\nAbout to free a second time\n"</span>);
+    free(p);
+
+    exit(EXIT_SUCCESS);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ gcc a.c
+$ ./a.out
+About to free
+
+About to free a second time
+block freed twice
+<span style="color: #87D700; font-weight: bold;">Aborted</span> (core dumped)
+</pre>
+</div></dd>
+<dt>MALLOC_CHECK_</dt><dd>环境变量提供了类似mcheck和mprobe函数的功能。主要区别是，使用MALLOC_CHECK_环境变量无需对应用进行重新编译。通过设置不同的值，可以控制程序对内存分配错误的处理方式，0：忽略错误 1：标准错误上打印 2：调用abort终止程序。并非所有的内存分配和释放错误都可以被检测，只能检测一些常见错误。注意，带有 set-user-ID 和 set-group-ID 的程序, MALLOC_CHECK_ 将被忽略。</dd>
+
+<dt>mallopt()</dt><dd><p>
+设置内存分配参数，param指定要修改的参数，value指定参数值。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;malloc.h&gt;</span>
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">mallopt</span>(<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">param</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">value</span>);
+</pre>
+</div>
+<p>
+param可能的值：
+</p>
+<ul class="org-ul">
+<li>M_ARENA_MAX</li>
+<li>M_ARENA_TEST</li>
+<li>M_CHECK_ACTION</li>
+<li>M_MMAP_MAX</li>
+<li>M_MMAP_THRESHOLD</li>
+<li>M_MXFAST</li>
+<li>M_PERTURB</li>
+<li>M_TOP_PAD</li>
+<li>M_TRIM_THRESHOLD</li>
+</ul>
+
+<p>
+通过配置相对应的环境变量，也可以达到mallopt函数的效果（mallopt优先），：
+</p>
+<ul class="org-ul">
+<li>MALLOC_ARENA_MAX</li>
+<li>MALLOC_ARENA_TEST</li>
+<li>MALLOC_CHECK_</li>
+<li>MALLOC_MMAP_MAX_</li>
+<li>MALLOC_MMAP_THRESHOLD_</li>
+<li>MALLOC_PERTURB_</li>
+<li>MALLOC_TRIM_THRESHOLD_</li>
+<li>MALLOC_TOP_PAD_</li>
+</ul></dd>
+
+<dt>mallinfo()</dt><dd><p>
+返回内存分配的各种统计数据的结构。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;malloc.h&gt;</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">mallinfo</span> <span style="color: #87D700; font-weight: bold;">mallinfo</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>);
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">mallinfo</span> {
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">arena</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#24050;&#20998;&#37197;&#30340;&#38750;mmap&#30340;&#31354;&#38388;&#23383;&#33410;&#25968; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">ordblks</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#26222;&#36890;&#30340;&#31354;&#38386;&#22359;&#30340;&#25968;&#37327; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">smblks</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">fastbin&#30340;&#31354;&#38386;&#22359;&#30340;&#25968;&#37327; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">hblks</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;mmap&#20998;&#37197;&#30340;&#22359;&#30340;&#25968;&#37327; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">hblkhd</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;mmap&#20998;&#37197;&#30340;&#22359;&#30340;&#23383;&#33410;&#25968; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">usmblks</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#26366;&#32463;&#24050;&#20998;&#37197;&#31354;&#38388;&#30340;&#26368;&#22823;&#20540; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fsmblks</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">fastbin&#31354;&#38386;&#22359;&#30340;&#23383;&#33410;&#25968; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">uordblks</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#27491;&#22312;&#20351;&#29992;&#30340;&#24050;&#20998;&#37197;&#31354;&#38388;&#23383;&#33410;&#25968; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fordblks</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#31354;&#38386;&#22359;&#30340;&#23383;&#33410;&#25968; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">keepcost</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#22534;&#39030;&#37096;&#30340;&#21487;&#37322;&#25918;&#30340;&#31354;&#38386;&#31354;&#38388;&#65292;&#36825;&#26159;malloc_trim&#29702;&#24819;&#24773;&#20917;&#19979;&#21487;&#20197;&#37322;&#25918;&#30340;&#26368;&#22823;&#23383;&#33410;&#25968; </span><span style="color: #8B8878;">*/</span>
+};
+</pre>
+</div></dd>
+</dl>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4fb68c9" class="outline-2">
+<h2 id="org4fb68c9"><span class="section-number-2">5</span> proc 文件系统</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org814d484" class="outline-3">
+<h3 id="org814d484"><span class="section-number-3">5.1</span> pagemap</h3>
+</div>
+</div>
+
+<div id="outline-container-orgba15c49" class="outline-2">
+<h2 id="orgba15c49"><span class="section-number-2">6</span> 资源</h2>
+<div class="outline-text-2" id="text-6">
+<dl class="org-dl">
+<dt>getrusage</dt><dd>返回资源的使用情况</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/time.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/resource.h&gt;</span>
+
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">getrusage</span>(<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">who</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">rusage</span> *<span style="color: #FF8C00; font-weight: bold;">usage</span>);
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,755 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-23 Tue 17:49 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>进程管理</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">进程管理</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org8efe6b2">1. 进程</a>
+<ul>
+<li><a href="#orgceab7ba">1.1. 进程的优先级</a></li>
+<li><a href="#org8ffd325">1.2. 进程状态</a></li>
+<li><a href="#org873b51a">1.3. 内核抢占</a></li>
+<li><a href="#orgab6fd79">1.4. 标识进程</a></li>
+<li><a href="#orgf58f88d">1.5. 进程描述符</a></li>
+<li><a href="#org592a4d3">1.6. 进程的参数、环境变量和用户栈</a></li>
+<li><a href="#org681cb70">1.7. 进程的创建</a>
+<ul>
+<li><a href="#org8cd9842">1.7.1. 进程的写时复制</a></li>
+<li><a href="#orgcedeee2">1.7.2. fork</a></li>
+</ul>
+</li>
+<li><a href="#org51d37c1">1.8. 内核线程</a></li>
+</ul>
+</li>
+<li><a href="#orgc3e609e">2. 操作进程的工具</a></li>
+<li><a href="#org8a2e497">3. 进程管理</a>
+<ul>
+<li><a href="#orgeb1befa">3.1. 核心调度器</a>
+<ul>
+<li><a href="#org1ba15fc">3.1.1. 周期性调度器</a></li>
+<li><a href="#orgb69a484">3.1.2. 主调度器</a></li>
+<li><a href="#orga948416">3.1.3. fork交互</a></li>
+<li><a href="#org5b43da8">3.1.4. 上下文切换</a></li>
+</ul>
+</li>
+<li><a href="#orgc332b0c">3.2. 完全公平调度类</a>
+<ul>
+<li><a href="#org07f13fe">3.2.1. 数据结构</a></li>
+<li><a href="#orgf222e2a">3.2.2. CFS操作</a></li>
+</ul>
+</li>
+<li><a href="#org5ac74e9">3.3. 实时调度类</a></li>
+<li><a href="#orgcd75862">3.4. 内核抢占</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8efe6b2" class="outline-2">
+<h2 id="org8efe6b2"><span class="section-number-2">1</span> 进程</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+进程是程序执行的一个实例，从内核的观点来看，进程用来充当系统分配资源的实体。
+</p>
+
+<p>
+现代操作系统都可以同时运行若干个进程，但这只是计算机给我们的错觉，如果系统中只有一个处理器，则某一时刻，只有一个进程可以执行。多处理器中，可以同时运行进程的个数取决于处理器的数量。
+</p>
+
+<p>
+内核和处理器给我们建立了多任务同时运行的错觉，本质上是通过在短时间内，对多个进程进行切换而实现的，由于时间较短，我们无法注意到操作系统中的进程切换导致的短暂停滞，所以看起来像是多个任务同时运行。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">&#36827;&#31243;&#21644;&#31243;&#24207;&#30340;&#21306;&#21035;&#65306;
+    &#31243;&#24207;&#26102;&#19968;&#22534;&#20195;&#30721;&#21644;&#25968;&#25454;&#65292;&#21487;&#20197;&#20316;&#20026;&#30446;&#26631;&#25991;&#20214;&#23384;&#22312;&#19982;&#30913;&#30424;&#19978;&#65292;&#25110;&#32773;&#20316;&#20026;&#27573;&#23384;&#22312;&#20110;&#22320;&#22336;&#31354;&#38388;&#20013;&#12290;
+
+    &#36827;&#31243;&#26159;&#31243;&#24207;&#25191;&#34892;&#30340;&#19968;&#20010;&#20855;&#20307;&#30340;&#23454;&#20363;&#65292;&#31243;&#24207;&#24635;&#26159;&#36816;&#34892;&#22312;&#26576;&#20010;&#36827;&#31243;&#30340;&#19978;&#19979;&#25991;&#20013;&#12290;
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgceab7ba" class="outline-3">
+<h3 id="orgceab7ba"><span class="section-number-3">1.1</span> 进程的优先级</h3>
+<div class="outline-text-3" id="text-1-1">
+<dl class="org-dl">
+<dt>硬实时进程</dt><dd>对时间有严格的限制，必须在指定的时间限内完成。例如飞机的飞行控制命令。</dd>
+
+<dt>软实时进程</dt><dd>硬实时进程的一种弱化形式，虽然也需要尽快得到结果，但是稍晚一点，不会造成重大事故。例如CD的写如，必须保证某一速率，否则，会导致CD不可用。</dd>
+
+<dt>普通进程</dt><dd>没有特定的时间约束，但是仍可以根据重要性来分配优先级。例如编译进程和交互式进程。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org8ffd325" class="outline-3">
+<h3 id="org8ffd325"><span class="section-number-3">1.2</span> 进程状态</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+进程并不总是可以立即运行，而是需要等待外部的信号或者事件，例如在文本编辑器中等待键盘输入。
+</p>
+
+<dl class="org-dl">
+<dt>可运行状态（TASK_RUNNING）</dt><dd>进程要么在CPU上执行，要么准备执行（等待CPU调度）。</dd>
+
+<dt>可中断等待状态（TASK_INTERRUPTIBLE）</dt><dd>进程被挂起，直到某个条件变为真。硬件中断，释放进程等待的系统资源，或者传递信号都是可以唤醒该状态下进程的条件。</dd>
+
+<dt>不可中断的等待状态（TASK_UNINTERRUPTIBLE）</dt><dd>与可中断等待状态类似，但是向其传递信号不能改变进程状态。</dd>
+
+<dt>暂停状态（TASK_STOPPED）</dt><dd>进程被暂停，当进程受到SIGSTOP、SIGTSTP、SIGTTIN或者SIGTTOU信号后，进入暂停状态。</dd>
+<dt>跟踪状态（TASK_TRACED）</dt><dd>进程的执行被debbugger程序暂停。当一个进程被另一个进程监控（debugger执行ptrace系统调用监控一个测试程序），任何信号都可以把这个进程置为TASK_TRACED状态。</dd>
+
+<dt>僵死状态（TASK_ZOMBIE）</dt><dd>进程的执行被终止，但是父进程没有通过wait4()或者waitpid()系统调用来返回进程死亡的信息。在发布wait()类系统调用前，内核不能丢弃进程描述符的数据，父进程可能还需要此数据。</dd>
+
+<dt>僵死撤销状态（EXIT_DEAD）</dt><dd>最终状态：父进程刚发出wait4()或waitpid()系统调用，之后进程被系统删除。</dd>
+</dl>
+
+
+
+<div id="orgdc74eed" class="figure">
+<p><img src="./dot/process/pro_trans.png" alt="pro_trans.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org873b51a" class="outline-3">
+<h3 id="org873b51a"><span class="section-number-3">1.3</span> 内核抢占</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+linux进程管理结构中还需要另外两种进程状态：内核态和用户态。这反映出现代CPU至少有两种不同的执行状态，一个具有全部的权限，另一个会受到很多限制。
+</p>
+
+<p>
+进程通常处于用户态，只能访问自身数据，无法干扰其他进程。
+</p>
+
+<p>
+如果进程想要访问系统数据或者功能，则必须切换到内核态，可以通过系统调用或者中断实现。系统调用是由程序有意调用的，中断则不同，其发生是不可预测的。处理中断的操作通常与中断发生时执行的进无关。例如，在块设备向内存传输完数据会引发中断网卡的网络数据引发的中断，此时可能执行任意进程。
+</p>
+
+<p>
+内核的抢占调度模型建立了一个层次结构，用于判断哪些进程状态可以由其他进程状态抢占。
+</p>
+<ul class="org-ul">
+<li>普通进程总是可以被抢占。当一个重要进程变为可运行时，调度器可以决定是否立即执行该进程。</li>
+<li>如果系统处于核心态执行系统调用，系统中的其他进程无法夺取其CPU时间。调度器必须等到系统调用执行结束，才可以选择其他进程执行，但是中断可以中止系统调用。</li>
+<li>中断可以暂停处于用户态和核心态的进程。由于中断触发后需要尽快处理，所以中断具有最高的优先级。</li>
+</ul>
+
+<p>
+<b>内核抢占</b> 功能允许紧急情况下切换到另一个进程，甚至当前是处于核心态执行系统调用（中断处理时不行）。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgab6fd79" class="outline-3">
+<h3 id="orgab6fd79"><span class="section-number-3">1.4</span> 标识进程</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+操作系统使用PID（进程ID）来标识进程，PID存放在进程描述符的pid字段。
+</p>
+
+<p>
+通过/proc/sys/kernel/pid_max可以查看当前PID的最大值，可以通过向文件写入值来更改PID最大值。
+</p>
+
+<p>
+POSIX标准规定一个多线程应用中的所有线程都必须由相同的PID，linux中一个线程组中的所有线程使用和该线程组的领头线程相同的PID，它被存入进程描述符的tgid字段，getpid()系统调用返回当前进程的tgid值，因此多线程应用的所有线程共享相同的PID。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf58f88d" class="outline-3">
+<h3 id="orgf58f88d"><span class="section-number-3">1.5</span> 进程描述符</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+进程描述符中包含的数据能完整的描述一个正在执行的程序：其打开的文件，进程的地址空间，挂起的信号，进程的状态等等。
+</p>
+
+<pre class="example">
+
+</pre>
+</div>
+</div>
+<div id="outline-container-org592a4d3" class="outline-3">
+<h3 id="org592a4d3"><span class="section-number-3">1.6</span> 进程的参数、环境变量和用户栈</h3>
+<div class="outline-text-3" id="text-1-6">
+
+<div id="orgad098e1" class="figure">
+<p><img src="./dot/process/argv.png" alt="argv.png" />
+</p>
+</div>
+
+
+<div id="org7c4e90a" class="figure">
+<p><img src="./dot/process/envp.png" alt="envp.png" />
+</p>
+</div>
+
+
+<div id="org733526e" class="figure">
+<p><img src="./dot/process/stack.png" alt="stack.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org681cb70" class="outline-3">
+<h3 id="org681cb70"><span class="section-number-3">1.7</span> 进程的创建</h3>
+<div class="outline-text-3" id="text-1-7">
+</div>
+<div id="outline-container-org8cd9842" class="outline-4">
+<h4 id="org8cd9842"><span class="section-number-4">1.7.1</span> 进程的写时复制</h4>
+<div class="outline-text-4" id="text-1-7-1">
+<p>
+在使用fork创建子进程时，子进程和父进程共享地址空间，当父进程或者子进程需要写入的时候，才会复制数据。这么做可以避免一些不必要的复制，而且很多时候，在fork之后，会立即执行exec，之前的拷贝都是无用功。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcedeee2" class="outline-4">
+<h4 id="orgcedeee2"><span class="section-number-4">1.7.2</span> fork</h4>
+<div class="outline-text-4" id="text-1-7-2">
+<p>
+fork调用最终是通过kernel_clone()函数来实现的， kernel_clone又会调用copy_process()函数。
+</p>
+
+<ul class="org-ul">
+<li><p>
+kernel_clone
+</p>
+
+
+<div id="org0ab6fb8" class="figure">
+<p><img src="plantuml/process/fork.png" alt="fork.png" />
+</p>
+</div>
+
+<p>
+在调用copy_process生成子进程的数据之后，内核还需要作以下操作：
+</p>
+<ul class="org-ul">
+<li>由于fork需要返回子进程的pid，所以需要获取PID。如果指定创建新的PID命名空间，则pid_vnr()返回命名空间对应的PID。</li>
+<li>通过wake_up_new_task唤醒子进程，也就是直接将子进程的task_struct添加到调度队列。</li>
+<li>如果使用了vfork，必须启用子进程的completions机制，通过task_struct的vfork_done成员来实现，父进程在该变量上睡眠，直到子进程退出。 通过这种方法，可以确保使用vfork生成的子进程的父进程一直处于不活动的状态，直至子进程退出，或者执行一个新的程序。父进程的临时睡眠状态，也确保两个进程不会彼此干扰或操作对方的地址空间。</li>
+</ul></li>
+
+<li><p>
+copy_process
+</p>
+
+<div id="org8e1f1a9" class="figure">
+<p><img src="plantuml/process/copy_process.png" alt="copy_process.png" />
+</p>
+</div></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org51d37c1" class="outline-3">
+<h3 id="org51d37c1"><span class="section-number-3">1.8</span> 内核线程</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+内核线程是直接有内核本身启动的进程。内核线程实际上是将内核函数委托给独立的进程，与系统中的其他进程一起运行。内核线程通常成为内核守护进程。
+</p>
+
+<p>
+内核线程一般用于执行以下任务：
+</p>
+<ul class="org-ul">
+<li>周期性的将修改过的内存页和页的来源块设备同步（例如mmap的文件映射）。</li>
+<li>如果内存页较少使用，将其写入交换分区。</li>
+<li>管理延时操作。</li>
+<li>实现文件系统的事物日志。</li>
+</ul>
+
+<p>
+内核线程可以分为两种类型：
+</p>
+<ul class="org-ul">
+<li>线程启动后一直等待，直到内核请求线程执行某一个特定操作。</li>
+<li>线程启动后周期性的间隔运行，检测特定资源的使用，在超出或者地狱预设的限制时，执行操作。</li>
+</ul>
+
+<p>
+内核线程的创建函数：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673; font-weight: bold; font-style: italic;">/**</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * &#22312;&#24403;&#21069;node&#21019;&#24314;&#20869;&#26680;&#32447;&#31243;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@threadfn</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#20869;&#26680;&#32447;&#31243;&#23558;&#35201;&#25191;&#34892;&#30340;&#20989;&#25968;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@data</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#20256;&#36882;&#32473; </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@</span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">threadfn</span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">()</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">&#20989;&#25968;&#30340;&#21442;&#25968;&#25351;&#38024;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@namefmt</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#20869;&#26680;&#32447;&#31243;&#30340;&#21517;&#31216;&#26684;&#24335;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@arg</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">...:  </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@namefmt</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">&#30340;&#21442;&#25968;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> *</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * &#35813;&#20989;&#25968;&#21019;&#24314;&#20869;&#26680;&#32447;&#31243;&#21518;&#65292;&#19981;&#20250;&#31435;&#21363;&#36816;&#34892;&#65292;&#38656;&#35201;&#36890;&#36807;wake_up_process&#20989;&#25968;&#21551;&#21160;&#12290;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">kthread_create</span>(<span style="color: #FF8C00; font-weight: bold;">threadfn</span>, <span style="color: #FF8C00; font-weight: bold;">data</span>, <span style="color: #FF8C00; font-weight: bold;">namefmt</span>, <span style="color: #FF8C00; font-weight: bold;">arg</span>...) \
+	kthread_create_on_node(threadfn, data, NUMA_NO_NODE, namefmt, ##arg)
+
+<span style="color: #CDC673; font-weight: bold; font-style: italic;">/**</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * &#21019;&#24314;&#20869;&#26680;&#32447;&#31243;&#24182;&#36816;&#34892;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@threadfn</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#23558;&#35201;&#36816;&#34892;&#30340;&#20989;&#25968;&#65292;&#30452;&#21040;&#34987;signal_pending(current)&#32456;&#27490;.</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@data</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@threadfn</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">&#21442;&#25968;&#25351;&#38024;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@namefmt</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#32447;&#31243;&#21517;&#31216;&#26684;&#24335;</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> *</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">kthread_run</span>(<span style="color: #FF8C00; font-weight: bold;">threadfn</span>, <span style="color: #FF8C00; font-weight: bold;">data</span>, <span style="color: #FF8C00; font-weight: bold;">namefmt</span>, ...)                          \
+({                                                                         \
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">task_struct</span> *<span style="color: #FF8C00; font-weight: bold;">__k</span>                                            \
+		= kthread_create(threadfn, data, namefmt, ## __VA_ARGS__); \
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IS_ERR(__k))                                                  \
+		wake_up_process(__k);                                      \
+	__k;                                                               \
+})
+</pre>
+</div>
+
+<p>
+内核线程是运行在内核态而非用户态，所以只能访问虚拟地址空间的内核部分。
+</p>
+
+<p>
+内核线程不需要和任何特定的用户进程相关，所以内核并不需要切换虚拟地址空间的用户空间（task_struct的mm成员指向）。由于内核线程之前可能是任意用户进程执行，内核线程不能修改其内容，为了强调用户空间部分不能访问，将task_struct的mm成员设置为空，而将active_mm指向用户空间的mm_struct。
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc3e609e" class="outline-2">
+<h2 id="orgc3e609e"><span class="section-number-2">2</span> 操作进程的工具</h2>
+<div class="outline-text-2" id="text-2">
+<dl class="org-dl">
+<dt>STRACE</dt><dd>打印一个正在运行的进程和它的子进程调用的每个系统调用的轨迹。使用 <code>-static</code> 编译程序会的高一个更加干净的、不带有大量动态库的输出轨迹。</dd>
+<dt>PS</dt><dd>列出当前系统中的进程</dd>
+<dt>TOP</dt><dd>打印出关于当前进程资源的使用信息</dd>
+<dt>PMAP</dt><dd>显示进程的内存映射</dd>
+<dt>/proc</dt><dd>虚拟文件系统，以ASCII文本格式输出大量内核数据结构的内容，用户可以读取这些内容。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org8a2e497" class="outline-2">
+<h2 id="org8a2e497"><span class="section-number-2">3</span> 进程管理</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgeb1befa" class="outline-3">
+<h3 id="orgeb1befa"><span class="section-number-3">3.1</span> 核心调度器</h3>
+<div class="outline-text-3" id="text-3-1">
+</div>
+<div id="outline-container-org1ba15fc" class="outline-4">
+<h4 id="org1ba15fc"><span class="section-number-4">3.1.1</span> 周期性调度器</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+周期性调度器由 scheduler_tick 函数实现.
+</p>
+
+<p>
+内核按照频率HZ自动调用该函数
+</p>
+
+<ol class="org-ol">
+<li>管理内核中与整个系统和各个进程的调度相关的统计量</li>
+<li>激活负责当前进程的调度类的周期性调度方法</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgb69a484" class="outline-4">
+<h4 id="orgb69a484"><span class="section-number-4">3.1.2</span> 主调度器</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<p>
+schedule();
+</p>
+
+<p>
+__sched 前缀用于可能调用schedule的函数.
+</p>
+
+<p>
+context_switch
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orga948416" class="outline-4">
+<h4 id="orga948416"><span class="section-number-4">3.1.3</span> fork交互</h4>
+</div>
+
+
+
+<div id="outline-container-org5b43da8" class="outline-4">
+<h4 id="org5b43da8"><span class="section-number-4">3.1.4</span> 上下文切换</h4>
+<div class="outline-text-4" id="text-3-1-4">
+<p>
+内核为每个进程维持一个上下文。上下文就是内核重新启动一个被抢占的进程所需的状态，由一些对象值组成，包括通用亩的寄存器、浮点寄存器、程序计数器、用户栈、状态寄存器、内核栈和各种内核数据结构（例如描述地址空间的页表、宝航当前进程信息的进程表，进程已打开文件的文件表）。
+</p>
+
+<p>
+某一时刻，内核决定使用先前的一个被抢占的进程来抢占当前进程，这种决策叫调度。内核选择一个新的进程运行，称之为内核调度了这个进程。内核调度新进程运行后使用 <code>上下文切换</code> 的机制来将控制权转移到新的进程。上下文切换过程：
+</p>
+<ol class="org-ol">
+<li>保存当前进程的上下文</li>
+<li>恢复某个先前被抢占的进程的上下文</li>
+<li>将控制权传递给新进程</li>
+</ol>
+
+
+<p>
+context_switch
+</p>
+
+<p>
+调用 switch_to 之前:
+A &gt;&gt;&gt; B;  prev = A, next = B
+B &gt;&gt;&gt; C;  prev = B, next = C
+C &gt;&gt;&gt; A;  prev = C, next = A
+</p>
+
+<p>
+当再次调度到A时, 需要让A进程知道上次运行的进程是C.
+为了让A进程知道是从C进程切换过来的, 使用switch_to宏, 可以理解为switch_to是带有两个参数的宏, 返回一个指向此前运行进程的指针.本质上等同与一下逻辑:
+	prev = switch_to(prev, next);
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc332b0c" class="outline-3">
+<h3 id="orgc332b0c"><span class="section-number-3">3.2</span> 完全公平调度类</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-C">
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878; font-style: italic;"> * All the scheduling class methods:</span>
+<span style="color: #8B8878; font-style: italic;"> </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">sched_class</span> <span style="color: #FF8C00; font-weight: bold;">fair_sched_class</span> = {
+	.next                   = &amp;idle_sched_class,
+	.enqueue_task           = enqueue_task_fair,
+	.dequeue_task           = dequeue_task_fair,
+	.yield_task             = yield_task_fair,
+
+	.check_preempt_curr     = check_preempt_wakeup,
+
+	.pick_next_task         = pick_next_task_fair,
+	.put_prev_task          = put_prev_task_fair,
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_SMP
+	.load_balance           = load_balance_fair,
+	.move_one_task          = move_one_task_fair,
+<span style="color: #FF1493;">#endif</span>
+
+	.set_curr_task          = set_curr_task_fair,
+	.task_tick          = task_tick_fair,
+	.task_new               = task_new_fair,
+};
+
+
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org07f13fe" class="outline-4">
+<h4 id="org07f13fe"><span class="section-number-4">3.2.1</span> 数据结构</h4>
+</div>
+
+
+<div id="outline-container-orgf222e2a" class="outline-4">
+<h4 id="orgf222e2a"><span class="section-number-4">3.2.2</span> CFS操作</h4>
+</div>
+</div>
+
+
+<div id="outline-container-org5ac74e9" class="outline-3">
+<h3 id="org5ac74e9"><span class="section-number-3">3.3</span> 实时调度类</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">*INDENT-OFF* </span><span style="color: #8B8878;">*/</span>
+
+<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">sched_class</span> <span style="color: #FF8C00; font-weight: bold;">rt_sched_class</span> = {
+	.next                   = &amp;fair_sched_class,
+	.enqueue_task           = enqueue_task_rt,
+	.dequeue_task           = dequeue_task_rt,
+	.yield_task             = yield_task_rt,
+
+	.check_preempt_curr     = check_preempt_curr_rt,
+
+	.pick_next_task         = pick_next_task_rt,
+	.put_prev_task          = put_prev_task_rt,
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_SMP
+	.load_balance           = load_balance_rt,
+	.move_one_task          = move_one_task_rt,
+<span style="color: #FF1493;">#endif</span>
+
+	.set_curr_task          = set_curr_task_rt,
+	.task_tick              = task_tick_rt,
+};
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">*INDENT-ON* </span><span style="color: #8B8878;">*/</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orgcd75862" class="outline-3">
+<h3 id="orgcd75862"><span class="section-number-3">3.4</span> 内核抢占</h3>
+<div class="outline-text-3" id="text-3-4">
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">thread_info</span> {
+...
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> preempt_count; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">0 =&gt; &#21487;&#25250;&#21344;, &lt;0 =&gt; BUG </span><span style="color: #8B8878;">*/</span>
+...
+};
+
+</pre>
+</div>
+
+<p>
+成员preempt_count值为0, 可以被抢占, 否则不行.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-23 Tue 17:49</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-22 Mon 12:44 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>tmux</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">tmux</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgf1265c3">1. 简介</a>
+<ul>
+<li><a href="#org75f7f28">1.1. 介绍</a></li>
+<li><a href="#org88f3403">1.2. 安装</a></li>
+</ul>
+</li>
+<li><a href="#org77294a9">2. 使用</a>
+<ul>
+<li><a href="#orge507613">2.1. pane</a></li>
+<li><a href="#org49dbb3e">2.2. window</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgf1265c3" class="outline-2">
+<h2 id="orgf1265c3"><span class="section-number-2">1</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org75f7f28" class="outline-3">
+<h3 id="org75f7f28"><span class="section-number-3">1.1</span> 介绍</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+命令行的典型使用方式是，打开一个终端窗口（terminal window，以下简称"窗口"），在里面输入命令。用户与计算机的这种临时的交互，称为一次"会话"（session）。
+</p>
+
+<p>
+会话的一个重要特点是，窗口与其中启动的进程是连在一起的。打开窗口，会话开始；关闭窗口，会话结束，会话内部的进程也会随之终止，不管有没有运行完。
+</p>
+
+<p>
+一个典型的例子就是，SSH 登录远程计算机，打开一个远程窗口执行命令。这时，网络突然断线，再次登录的时候，是找不回上一次执行的命令的。因为上一次 SSH 会话已经终止了，里面的进程也随之消失了。
+</p>
+
+<p>
+为了解决这个问题，会话与窗口可以"解绑"：窗口关闭时，会话并不终止，而是继续运行，等到以后需要的时候，再让会话"绑定"其他窗口。
+</p>
+
+<p>
+Tmux 就是会话与窗口的"解绑"工具，将它们彻底分离，其功能包括：
+</p>
+<ul class="org-ul">
+<li>它允许在单个窗口中，同时访问多个会话。这对于同时运行多个命令行程序很有用。</li>
+<li>它可以让新窗口"接入"已经存在的会话。</li>
+<li>它允许每个会话有多个连接窗口，因此可以多人实时共享会话。</li>
+<li>它还支持窗口任意的垂直和水平拆分。</li>
+</ul>
+<p>
+类似的终端复用器还有 GNU Screen。Tmux 与它功能相似，但是更易用，也更强大。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org88f3403" class="outline-3">
+<h3 id="org88f3403"><span class="section-number-3">1.2</span> 安装</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Ubuntu 或 Debian
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo apt-get install tmux
+</pre>
+</div>
+
+<p>
+CentOS 或 Fedora
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo yum install tmux
+</pre>
+</div>
+
+<p>
+Mac
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ brew install tmux
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org77294a9" class="outline-2">
+<h2 id="org77294a9"><span class="section-number-2">2</span> 使用</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li><p>
+启动与退出
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux  <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#21551;&#21160; Tmux &#31383;&#21475;&#65292;&#24213;&#37096;&#26377;&#19968;&#20010;&#29366;&#24577;&#26639;&#12290;&#29366;&#24577;&#26639;&#30340;&#24038;&#20391;&#26159;&#31383;&#21475;&#20449;&#24687;&#65288;&#32534;&#21495;&#21644;&#21517;&#31216;&#65289;&#65292;&#21491;&#20391;&#26159;&#31995;&#32479;&#20449;&#24687;&#12290;</span>
+
+$ exit  <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#25353;&#19979;Ctrl+d&#25110;&#32773;&#26174;&#24335;&#36755;&#20837;exit&#21629;&#20196;&#65292;&#23601;&#21487;&#20197;&#36864;&#20986; Tmux &#31383;&#21475;&#12290;</span>
+</pre>
+</div></li>
+
+<li><p>
+快捷键前缀键
+</p>
+
+<p>
+Tmux 窗口有大量的快捷键。所有快捷键都要通过前缀键唤起。默认的前缀键是Ctrl+b，即先按下Ctrl+b，快捷键才会生效。
+</p>
+
+<p>
+举例来说，帮助命令的快捷键是Ctrl+b ?。它的用法是，在 Tmux 窗口中，先按下Ctrl+b，再按下?，就会显示帮助信息。
+</p>
+
+<p>
+然后，按下 ESC 键或q键，就可以退出帮助。
+</p></li>
+
+<li><p>
+新建会话
+</p>
+
+<p>
+第一个启动的 Tmux 窗口，编号是0，第二个窗口的编号是1，以此类推。这些窗口对应的会话，就是 0 号会话、1 号会话。
+</p>
+
+<p>
+使用编号区分会话，不太直观，更好的方法是为会话起名。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux new -s &lt;session-name&gt;
+</pre>
+</div></li>
+
+<li><p>
+分离会话
+</p>
+
+<p>
+在 Tmux 窗口中，按下Ctrl+b d或者输入tmux detach命令，就会将当前会话与窗口分离。
+</p>
+
+<p>
+上面命令执行后，就会退出当前 Tmux 窗口，但是会话和里面的进程仍然在后台运行。
+</p></li>
+
+<li><p>
+查看会话
+</p>
+
+<p>
+tmux ls命令可以查看当前所有的 Tmux 会话。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux ls# or$ tmux list-session
+</pre>
+</div></li>
+
+<li><p>
+接入会话
+</p>
+
+<p>
+tmux attach命令用于重新接入某个已存在的会话。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux attach -t &lt;n&gt;  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
+$ tmux attach -t &lt;session-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
+</pre>
+</div></li>
+
+<li><p>
+杀死会话
+</p>
+
+<p>
+tmux kill-session命令用于杀死某个会话。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux kill-session -t &lt;n&gt;  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
+$ tmux kill-session -t &lt;session-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
+</pre>
+</div></li>
+
+<li><p>
+切换会话
+</p>
+
+<p>
+tmux switch命令用于切换会话。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux switch -t &lt;n&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
+$ tmux switch -t &lt;session-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
+</pre>
+</div></li>
+
+<li><p>
+重命名会话
+</p>
+
+<p>
+tmux rename-session命令用于重命名会话。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux rename-session -t &lt;n&gt; &lt;new-name&gt;
+</pre>
+</div>
+
+<p>
+上面命令将0号会话重命名。
+</p></li>
+
+<li>会话快捷键
+<ul class="org-ul">
+<li><code>Ctrl+b d</code> ：分离当前会话。</li>
+<li><code>Ctrl+b s</code> ：列出所有会话。</li>
+<li><code>Ctrl+b $</code> ：重命名当前会话。</li>
+</ul></li>
+</ul>
+</div>
+
+<div id="outline-container-orge507613" class="outline-3">
+<h3 id="orge507613"><span class="section-number-3">2.1</span> pane</h3>
+<div class="outline-text-3" id="text-2-1">
+<ul class="org-ul">
+<li><p>
+划分窗格
+</p>
+
+<p>
+tmux split-window命令用来划分窗格。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux split-window   <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#21010;&#20998;&#19978;&#19979;&#20004;&#20010;&#31383;&#26684;</span>
+$ tmux split-window -h  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#21010;&#20998;&#24038;&#21491;&#20004;&#20010;&#31383;&#26684;</span>
+</pre>
+</div></li>
+
+<li><p>
+移动光标
+</p>
+
+<p>
+tmux select-pane命令用来移动光标位置。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux select-pane -U  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#19978;&#26041;&#31383;&#26684;</span>
+$ tmux select-pane -D  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#19979;&#26041;&#31383;&#26684;</span>
+$ tmux select-pane -L  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#24038;&#36793;&#31383;&#26684;</span>
+$ tmux select-pane -R  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#21491;&#36793;&#31383;&#26684;</span>
+</pre>
+</div></li>
+
+<li><p>
+交换窗格位置
+</p>
+
+<p>
+tmux swap-pane命令用来交换窗格位置。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux swap-pane -U  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#24403;&#21069;&#31383;&#26684;&#19978;&#31227;</span>
+$ tmux swap-pane -D  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#24403;&#21069;&#31383;&#26684;&#19979;&#31227;</span>
+</pre>
+</div></li>
+
+<li>窗口快捷键
+<ul class="org-ul">
+<li><code>Ctrl+b %</code> : 左右划分窗格</li>
+<li><code>Ctrl+b "</code> : 上下划分窗格</li>
+<li><code>Ctrl+b &lt;0-9&gt;</code> : 切换到指定窗口</li>
+<li><code>Ctrl+b ;</code> : 光标切换到上一个窗格</li>
+<li><code>Ctrl+b o</code> : 光标切换到下一个窗格</li>
+<li><code>Ctrl+b {</code> : 当前窗格左移</li>
+<li><code>Ctrl+b }</code> : 当前窗格右移</li>
+<li><code>Ctrl+b Ctrl+o</code> : 当前窗格上移</li>
+<li><code>Ctrl+b Alt+o</code> : 当前窗格下移</li>
+<li><code>Ctrl+b x</code> : 关闭当前窗格</li>
+<li><code>Ctrl+b !</code> : 将当前窗格拆分为一个独立窗口</li>
+<li><code>Ctrl+b z</code> : 当前窗格全屏显示，再使用一次会变回原来大小</li>
+<li><code>Ctrl+b Ctrl+&lt;&gt;</code> : 按箭头方向调整窗格大小</li>
+<li><code>Ctrl+b q</code> : 显示窗格编号, 按数字键切换到窗格</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org49dbb3e" class="outline-3">
+<h3 id="org49dbb3e"><span class="section-number-3">2.2</span> window</h3>
+<div class="outline-text-3" id="text-2-2">
+<ul class="org-ul">
+<li><p>
+新建窗口
+tmux new-window命令用来创建新窗口。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux new-window
+<span style="color: #8B8878;">#  </span><span style="color: #8B8878; font-style: italic;">or</span>
+$ tmux new-window -n &lt;window-name&gt;  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#26032;&#24314;&#19968;&#20010;&#25351;&#23450;&#21517;&#31216;&#30340;&#31383;&#21475;</span>
+</pre>
+</div></li>
+
+<li><p>
+切换窗口
+</p>
+
+<p>
+tmux select-window命令用来切换窗口。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux select-window -t &lt;window-number&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20999;&#25442;&#21040;&#25351;&#23450;&#32534;&#21495;&#30340;&#31383;&#21475;</span>
+$ tmux select-window -t &lt;window-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20999;&#25442;&#21040;&#25351;&#23450;&#21517;&#31216;&#30340;&#31383;&#21475;</span>
+$ tmux select-window -l  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">last-window</span>
+$ tmux select-window -n  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">next-window</span>
+$ tmux select-window -p  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">previous-window</span>
+</pre>
+</div></li>
+
+<li><p>
+重命名窗口
+</p>
+
+<p>
+tmux rename-window命令用于为当前窗口起名（或重命名）。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ tmux rename-window &lt;new-name&gt;
+</pre>
+</div></li>
+
+<li>窗口快捷键
+<ul class="org-ul">
+<li><code>Ctrl+b c</code> ：创建一个新窗口，状态栏会显示多个窗口的信息。</li>
+<li><code>Ctrl+b p</code> ：切换到上一个窗口（按照状态栏上的顺序）。</li>
+<li><code>Ctrl+b n</code> ：切换到下一个窗口。</li>
+<li><code>Ctrl+b &lt;number&gt;</code> ：切换到指定编号的窗口，其中的&lt;number&gt;是状态栏上的窗口编号。</li>
+<li><code>Ctrl+b w</code> ：从列表中选择窗口。</li>
+<li><code>Ctrl+b ,</code> ：窗口重命名。</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

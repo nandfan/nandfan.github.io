@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-22 Mon 12:44 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oracle折腾记录</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Oracle折腾记录</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org5fcd53d">1. Oracle操作</a></li>
+<li><a href="#org63eb360">2. RAC集群</a>
+<ul>
+<li><a href="#org0b6df66">2.1. rac集群启动和关闭顺序</a></li>
+</ul>
+</li>
+<li><a href="#org0263b4d">3. ASM存储</a>
+<ul>
+<li><a href="#org77628aa">3.1. 确定asm存储设备</a></li>
+<li><a href="#orgbac4112">3.2. asm磁盘格式解析</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org5fcd53d" class="outline-2">
+<h2 id="org5fcd53d"><span class="section-number-2">1</span> Oracle操作</h2>
+<div class="outline-text-2" id="text-1">
+<dl class="org-dl">
+<dt>切换实例归档</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">alter</span> <span style="color: #FF1493;">system</span> archive log <span style="color: #FF1493;">current</span>;       #&#25152;&#26377;&#23454;&#20363;
+<span style="color: #FF1493;">alter</span> <span style="color: #FF1493;">system</span> switch logfile;    #&#21333;&#23454;&#20363;
+</pre>
+</div></dd>
+
+<dt>查询asm磁盘空间信息</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">select</span> group_number, <span style="color: #FF1493;">name</span>, total_mb, free_mb, total_mb-free_mb used_mb <span style="color: #FF1493;">from</span> v$asm_disk_stat;
+<span style="color: #FF1493;">select</span> group_number, <span style="color: #FF1493;">name</span>, total_mb, free_mb, total_mb-free_mb used_mb <span style="color: #FF1493;">from</span> v$asm_diskgroup;
+</pre>
+</div></dd>
+
+<dt>查询asm磁盘状态</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">select</span> GROUP_NUMBER,DISK_NUMBER,MOUNT_STATUS,HEADER_STATUS,MODE_STATUS,<span style="color: #FF1493;">name</span>,<span style="color: #FF1493;">path</span> <span style="color: #FF1493;">from</span> v$asm_disk;
+</pre>
+</div></dd>
+
+<dt>查询表空间使用率</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">select</span> total.tablespace_name,
+       round(total.MB, 2) <span style="color: #FF1493;">as</span> Total_MB,
+       round(total.MB - <span style="color: #FF1493;">free</span>.MB, 2) <span style="color: #FF1493;">as</span> Used_MB,
+       round((1 - <span style="color: #FF1493;">free</span>.MB / total.MB) * 100, 2) || <span style="color: #CDC673;">'%'</span> <span style="color: #FF1493;">as</span> Used_Pct
+       <span style="color: #FF1493;">from</span> (<span style="color: #FF1493;">select</span> tablespace_name, <span style="color: #FF1493;">sum</span>(bytes) / 1024 / 1024 <span style="color: #FF1493;">as</span> MB
+		    <span style="color: #FF1493;">from</span> dba_free_space
+		    <span style="color: #FF1493;">group</span> <span style="color: #FF1493;">by</span> tablespace_name) <span style="color: #FF1493;">free</span>,
+       (<span style="color: #FF1493;">select</span> tablespace_name, <span style="color: #FF1493;">sum</span>(bytes) / 1024 / 1024 <span style="color: #FF1493;">as</span> MB
+	       <span style="color: #FF1493;">from</span> dba_data_files
+	       <span style="color: #FF1493;">group</span> <span style="color: #FF1493;">by</span> tablespace_name) total
+       <span style="color: #FF1493;">where</span> <span style="color: #FF1493;">free</span>.tablespace_name = total.tablespace_name;
+</pre>
+</div></dd>
+
+<dt>归档日志设置信息</dt><dd><div class="org-src-container">
+<pre class="src src-sql">archive log list;
+</pre>
+</div></dd>
+
+<dt>归档路径</dt><dd><div class="org-src-container">
+<pre class="src src-sql">show <span style="color: #FF1493;">parameter</span> log_archive_format
+show <span style="color: #FF1493;">parameter</span> DB_RECOVERY_FILE_DEST
+</pre>
+</div></dd>
+
+<dt>redo路径</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">select</span> * <span style="color: #FF1493;">from</span> v$logfile;
+</pre>
+</div></dd>
+
+<dt>sqlplus 显示设置</dt><dd><div class="org-src-container">
+<pre class="src src-sql">show pagesize;   <span style="color: #FF1493;">set</span> pagesize 100;
+show linesize;   <span style="color: #FF1493;">set</span> linesize 200;
+</pre>
+</div></dd>
+
+<dt>归档空间大小</dt><dd><div class="org-src-container">
+<pre class="src src-sql">show <span style="color: #FF1493;">parameter</span> db_recovery_file_dest;
+<span style="color: #FF1493;">alter</span> <span style="color: #FF1493;">system</span> <span style="color: #FF1493;">set</span> db_recovery_file_dest_size = 70G;
+</pre>
+</div></dd>
+
+<dt>关闭数据库实例</dt><dd><div class="org-src-container">
+<pre class="src src-sql">shutdown <span style="color: #FF1493;">immediate</span>
+</pre>
+</div></dd>
+
+<dt>启动数据库实例</dt><dd><div class="org-src-container">
+<pre class="src src-sh">$ srvctl start database -d db
+$ srvctl status database -d db
+</pre>
+</div></dd>
+
+<dt>密码过期</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">select</span> * <span style="color: #FF1493;">from</span> dba_profiles <span style="color: #FF1493;">where</span> profile=<span style="color: #CDC673;">'DEFAULT'</span> <span style="color: #FF1493;">and</span> resource_name=<span style="color: #CDC673;">'PASSWORD_LIFE_TIME'</span>;
+<span style="color: #FF1493;">alter</span> profile <span style="color: #FF1493;">default</span>  <span style="color: #FF1493;">limit</span> password_life_time unlimited;
+<span style="color: #FF1493;">commit</span>;
+</pre>
+</div></dd>
+
+<dt>修改密码</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">alter</span> <span style="color: #FF1493;">user</span> XXXUSER identified <span style="color: #FF1493;">by</span> Welcome1;
+</pre>
+</div></dd>
+
+<dt>账号被锁住解锁命令</dt><dd><div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">alter</span> <span style="color: #FF1493;">user</span> XXXUSER identified <span style="color: #FF1493;">by</span> oracle account unlock;
+</pre>
+</div></dd>
+
+<dt>oracle 10g rac 磁盘组增加磁盘</dt><dd><div class="org-src-container">
+<pre class="src src-sh"><span style="color: #FF1493;">export</span> <span style="color: #FF8C00; font-weight: bold;">ORACLE_SID</span>=+ASM1
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sql"><span style="color: #FF1493;">select</span> <span style="color: #FF1493;">name</span> <span style="color: #FF1493;">from</span> v$asm_diskgroup;
+<span style="color: #FF1493;">select</span> <span style="color: #FF1493;">name</span>,<span style="color: #FF1493;">path</span> <span style="color: #FF1493;">from</span> v$asm_disk_stat;
+<span style="color: #FF1493;">alter</span> diskgroup <span style="color: #FF1493;">DATA</span> <span style="color: #FF1493;">add</span> disk <span style="color: #CDC673;">'/dev/oracleasm/disks/ASM3'</span> <span style="color: #FF1493;">name</span> DATA_0002;
+</pre>
+</div></dd>
+
+<dt>重建控制文件</dt><dd></dd>
+</dl>
+
+
+<dl class="org-dl">
+<dt>redo文件大小修改</dt><dd></dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org63eb360" class="outline-2">
+<h2 id="org63eb360"><span class="section-number-2">2</span> RAC集群</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org0b6df66" class="outline-3">
+<h3 id="org0b6df66"><span class="section-number-3">2.1</span> rac集群启动和关闭顺序</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+实例名称为 qssecdb
+四个节点分别为 node-rac1 node-rac2 node-rac3 node-rac4
+</p>
+
+<p>
+以oracle 用户执行:
+停止所有节点上的实例
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ srvctl stop database -d qssecdb
+</pre>
+</div>
+
+<p>
+每个节点执行:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ emctl stop dbconsole
+</pre>
+</div>
+
+<p>
+关闭所有asm实例
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ srvctl stop asm -n node-rac1 -i +ASM1
+$ srvctl stop asm -n node-rac2 -i +ASM2
+$ srvctl stop asm -n node-rac3 -i +ASM3
+$ srvctl stop asm -n node-rac4 -i +ASM4
+</pre>
+</div>
+
+<p>
+停止所有应用:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ srvctl stop nodeapps -n node-rac1
+$ srvctl stop nodeapps -n node-rac2
+$ srvctl stop nodeapps -n node-rac3
+$ srvctl stop nodeapps -n node-rac4
+</pre>
+</div>
+
+<p>
+以root用户执行:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">crsctl stop cluster -all   //&#20572;&#27490;&#25152;&#26377;&#33410;&#28857;&#26381;&#21153;</span>
+</pre>
+</div>
+<p>
+或者每个节点执行:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">crsctl stop cluster</span>
+</pre>
+</div>
+<p>
+或者 执行
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">crsctl stop cluster -n qssecdb1 qssecdb2 qssecdb3 qssecdb4</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0263b4d" class="outline-2">
+<h2 id="org0263b4d"><span class="section-number-2">3</span> ASM存储</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org77628aa" class="outline-3">
+<h3 id="org77628aa"><span class="section-number-3">3.1</span> 确定asm存储设备</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+配置确定方法
+</p>
+
+<ol class="org-ol">
+<li><p>
+确定盘符挂载路径
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">/usr/sbin/oracleasm status</span>
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">/usr/sbin/oracleasm listdisks            #&#26597;&#30475;&#30913;&#30424;&#36335;&#24452;</span>
+</pre>
+</div></li>
+
+<li><p>
+查看归档日志路径
+</p>
+<div class="org-src-container">
+<pre class="src src-sql">&gt; sqlplus / <span style="color: #FF1493;">as</span> sysdba
+&gt; show <span style="color: #FF1493;">parameter</span> db_recovery   #&#30830;&#23450;&#36335;&#24452;&#21517;&#31216;  ARCH
+</pre>
+</div></li>
+</ol>
+
+
+<ol class="org-ol">
+<li><p>
+查看归档路径对应的磁盘名称
+</p>
+<div class="org-src-container">
+<pre class="src src-sql">&gt; <span style="color: #FF1493;">select</span> a.<span style="color: #FF1493;">name</span> <span style="color: #FF1493;">from</span> V_$ASM_DISK a, V_$ASM_DISKGROUP b <span style="color: #FF1493;">where</span> a.group_number = b.group_number <span style="color: #FF1493;">and</span> b.<span style="color: #FF1493;">name</span> = <span style="color: #CDC673;">'ARCH'</span>;
+</pre>
+</div></li>
+<li><p>
+确定磁盘路径是否存在
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">find /dev/oracleasm/ -name ARCHDISK;
+</pre>
+</div></li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-sql">&gt; <span style="color: #FF1493;">select</span> a.group_number, a.disk_number, a.<span style="color: #FF1493;">path</span> <span style="color: #FF1493;">from</span> V_$ASM_DISK a, V_$ASM_DISKGROUP b <span style="color: #FF1493;">where</span> a.group_number = b.group_number  <span style="color: #FF1493;">and</span> b.<span style="color: #FF1493;">name</span> = <span style="color: #CDC673;">'DATA'</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbac4112" class="outline-3">
+<h3 id="orgbac4112"><span class="section-number-3">3.2</span> asm磁盘格式解析</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

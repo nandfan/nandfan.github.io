@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-24 Wed 10:32 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ARCH安装总结</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">ARCH安装总结</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgb3b3701">1. 安装</a>
+<ul>
+<li><a href="#orgbc9b58f">1.1. usb制作启动盘</a></li>
+<li><a href="#orgd2d3ea5">1.2. 查看BIOS设置，检查引导方式：MBR(legacy)/GPT(UEFI)</a></li>
+<li><a href="#org906d72e">1.3. 安装系统</a>
+<ul>
+<li><a href="#org0fdb762">1.3.1. 分区</a></li>
+<li><a href="#orgd0218fb">1.3.2. 格式化磁盘：</a></li>
+<li><a href="#org09a5167">1.3.3. 挂载分区</a></li>
+<li><a href="#orgaad333c">1.3.4. 安装</a></li>
+<li><a href="#orgf14f903">1.3.5. 配置系统</a></li>
+<li><a href="#org28245fa">1.3.6. Chroot</a></li>
+<li><a href="#orgf55948d">1.3.7. 时区</a></li>
+<li><a href="#org87711ee">1.3.8. 本地化</a></li>
+<li><a href="#org0796733">1.3.9. 网络配置</a></li>
+<li><a href="#orga681b66">1.3.10. Root 密码</a></li>
+<li><a href="#org8c7f8e7">1.3.11. 安装引导程序(UEFI)</a></li>
+<li><a href="#orgd338b93">1.3.12. 退出重启系统</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org4d24c36">2. 应用</a>
+<ul>
+<li><a href="#orgdb8c110">2.1. 图形界面</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgb3b3701" class="outline-2">
+<h2 id="orgb3b3701"><span class="section-number-2">1</span> 安装</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgbc9b58f" class="outline-3">
+<h3 id="orgbc9b58f"><span class="section-number-3">1.1</span> usb制作启动盘</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+首先需要将整个的U盘内容备份，然后依次执行如下命令
+</p>
+
+<p>
+删除U盘上所有的分区信息:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo wipefs --all /dev/sdb
+</pre>
+</div>
+
+
+<p>
+将iso写入到U盘:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo dd <span style="color: #FF8C00; font-weight: bold;">if</span>=archlinux-2018.12.01-x86_64.iso <span style="color: #FF8C00; font-weight: bold;">of</span>=/dev/sdb <span style="color: #FF8C00; font-weight: bold;">bs</span>=8M <span style="color: #FF8C00; font-weight: bold;">status</span>=progress <span style="color: #FF8C00; font-weight: bold;">oflag</span>=sync
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd2d3ea5" class="outline-3">
+<h3 id="orgd2d3ea5"><span class="section-number-3">1.2</span> 查看BIOS设置，检查引导方式：MBR(legacy)/GPT(UEFI)</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+这里需要区分对待两种不同的引导方式：
+</p>
+<dl class="org-dl">
+<dt>MBR 方式</dt><dd>只需要一个磁盘分区作为系统分区即可，剩余分区作为独立分区单独挂在到系统中，可以不加 swap分区，后面可以在通过命令方式添加交换文件。</dd>
+<dt>GPT 方式</dt><dd>需要额外多一个分区作为efi引导用 主要因为有时候通过efi引导的系统键盘有时候不能用</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org906d72e" class="outline-3">
+<h3 id="org906d72e"><span class="section-number-3">1.3</span> 安装系统</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+<div id="outline-container-org0fdb762" class="outline-4">
+<h4 id="org0fdb762"><span class="section-number-4">1.3.1</span> 分区</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+BIOS 与 MBR
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">挂载点</th>
+<th scope="col" class="org-left">分区</th>
+<th scope="col" class="org-left">分区类型</th>
+<th scope="col" class="org-left">建议大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">[SWAP]</td>
+<td class="org-left">/dev/swap_partition（交换空间分区）</td>
+<td class="org-left">Linux swap (交换空间)</td>
+<td class="org-left">大于 512 MiB</td>
+</tr>
+
+<tr>
+<td class="org-left">/mnt</td>
+<td class="org-left">/dev/root_partition（根分区）</td>
+<td class="org-left">Linux</td>
+<td class="org-left">剩余空间</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+UEFI 与 GPT
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">挂载点</th>
+<th scope="col" class="org-left">分区</th>
+<th scope="col" class="org-left">分区类型</th>
+<th scope="col" class="org-left">建议大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">/mnt/boot 或 /mnt/efi</td>
+<td class="org-left">/dev/efi_system_partition（efi 系统分区）</td>
+<td class="org-left">EFI 系统分区</td>
+<td class="org-left">至少 260 MiB</td>
+</tr>
+
+<tr>
+<td class="org-left">[SWAP]</td>
+<td class="org-left">/dev/swap_partition（交换空间分区）</td>
+<td class="org-left">Linux swap (交换空间)</td>
+<td class="org-left">大于 512 MiB</td>
+</tr>
+
+<tr>
+<td class="org-left">/mnt</td>
+<td class="org-left">/dev/root_partition（根分区）</td>
+<td class="org-left">Linux x86-64 根目录 (/)</td>
+<td class="org-left">剩余空间</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgd0218fb" class="outline-4">
+<h4 id="orgd0218fb"><span class="section-number-4">1.3.2</span> 格式化磁盘：</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<div class="org-src-container">
+<pre class="src src-sh">$ cfdisk /dev/sdx
+</pre>
+</div>
+
+<p>
+MBR:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ mkfs.ext4 /dev/sdx
+</pre>
+</div>
+
+<p>
+GPT:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ mkfs.fat /dev/sdx1
+$ mkfs.ext4 /dev/sdx2
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org09a5167" class="outline-4">
+<h4 id="org09a5167"><span class="section-number-4">1.3.3</span> 挂载分区</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+MBR
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount /dev/sdx /mnt</span>
+</pre>
+</div>
+
+<p>
+GPT
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ mount /dev/sdx2 /mnt/
+$ mkdir /mnt/boot/efi
+$ mount /dev/sdx1 /mnt/boot/efi
+</pre>
+</div>
+
+<p>
+如果创建了swap，使用以下命令启用：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ swapon /dev/swap_partition&#65288;&#20132;&#25442;&#31354;&#38388;&#20998;&#21306;&#65289;
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgaad333c" class="outline-4">
+<h4 id="orgaad333c"><span class="section-number-4">1.3.4</span> 安装</h4>
+<div class="outline-text-4" id="text-1-3-4">
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">pacstrap /mnt base linux linux-firmware</span>
+  &#25110;&#32773;
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">pacstrap /mnt base linux-lts linux-firmware</span>
+</pre>
+</div>
+
+<p>
+base 软件包并没有包含 Live 环境中的全部程序。因此要获得一个功能齐全的基本系统，可能需要安装其他软件包。特别要考虑安装：
+</p>
+<ul class="org-ul">
+<li>管理所用文件系统的用户工具 xfs btrfs 需要安装相应的管理工具；</li>
+<li>访问 RAID 或 LVM 分区的工具；</li>
+<li>未包含在 linux-firmware 中的额外固件；</li>
+<li>联网 所需要的程序(dhcpd)；</li>
+<li>文本编辑器 比如 nano vim；</li>
+<li>访问 man 和 info 页面的工具：man-db, man-pages 和 texinfo。</li>
+<li>要安装其他软件包或软件包组 (比如 base-devel)，请将它们的名字追加到上文的 pacstrap 命令后 (用空格分隔)，或者也可以在 Chroot 进新系统后使用 pacman 手动安装软件包或软件包组。packages.x86_64 中可以看到不同软件包或软件包组间的差异。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgf14f903" class="outline-4">
+<h4 id="orgf14f903"><span class="section-number-4">1.3.5</span> 配置系统</h4>
+<div class="outline-text-4" id="text-1-3-5">
+<p>
+Fstab
+用以下命令生成 fstab 文件 (用 -U 或 -L 选项设置UUID 或卷标)：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">genfstab -U /mnt &gt;&gt; /mnt/etc/fstab</span>
+</pre>
+</div>
+
+<p>
+强烈建议在执行完以上命令后，后检查一下生成的 /mnt/etc/fstab 文件是否正确。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org28245fa" class="outline-4">
+<h4 id="org28245fa"><span class="section-number-4">1.3.6</span> Chroot</h4>
+<div class="outline-text-4" id="text-1-3-6">
+<p>
+Change root 到新安装的系统：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">arch-chroot /mnt</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf55948d" class="outline-4">
+<h4 id="orgf55948d"><span class="section-number-4">1.3.7</span> 时区</h4>
+<div class="outline-text-4" id="text-1-3-7">
+<p>
+设置时区：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span>
+</pre>
+</div>
+
+<p>
+运行 hwclock(8) 以生成 /etc/adjtime：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">hwclock --systohc</span>
+</pre>
+</div>
+
+<p>
+这个命令假定硬件时间已经被设置为 UTC 时间。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org87711ee" class="outline-4">
+<h4 id="org87711ee"><span class="section-number-4">1.3.8</span> 本地化</h4>
+<div class="outline-text-4" id="text-1-3-8">
+<p>
+本地化的程序与库若要本地化文本，都依赖 Locale，后者明确规定地域、货币、时区日期的格式、字符排列方式和其他本地化标准。
+</p>
+
+<p>
+需在这两个文件设置：locale.gen 与 locale.conf。
+</p>
+
+<p>
+编辑/etc/locale.gen 然后移除需要的 地区 前的注释符号 #。
+</p>
+
+<p>
+接着执行 locale-gen 以生成 locale 信息：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">locale-gen</span>
+</pre>
+</div>
+
+<p>
+然后创建 locale.conf 文件，并 编辑设定 LANG 变量，比如：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">echo "LANG=en_US.UTF-8" &gt; /etc/locale.conf</span>
+</pre>
+</div>
+
+<p>
+另外对于中文用户：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">&#29992;&#25143;&#21487;&#20197;&#35774;&#32622;&#33258;&#24049;&#30340; locale&#65292;&#35814;&#24773;&#35831;&#21442;&#38405; Locale#Overriding system locale per user session &#25110; Locale (&#31616;&#20307;&#20013;&#25991;)#&#35774;&#32622; locale&#65307;
+
+&#23558;&#31995;&#32479; locale &#35774;&#32622;&#20026; en_US.UTF-8 &#65292;&#31995;&#32479;&#30340; log &#23601;&#20250;&#29992;&#33521;&#25991;&#26174;&#31034;&#65292;&#36825;&#26679;&#26356;&#23481;&#26131;&#21028;&#26029;&#21644;&#22788;&#29702;&#38382;&#39064;&#65307;
+&#20063;&#21487;&#20197;&#35774;&#32622;&#20026; en_GB.UTF-8 &#25110; en_SG.UTF-8&#65292;&#38468;&#24102;&#20197;&#19979;&#20248;&#28857;:
+&#36827;&#20837;&#26700;&#38754;&#29615;&#22659;&#21518;&#20197; 24 &#23567;&#26102;&#21046;&#26174;&#31034;&#26102;&#38388;&#65307;
+LibreOffice &#31561;&#21150;&#20844;&#36719;&#20214;&#30340;&#32440;&#24352;&#23610;&#23544;&#20250;&#40664;&#35748;&#20026; A4 &#32780;&#38750; Letter(US)&#65307;
+&#21487;&#23613;&#37327;&#36991;&#20813;&#19981;&#24517;&#35201;&#19988;&#21487;&#33021;&#36896;&#25104;&#22788;&#29702;&#40635;&#28902;&#30340;&#33521;&#21046;&#21333;&#20301;&#12290;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0796733" class="outline-4">
+<h4 id="org0796733"><span class="section-number-4">1.3.9</span> 网络配置</h4>
+<div class="outline-text-4" id="text-1-3-9">
+<p>
+创建 hostname 文件:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">echo "myhostname" &gt; /etc/hostname</span>
+</pre>
+</div>
+<p>
+添加对应的信息到 hosts:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat  /etc/hosts</span>
+127.0.0.1   localhost
+::1     localhost
+127.0.1.1   myhostname.localdomain  myhostname
+</pre>
+</div>
+<p>
+如果系统有一个永久的 IP 地址，请使用这个永久的 IP 地址而不是 127.0.1.1。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga681b66" class="outline-4">
+<h4 id="orga681b66"><span class="section-number-4">1.3.10</span> Root 密码</h4>
+<div class="outline-text-4" id="text-1-3-10">
+<p>
+设置 Root 密码：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">passwd</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8c7f8e7" class="outline-4">
+<h4 id="org8c7f8e7"><span class="section-number-4">1.3.11</span> 安装引导程序(UEFI)</h4>
+<div class="outline-text-4" id="text-1-3-11">
+<p>
+首先安装软件包 grub 和 efibootmgr。其中“GRUB”是启动引导器，“efibootmgr”被 GRUB 脚本用来将启动项写入 NVRAM。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">pacman -S grub efibootmgr</span>
+</pre>
+</div>
+
+<p>
+<b>esp替换为EFI分区挂载目录</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB</span>
+</pre>
+</div>
+
+<p>
+在配置完成后，生成主配置文件。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">grub-mkconfig -o /boot/grub/grub.cfg</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd338b93" class="outline-4">
+<h4 id="orgd338b93"><span class="section-number-4">1.3.12</span> 退出重启系统</h4>
+<div class="outline-text-4" id="text-1-3-12">
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">exit</span>
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">umount /mnt -R reboot</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4d24c36" class="outline-2">
+<h2 id="org4d24c36"><span class="section-number-2">2</span> 应用</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgdb8c110" class="outline-3">
+<h3 id="orgdb8c110"><span class="section-number-3">2.1</span> 图形界面</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+i3-gaps
+Xorg
+lightdm 显示管理器
+fcitx（输入法框架）
+rxvt-unicode(Urxvt: 终端）
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-24 Wed 10:32</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,2798 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-24 Wed 12:36 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPP学习</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<meta name="keywords" content="vpp" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">VPP学习</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org49c5d75">1. VPP初始化</a>
+<ul>
+<li><a href="#orgd281dad">1.1. 简介</a></li>
+<li><a href="#org306a120">1.2. 编译</a>
+<ul>
+<li><a href="#org8237075">1.2.1. 克隆项目</a></li>
+<li><a href="#org73ba7f8">1.2.2. 编译</a></li>
+<li><a href="#org15578a5">1.2.3. 单独编译插件</a></li>
+</ul>
+</li>
+<li><a href="#org48d05b5">1.3. 运行</a></li>
+<li><a href="#org841e00b">1.4. 提交补丁</a></li>
+</ul>
+</li>
+<li><a href="#orgafb92ba">2. 注册结构汇总</a>
+<ul>
+<li><a href="#org8ae658f">2.1. NODE</a>
+<ul>
+<li><a href="#orge347654">2.1.1. node 的类型</a></li>
+<li><a href="#orgc819571">2.1.2. node的定义</a>
+<ul>
+<li><a href="#orgb01641a">2.1.2.1. VLIB_REGISTER_NODE</a></li>
+<li><a href="#org656016b">2.1.2.2. VLIB_NODE_FN</a></li>
+</ul>
+</li>
+<li><a href="#orgc104d9f">2.1.3. node的注册</a></li>
+</ul>
+</li>
+<li><a href="#org0dbbd2e">2.2. node初始化</a></li>
+<li><a href="#org5079b8d">2.3. MAIN_LOOP注册</a></li>
+<li><a href="#org01bf645">2.4. INIT_FUNCTION注册</a></li>
+<li><a href="#org2104ad4">2.5. NODE注册</a></li>
+<li><a href="#org3fda479">2.6. Worker注册</a></li>
+<li><a href="#org6dbaa4b">2.7. SIBILIND</a></li>
+</ul>
+</li>
+<li><a href="#orge43c9ee">3. VPP基础库</a>
+<ul>
+<li><a href="#orgcaea555">3.1. Vectors</a></li>
+<li><a href="#orga2199b9">3.2. Bitmaps</a></li>
+<li><a href="#org3afb88d">3.3. Pools</a></li>
+<li><a href="#orgac75e03">3.4. Hashes</a>
+<ul>
+<li><a href="#orge05b312">3.4.1. 数据结构</a></li>
+</ul>
+</li>
+<li><a href="#org2e63355">3.5. Timekeeping</a></li>
+<li><a href="#orgea4d22c">3.6. 时间轮Timer Wheel</a>
+<ul>
+<li><a href="#org869604e">3.6.1. 介绍</a></li>
+<li><a href="#org7ac7ff1">3.6.2. 原理说明</a></li>
+<li><a href="#org4a3d23b">3.6.3. 初始化宏</a></li>
+<li><a href="#org1aa02eb">3.6.4. 用法</a></li>
+</ul>
+</li>
+<li><a href="#org56726e8">3.7. 单向共享内存队列 svm queue</a>
+<ul>
+<li><a href="#org260fdfb">3.7.1. 数据结构</a></li>
+<li><a href="#org98a3337">3.7.2. 接口</a></li>
+<li><a href="#orgce1d2eb">3.7.3. 内存结构</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org17f93a5">4. 插件</a>
+<ul>
+<li><a href="#org759d4fa">4.1. 插件列表</a></li>
+</ul>
+</li>
+<li><a href="#org4e3c083">5. COMMAND</a>
+<ul>
+<li><a href="#org87bee90">5.1. command注册</a></li>
+<li><a href="#orgdda8fd8">5.2. 宏定义</a></li>
+</ul>
+</li>
+<li><a href="#org2ad3a44">6. process调度(协程)</a></li>
+<li><a href="#org6f3eff2">7. dpdk逻辑梳理</a>
+<ul>
+<li><a href="#org4907838">7.1. 数据包处理逻辑</a></li>
+<li><a href="#org904505c">7.2. 代码逻辑</a>
+<ul>
+<li><a href="#orgda4d848">7.2.1. 执行input node</a>
+<ul>
+<li><a href="#org53a126c">7.2.1.1. dpdk-input-node</a></li>
+<li><a href="#orgee59991">7.2.1.2. ethernet-input-node</a></li>
+<li><a href="#org25f8a2f">7.2.1.3. ip4-input-node</a></li>
+<li><a href="#org624cd8f">7.2.1.4. ip4-lookup-node</a></li>
+<li><a href="#orga551aa3">7.2.1.5. ip4-local-node</a></li>
+<li><a href="#orga5db39d">7.2.1.6. tcp4-input-node</a></li>
+<li><a href="#org9f7a311">7.2.1.7. 执行逻辑</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orge1d1343">8. 内存管理</a>
+<ul>
+<li><a href="#orgef0a590">8.1. main_heap初始化</a>
+<ul>
+<li><a href="#orgd51f835">8.1.1. 临时初始化内存</a></li>
+<li><a href="#org1775886">8.1.2. main heap初始化</a></li>
+</ul>
+</li>
+<li><a href="#org1acf855">8.2. vlib内存库</a></li>
+<li><a href="#org0168c89">8.3. buffer初始化</a></li>
+</ul>
+</li>
+<li><a href="#org710688b">9. BinaryAPI</a>
+<ul>
+<li><a href="#orgd92c316">9.1. BAPI</a>
+<ul>
+<li><a href="#org3806f38">9.1.1. 消息分配</a></li>
+<li><a href="#orgf4b807f">9.1.2. 消息跟踪和重放</a></li>
+<li><a href="#org181df02">9.1.3. 客户端连接细节</a></li>
+<li><a href="#org4336d3a">9.1.4. 二进制API消息接收线程</a></li>
+<li><a href="#org19a7bc6">9.1.5. 客户端连接断开细节</a></li>
+<li><a href="#orgede99c8">9.1.6. 发送API MSG到VPP</a></li>
+<li><a href="#org25ed05e">9.1.7. 从VPP接收API MSG</a></li>
+</ul>
+</li>
+<li><a href="#org84b75c8">9.2. 共享内存通信</a></li>
+</ul>
+</li>
+<li><a href="#org236c7f4">10. 协议栈/LDP/VCL</a>
+<ul>
+<li><a href="#org883fb2b">10.1. 数据结构</a></li>
+<li><a href="#orgce81889">10.2. app注册逻辑</a>
+<ul>
+<li><a href="#org831b1e0">10.2.1. ldp_constructor</a></li>
+<li><a href="#orgf26c4a4">10.2.2. vcl_api_attach</a></li>
+</ul>
+</li>
+<li><a href="#orgaa21438">10.3. session queue相关的node</a></li>
+<li><a href="#org3c30342">10.4. socket过程</a></li>
+<li><a href="#org753a489">10.5. connect过程</a></li>
+<li><a href="#orgf8a3d4b">10.6. listen-accept</a></li>
+<li><a href="#orge460adb">10.7. 发送数据</a></li>
+<li><a href="#orge408295">10.8. 接受数据</a></li>
+<li><a href="#org8b37fd6">10.9. 协议栈</a>
+<ul>
+<li><a href="#org7779cff">10.9.1. 连接被动关闭</a></li>
+</ul>
+</li>
+<li><a href="#org0ea1718">10.10. VCL</a></li>
+<li><a href="#org71a8b67">10.11. 通信</a>
+<ul>
+<li><a href="#orgfb53d51">10.11.1. eventfd</a></li>
+<li><a href="#org3b618b7">10.11.2. 条件变量</a></li>
+<li><a href="#orgb43776f">10.11.3. 通知函数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgd5abd7d">11. NODE功能梳理</a>
+<ul>
+<li><a href="#org77447e8">11.1. 收包类的node</a>
+<ul>
+<li><a href="#org52157dd">11.1.1. dpdk-input</a></li>
+<li><a href="#org5513c05">11.1.2. tuntap-input</a></li>
+</ul>
+</li>
+<li><a href="#org3daf867">11.2. flow-report-process</a></li>
+<li><a href="#orgf5598cd">11.3. ip4-input</a></li>
+<li><a href="#org2a82847">11.4. dpdk-input</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="org1ac130a" class="figure">
+<p><img src="dot/vpp/vpp-framwork.png" alt="vpp-framwork.png" />
+</p>
+</div>
+
+<div id="outline-container-org49c5d75" class="outline-2">
+<h2 id="org49c5d75"><span class="section-number-2">1</span> VPP初始化</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgd281dad" class="outline-3">
+<h3 id="orgd281dad"><span class="section-number-3">1.1</span> 简介</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+VPP(Vector Packet Processing), VPP是由思科开源的一个可扩展的框架，可提供开箱即用的生产质量交换机/路由器功能， 是一种高性能的数据包处理堆栈，可以在普通CPU上运行。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org306a120" class="outline-3">
+<h3 id="org306a120"><span class="section-number-3">1.2</span> 编译</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+<a href="https://wiki.fd.io/view/VPP/Pulling,_Building,_Running,_Hacking_and_Pushing_VPP_Code">链接：https://wiki.fd.io/view/VPP/Pulling,_Building,_Running,_Hacking_and_Pushing_VPP_Code</a>
+</p>
+</div>
+
+<div id="outline-container-org8237075" class="outline-4">
+<h4 id="org8237075"><span class="section-number-4">1.2.1</span> 克隆项目</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+项目地址: <a href="https://gerrit.fd.io/r/vpp">https://gerrit.fd.io/r/vpp</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git clone <span style="color: #CDC673;">"https://gerrit.fd.io/r/vpp"</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org73ba7f8" class="outline-4">
+<h4 id="org73ba7f8"><span class="section-number-4">1.2.2</span> 编译</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">if vpp&lt;08.10</span>
+$ make install-dep
+$ make bootstrap
+$ make build        <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">or `make build-release`</span>
+
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">vpp 08.10+ (cmake)</span>
+$ make install-dep
+$ make install-ext-deps
+$ make build        <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">or `make build-release`</span>
+</pre>
+</div>
+
+<p>
+编译debug版本, 使用命令: <code>make build</code>,  realease: <code>make build</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org15578a5" class="outline-4">
+<h4 id="org15578a5"><span class="section-number-4">1.2.3</span> 单独编译插件</h4>
+<div class="outline-text-4" id="text-1-2-3">
+<div class="org-src-container">
+<pre class="src src-sh">$ cd my-plugin
+$ mkdir _build
+$ cd _build
+$ cmake -GNinja -DCMAKE_INSTALL_PREFIX:<span style="color: #FF8C00; font-weight: bold;">PATH</span>=/path/to/vpp/build-root/install-vpp-native/vpp ../
+$ ninja
+</pre>
+</div>
+<p>
+如果系统中安装了vpp-dev包，DCMAKE_INSTALL_PREFIX变量可以不用设置。
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org48d05b5" class="outline-3">
+<h3 id="org48d05b5"><span class="section-number-3">1.3</span> 运行</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+编译后的程序目录:
+debug:  /path/to/vpp/build-root/install-vpp_debug-native/vpp/bin/vpp
+release:  /path/to/vpp/build-root/install-vpp-native/vpp/bin/vpp
+</p>
+
+<p>
+配置文件目录: /path/to/vpp/src/vpp/conf/startup.conf
+注意: 在 unix 和 api-segment 配置块中, 需要修改 gid 的配置. 或者单独创建vpp组.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo /path/to/vpp/build-root/install-vpp_debug-native/vpp/bin/vpp -c /path/to/vpp/src/vpp/conf/startup.conf
+</pre>
+</div>
+
+<p>
+打开cli
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo /path/to/vpp/build-root/install-vpp_debug-native/vpp/bin/vppctl
+$ ?  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#21015;&#20986;&#21629;&#20196;&#21015;&#34920;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org841e00b" class="outline-3">
+<h3 id="org841e00b"><span class="section-number-3">1.4</span> 提交补丁</h3>
+<div class="outline-text-3" id="text-1-4">
+<ul class="org-ul">
+<li>注册账号
+首先需要注册 linux foundation 账号, <a href="https://linuxfoundation.org/">https://linuxfoundation.org/</a></li>
+
+<li>添加证书
+然后在 vpp gerrit项目平台的设置中添加自己的证书, <a href="https://gerrit.fd.io/r/settings/">https://gerrit.fd.io/r/settings/</a></li>
+
+<li><p>
+配置ssh
+在家目录的 <code>.ssh</code> 目录中的config(没有的话手动创建)中配置以下内容
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">Host gerrit.fd.io
+      User username   # &#37197;&#32622;&#29992;&#25143;&#21517;
+      Port 29418
+      Hostname gerrit.fd.io
+      PreferredAuthentications publickey
+      IdentityFile ~/.ssh/id_rsa # &#37197;&#32622;&#19978;&#38754;&#28155;&#21152;&#30340;&#35777;&#20070;
+      ForwardX11 no
+</pre>
+</div></li>
+
+<li><p>
+clone项目
+</p>
+
+<p>
+注意替换以下内容中的 <code>xxxxxx</code> 为自己的用户名.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ git clone <span style="color: #CDC673;">"ssh://xxxxxx@gerrit.fd.io:29418/vpp"</span> &amp;&amp; scp -p -P 29418 xxxxxx@gerrit.fd.io:hooks/commit-msg <span style="color: #CDC673;">"vpp/.git/hooks/"</span>
+</pre>
+</div>
+
+<p>
+或者直接打开以下链接, 复制页面中的 命令行.
+<a href="https://gerrit.fd.io/r/admin/repos/vpp">https://gerrit.fd.io/r/admin/repos/vpp</a>
+</p></li>
+
+<li><p>
+提交格式
+提交补丁使用以下命令.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ git commit -s
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">&#27169;&#22359;: &#38388;&#35201;&#35828;&#26126;
+  &#35814;&#32454;&#35828;&#26126;, &#21487;&#20197;&#30465;&#30053;
+
+Type: fix
+</pre>
+</div>
+
+<p>
+注意: Type 中的字段可以为 <code>feature fix refactor improvement style docs test make</code> 中的任意一个值, 并且必须填写.
+</p>
+
+<p>
+也可以执行 <code>git log</code> , 参照着来写.
+</p></li>
+
+<li><p>
+代码review
+需要预先安装 <code>git-review</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo apt install git-review
+</pre>
+</div>
+
+<p>
+执行提交
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ git review
+</pre>
+</div></li>
+
+<li><p>
+查看 dashboard
+</p>
+
+<p>
+在链接 <a href="https://gerrit.fd.io/r/dashboard/self">https://gerrit.fd.io/r/dashboard/self</a> 中查看提交的补丁状态, 并指定 reviewer 人员.
+</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgafb92ba" class="outline-2">
+<h2 id="orgafb92ba"><span class="section-number-2">2</span> 注册结构汇总</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org8ae658f" class="outline-3">
+<h3 id="org8ae658f"><span class="section-number-3">2.1</span> NODE</h3>
+<div class="outline-text-3" id="text-2-1">
+</div>
+<div id="outline-container-orge347654" class="outline-4">
+<h4 id="orge347654"><span class="section-number-4">2.1.1</span> node 的类型</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">enum</span>
+{
+  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">An internal node on the call graph (could be output). </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #FF8C00; font-weight: bold;">VLIB_NODE_TYPE_INTERNAL</span>,
+
+  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Nodes which input data into the processing graph.</span>
+<span style="color: #8B8878; font-style: italic;">     Input nodes are called for each iteration of main loop. </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #FF8C00; font-weight: bold;">VLIB_NODE_TYPE_INPUT</span>,
+
+  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Nodes to be called before all input nodes.</span>
+<span style="color: #8B8878; font-style: italic;">     Used, for example, to clean out driver TX rings before</span>
+<span style="color: #8B8878; font-style: italic;">     processing input. </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #FF8C00; font-weight: bold;">VLIB_NODE_TYPE_PRE_INPUT</span>,
+
+  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">"Process" nodes which can be suspended and later resumed. </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #FF8C00; font-weight: bold;">VLIB_NODE_TYPE_PROCESS</span>,
+
+  <span style="color: #FF8C00; font-weight: bold;">VLIB_N_NODE_TYPE</span>,
+} <span style="color: #5FD7FF; font-weight: bold;">vlib_node_type_t</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc819571" class="outline-4">
+<h4 id="orgc819571"><span class="section-number-4">2.1.2</span> node的定义</h4>
+<div class="outline-text-4" id="text-2-1-2">
+</div>
+<div id="outline-container-orgb01641a" class="outline-5">
+<h5 id="orgb01641a"><span class="section-number-5">2.1.2.1</span> VLIB_REGISTER_NODE</h5>
+<div class="outline-text-5" id="text-2-1-2-1">
+<p>
+node 的注册，使用gcc的 <code>__attribute__((__constructor__))</code> 构造属性，在main函数之前进行注册。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">VLIB_REGISTER_NODE</span>(<span style="color: #FF8C00; font-weight: bold;">x</span>, ...)                                             \
+	__VA_ARGS__ <span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">x</span>;                                \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                     \
+		<span style="color: #FF1493;">__attribute__</span>((__constructor__));                              \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                     \
+	{                                                                      \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();                             \
+		x.next_registration = vm-&gt;node_main.node_registrations;        \
+		vm-&gt;node_main.node_registrations = &amp;x;                         \
+	}                                                                      \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                      \
+		<span style="color: #FF1493;">__attribute__</span>((__destructor__));                               \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                      \
+	{                                                                      \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();                             \
+		VLIB_REMOVE_FROM_LINKED_LIST(vm-&gt;node_main.node_registrations, \
+					     &amp;x, next_registration);           \
+	}                                                                      \
+	__VA_ARGS__ <span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">x</span>
+
+<span style="color: #87D700; font-weight: bold;">VLIB_REGISTER_NODE</span>(dpdk_input_node) = {
+	.type = VLIB_NODE_TYPE_INPUT,
+	.name = <span style="color: #CDC673;">"dpdk-input"</span>,
+	.sibling_of = <span style="color: #CDC673;">"device-input"</span>,
+	.flags = VLIB_NODE_FLAG_TRACE_SUPPORTED,
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Will be enabled if/when hardware is detected. </span><span style="color: #8B8878;">*/</span>
+	.state = VLIB_NODE_STATE_DISABLED,
+
+	.format_buffer = format_ethernet_header_with_length,
+	.format_trace = format_dpdk_rx_trace,
+
+	.n_errors = DPDK_N_ERROR,
+	.error_strings = dpdk_error_strings,
+}
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#23439;&#23450;&#20041;&#23637;&#24320;&#21518; (dpdk-input-node) </span><span style="color: #8B8878;">*/</span>
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">dpdk_input_node &#21464;&#37327;&#22768;&#26126; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">dpdk_input_node</span>;
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#22768;&#26126;&#65306;&#27880;&#20876;dpdk_input_node&#65292; &#21033;&#29992;gcc&#30340;&#26500;&#36896;&#23646;&#24615;&#65292;&#20351;&#20854;&#20808;&#20110;main&#20989;&#25968;&#25191;&#34892; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+	<span style="color: #FF1493;">__attribute__</span>((__constructor__));
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21033;&#29992; node &#32467;&#26500;&#30340; next_registration &#23558;&#25152;&#26377;node&#20018;&#25104;&#19968;&#20010;&#38142;&#34920; </span><span style="color: #8B8878;">*/</span>
+	dpdk_input_node.next_registration = vm-&gt;node_main.node_registrations;
+	vm-&gt;node_main.node_registrations = &amp;dpdk_input_node;
+}
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#22768;&#26126;&#65306; &#20174;vlib_main_t &#32467;&#26500;&#30340;&#38142;&#34920;&#20013;&#31227;&#38500;&#35813;node&#65292; &#22312;main&#20989;&#25968;&#36816;&#34892;&#21518;&#35843;&#29992;(&#26512;&#26500;&#20989;&#25968;) </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+	<span style="color: #FF1493;">__attribute__</span>((__destructor__));
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();
+	VLIB_REMOVE_FROM_LINKED_LIST(vm-&gt;node_main.node_registrations,
+				     &amp;dpdk_input_node, next_registration);
+}
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">node&#30340;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">dpdk_input_node</span> = {
+	.type = VLIB_NODE_TYPE_INPUT,
+	.name = <span style="color: #CDC673;">"dpdk-input"</span>,
+	.sibling_of = <span style="color: #CDC673;">"device-input"</span>,
+	.flags = VLIB_NODE_FLAG_TRACE_SUPPORTED,
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Will be enabled if/when hardware is detected. </span><span style="color: #8B8878;">*/</span>
+	.state = VLIB_NODE_STATE_DISABLED,
+
+	.format_buffer = format_ethernet_header_with_length,
+	.format_trace = format_dpdk_rx_trace,
+
+	.n_errors = DPDK_N_ERROR,
+	.error_strings = dpdk_error_strings,
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>利用 <b>VLIB_REGISTER_NODE(x,&#x2026;)</b> 定义好node后，会生成 <b>static void \__vlib_add_node_registration_nodename(void){&#x2026;}</b> 之类的初始化函数，此类函数使用 <b>__attribute__ ((<span class="underline"><span class="underline">constructor</span></span>))</b> 属性修饰(构造函数)， 会在main函数执行之前被调用。</li>
+
+<li>函数的功能是利用自身的 <b>next_registration</b> 成员以及 <b>vlib_mains[n]-&gt;node_main.node_registrations</b> 将所有node串成一个链表。</li>
+</ul>
+
+
+
+<div id="org12764af" class="figure">
+<p><img src="./dot/vpp/v_reg_node.png" alt="v_reg_node.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org656016b" class="outline-5">
+<h5 id="org656016b"><span class="section-number-5">2.1.2.2</span> VLIB_NODE_FN</h5>
+<div class="outline-text-5" id="text-2-1-2-2">
+<p>
+VLIB_NODE_FN用于定义 vlib_node_registration_t 结构中的 function（node的处理函数） 成员。
+</p>
+
+<p>
+注意：如果使用VLIB_NODE_FN定义node的function时， 定义node时的function成员必须为NULL。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">VLIB_NODE_FN</span>(<span style="color: #FF8C00; font-weight: bold;">node</span>)                                                     \
+	<span style="color: #5FD7FF; font-weight: bold;">uword</span> <span style="color: #87D700; font-weight: bold;">CLIB_MARCH_SFX</span>(node##_fn)();                                     \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">vlib_node_fn_registration_t</span> <span style="color: #87D700; font-weight: bold;">CLIB_MARCH_SFX</span>(                     \
+		node##_fn_registration) = {                                    \
+		.function = &amp;CLIB_MARCH_SFX(node##_fn),                        \
+	};                                                                     \
+									       \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__clib_constructor</span> CLIB_MARCH_SFX(                         \
+		node##_multiarch_register)(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                               \
+	{                                                                      \
+		<span style="color: #FF1493;">extern</span> <span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">node</span>;                          \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_node_fn_registration_t</span> *<span style="color: #FF8C00; font-weight: bold;">r</span>;                                \
+		r = &amp;CLIB_MARCH_SFX(node##_fn_registration);                   \
+		r-&gt;priority = CLIB_MARCH_FN_PRIORITY();                        \
+		r-&gt;name = CLIB_MARCH_VARIANT_STR;                              \
+		r-&gt;next_registration = node.node_fn_registrations;             \
+		node.node_fn_registrations = r;                                \
+	}                                                                      \
+	<span style="color: #5FD7FF; font-weight: bold;">uword</span> <span style="color: #5FD7FF; font-weight: bold;">CLIB_CPU_OPTIMIZED</span> <span style="color: #87D700; font-weight: bold;">CLIB_MARCH_SFX</span>(node##_fn)
+
+<span style="color: #87D700; font-weight: bold;">VLIB_NODE_FN</span>(dpdk_input_node)
+(<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span>, <span style="color: #5FD7FF; font-weight: bold;">vlib_node_runtime_t</span> *<span style="color: #FF8C00; font-weight: bold;">node</span>, <span style="color: #5FD7FF; font-weight: bold;">vlib_frame_t</span> *<span style="color: #FF8C00; font-weight: bold;">f</span>)
+{......}
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#23439;&#23450;&#20041;&#23637;&#24320; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">uword</span> <span style="color: #87D700; font-weight: bold;">dpdk_input_node_fn</span>();
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">vlib_node_fn_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">dpdk_input_node_fn_registration</span> = {
+	.function = &amp;dpdk_input_node_fn,
+};
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__clib_constructor</span> dpdk_input_node_multiarch_register(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#22312;&#20351;&#29992;VLIB_NODE_FN&#27880;&#20876;function&#26102;&#65292; node&#20013;&#30340;function&#25104;&#21592;&#24517;&#39035;&#20026;NULL,</span>
+<span style="color: #8B8878; font-style: italic;">           &#22312;&#35843;&#29992;register_node&#26102;, &#20808;&#26816;&#26597;&#26159;&#21542;&#21021;&#22987;&#21270;&#20102;node&#20013;&#30340;node_fn_registrations</span>
+<span style="color: #8B8878; font-style: italic;">           &#25104;&#21592;(&#20351;&#29992;VLIB_NODE_FN&#23439;&#23450;&#20041;&#27880;&#20876;) </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">extern</span> <span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">node</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">vlib_node_fn_registration_t</span> *<span style="color: #FF8C00; font-weight: bold;">r</span>;
+	r = &amp;dpdk_input_node_fn_registration;
+	r-&gt;priority = 0;
+	r-&gt;name = <span style="color: #CDC673;">"default"</span>;
+	r-&gt;next_registration = node.node_fn_registrations;
+	node.node_fn_registrations = r;
+}
+<span style="color: #5FD7FF; font-weight: bold;">uword</span> <span style="color: #87D700; font-weight: bold;">dpdk_input_node_fn</span>(<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span>, <span style="color: #5FD7FF; font-weight: bold;">vlib_node_runtime_t</span> *<span style="color: #FF8C00; font-weight: bold;">node</span>, <span style="color: #5FD7FF; font-weight: bold;">vlib_frame_t</span> *<span style="color: #FF8C00; font-weight: bold;">f</span>)
+{......}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc104d9f" class="outline-4">
+<h4 id="orgc104d9f"><span class="section-number-4">2.1.3</span> node的注册</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+使用函数 <code>register_node()</code> 函数对node进行注册.
+</p>
+
+<p>
+函数  <code>register_node()</code> 的调用顺序：
+</p>
+
+<div id="org572ad53" class="figure">
+<p><img src="./plantuml/vpp/reg_node_call_stack.png" alt="reg_node_call_stack.png" />
+</p>
+</div>
+
+
+<div id="org14741fa" class="figure">
+<p><img src="./plantuml/vpp/reg_node_fun.png" alt="reg_node_fun.png" />
+</p>
+</div>
+
+<div id="orgf04cf22" class="figure">
+<p><img src="./plantuml/vpp/reg_node_fun.png" alt="reg_node_fun.png" />
+</p>
+</div>
+
+<p>
+vlib数据包处理应用程序总是定义一组图节点来处理数据包。
+</p>
+
+<p>
+一个通常通过VLIB_REGISTER_NODE宏来构造vlib_node_registration_t。在运行时，框架将此类注册集处理为有向图。在运行时将节点添加到图很容易。该框架不支持删除节点。
+</p>
+
+<p>
+vlib提供了几种类型的矢量处理图节点，主要用于控制框架的调度行为。
+</p>
+
+<ul class="org-ul">
+<li>vlib_node_registration_t的类型成员的功能如下:
+<ul class="org-ul">
+<li>VLIB_NODE_TYPE_PRE_INPUT-在所有其他节点类型之前运行</li>
+<li>VLIB_NODE_TYPE_INPUT-在pre_input节点之后尽可能频繁地运行</li>
+<li>VLIB_NODE_TYPE_INTERNAL-仅在通过添加待处理帧后显示的使其可运行</li>
+<li>VLIB_NODE_TYPE_PROCESS-仅在明确使其可运行时。“进程”节点实际上是协作的多任务线程。他们 必须在相当短的时间内明确暂停。</li>
+</ul></li>
+</ul>
+
+<p>
+为了更好地理解图节点调度程序，请阅读./src/vlib/main.c:vlib_main_loop。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0dbbd2e" class="outline-3">
+<h3 id="org0dbbd2e"><span class="section-number-3">2.2</span> node初始化</h3>
+<div class="outline-text-3" id="text-2-2">
+<pre class="example">
+vlib_node_main_init
+- sibling关联
+	1. 获取sibling_of标识的node,
+	2. 将本node index保存至同级node(属于同一个sibling_of)的sibling_bitmap中
+	3. 将同级node的index保存至本node的sibling_bitmap中
+	4. 将本node 和 所属 sibling_of的node互相关联
+
+- node和next_node的关联
+	1. 将next_node_names 名称解析为索引, 保存至 vlib_node_t 中的 next_nodes成员中
+
+- next_node和上一级的关联
+	1. 将node的索引保存至next_node的prev_node_bitmap中
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org5079b8d" class="outline-3">
+<h3 id="org5079b8d"><span class="section-number-3">2.3</span> MAIN_LOOP注册</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(start_workers);
+</p>
+
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(ip4_main_loop_enter);
+</p>
+
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(ip6_main_loop_enter);
+</p>
+
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(session_main_loop_init);
+</p>
+
+<p>
+vlib_node_registration_t node;
+</p>
+
+<p>
+利用 node-&gt;node_fn_registrations; 来串接node的注册;
+</p>
+</div>
+</div>
+
+<div id="outline-container-org01bf645" class="outline-3">
+<h3 id="org01bf645"><span class="section-number-3">2.4</span> INIT_FUNCTION注册</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+VLIB_INIT_FUNCTION
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2104ad4" class="outline-3">
+<h3 id="org2104ad4"><span class="section-number-3">2.5</span> NODE注册</h3>
+<div class="outline-text-3" id="text-2-5">
+<ul class="org-ul">
+<li>VLIB_REGISTER_NODE</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">VLIB_REGISTER_NODE</span>(<span style="color: #FF8C00; font-weight: bold;">x</span>, ...)                                             \
+	__VA_ARGS__ <span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">x</span>;                                \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                     \
+		<span style="color: #FF1493;">__attribute__</span>((__constructor__));                              \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                     \
+	{                                                                      \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();                             \
+		x.next_registration = vm-&gt;node_main.node_registrations;        \
+		vm-&gt;node_main.node_registrations = &amp;x;                         \
+	}                                                                      \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                      \
+		<span style="color: #FF1493;">__attribute__</span>((__destructor__));                               \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                      \
+	{                                                                      \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();                             \
+		VLIB_REMOVE_FROM_LINKED_LIST(vm-&gt;node_main.node_registrations, \
+					     &amp;x, next_registration);           \
+	}                                                                      \
+	__VA_ARGS__ <span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">x</span>
+
+<span style="color: #87D700; font-weight: bold;">VLIB_REGISTER_NODE</span>(dpdk_input_node) = {
+	.type = VLIB_NODE_TYPE_INPUT,
+	.name = <span style="color: #CDC673;">"dpdk-input"</span>,
+	.sibling_of = <span style="color: #CDC673;">"device-input"</span>,
+	.flags = VLIB_NODE_FLAG_TRACE_SUPPORTED,
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Will be enabled if/when hardware is detected. </span><span style="color: #8B8878;">*/</span>
+	.state = VLIB_NODE_STATE_DISABLED,
+
+	.format_buffer = format_ethernet_header_with_length,
+	.format_trace = format_dpdk_rx_trace,
+
+	.n_errors = DPDK_N_ERROR,
+	.error_strings = dpdk_error_strings,
+}
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#23439;&#23450;&#20041;&#23637;&#24320;&#21518; (dpdk-input-node) </span><span style="color: #8B8878;">*/</span>
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">dpdk_input_node &#21464;&#37327;&#22768;&#26126; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">dpdk_input_node</span>;
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#22768;&#26126;&#65306;&#27880;&#20876;dpdk_input_node&#65292; &#21033;&#29992;gcc&#30340;&#26500;&#36896;&#23646;&#24615;&#65292;&#20351;&#20854;&#20808;&#20110;main&#20989;&#25968;&#25191;&#34892; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+	<span style="color: #FF1493;">__attribute__</span>((__constructor__));
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21033;&#29992; node &#32467;&#26500;&#30340; next_registration &#23558;&#25152;&#26377;node&#20018;&#25104;&#19968;&#20010;&#38142;&#34920; </span><span style="color: #8B8878;">*/</span>
+	dpdk_input_node.next_registration = vm-&gt;node_main.node_registrations;
+	vm-&gt;node_main.node_registrations = &amp;dpdk_input_node;
+}
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#22768;&#26126;&#65306; &#20174;vlib_main_t &#32467;&#26500;&#30340;&#38142;&#34920;&#20013;&#31227;&#38500;&#35813;node&#65292; &#22312;main&#20989;&#25968;&#36816;&#34892;&#21518;&#35843;&#29992;(&#26512;&#26500;&#20989;&#25968;) </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+	<span style="color: #FF1493;">__attribute__</span>((__destructor__));
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20989;&#25968;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_node_registration_dpdk_input_node</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();
+	VLIB_REMOVE_FROM_LINKED_LIST(vm-&gt;node_main.node_registrations,
+				     &amp;dpdk_input_node, next_registration);
+}
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">node&#30340;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">vlib_node_registration_t</span> <span style="color: #FF8C00; font-weight: bold;">dpdk_input_node</span> = {
+	.type = VLIB_NODE_TYPE_INPUT,
+	.name = <span style="color: #CDC673;">"dpdk-input"</span>,
+	.sibling_of = <span style="color: #CDC673;">"device-input"</span>,
+	.flags = VLIB_NODE_FLAG_TRACE_SUPPORTED,
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Will be enabled if/when hardware is detected. </span><span style="color: #8B8878;">*/</span>
+	.state = VLIB_NODE_STATE_DISABLED,
+
+	.format_buffer = format_ethernet_header_with_length,
+	.format_trace = format_dpdk_rx_trace,
+
+	.n_errors = DPDK_N_ERROR,
+	.error_strings = dpdk_error_strings,
+}
+</pre>
+</div>
+
+<p>
+此宏定义为该node定义了 <code>vlib_node_registration_t</code> 结构的 <code>dpdk_input_node</code> 变量, 用于后续注册node, 还定义了构造函数 <code>__vlib_add_node_registration-dpdk_input_node</code> 函数, 将 <code>dpdk_input_node</code> 加入(
+</p>
+
+<ul class="org-ul">
+<li>vlib_register_all_static_node</li>
+
+<li>register_node</li>
+
+<li>vlib_node_main_init</li>
+</ul>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org3fda479" class="outline-3">
+<h3 id="org3fda479"><span class="section-number-3">2.6</span> Worker注册</h3>
+</div>
+
+<div id="outline-container-org6dbaa4b" class="outline-3">
+<h3 id="org6dbaa4b"><span class="section-number-3">2.7</span> SIBILIND</h3>
+<div class="outline-text-3" id="text-2-7">
+<ul class="org-ul">
+<li>device-input</li>
+<li>ethernet-input</li>
+<li>nat-default</li>
+<li>ip6-rewrite</li>
+<li>ip4-rewrite</li>
+<li>ip4-input</li>
+<li>ip6-input</li>
+<li>ip6-local</li>
+<li>ip4-local</li>
+<li>ip4-drop</li>
+<li>ip6-drop</li>
+<li>l2-output-feat-arc</li>
+<li>l2-input-feat-arc</li>
+<li>mpls-lookup</li>
+<li>ip4-lookup</li>
+<li>ip6-lookup</li>
+<li>mpls-load-balance</li>
+<li>adj-midchain-tx</li>
+<li>mpls-output</li>
+<li>esp6-decrypt-tun</li>
+<li>esp4-decrypt-tun</li>
+<li>esp6-decrypt</li>
+<li>esp4-decrypt</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge43c9ee" class="outline-2">
+<h2 id="orge43c9ee"><span class="section-number-2">3</span> VPP基础库</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgcaea555" class="outline-3">
+<h3 id="orgcaea555"><span class="section-number-3">3.1</span> Vectors</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+vppinfra中的vectors是一个动态数组，由用户定义headers。vppinfra中的很多数据结构（hash、heap、pool）都是使用vector，其中header各不相同。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">                  User header (optional, uword aligned)
+		  Alignment padding (if needed)
+		  Vector length in elements
+User's pointer -&gt; Vector element 0
+		  Vector element 1
+		  ...
+		  Vector element N-1
+</pre>
+</div>
+
+<p>
+如上面所示，vector API从第0个元素开始处理， 空指针是一个有效的0长度的vector。
+</p>
+
+<p>
+为避免内存分配器的抖动，通常重置vector的长度以保留内存分配。通过宏定义 <code>vec_reset_length(v)</code> 来重置vector的长度字段。
+</p>
+
+<p>
+通常情况下 user header是不存在的。 User headers允许在vppinfra vector之上构建其他的数据结构。可以通过 <code>[vec]()*_aligned</code> 系列的宏来指定vector首个数据元素的对齐。
+</p>
+
+<p>
+Vector 元素可以是任意的c语言类型，在vector之上构建的数据结构（heap、pool等）也是如此。许多宏的 <code>_a</code> 变体支持vector元素的对齐， <code>_h</code> 变体支持非零长度的vector header， <code>_ha</code> 则都支持。此外可以在vector 元素结构中使用 <code>[CLIB_CACHE_LINE_ALIGN_MARK]()</code> 宏来指定缓存行对齐。
+</p>
+
+<p>
+对header 和 对齐 相关宏的用法不一致，会导致延迟混乱的故障。
+</p>
+
+<p>
+常见的编程错误： 存储一个变量指向vector元素的指针，然后扩展vector，扩展后，原始的元素内存位置可能已经变换，此时使用原先的指针可能会导致非法引用，正确的方法是记住vector的索引，vector的索引总是保持不变的。
+</p>
+
+<p>
+由于调试时不能调用宏，因此提供一些函数以供调试使用：
+</p>
+<ul class="org-ul">
+<li>vl(v)  打印 vec_len(v)</li>
+<li>pe(p)  打印 pool_elts(p)</li>
+<li>pifi(p, index)  打印 pool_is_free_index(p, index)</li>
+<li>debug_hex_bytes(p, nbytes)  从p开始已十六进制输出nbytes长度内存。</li>
+</ul>
+
+<p>
+使用 “show gdb” cli调试命令来打印当前集合。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga2199b9" class="outline-3">
+<h3 id="orga2199b9"><span class="section-number-3">3.2</span> Bitmaps</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+位图，使用vppinfra vector构建。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3afb88d" class="outline-3">
+<h3 id="org3afb88d"><span class="section-number-3">3.3</span> Pools</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+结合vectors和bitmaps，可以快速的分配及释放具有独立生存周期的固定大小的数据结构，pools很适合私有会话数据结构的分配。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgac75e03" class="outline-3">
+<h3 id="orgac75e03"><span class="section-number-3">3.4</span> Hashes</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+vppinfra提供了hash表的几种规格，数据平面的报文分类和会话查找经常使用hansh表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">bihash_16_8.h
+bihash_16_8_32.h
+bihash_24_16.h
+bihash_24_8.h
+bihash_32_8.h
+bihash_40_8.h
+bihash_48_8.h
+bihash_8_16.h
+bihash_8_8.h
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orge05b312" class="outline-4">
+<h4 id="orge05b312"><span class="section-number-4">3.4.1</span> 数据结构</h4>
+<div class="outline-text-4" id="text-3-4-1">
+<p>
+初始化参数
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2e63355" class="outline-3">
+<h3 id="org2e63355"><span class="section-number-3">3.5</span> Timekeeping</h3>
+</div>
+<div id="outline-container-orgea4d22c" class="outline-3">
+<h3 id="orgea4d22c"><span class="section-number-3">3.6</span> 时间轮Timer Wheel</h3>
+<div class="outline-text-3" id="text-3-6">
+</div>
+<div id="outline-container-org869604e" class="outline-4">
+<h4 id="org869604e"><span class="section-number-4">3.6.1</span> 介绍</h4>
+<div class="outline-text-4" id="text-3-6-1">
+<ol class="org-ol">
+<li><p>
+定义时间轮参数的宏
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#26102;&#38388;&#36718;&#30340;&#36718;&#25968;&#37327; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_TIMER_WHEELS</span> 1
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#27599;&#20010;&#26102;&#38388;&#36718;&#30340;&#27133;&#25968;&#37327; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_SLOTS_PER_RING</span> 2048
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#26102;&#38388;&#36718;&#27133;&#25968;&#25968;&#20540;&#23545;&#24212;&#30340;&#20301;&#31227;</span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_RING_SHIFT</span> 11
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#26102;&#38388;&#36718;&#27133;&#25968;&#30340;&#25513;&#30721; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_RING_MASK</span> (TW_SLOTS_PER_RING -1)
+<span style="color: #8B8878;">/*  */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_TIMERS_PER_OBJECT</span> 2
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">LOG2_TW_TIMERS_PER_OBJECT</span> 1
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#27169;&#26495;&#23450;&#20041;&#30340;&#20989;&#25968;&#21518;&#32512;&#65292; &#29992;&#20197;&#21306;&#20998;&#19981;&#21516;&#21442;&#25968;&#23450;&#20041;&#30340;&#26102;&#38388;&#36718;&#20989;&#25968; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_SUFFIX</span> _2t_1w_2048sl
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_FAST_WHEEL_BITMAP</span> 0
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">TW_TIMER_ALLOW_DUPLICATE_STOP</span> 0
+</pre>
+</div></li>
+
+<li><p>
+时间轮结构、函数介绍
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">enum</span>
+{
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Fast timer ring ID </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF8C00; font-weight: bold;">TW_TIMER_RING_FAST</span>,
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Slow timer ring ID </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF8C00; font-weight: bold;">TW_TIMER_RING_SLOW</span>,
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Glacier ring ID </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF8C00; font-weight: bold;">TW_TIMER_RING_GLACIER</span>,
+} <span style="color: #5FD7FF; font-weight: bold;">tw_ring_index_t</span>;
+
+<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span>
+{
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Timer pool </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #87D700; font-weight: bold;">TWT</span> (tw_timer) * timers;
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Next time the wheel should run </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">f64</span> <span style="color: #FF8C00; font-weight: bold;">next_run_time</span>;
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Last time the wheel ran </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">f64</span> <span style="color: #FF8C00; font-weight: bold;">last_run_time</span>;
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">&#27599;&#31186;&#38047;&#30340;timer&#28404;&#31572;&#25968; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">f64</span> <span style="color: #FF8C00; font-weight: bold;">ticks_per_second</span>;
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Timer interval, also needed to avoid fp divide in speed path </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">f64</span> <span style="color: #FF8C00; font-weight: bold;">timer_interval</span>;
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">current tick </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">u64</span> <span style="color: #FF8C00; font-weight: bold;">current_tick</span>;
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">&#24403;&#21069;&#30340;&#26102;&#38388;&#36718;&#30340;&#20301;&#32622;&#26631;&#35782; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">current_index</span>[TW_TIMER_WHEELS];
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">&#27599;&#20010;&#26102;&#38388;&#36718;&#30340;&#27133;&#20301;&#25968;&#32452; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">tw_timer_wheel_slot_t</span> <span style="color: #FF8C00; font-weight: bold;">w</span>[TW_TIMER_WHEELS][TW_SLOTS_PER_RING];
+
+<span style="color: #FF1493;">#if</span> TW_OVERFLOW_VECTOR &gt; 0
+	<span style="color: #5FD7FF; font-weight: bold;">tw_timer_wheel_slot_t</span> <span style="color: #FF8C00; font-weight: bold;">overflow</span>;
+<span style="color: #FF1493;">#endif</span>
+
+<span style="color: #FF1493;">#if</span> TW_FAST_WHEEL_BITMAP &gt; 0
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Fast wheel slot occupancy bitmap </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">uword</span> *<span style="color: #FF8C00; font-weight: bold;">fast_slot_bitmap</span>;
+<span style="color: #FF1493;">#endif</span>
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">expired timer callback, receives a vector of handles </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">void</span> (*expired_timer_callback) (<span style="color: #5FD7FF; font-weight: bold;">u32</span> * <span style="color: #FF8C00; font-weight: bold;">expired_timer_handles</span>);
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">&#22788;&#29702;&#36807;&#26399;timer&#26102;,&#29992;&#20110;&#23384;&#20648;timer handle&#30340;&#21521;&#37327; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">u32</span> *<span style="color: #FF8C00; font-weight: bold;">expired_timer_handles</span>;
+
+	<span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">&#36807;&#26399;&#30340;&#26368;&#22823;&#25968;&#37327; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">max_expirations</span>;
+} <span style="color: #5FD7FF; font-weight: bold;">TWT</span> (tw_timer_wheel);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21551;&#21160;&#19968;&#20010;timer&#30340;&#23439;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_start) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw, <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">pool_index</span>, <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">timer_id</span>, <span style="color: #5FD7FF; font-weight: bold;">u64</span> <span style="color: #FF8C00; font-weight: bold;">interval</span>);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20572;&#27490;&#19968;&#20010;timer&#30340;&#23439;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_stop) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw, <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">handle</span>);
+<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_handle_is_free) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw, <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">handle</span>);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#26356;&#26032;&#26102;&#38388;&#25139;&#30340;&#23439;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_update) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw, <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">handle</span>, <span style="color: #5FD7FF; font-weight: bold;">u64</span> <span style="color: #FF8C00; font-weight: bold;">interval</span>);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21021;&#22987;&#21270;&#26102;&#38388;&#36718;&#23454;&#20363; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_wheel_init) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">expired_timer_callback</span>, <span style="color: #5FD7FF; font-weight: bold;">f64</span> <span style="color: #FF8C00; font-weight: bold;">timer_interval</span>, <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">max_expirations</span>);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#37322;&#25918;&#26102;&#38388;&#36718;&#23454;&#20363; </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_wheel_free) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#20174;&#26102;&#38388;&#36718;&#20013;&#21462;&#20986;&#36807;&#26399;&#30340;timer </span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF; font-weight: bold;">u32</span> *<span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_expire_timers) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw, <span style="color: #5FD7FF; font-weight: bold;">f64</span> <span style="color: #FF8C00; font-weight: bold;">now</span>);
+<span style="color: #5FD7FF; font-weight: bold;">u32</span> *<span style="color: #87D700; font-weight: bold;">TW</span> (tw_timer_expire_timers_vec) (<span style="color: #5FD7FF; font-weight: bold;">TWT</span> (<span style="color: #FF8C00; font-weight: bold;">tw_timer_wheel</span>) * tw, <span style="color: #5FD7FF; font-weight: bold;">f64</span> <span style="color: #FF8C00; font-weight: bold;">now</span>, <span style="color: #5FD7FF; font-weight: bold;">u32</span> * <span style="color: #FF8C00; font-weight: bold;">vec</span>);
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org7ac7ff1" class="outline-4">
+<h4 id="org7ac7ff1"><span class="section-number-4">3.6.2</span> 原理说明</h4>
+<div class="outline-text-4" id="text-3-6-2">
+<p>
+tw_timer_wheel_init初始化的过程大致如下图：
+</p>
+
+<div id="orgbfb7bc8" class="figure">
+<p><img src="./dot/vpp/timer_wheel.png" alt="timer_wheel.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>时间轮的轮数由宏 <code>TW_TIMER_WHEELS</code> 来指定， 最大为3轮。</li>
+<li>slot槽的数量由宏 <code>TW_SLOTS_PER_RING</code> 指定。</li>
+<li>slot槽中保存tw_timer结构的handle。用于索引timer结构。tw_timer结构全部从tw_timer_wheel结构的timers向量中申请。</li>
+<li>时间轮0（TW_TIMER_RING_FAST）中的slot之间的间隔时间由函数 <code>tw_timer_wheel_init</code> 的参数 <code>timer_interval_in_seconds</code> 提供。</li>
+<li>时间轮1（TW_TIMER_RING_SLOW）中的slot的时间间隔为时间轮0的slot间隔乘slot数量。</li>
+<li>时间轮2（TW_TIMER_RING_GLACIER）中的slot的时间间隔为时间轮1的slot间隔乘slot数量。</li>
+</ol>
+
+<p>
+tw_timer_start添加timer过程：
+</p>
+
+<div id="orga0f1b22" class="figure">
+<p><img src="./dot/vpp/timer_wheel_start.png" alt="timer_wheel_start.png" />
+</p>
+</div>
+
+
+<p>
+tw_timer_expire_timers处理过期timer的过程:
+</p>
+
+<div id="org535e0c9" class="figure">
+<p><img src="./dot/vpp/timer_wheel_expire.png" alt="timer_wheel_expire.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4a3d23b" class="outline-4">
+<h4 id="org4a3d23b"><span class="section-number-4">3.6.3</span> 初始化宏</h4>
+</div>
+
+<div id="outline-container-org1aa02eb" class="outline-4">
+<h4 id="org1aa02eb"><span class="section-number-4">3.6.4</span> 用法</h4>
+<div class="outline-text-4" id="text-3-6-4">
+<div class="org-src-container">
+<pre class="src src-fundamental">tw_timer_16t_1w_2048sl.c
+tw_timer_16t_1w_2048sl.h
+tw_timer_16t_2w_512sl.c
+tw_timer_16t_2w_512sl.h
+tw_timer_1t_3w_1024sl_ov.c
+tw_timer_1t_3w_1024sl_ov.h
+tw_timer_2t_1w_2048sl.c
+tw_timer_2t_1w_2048sl.h
+tw_timer_2t_2w_512sl.c
+tw_timer_2t_2w_512sl.h
+tw_timer_4t_3w_256sl.c
+tw_timer_4t_3w_256sl.h
+tw_timer_4t_3w_4sl_ov.c
+tw_timer_4t_3w_4sl_ov.h
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org56726e8" class="outline-3">
+<h3 id="org56726e8"><span class="section-number-3">3.7</span> 单向共享内存队列 svm queue</h3>
+<div class="outline-text-3" id="text-3-7">
+</div>
+<div id="outline-container-org260fdfb" class="outline-4">
+<h4 id="org260fdfb"><span class="section-number-4">3.7.1</span> 数据结构</h4>
+<div class="outline-text-4" id="text-3-7-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">_svm_queue</span>
+{
+	<span style="color: #5FD7FF; font-weight: bold;">pthread_mutex_t</span> <span style="color: #FF8C00; font-weight: bold;">mutex</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">8 bytes </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">pthread_cond_t</span> <span style="color: #FF8C00; font-weight: bold;">condvar</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">8 bytes </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">head</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">tail</span>;
+	<span style="color: #FF1493;">volatile</span> <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">cursize</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">maxsize</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">elsize</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">consumer_pid</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">producer_evtfd</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">consumer_evtfd</span>;
+	<span style="color: #5FD7FF; font-weight: bold;">char</span> <span style="color: #FF8C00; font-weight: bold;">data</span>[0];
+} <span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span>;
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org98a3337" class="outline-4">
+<h4 id="org98a3337"><span class="section-number-4">3.7.2</span> 接口</h4>
+<div class="outline-text-4" id="text-3-7-2">
+<dl class="org-dl">
+<dt>分配并初始化svm queue</dt><dd><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">参数</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">nels</td>
+<td class="org-left">queue中的元素数量</td>
+</tr>
+
+<tr>
+<td class="org-left">elsize</td>
+<td class="org-left">queue中的元素大小， 一般为4或calineline-size</td>
+</tr>
+
+<tr>
+<td class="org-left">pid</td>
+<td class="org-left">队列消费者的pid</td>
+</tr>
+
+<tr>
+<td class="org-left">return</td>
+<td class="org-left">新初始化的svn queue</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+在调用此函数前，先将堆切换为svm数据堆。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> *<span style="color: #87D700; font-weight: bold;">svm_queue_alloc_and_init</span> (<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">nels</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">elsize</span>,<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">consumer_pid</span>);
+</pre>
+</div></dd>
+
+<dt>等待队列事件</dt><dd><p>
+在获取到q-&gt;mutex的前提下调用。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">svm_queue_wait</span> (<span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> * <span style="color: #FF8C00; font-weight: bold;">q</span>);
+</pre>
+</div></dd>
+
+<dt>等待队列事件，并设置超时</dt><dd><p>
+在获取到q-&gt;mutex的前提下调用。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">svm_queue_timedwait</span> (<span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> * <span style="color: #FF8C00; font-weight: bold;">q</span>, <span style="color: #5FD7FF; font-weight: bold;">double</span> <span style="color: #FF8C00; font-weight: bold;">timeout</span>);
+</pre>
+</div></dd>
+
+<dt>向队列添加元素</dt><dd><div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">svm_queue_add_raw</span> (<span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> * <span style="color: #FF8C00; font-weight: bold;">q</span>, <span style="color: #5FD7FF; font-weight: bold;">u8</span> * <span style="color: #FF8C00; font-weight: bold;">elem</span>);
+</pre>
+</div></dd>
+
+<dt>设置生产者event fd</dt><dd><p>
+当生产者产生事件时，会向fd中写入1。
+</p>
+
+<p>
+生产者event fd被设置后，将不再使用队列的condvars字段来通知事件。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">svm_queue_set_producer_event_fd</span> (<span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> * <span style="color: #FF8C00; font-weight: bold;">q</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fd</span>);
+</pre>
+</div></dd>
+
+<dt>设置消费者event fd</dt><dd><p>
+当消费者要生成一个事件时，向这个fd中写入1。
+</p>
+
+<p>
+虽然实际上，生产者和消费者的fd都指向同一个底层文件描述符，但由于是两个不同进程，其文件描述符表不同。调用者需要确保两个对等点之间正确的交换两个文件描述符。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">svm_queue_set_consumer_event_fd</span> (<span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> * <span style="color: #FF8C00; font-weight: bold;">q</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fd</span>);
+</pre>
+</div></dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-orgce1d2eb" class="outline-4">
+<h4 id="orgce1d2eb"><span class="section-number-4">3.7.3</span> 内存结构</h4>
+<div class="outline-text-4" id="text-3-7-3">
+
+<div id="orgfb27751" class="figure">
+<p><img src="./dot/vpp/svm_queue.png" alt="svm_queue.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org17f93a5" class="outline-2">
+<h2 id="org17f93a5"><span class="section-number-2">4</span> 插件</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org759d4fa" class="outline-3">
+<h3 id="org759d4fa"><span class="section-number-3">4.1</span> 插件列表</h3>
+<div class="outline-text-3" id="text-4-1">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Plugin</th>
+<th scope="col" class="org-left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">1. <code>ioam_plugin.so</code></td>
+<td class="org-left">Inbound Operations, Administration, and Maintenance (OAM)</td>
+</tr>
+
+<tr>
+<td class="org-left">2. <code>perfmon_plugin.so</code></td>
+<td class="org-left">Performance Monitor</td>
+</tr>
+
+<tr>
+<td class="org-left">3. <code>urpf_plugin.so</code></td>
+<td class="org-left">Unicast Reverse Path Forwarding (uRPF)</td>
+</tr>
+
+<tr>
+<td class="org-left">4. <code>tlspicotls_plugin.so</code></td>
+<td class="org-left">Transport Layer Security (TLS) Engine, Picotls Based</td>
+</tr>
+
+<tr>
+<td class="org-left">5. <code>l3xc_plugin.so</code></td>
+<td class="org-left">L3 Cross-Connect (L3XC)</td>
+</tr>
+
+<tr>
+<td class="org-left">6. <code>mdata_plugin.so</code></td>
+<td class="org-left">Buffer metadata change tracker.</td>
+</tr>
+
+<tr>
+<td class="org-left">7. <code>ping_plugin.so</code></td>
+<td class="org-left">Ping (ping)</td>
+</tr>
+
+<tr>
+<td class="org-left">8. <code>avf_plugin.so</code></td>
+<td class="org-left">Intel Adaptive Virtual Function (AVF) Device Driver</td>
+</tr>
+
+<tr>
+<td class="org-left">9. <code>pppoe_plugin.so</code></td>
+<td class="org-left">PPP over Ethernet (PPPoE)</td>
+</tr>
+
+<tr>
+<td class="org-left">10. <code>crypto_native_plugin.so</code></td>
+<td class="org-left">Intel IA32 Software Crypto Engine</td>
+</tr>
+
+<tr>
+<td class="org-left">11. <code>srv6am_plugin.so</code></td>
+<td class="org-left">Masquerading Segment Routing for IPv6 (SRv6) Proxy</td>
+</tr>
+
+<tr>
+<td class="org-left">12. <code>l2e_plugin.so</code></td>
+<td class="org-left">Layer 2 (L2) Emulation</td>
+</tr>
+
+<tr>
+<td class="org-left">13. <code>dpdk_plugin.so</code></td>
+<td class="org-left">Data Plane Development Kit (DPDK)</td>
+</tr>
+
+<tr>
+<td class="org-left">14. <code>acl_plugin.so</code></td>
+<td class="org-left">Access Control Lists (ACL)</td>
+</tr>
+
+<tr>
+<td class="org-left">15. <code>crypto_openssl_plugin.so</code></td>
+<td class="org-left">OpenSSL Crypto Engine</td>
+</tr>
+
+<tr>
+<td class="org-left">16. <code>dslite_plugin.so</code></td>
+<td class="org-left">Dual-Stack Lite</td>
+</tr>
+
+<tr>
+<td class="org-left">17. <code>tlsmbedtls_plugin.so</code></td>
+<td class="org-left">Transport Layer Security (TLS) Engine, Mbedtls Based</td>
+</tr>
+
+<tr>
+<td class="org-left">18. <code>ikev2_plugin.so</code></td>
+<td class="org-left">Internet Key Exchange (IKEv2) Protocol</td>
+</tr>
+
+<tr>
+<td class="org-left">19. <code>svs_plugin.so</code></td>
+<td class="org-left">Source Virtual Routing and Fowarding (VRF) Select</td>
+</tr>
+
+<tr>
+<td class="org-left">20. <code>vrrp_plugin.so</code></td>
+<td class="org-left">VRRP v3 (RFC 5798)</td>
+</tr>
+
+<tr>
+<td class="org-left">21. <code>hs_apps_plugin.so</code></td>
+<td class="org-left">Host Stack Applications</td>
+</tr>
+
+<tr>
+<td class="org-left">22. <code>nsim_plugin.so</code></td>
+<td class="org-left">Network Delay Simulator</td>
+</tr>
+
+<tr>
+<td class="org-left">23. <code>dns_plugin.so</code></td>
+<td class="org-left">Simple DNS name resolver</td>
+</tr>
+
+<tr>
+<td class="org-left">24. <code>dhcp_plugin.so</code></td>
+<td class="org-left">Dynamic Host Configuration Protocol (DHCP)</td>
+</tr>
+
+<tr>
+<td class="org-left">25. <code>rdma_plugin.so</code></td>
+<td class="org-left">RDMA IBverbs Device Driver</td>
+</tr>
+
+<tr>
+<td class="org-left">26. <code>gbp_plugin.so</code></td>
+<td class="org-left">Group Based Policy (GBP)</td>
+</tr>
+
+<tr>
+<td class="org-left">27. <code>igmp_plugin.so</code></td>
+<td class="org-left">Internet Group Management Protocol (IGMP)</td>
+</tr>
+
+<tr>
+<td class="org-left">28. <code>nat_plugin.so</code></td>
+<td class="org-left">Network Address Translation (NAT)</td>
+</tr>
+
+<tr>
+<td class="org-left">29. <code>memif_plugin.so</code></td>
+<td class="org-left">Packet Memory Interface (memif) &#x2013; Experimental</td>
+</tr>
+
+<tr>
+<td class="org-left">30. <code>crypto_ipsecmb_plugin.so</code></td>
+<td class="org-left">Intel IPSEC Multi-buffer Crypto Engine</td>
+</tr>
+
+<tr>
+<td class="org-left">31. <code>nsh_plugin.so</code></td>
+<td class="org-left">Network Service Header (NSH)</td>
+</tr>
+
+<tr>
+<td class="org-left">32. <code>abf_plugin.so</code></td>
+<td class="org-left">Access Control List (ACL) Based Forwarding</td>
+</tr>
+
+<tr>
+<td class="org-left">33. <code>ila_plugin.so</code></td>
+<td class="org-left">Identifier Locator Addressing (ILA) for IPv6</td>
+</tr>
+
+<tr>
+<td class="org-left">34. <code>srv6mobile_plugin.so</code></td>
+<td class="org-left">SRv6 GTP Endpoint Functions</td>
+</tr>
+
+<tr>
+<td class="org-left">35. <code>tlsopenssl_plugin.so</code></td>
+<td class="org-left">Transport Layer Security (TLS) Engine, OpenSSL Based</td>
+</tr>
+
+<tr>
+<td class="org-left">36. <code>gtpu_plugin.so</code></td>
+<td class="org-left">GPRS Tunnelling Protocol, User Data (GTPv1-U)</td>
+</tr>
+
+<tr>
+<td class="org-left">37. <code>map_plugin.so</code></td>
+<td class="org-left">Mapping of Address and Port (MAP)</td>
+</tr>
+
+<tr>
+<td class="org-left">38. <code>stn_plugin.so</code></td>
+<td class="org-left">VPP Steals the NIC (STN) for Container Integration</td>
+</tr>
+
+<tr>
+<td class="org-left">39. <code>builtinurl_plugin.so</code></td>
+<td class="org-left">vpp built-in URL support</td>
+</tr>
+
+<tr>
+<td class="org-left">40. <code>http_static_plugin.so</code></td>
+<td class="org-left">HTTP Static Server</td>
+</tr>
+
+<tr>
+<td class="org-left">41. <code>ct6_plugin.so</code></td>
+<td class="org-left">IPv6 Connection Tracker</td>
+</tr>
+
+<tr>
+<td class="org-left">42. <code>cdp_plugin.so</code></td>
+<td class="org-left">Cisco Discovery Protocol (CDP)</td>
+</tr>
+
+<tr>
+<td class="org-left">43. <code>lacp_plugin.so</code></td>
+<td class="org-left">Link Aggregation Control Protocol (LACP)</td>
+</tr>
+
+<tr>
+<td class="org-left">44. <code>flowprobe_plugin.so</code></td>
+<td class="org-left">Flow per Packet</td>
+</tr>
+
+<tr>
+<td class="org-left">45. <code>mactime_plugin.so</code></td>
+<td class="org-left">Time-based MAC Source Address Filter</td>
+</tr>
+
+<tr>
+<td class="org-left">46. <code>lb_plugin.so</code></td>
+<td class="org-left">Load Balancer (LB)</td>
+</tr>
+
+<tr>
+<td class="org-left">47. <code>srv6as_plugin.so</code></td>
+<td class="org-left">Static Segment Routing for IPv6 (SRv6) Proxy</td>
+</tr>
+
+<tr>
+<td class="org-left">48. <code>srv6ad_plugin.so</code></td>
+<td class="org-left">Dynamic Segment Routing for IPv6 (SRv6) Proxy</td>
+</tr>
+
+<tr>
+<td class="org-left">49. <code>vmxnet3_plugin.so</code></td>
+<td class="org-left">VMWare Vmxnet3 Device Driver</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4e3c083" class="outline-2">
+<h2 id="org4e3c083"><span class="section-number-2">5</span> COMMAND</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org87bee90" class="outline-3">
+<h3 id="org87bee90"><span class="section-number-3">5.1</span> command注册</h3>
+<div class="outline-text-3" id="text-5-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">VLIB_CLI_COMMAND</span>(<span style="color: #FF8C00; font-weight: bold;">x</span>, ...)                                               \
+	__VA_ARGS__ <span style="color: #5FD7FF; font-weight: bold;">vlib_cli_command_t</span> <span style="color: #FF8C00; font-weight: bold;">x</span>;                                      \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_cli_command_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                  \
+		<span style="color: #FF1493;">__attribute__</span>((__constructor__));                              \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_cli_command_registration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                  \
+	{                                                                      \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();                             \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_cli_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">cm</span> = &amp;vm-&gt;cli_main;                           \
+		x.next_cli_command = cm-&gt;cli_command_registrations;            \
+		cm-&gt;cli_command_registrations = &amp;x;                            \
+	}                                                                      \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_cli_command_unregistration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                \
+		<span style="color: #FF1493;">__attribute__</span>((__destructor__));                               \
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_cli_command_unregistration_</span>##x(<span style="color: #5FD7FF; font-weight: bold;">void</span>)                \
+	{                                                                      \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();                             \
+		<span style="color: #5FD7FF; font-weight: bold;">vlib_cli_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">cm</span> = &amp;vm-&gt;cli_main;                           \
+		VLIB_REMOVE_FROM_LINKED_LIST(cm-&gt;cli_command_registrations,    \
+					     &amp;x, next_cli_command);            \
+	}                                                                      \
+	__VA_ARGS__ <span style="color: #5FD7FF; font-weight: bold;">vlib_cli_command_t</span> <span style="color: #FF8C00; font-weight: bold;">x</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdda8fd8" class="outline-3">
+<h3 id="orgdda8fd8"><span class="section-number-3">5.2</span> 宏定义</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+利用gcc <span class="underline"><span class="underline">attribute__((__constructor</span></span>)) 属性进行构造初始化
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #87D700; font-weight: bold;">VLIB_INIT_FUNCTION</span>(dpdk_main_init) = {
+	.runs_after = VLIB_INITS(<span style="color: #CDC673;">"dpdk_init"</span>),
+};
+
+<span style="color: #87D700; font-weight: bold;">VLIB_DECLARE_INIT_FUNCTION</span>(x, tag)
+
+<span style="color: #5FD7FF; font-weight: bold;">vlib_init_function_t</span> *<span style="color: #87D700; font-weight: bold;">_VLIB_INIT_FUNCTION_SYMBOL</span>(x, tag) = dpdk_main_init;
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_init_function_dpdk_main_init</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+	<span style="color: #FF1493;">__attribute__</span>((__constructor__));
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">_vlib_init_function_list_elt_t</span> <span style="color: #FF8C00; font-weight: bold;">_vlib_init_function_init_dpdk_main_init</span>;
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_add_init_function_dpdk_main_init</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();
+	_vlib_init_function_init_dpdk_main_init.next_init_function =
+		vm-&gt;init_function_registrations;
+	vm-&gt;init_function_registrations =
+		&amp;_vlib_init_function_init_dpdk_main_init;
+	_vlib_init_function_init_dpdk_main_init.f = &amp;dpdk_main_init;
+	_vlib_init_function_init_dpdk_main_init.name = <span style="color: #CDC673;">"dpdk_main_init"</span>;
+}
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_init_function_dpdk_main_init</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+	<span style="color: #FF1493;">__attribute__</span>((__destructor__));
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">__vlib_rm_init_function_dpdk_main_init</span>(<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+	<span style="color: #5FD7FF; font-weight: bold;">vlib_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vm</span> = vlib_get_main();
+	<span style="color: #5FD7FF; font-weight: bold;">_vlib_init_function_list_elt_t</span> *<span style="color: #FF8C00; font-weight: bold;">this</span>, *<span style="color: #FF8C00; font-weight: bold;">prev</span>;
+	this = vm-&gt;init_function_registrations;
+	<span style="color: #FF1493;">if</span> (this == 0)
+		<span style="color: #FF1493;">return</span>;
+	<span style="color: #FF1493;">if</span> (this-&gt;f == dpdk_main_init) {
+		vm-&gt;init_function_registrations =
+			this-&gt;next_init_function;
+		<span style="color: #FF1493;">return</span>;
+	}
+	prev = this;
+	this = this-&gt;next_init_function;
+	<span style="color: #FF1493;">while</span> (this) {
+		<span style="color: #FF1493;">if</span> (this-&gt;f == dpdk_main_init) {
+			prev-&gt;next_init_function =
+				this-&gt;next_init_function;
+			<span style="color: #FF1493;">return</span>;
+		}
+		prev = this;
+		this = this-&gt;next_init_function;
+	}
+}
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">_vlib_init_function_list_elt_t</span> <span style="color: #FF8C00; font-weight: bold;">_vlib_init_function_init_dpdk_main_init</span>  = {
+	.runs_after = VLIB_INITS(<span style="color: #CDC673;">"dpdk_init"</span>),
+};
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #87D700; font-weight: bold;">VNET_FEATURE_INIT</span>()
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2ad3a44" class="outline-2">
+<h2 id="org2ad3a44"><span class="section-number-2">6</span> process调度(协程)</h2>
+<div class="outline-text-2" id="text-6">
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #87D700; font-weight: bold;">dispatch_process</span>();
+<span style="color: #87D700; font-weight: bold;">vlib_process_startup</span>();
+<span style="color: #87D700; font-weight: bold;">vlib_process_bootstrap</span>();
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6f3eff2" class="outline-2">
+<h2 id="org6f3eff2"><span class="section-number-2">7</span> dpdk逻辑梳理</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+device-input(例如 dpdk-input-node)之类的节点, next node 与device-input保持一致
+分别为:
+</p>
+<ul class="org-ul">
+<li>ip4-input-no-checksum [0]</li>
+<li>ip4-input [1]</li>
+<li>ip6-input [2]</li>
+<li>mpls-input [3]</li>
+<li>ethernet-input [4]</li>
+<li>error-drop [5]</li>
+</ul>
+</div>
+
+
+<div id="outline-container-org4907838" class="outline-3">
+<h3 id="org4907838"><span class="section-number-3">7.1</span> 数据包处理逻辑</h3>
+<div class="outline-text-3" id="text-7-1">
+<ul class="org-ul">
+<li>dpdk_device_input</li>
+<li>ethernet_input</li>
+<li>ip4_input</li>
+<li>ip4_lookup</li>
+<li>ip4_local</li>
+<li>tcp4_input</li>
+<li>tcp4_listen</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">vlib_main_or_worker_loop
+	//&#35843;&#24230;&#25191;&#34892; VLIB_NODE_TYPE_PRE_INPUT &#31867;&#22411;&#30340;node
+	vec_foreach(,,nm-&gt;nodes_by_type[VLIB_NODE_TYPE_PRE_INPUT){dispatch_node}
+	//&#35843;&#24230;&#25191;&#34892; VLIB_NODE_TYPE_INPUT &#31867;&#22411;&#30340;node
+	vec_foreach(,,nm-&gt;nodes_by_type[VLIB_NODE_TYPE_INPUT){dispatch_node}
+		dpdk_device_input &#22312;&#27492;&#20301;&#32622;&#34987;&#35843;&#29992;
+	//&#25191;&#34892;&#34987;input node &#28155;&#21152;&#30340; &#26410;&#20915;&#21521;&#37327;
+	for (i = 0; i &lt; _vec_len (nm-&gt;pending_frames); i++)
+		cpu_time_now = dispatch_pending_node (vm, i, cpu_time_now);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org904505c" class="outline-3">
+<h3 id="org904505c"><span class="section-number-3">7.2</span> 代码逻辑</h3>
+<div class="outline-text-3" id="text-7-2">
+</div>
+<div id="outline-container-orgda4d848" class="outline-4">
+<h4 id="orgda4d848"><span class="section-number-4">7.2.1</span> 执行input node</h4>
+<div class="outline-text-4" id="text-7-2-1">
+<p>
+在vlib_main_loop中, 调度 VLIB_NODE_TYPE_INPUT 类型的node时, dpdk-input-node会被调用.
+</p>
+</div>
+
+<div id="outline-container-org53a126c" class="outline-5">
+<h5 id="org53a126c"><span class="section-number-5">7.2.1.1</span> dpdk-input-node</h5>
+<div class="outline-text-5" id="text-7-2-1-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">dpdk_device_input()
+	rte_eth_rx_burst()
+	dpdk_process_rx_burst()
+	vlib_put_next_frame()
+</pre>
+</div>
+
+<p>
+在执行完 vlib_put_next_frame 后, 会将ethernet-input-node 加入 vlib_node_main_t的 pending_frames中, 等待被执行.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgee59991" class="outline-5">
+<h5 id="orgee59991"><span class="section-number-5">7.2.1.2</span> ethernet-input-node</h5>
+<div class="outline-text-5" id="text-7-2-1-2">
+<p>
+在 vlib_main_or_worker_loop 中, 会处理由 input node 添加的 pending vector, 通过调用 dispatch_pending_node() 函数来处理, ethernet-input-node由此被调用.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">ethernet_input_node
+	eth_input_single_int
+		eth_input_process_frame
+		vlib_buffer_enqueue_to_next
+</pre>
+</div>
+
+<p>
+在 eth_input_process_frame 中,确定数据报类型, 假设为ipv4的报文, 选定ip4-input-node 或者 ip4-input-no-checksum-node 作为下一个node处理.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org25f8a2f" class="outline-5">
+<h5 id="org25f8a2f"><span class="section-number-5">7.2.1.3</span> ip4-input-node</h5>
+<div class="outline-text-5" id="text-7-2-1-3">
+<p>
+在ethernet-input-node处理完成后, ip4-input-node已经被添加至pending_frames 中, 下一次轮询直接被调用.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">ip4_input_node_fn/ip4_inpu_no_checksum_node_fn
+	ip4_input_inline
+		ip4_input_set_next
+			&#35774;&#32622;next node&#20026; IP4_INPUT_NEXT_LOOKUP
+			vnet_feature_arc_start
+	vlib_buffer_enqueue_to_next
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org624cd8f" class="outline-5">
+<h5 id="org624cd8f"><span class="section-number-5">7.2.1.4</span> ip4-lookup-node</h5>
+<div class="outline-text-5" id="text-7-2-1-4">
+<div class="org-src-container">
+<pre class="src src-fundamental">
+ip4_lookup_inline
+	ip4_fib_mtire_liikup_step_one
+	ip4_fib_mtrie_lookup_step
+vlib_buffer_enqueue_to_next
+
+</pre>
+</div>
+
+<p>
+通过查找转发信息库, 发现是到本机的报文, 选定ip-local-node为下一个node.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga551aa3" class="outline-5">
+<h5 id="orga551aa3"><span class="section-number-5">7.2.1.5</span> ip4-local-node</h5>
+<div class="outline-text-5" id="text-7-2-1-5">
+<div class="org-src-container">
+<pre class="src src-fundamental">ip4_local_inline
+	ip4_local_classify
+		&#20998;&#29255;&#25253;&#25991;&#36873;&#25321;IP_LOCAL_NEXT_REASSEMBLY&#20026;&#19979;&#19968;&#20010;node
+		&#21542;&#21017;&#30452;&#25509;&#26681;&#25454;&#22235;&#23618;&#21327;&#35758;&#36873;&#25321;&#30456;&#24212;&#30340;node(tcp4-input-node)
+	ip4_local_set_next_and_error
+vlib_buffer_enqueue_to_next
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga5db39d" class="outline-5">
+<h5 id="orga5db39d"><span class="section-number-5">7.2.1.6</span> tcp4-input-node</h5>
+<div class="outline-text-5" id="text-7-2-1-6">
+<div class="org-src-container">
+<pre class="src src-fundamental">tcp46_input_inline
+	tcp_input_lookup_buffer
+		session_lookup_connection_wt4
+			&#26597;&#25214;established session
+			&#26597;&#25214;half-open connection
+			&#26597;&#25214;session rules table
+			&#26597;&#25214;listener session
+	tcp_input_dispatch_buffer
+		&#26681;&#25454;&#26597;&#25214;&#21040;&#30340;&#36830;&#25509;&#21477;&#26564;,&#20174;tcp&#29366;&#24577;&#36716;&#25442;&#34920;(tcp_dispatch_table_init)&#20013;&#36873;&#25321;&#19979;&#19968;&#20010;node
+vlib_buffer_enqueue_to_next
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9f7a311" class="outline-5">
+<h5 id="org9f7a311"><span class="section-number-5">7.2.1.7</span> 执行逻辑</h5>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge1d1343" class="outline-2">
+<h2 id="orge1d1343"><span class="section-number-2">8</span> 内存管理</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-orgef0a590" class="outline-3">
+<h3 id="orgef0a590"><span class="section-number-3">8.1</span> main_heap初始化</h3>
+<div class="outline-text-3" id="text-8-1">
+</div>
+<div id="outline-container-orgd51f835" class="outline-4">
+<h4 id="orgd51f835"><span class="section-number-4">8.1.1</span> 临时初始化内存</h4>
+<div class="outline-text-4" id="text-8-1-1">
+<p>
+此处初始化的内存稍后调用 clib_mem_destroy() 初始化. 主要用来作为解析内存参数时的内存分配.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">clib_mem_init &gt;&gt; clib_mem_init_internal
+	1. clib_mem_main_init
+	2. clib_mem_vm_map_internal
+		clib_mem_vm_reserve
+	3. create_mspace_with_base
+	4. clib_mem_set_heap
+
+1. &#33719;&#21462;&#31995;&#32479;pagesize
+   &#22312;&#22823;&#39029;&#25991;&#20214;&#31995;&#32479;&#20013;&#21019;&#24314;&#21311;&#21517;&#25991;&#20214;&#25551;&#36848;&#31526;(memfd_create).
+   mmap&#26144;&#23556;&#19968;&#39029;&#31354;&#38388;, &#20351;&#29992;move_pages&#27979;&#35797;&#31995;&#32479;numa-node&#25968;&#37327;
+2. &#39044;&#30041;&#31995;&#32479;&#21551;&#21160;&#21021;&#22987;&#21270;&#38656;&#35201;&#30340;&#20869;&#23384;
+   &#35843;&#29992;mmap&#39044;&#30041;&#20869;&#23384;(&#38656;&#35201;&#22810;&#39044;&#30041;&#19968;&#39029;&#20869;&#23384;, &#29992;&#20316;&#31649;&#29702;&#20869;&#23384;&#30340;header(clib_mem_vm_map_hdr_t))
+   &#35774;&#32622;&#20869;&#23384;&#23646;&#24615;
+   &#21021;&#22987;&#21270;&#20869;&#23384;header&#32467;&#26500;
+3. &#21021;&#22987;&#21270;&#29992;&#25143;&#22534;&#20869;&#23384;&#31649;&#29702;&#32467;&#26500;
+4. &#35774;&#32622;&#40664;&#35748;&#20998;&#37197;&#30340;&#22534;&#20869;&#23384;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1775886" class="outline-4">
+<h4 id="org1775886"><span class="section-number-4">8.1.2</span> main heap初始化</h4>
+<div class="outline-text-4" id="text-8-1-2">
+<p>
+解析完内存参数后, 重新初始化默认的堆内存.
+</p>
+
+<ul class="org-ul">
+<li>标记 main thread 运行的numa node</li>
+<li>使用 main heap 作为其他numa node的堆内存</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1acf855" class="outline-3">
+<h3 id="org1acf855"><span class="section-number-3">8.2</span> vlib内存库</h3>
+<div class="outline-text-3" id="text-8-2">
+<div class="org-src-container">
+<pre class="src src-fundamental">vlib_physmem_init
+	linux_vfio_init
+
+
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0168c89" class="outline-3">
+<h3 id="org0168c89"><span class="section-number-3">8.3</span> buffer初始化</h3>
+</div>
+</div>
+
+<div id="outline-container-org710688b" class="outline-2">
+<h2 id="org710688b"><span class="section-number-2">9</span> BinaryAPI</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+vpp提供了一种二进制API的方案,可以允许各种各样的客户端对数据平面进行编程.
+</p>
+
+<p>
+通讯消息定义在 *.api的文件中, API的编译器位于 src/tools/vppapigen/ 目录下.
+</p>
+
+<p>
+下面是一个示例, 文件位置: src/vnet/interface.api, 定义了典型的请求/响应消息格式:
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">\brief Set flags on the interface</span>
+<span style="color: #8B8878; font-style: italic;">    @param client_index - opaque cookie to identify the sender</span>
+<span style="color: #8B8878; font-style: italic;">    @param context - sender context, to match reply w/ request</span>
+<span style="color: #8B8878; font-style: italic;">    @param sw_if_index - index of the interface to set flags on</span>
+<span style="color: #8B8878; font-style: italic;">    @param flags - interface_status flags</span>
+<span style="color: #8B8878; font-style: italic;">        (only IF_STATUS_API_FLAG_ADMIN_UP used in config)</span>
+<span style="color: #8B8878;">*/</span>
+autoreply <span style="color: #5FD7FF; font-weight: bold;">define</span> <span style="color: #FF8C00; font-weight: bold;">sw_interface_set_flags</span>
+{
+  <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">client_index</span>;
+  <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">context</span>;
+  <span style="color: #5FD7FF; font-weight: bold;">vl_api_interface_index_t</span> <span style="color: #FF8C00; font-weight: bold;">sw_if_index</span>;
+  <span style="color: #5FD7FF; font-weight: bold;">vl_api_if_status_flags_t</span> <span style="color: #FF8C00; font-weight: bold;">flags</span>;
+};
+</pre>
+</div>
+
+<p>
+在api编译器编译此文件后, 会在 build-root/install-vpp_debug-native/vpp/include/vnet/interface.api.h 文件中生成如下内容:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#ifdef</span> vl_msg_id
+<span style="color: #87D700; font-weight: bold;">vl_msg_id</span>(VL_API_SW_INTERFACE_SET_FLAGS, vl_api_sw_interface_set_flags_t_handler)
+<span style="color: #87D700; font-weight: bold;">vl_msg_id</span>(VL_API_SW_INTERFACE_SET_FLAGS_REPLY, vl_api_sw_interface_set_flags_reply_t_handler)
+
+<span style="color: #FF1493;">#endif</span>
+
+<span style="color: #FF1493;">#ifdef</span> vl_msg_name
+<span style="color: #87D700; font-weight: bold;">vl_msg_name</span>(<span style="color: #5FD7FF; font-weight: bold;">vl_api_sw_interface_set_flags_t</span>, 1)
+<span style="color: #87D700; font-weight: bold;">vl_msg_name</span>(<span style="color: #5FD7FF; font-weight: bold;">vl_api_sw_interface_set_flags_reply_t</span>, 1)
+
+<span style="color: #FF1493;">#endif</span>
+
+<span style="color: #FF1493;">#ifdef</span> vl_msg_name_crc_list
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">foreach_vl_msg_name_crc_interface</span> \
+_(VL_API_SW_INTERFACE_SET_FLAGS, sw_interface_set_flags, 6a2b491a) \
+_(VL_API_SW_INTERFACE_SET_FLAGS_REPLY, sw_interface_set_flags_reply, e8d4e804) \
+;
+<span style="color: #FF1493;">#endif</span>
+
+<span style="color: #FF1493;">#ifdef</span> vl_typedefs
+
+<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #FF1493;">__attribute__</span> ((packed)) <span style="color: #5FD7FF; font-weight: bold;">_vl_api_sw_interface_set_flags</span> {
+    <span style="color: #5FD7FF; font-weight: bold;">u16</span> <span style="color: #FF8C00; font-weight: bold;">_vl_msg_id</span>;
+    <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">client_index</span>;
+    <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">context</span>;
+    <span style="color: #5FD7FF; font-weight: bold;">vl_api_interface_index_t</span> <span style="color: #FF8C00; font-weight: bold;">sw_if_index</span>;
+    <span style="color: #5FD7FF; font-weight: bold;">vl_api_if_status_flags_t</span> <span style="color: #FF8C00; font-weight: bold;">flags</span>;
+} <span style="color: #5FD7FF; font-weight: bold;">vl_api_sw_interface_set_flags_t</span>;
+<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #FF1493;">__attribute__</span> ((packed)) <span style="color: #5FD7FF; font-weight: bold;">_vl_api_sw_interface_set_flags_reply</span> {
+    <span style="color: #5FD7FF; font-weight: bold;">u16</span> <span style="color: #FF8C00; font-weight: bold;">_vl_msg_id</span>;
+    <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">context</span>;
+    <span style="color: #5FD7FF; font-weight: bold;">i32</span> <span style="color: #FF8C00; font-weight: bold;">retval</span>;
+} <span style="color: #5FD7FF; font-weight: bold;">vl_api_sw_interface_set_flags_reply_t</span>;
+<span style="color: #FF1493;">#endif</span>
+</pre>
+</div>
+
+<p>
+要更改接口的管理状态, 二进制api客户端会发送 vl_api_sw_interface_set_flags_t到vpp, vpp会以 vl_api_sw_interface_set_flags_reply_t的消息格式进行响应.
+</p>
+
+<p>
+多层次的软件 传输类型 以及共享库实现了多种功能:
+</p>
+<ul class="org-ul">
+<li>API消息分配 跟踪 打印 重放</li>
+<li>通过全局的共享内存 成对/专用的共享内存和套接字的消息传输</li>
+<li>跨越非线程安全消息处理程序的工作线程的屏障同步</li>
+</ul>
+
+<p>
+消息处理例程对于向vpp递送消息或者从vpp获取消息的传输方式不关心,  可以同时使用多种API消息的传输类型.
+</p>
+</div>
+
+<div id="outline-container-orgd92c316" class="outline-3">
+<h3 id="orgd92c316"><span class="section-number-3">9.1</span> BAPI</h3>
+<div class="outline-text-3" id="text-9-1">
+</div>
+<div id="outline-container-org3806f38" class="outline-4">
+<h4 id="org3806f38"><span class="section-number-4">9.1.1</span> 消息分配</h4>
+<div class="outline-text-4" id="text-9-1-1">
+<p>
+二进制api消息总是顺序处理的, 当ring分配器可用时用它作为消息的分配器, 相对于传统的内存分配器来说,此方案非常快, 并且不会引起内存碎片. 参照 src/vlibmemory/memory_shared.c vl_api_msg_alloc_internal()
+</p>
+
+<p>
+无论采用何种传输方式, 二进制api消息始终遵循 msgbuf_t 头部:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Message header structure </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">msgbuf_</span>
+{
+  <span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> *<span style="color: #FF8C00; font-weight: bold;">q</span>; <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; message allocated in this shmem ring  </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">data_len</span>;                  <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; message length not including header  </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #5FD7FF; font-weight: bold;">u32</span> <span style="color: #FF8C00; font-weight: bold;">gc_mark_timestamp</span>;         <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; message garbage collector mark TS  </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #5FD7FF; font-weight: bold;">u8</span> <span style="color: #FF8C00; font-weight: bold;">data</span>[0];                    <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; actual message begins here  </span><span style="color: #8B8878;">*/</span>
+} <span style="color: #5FD7FF; font-weight: bold;">msgbuf_t</span>;
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #5FD7FF; font-weight: bold;">void</span>
+<span style="color: #87D700; font-weight: bold;">vl_msg_api_free</span> (<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">a</span>)
+{
+  <span style="color: #5FD7FF; font-weight: bold;">api_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">am</span> = vlibapi_get_main ();
+  vl_msg_api_free_w_region (am-&gt;vlib_rp, a);
+  {
+
+    <span style="color: #5FD7FF; font-weight: bold;">msgbuf_t</span> *<span style="color: #FF8C00; font-weight: bold;">rv</span>;
+    <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">oldheap</span>;
+
+    rv = (<span style="color: #5FD7FF; font-weight: bold;">msgbuf_t</span> *) (((<span style="color: #5FD7FF; font-weight: bold;">u8</span> *) a) - offsetof (msgbuf_t, data));
+
+    <span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878; font-style: italic;">     * &#30001;&#20110;&#21482;&#26377;&#19968;&#20010;&#20363;&#31243;/&#32447;&#31243;&#23545;&#28040;&#24687;&#32531;&#20914;&#21306;&#20855;&#26377;&#25511;&#21046;&#26435;.</span>
+<span style="color: #8B8878; font-style: italic;">     * &#27492;&#22788;&#20165;&#20165;&#28165;&#38500;rv-&gt;q&#23383;&#27573;&#26469;&#37322;&#25918;&#32531;&#20914;&#21306;</span>
+<span style="color: #8B8878; font-style: italic;">     </span><span style="color: #8B8878;">*/</span>
+    <span style="color: #FF1493;">if</span> (rv-&gt;q)
+    {
+      rv-&gt;q = 0;
+      rv-&gt;gc_mark_timestamp = 0;
+      VL_MSG_API_POISON (rv-&gt;data);
+      <span style="color: #FF1493;">return</span>;
+    }
+    <span style="color: #8B8878;">/*  </span><span style="color: #8B8878; font-style: italic;">&lt;snip&gt; </span><span style="color: #8B8878;">*/</span>
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf4b807f" class="outline-4">
+<h4 id="orgf4b807f"><span class="section-number-4">9.1.2</span> 消息跟踪和重放</h4>
+<div class="outline-text-4" id="text-9-1-2">
+<p>
+vpp可以捕获和重放相当数量的二进制API trace, 涉及数十万的api事物的系统级别的问题可以在一秒内重新运行.  可以添加一些条件点在特定条件下触发.
+</p>
+
+<p>
+有了二进制API的跟踪 重放 打印 系统级别的bug上报, 即使系统在经过300000次的api处理之后停止转发, 仍然可以可以离线分析定位问题.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org181df02" class="outline-4">
+<h4 id="org181df02"><span class="section-number-4">9.1.3</span> 客户端连接细节</h4>
+<div class="outline-text-4" id="text-9-1-3">
+<p>
+用c语言建立一个到VPP的二进制API连接:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">int</span>
+<span style="color: #87D700; font-weight: bold;">connect_to_vpe</span> (<span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">name</span>)
+{
+  <span style="color: #5FD7FF; font-weight: bold;">vat_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">vam</span> = &amp;vat_main;
+  <span style="color: #5FD7FF; font-weight: bold;">api_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">am</span> = vlibapi_get_main ();
+
+  <span style="color: #FF1493;">if</span> (vl_client_connect_to_vlib (<span style="color: #CDC673;">"/vpe-api"</span>, name, 32) &lt; 0)
+    <span style="color: #FF1493;">return</span> -1;
+
+  vam-&gt;vl_input_queue = am-&gt;shmem_hdr-&gt;vl_input_queue;
+  vam-&gt;my_client_index = am-&gt;my_client_index;
+
+  <span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+
+<p>
+vpp在发送二进制API消息到客户端时不可以阻塞, vpp端的消息处理例程必须在短时间内完成, 在发送异步消息时, 尽可能积极的读取API的rx ring.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org4336d3a" class="outline-4">
+<h4 id="org4336d3a"><span class="section-number-4">9.1.4</span> 二进制API消息接收线程</h4>
+<div class="outline-text-4" id="text-9-1-4">
+<p>
+调用 vl_client_connect_to_vlib 将会启动一个二进制api消息接收线程.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> *
+<span style="color: #87D700; font-weight: bold;">rx_thread_fn</span> (<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">arg</span>)
+{
+  <span style="color: #5FD7FF; font-weight: bold;">rx_thread_fn_arg_t</span> *<span style="color: #FF8C00; font-weight: bold;">a</span> = (<span style="color: #5FD7FF; font-weight: bold;">rx_thread_fn_arg_t</span> *) arg;
+  <span style="color: #5FD7FF; font-weight: bold;">memory_client_main_t</span> *<span style="color: #FF8C00; font-weight: bold;">mm</span>;
+  <span style="color: #5FD7FF; font-weight: bold;">svm_queue_t</span> *<span style="color: #FF8C00; font-weight: bold;">q</span>;
+
+  vlibapi_set_main (a-&gt;am);
+  vlibapi_set_memory_client_main (a-&gt;mm);
+  free (a);
+
+  mm = vlibapi_get_memory_client_main ();
+  q = vlibapi_get_main ()-&gt;vl_input_queue;
+
+  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">So we can make the rx thread terminate cleanly </span><span style="color: #8B8878;">*/</span>
+  <span style="color: #FF1493;">if</span> (setjmp (mm-&gt;rx_thread_jmpbuf) == 0)
+    {
+      mm-&gt;rx_thread_jmpbuf_valid = 1;
+      clib_mem_set_thread_index ();
+      <span style="color: #FF1493;">while</span> (1)
+	vl_msg_api_queue_handler (q);
+    }
+  pthread_exit (0);
+}
+</pre>
+</div>
+
+<p>
+要处理自己的二进制API消息队列, 请使用vl_client_connect_to_vlib_no_rx_pthread.
+vl_msg_api_queue_handler() 使用条件变量或者事件fd(eventfd)与vpp通信, 处理vpp-&gt;客户端的流量, 然后睡眠.当消息队列由空变为非空时, vpp使用条件变量广播此事件.
+</p>
+
+<p>
+VPP以很高的速度检查二进制API消息输入队列. vpp依据数据平面包处理的要求, 以可变的速度在协程的上下文调用消息处理程序.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org19a7bc6" class="outline-4">
+<h4 id="org19a7bc6"><span class="section-number-4">9.1.5</span> 客户端连接断开细节</h4>
+<div class="outline-text-4" id="text-9-1-5">
+<p>
+要和vpp断开链接, 需要调用 vl_client_disconnect_from_vlib, 如果客户端异常终止, 请调用此函数. vpp尽可能的释放资源, 但无法保证回收泄露的共享内存的资源.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgede99c8" class="outline-4">
+<h4 id="orgede99c8"><span class="section-number-4">9.1.6</span> 发送API MSG到VPP</h4>
+<div class="outline-text-4" id="text-9-1-6">
+<p>
+许多vpp的二进制API包含客户端的请求消息和简单的状态响应.
+下面是一个示例, 设置接口的管理状态:
+</p>
+<pre class="example" id="orgcb352b4">
+void
+set_flags (test_main_t * tm, int up_down)
+{
+  vl_api_sw_interface_set_flags_t *mp;
+
+  mp = vl_msg_api_alloc (sizeof (*mp));
+  clib_memset (mp, 0, sizeof (*mp));
+
+  mp-&gt;_vl_msg_id = ntohs (VL_API_SW_INTERFACE_SET_FLAGS);
+  mp-&gt;client_index = tm-&gt;my_client_index;
+  mp-&gt;context = 0xdeadbeef;
+  mp-&gt;sw_if_index = ntohl (5);
+  mp-&gt;admin_up_down = up_down;
+  vl_msg_api_send_shmem (tm-&gt;vl_input_queue, (u8 *) &amp; mp);
+}
+</pre>
+
+<ul class="org-ul">
+<li>vl_msg_api_alloc分配消息缓冲区</li>
+<li>分配的缓冲区并未初始化, 必须进行初始化</li>
+<li>设置_vl_msg_id成员(消息类型)</li>
+<li>客户端的library中的全局数据结构 api_main用于在与vpp通讯时跟踪句柄和指针.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org25ed05e" class="outline-4">
+<h4 id="org25ed05e"><span class="section-number-4">9.1.7</span> 从VPP接收API MSG</h4>
+<div class="outline-text-4" id="text-9-1-7">
+<p>
+除非使用了vl_client_connect_to_vlib_no_rx_pthread, 否则将在单独的线程中接收消息. 由应用程序来保证与接收线程的同步.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">vl_typedefs</span>             <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">define message structures </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;vpp/api/vpe_all_api_h.h&gt;</span>
+<span style="color: #FF1493;">#undef</span> vl_typedefs
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">declare message handlers for each api </span><span style="color: #8B8878;">*/</span>
+
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">vl_endianfun</span>            <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">define message structures </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;vpp/api/vpe_all_api_h.h&gt;</span>
+<span style="color: #FF1493;">#undef</span> vl_endianfun
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">instantiate all the print functions we know about </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">vl_print</span>(<span style="color: #FF8C00; font-weight: bold;">handle</span>, ...)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">vl_printfun</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;vpp/api/vpe_all_api_h.h&gt;</span>
+<span style="color: #FF1493;">#undef</span> vl_printfun
+
+
+
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">foreach_sock_msg</span>                                                \
+_(SESSION_ENABLE_DISABLE_REPLY, session_enable_disable_reply)           \
+_(APP_ATTACH_REPLY, app_attach_reply)                                   \
+_(APPLICATION_TLS_CERT_ADD_REPLY, application_tls_cert_add_reply)       \
+_(APPLICATION_TLS_KEY_ADD_REPLY, application_tls_key_add_reply)         \
+_(APP_WORKER_ADD_DEL_REPLY, app_worker_add_del_reply)                   \
+
+<span style="color: #5FD7FF; font-weight: bold;">void</span>
+<span style="color: #87D700; font-weight: bold;">vppcom_api_hookup</span> (<span style="color: #5FD7FF; font-weight: bold;">void</span>)
+{
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">_</span>(<span style="color: #FF8C00; font-weight: bold;">N</span>, <span style="color: #FF8C00; font-weight: bold;">n</span>)                                                 \
+    vl_msg_api_set_handlers(VL_API_##N, #n,                     \
+			   vl_api_##n##_t_handler,              \
+			   vl_noop_handler,                     \
+			   vl_api_##n##_t_endian,               \
+			   vl_api_##n##_t_print,                \
+			   <span style="color: #FF1493;">sizeof</span>(vl_api_##n##_t), 1);
+  foreach_sock_msg;
+<span style="color: #FF1493;">#undef</span> _
+}
+</pre>
+</div>
+
+<p>
+vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构中的一些并行向量(二级指针/二维数组)设置值.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org84b75c8" class="outline-3">
+<h3 id="org84b75c8"><span class="section-number-3">9.2</span> 共享内存通信</h3>
+</div>
+</div>
+
+<div id="outline-container-org236c7f4" class="outline-2">
+<h2 id="org236c7f4"><span class="section-number-2">10</span> 协议栈/LDP/VCL</h2>
+<div class="outline-text-2" id="text-10">
+</div>
+<div id="outline-container-org883fb2b" class="outline-3">
+<h3 id="org883fb2b"><span class="section-number-3">10.1</span> 数据结构</h3>
+<div class="outline-text-3" id="text-10-1">
+
+<div id="org791a596" class="figure">
+<p><img src="./dot/vpp/app_worker_st.png" alt="app_worker_st.png" />
+</p>
+</div>
+
+
+
+<div id="org2672633" class="figure">
+<p><img src="./dot/vpp/vls_vcl_st.png" alt="vls_vcl_st.png" />
+</p>
+</div>
+
+
+<div id="orga0bb363" class="figure">
+<p><img src="./dot/vpp/ldp_st.png" alt="ldp_st.png" />
+</p>
+</div>
+
+
+<div id="org1683e2e" class="figure">
+<p><img src="./dot/vpp/session_queue.png" alt="session_queue.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgce81889" class="outline-3">
+<h3 id="orgce81889"><span class="section-number-3">10.2</span> app注册逻辑</h3>
+<div class="outline-text-3" id="text-10-2">
+<p>
+在指定LD_PRELOAD环境变量后， ldp_constructor在main函数之前被执行，然后调用ldp_init进行初始化操作。
+</p>
+</div>
+
+<div id="outline-container-org831b1e0" class="outline-4">
+<h4 id="org831b1e0"><span class="section-number-4">10.2.1</span> ldp_constructor</h4>
+<div class="outline-text-4" id="text-10-2-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">ldp_constructor
+      ldp_init
+	    vls_app_create
+		    vppcom_app_create
+			    vppcom_cfg //&#26681;&#25454;vcl&#37197;&#32622;&#25991;&#20214;&#21021;&#22987;&#21270;vcl&#37197;&#32622;
+			    fifo_segment_main_init
+			    atexit(vppcom_app_exit)
+			    vcl_elog_init
+			    vcl_worker_alloc_and_init //&#20998;&#37197;vcl_worker_t &#24182;&#21021;&#22987;&#21270;
+			    vcl_api_attach //&#21644;VPP&#20851;&#32852;
+		    pthread_affork(vls_app_pre_fork, vls_app_fork_parent_handler&#65292;vls_app_fork_child_handler)
+	    ldp_alloc_workers
+	    <span style="color: #CDC673;">"&#33719;&#21462;&#29615;&#22659;&#21464;&#37327;&#37197;&#32622;&#30456;&#20851;"</span>
+</pre>
+</div>
+
+
+<div id="org80d8560" class="figure">
+<p><img src="./plantuml/vpp/ldp_constructor.png" alt="ldp_constructor.png" />
+</p>
+</div>
+
+<p>
+初始化相关的环境变量：
+</p>
+<dl class="org-dl">
+<dt>LDP_ENV_SID_BIT</dt><dd>设置可用linux的fd数量</dd>
+<dt>LDP_ENV_DEBUG</dt><dd>设置日志级别</dd>
+<dt>LDP_ENV_APP_NAME</dt><dd>app名称</dd>
+<dt>LDP_ENV_TLS_TRANS</dt><dd>使用TLS</dd>
+</dl>
+<dl class="org-dl">
+<dt>vcl_worker_alloc_and_init</dt><dd>此函数主要分配vcl_worker_t结构，判断是否使用epoll事件来通知消息，初始化 <code>mqs_epfd</code> (vcl.conf中的use-mq-eventfd)，初始化mq_msg_vector（消息队列的缓冲区）长度和unhandled_evts_vector（存储未处理的事件缓冲区）长度。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-orgf26c4a4" class="outline-4">
+<h4 id="orgf26c4a4"><span class="section-number-4">10.2.2</span> vcl_api_attach</h4>
+<div class="outline-text-4" id="text-10-2-2">
+<dl class="org-dl">
+<dt>vcl_sapi_attach</dt><dd>使用socket连接到vpp</dd>
+</dl>
+
+<div id="orgfdf79c9" class="figure">
+<p><img src="plantuml/vpp/sapi-attach.png" alt="sapi-attach.png" />
+</p>
+</div>
+
+<dl class="org-dl">
+<dt>vcl_bapi_attach</dt><dd></dd>
+</dl>
+
+
+<div id="org50c3109" class="figure">
+<p><img src="plantuml/vpp/bapi-attach.png" alt="bapi-attach.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgaa21438" class="outline-3">
+<h3 id="orgaa21438"><span class="section-number-3">10.3</span> session queue相关的node</h3>
+</div>
+<div id="outline-container-org3c30342" class="outline-3">
+<h3 id="org3c30342"><span class="section-number-3">10.4</span> socket过程</h3>
+<div class="outline-text-3" id="text-10-4">
+
+<div id="org72eb75a" class="figure">
+<p><img src="./plantuml/vpp/socket.png" alt="socket.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org753a489" class="outline-3">
+<h3 id="org753a489"><span class="section-number-3">10.5</span> connect过程</h3>
+<div class="outline-text-3" id="text-10-5">
+
+<div id="org4f54f1e" class="figure">
+<p><img src="./plantuml/vpp/connect.png" alt="connect.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf8a3d4b" class="outline-3">
+<h3 id="orgf8a3d4b"><span class="section-number-3">10.6</span> listen-accept</h3>
+</div>
+<div id="outline-container-orge460adb" class="outline-3">
+<h3 id="orge460adb"><span class="section-number-3">10.7</span> 发送数据</h3>
+</div>
+<div id="outline-container-orge408295" class="outline-3">
+<h3 id="orge408295"><span class="section-number-3">10.8</span> 接受数据</h3>
+</div>
+<div id="outline-container-org8b37fd6" class="outline-3">
+<h3 id="org8b37fd6"><span class="section-number-3">10.9</span> 协议栈</h3>
+<div class="outline-text-3" id="text-10-9">
+</div>
+<div id="outline-container-org7779cff" class="outline-4">
+<h4 id="org7779cff"><span class="section-number-4">10.9.1</span> 连接被动关闭</h4>
+<div class="outline-text-4" id="text-10-9-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">tcp46-established-inline
+	tcp_rcv_fin
+	tcp_handle_disconnects
+		session_transport_closing_notify
+
+vpp   attach handle
+app   attach reply handle
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0ea1718" class="outline-3">
+<h3 id="org0ea1718"><span class="section-number-3">10.10</span> VCL</h3>
+<div class="outline-text-3" id="text-10-10">
+<ul class="org-ul">
+<li>vls_create  ==&gt; socket</li>
+<li>vls_close</li>
+<li>vls_listen</li>
+<li>vls_connnect</li>
+<li>vls_accept</li>
+<li>vls_read</li>
+<li>vls_recvfrom</li>
+<li>vls_write</li>
+<li>vls_wirte_msg</li>
+<li>vls_sendto</li>
+<li>vls_attr</li>
+<li>vls_epoll_create</li>
+<li>vls_epoll_ctl</li>
+<li>vls_epoll_wait</li>
+<li>vls_selsct</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org71a8b67" class="outline-3">
+<h3 id="org71a8b67"><span class="section-number-3">10.11</span> 通信</h3>
+<div class="outline-text-3" id="text-10-11">
+<p>
+基于共享内存的单向队列
+</p>
+
+<p>
+ssvm_client_init_memfd
+fifo_segment_attach
+vcl_segnemt_attach
+vcl_session_app_add_segment_handler
+segment_manager_alloc_session_fifos
+app_worker_add_segment_notify
+app_worker_alloc_session_fifos
+vl_api_send_fd_msg
+vl_sock_api_send_fd_msg
+session_send_fds
+mq_send_add_segment_cb
+app_worker_add_segment_notify
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">session_cb_vft_t</span> <span style="color: #FF8C00; font-weight: bold;">session_mq_cb_vft</span> = {
+  .session_accept_callback = mq_send_session_accepted_cb,
+  .session_disconnect_callback = mq_send_session_disconnected_cb,
+  .session_connected_callback = mq_send_session_connected_cb,
+  .session_reset_callback = mq_send_session_reset_cb,
+  .session_migrate_callback = mq_send_session_migrate_cb,
+  .session_cleanup_callback = mq_send_session_cleanup_cb,
+  .add_segment_callback = mq_send_add_segment_cb,
+  .del_segment_callback = mq_send_del_segment_cb,
+};
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">init_fn</span> <span style="color: #FF8C00; font-weight: bold;">server_init_fns</span>[SSVM_N_SEGMENT_TYPES] =
+  { ssvm_server_init_shm, ssvm_server_init_memfd, ssvm_server_init_private };
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">init_fn</span> <span style="color: #FF8C00; font-weight: bold;">client_init_fns</span>[SSVM_N_SEGMENT_TYPES] =
+  { ssvm_client_init_shm, ssvm_client_init_memfd, ssvm_client_init_private };
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">delete_fn</span> <span style="color: #FF8C00; font-weight: bold;">delete_fns</span>[SSVM_N_SEGMENT_TYPES] =
+  { ssvm_delete_shm, ssvm_delete_memfd, ssvm_delete_private };
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgfb53d51" class="outline-4">
+<h4 id="orgfb53d51"><span class="section-number-4">10.11.1</span> eventfd</h4>
+<div class="outline-text-4" id="text-10-11-1">
+<p>
+svm_msg_q_alloc_producer_eventfd
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3b618b7" class="outline-4">
+<h4 id="org3b618b7"><span class="section-number-4">10.11.2</span> 条件变量</h4>
+<div class="outline-text-4" id="text-10-11-2">
+<p>
+pthread_cond_broadcast(&amp;q.condvar)
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgb43776f" class="outline-4">
+<h4 id="orgb43776f"><span class="section-number-4">10.11.3</span> 通知函数</h4>
+<div class="outline-text-4" id="text-10-11-3">
+<p>
+svm_queue_send_singnal_inline
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd5abd7d" class="outline-2">
+<h2 id="orgd5abd7d"><span class="section-number-2">11</span> NODE功能梳理</h2>
+<div class="outline-text-2" id="text-11">
+</div>
+<div id="outline-container-org77447e8" class="outline-3">
+<h3 id="org77447e8"><span class="section-number-3">11.1</span> 收包类的node</h3>
+<div class="outline-text-3" id="text-11-1">
+</div>
+<div id="outline-container-org52157dd" class="outline-4">
+<h4 id="org52157dd"><span class="section-number-4">11.1.1</span> dpdk-input</h4>
+</div>
+
+
+<div id="outline-container-org5513c05" class="outline-4">
+<h4 id="org5513c05"><span class="section-number-4">11.1.2</span> tuntap-input</h4>
+</div>
+</div>
+
+<div id="outline-container-org3daf867" class="outline-3">
+<h3 id="org3daf867"><span class="section-number-3">11.2</span> flow-report-process</h3>
+<div class="outline-text-3" id="text-11-2">
+<p>
+完成流量上报功能, 可以设置接受流量信息的ip 端口, 发送流量信息的ip
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf5598cd" class="outline-3">
+<h3 id="orgf5598cd"><span class="section-number-3">11.3</span> ip4-input</h3>
+</div>
+
+
+<div id="outline-container-org2a82847" class="outline-3">
+<h3 id="org2a82847"><span class="section-number-3">11.4</span> dpdk-input</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-24 Wed 12:36</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

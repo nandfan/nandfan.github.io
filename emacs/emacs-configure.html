@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-22 Mon 12:44 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emacs 配置笔记</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Emacs 配置笔记</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org0f2bed5">1. org模式</a>
+<ul>
+<li><a href="#org192700c">1.1. 基础配置</a></li>
+<li><a href="#org027a1aa">1.2. org发布博客配置</a>
+<ul>
+<li><a href="#org765fa67">1.2.1. 基础</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org3f29f5a">2. 邮件配置</a>
+<ul>
+<li><a href="#org70d6fc0">2.1. 接收邮件(offlineimap)</a>
+<ul>
+<li><a href="#orgc5d24b2">2.1.1. 安装</a></li>
+<li><a href="#org64ea00b">2.1.2. 配置</a></li>
+<li><a href="#org06e65b5">2.1.3. 同步邮件</a></li>
+</ul>
+</li>
+<li><a href="#org1bbf1c7">2.2. mu/mu4e</a>
+<ul>
+<li><a href="#org73968a5">2.2.1. 安装</a></li>
+<li><a href="#org32eac82">2.2.2. 配置</a></li>
+<li><a href="#org1eb1fb6">2.2.3. 建立索引</a></li>
+<li><a href="#org6eace42">2.2.4. 快捷键绑定</a></li>
+</ul>
+</li>
+<li><a href="#org322f2d7">2.3. gnupg</a></li>
+<li><a href="#org89428a0">2.4. 参考链接</a></li>
+</ul>
+</li>
+<li><a href="#org735cce5">3. emacs画图</a></li>
+<li><a href="#orgb08124d">4. 技巧</a></li>
+<li><a href="#org346c14c">5. 问题记录</a>
+<ul>
+<li><a href="#org7ddc3ad">5.1. no public key</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0f2bed5" class="outline-2">
+<h2 id="org0f2bed5"><span class="section-number-2">1</span> org模式</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org192700c" class="outline-3">
+<h3 id="org192700c"><span class="section-number-3">1.1</span> 基础配置</h3>
+</div>
+
+<div id="outline-container-org027a1aa" class="outline-3">
+<h3 id="org027a1aa"><span class="section-number-3">1.2</span> org发布博客配置</h3>
+<div class="outline-text-3" id="text-1-2">
+</div>
+<div id="outline-container-org765fa67" class="outline-4">
+<h4 id="org765fa67"><span class="section-number-4">1.2.1</span> 基础</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<div class="org-src-container">
+<pre class="src src-elisp">
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3f29f5a" class="outline-2">
+<h2 id="org3f29f5a"><span class="section-number-2">2</span> 邮件配置</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org70d6fc0" class="outline-3">
+<h3 id="org70d6fc0"><span class="section-number-3">2.1</span> 接收邮件(offlineimap)</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+offlineimap 是一个python程序, 用来同步IMAP服务器的邮件, 不支持POP3协议.
+</p>
+
+<p>
+通过offlineimap将邮件下载到本地, 再通过mu/mu4e进行管理
+</p>
+</div>
+
+<div id="outline-container-orgc5d24b2" class="outline-4">
+<h4 id="orgc5d24b2"><span class="section-number-4">2.1.1</span> 安装</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+debian/ubuntu 通过apt安装
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo apt install offlineimap
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org64ea00b" class="outline-4">
+<h4 id="org64ea00b"><span class="section-number-4">2.1.2</span> 配置</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+offlineimap默认的配置文件在 <code>~/.offlineimaprc</code> , 首先创建 .offlineimaprc 文件.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ touch ~/.offlinemaprc
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">[general]
+accounts = qssec
+fsync = False
+
+[Account 163]
+localrepository = 163-Local
+remoterepository = 163-Remote
+# &#37197;&#32622;&#20026;True &#20197;&#25903;&#25345;&#20013;&#25991;&#25991;&#20214;&#22841;
+utf8foldernames = True
+
+[Repository qssec-Local]
+type = Maildir
+# &#37038;&#20214;&#20445;&#23384;&#30340;&#36335;&#24452;
+localfolders = ~/Workspace/mails/
+nametrans = lambda foldername: foldername.decode('imap4-utf-7').encode('utf-8')
+
+[Repository qssec-Remote]
+sslcacertfile=/etc/ssl/certs/ca-certificates.crt
+maxconnections = 2
+type = IMAP
+auth = on
+ssl = yes
+remotehost = imap.163.com
+
+# &#22635;&#20889;&#37038;&#31665;&#22320;&#22336;
+remoteuser = YourEmailXXX@163.com
+remoteport = 993
+
+#&#22635;&#20889;&#23494;&#30721;&#65292;&#19981;&#26159;&#30331;&#24405;&#23494;&#30721;&#65292;&#32780;&#26159;&#25480;&#26435;&#30721;, &#36890;&#36807;&#30331;&#38470;&#37038;&#31665;&#20027;&#39029;,&#29983;&#25104;&#25480;&#26435;&#30721;
+remotepass = XXXXXXXXXXXXXXXXXXXXX
+
+nametrans = lambda folder: folder.decode('imap4-utf-7').encode('utf-8')
+
+folderfilter = lambda folder: folder in ['INBOX']
+keepalive = 60
+holdconnectionopen = yes
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org06e65b5" class="outline-4">
+<h4 id="org06e65b5"><span class="section-number-4">2.1.3</span> 同步邮件</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<div class="org-src-container">
+<pre class="src src-sh">$ offlineimap
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1bbf1c7" class="outline-3">
+<h3 id="org1bbf1c7"><span class="section-number-3">2.2</span> mu/mu4e</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+mu4e是基于emacs的邮件客户端, 基于mu进行索引和搜索.
+</p>
+</div>
+
+<div id="outline-container-org73968a5" class="outline-4">
+<h4 id="org73968a5"><span class="section-number-4">2.2.1</span> 安装</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo apt install mu4e
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org32eac82" class="outline-4">
+<h4 id="org32eac82"><span class="section-number-4">2.2.2</span> 配置</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<div class="org-src-container">
+<pre class="src src-elisp"><span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#26681;&#25454;&#24744;&#33258;&#24049;&#30340; mu4e &#23433;&#35013;&#36335;&#24452;&#26367;&#25442; load-path, debian 10 &#20026;&#20197;&#19979;&#36335;&#24452;</span>
+(add-to-list 'load-path <span style="color: #CDC673;">"/usr/share/emacs/site-lisp/mu4e"</span>)
+
+(<span style="color: #FF1493;">require</span> '<span style="color: #AF87FF;">mu4e</span>)
+
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#37197;&#32622; mu4e &#20316;&#20026; MUA &#20197;&#21450;&#22522;&#26412;&#30340;&#37038;&#20214;&#20449;&#24687;&#37197;&#32622;</span>
+(<span style="color: #FF1493;">setq</span> mail-user-agent 'mu4e-user-agent)
+(<span style="color: #FF1493;">setq</span> user-full-name <span style="color: #CDC673;">"YourName"</span>)
+(<span style="color: #FF1493;">setq</span> user-mail-address <span style="color: #CDC673;">"YourEmailXXX@163.com"</span>)
+
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#37197;&#32622;&#20351;&#29992; offlieimap &#25910;&#21462;&#37038;&#20214;</span>
+(<span style="color: #FF1493;">setq</span> mu4e-get-mail-command <span style="color: #CDC673;">"offlineimap"</span>   <span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992; offlineimap &#33719;&#21462;&#37038;&#20214;</span>
+      mu4e-update-interval 120)             <span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#27599;&#20004;&#20998;&#38047;&#26816;&#26597;&#37038;&#20214;&#24182;&#26356;&#26032;&#32034;&#24341; (&#37197;&#32622;&#21333;&#20301;&#65306;&#31186;)</span>
+
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#37197;&#32622;&#40664;&#35748; smtp &#26381;&#21153;&#20197;&#20351;&#29992; smtpmail mode &#21457;&#36865; Email</span>
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">SMTP &#26381;&#21153;&#38656;&#35201;&#35748;&#35777;&#65292;&#25105;&#37319;&#29992; ~/.authinfo.gpg &#30340;&#26041;&#24335;&#25552;&#20379;&#35748;&#35777;&#20449;&#24687;&#12290;</span>
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#26377;&#20851; SMTP &#35748;&#35777;, &#21442;&#38405; https://www.emacswiki.org/emacs/SmtpAuth</span>
+(<span style="color: #FF1493;">setq</span> send-mail-function 'smtpmail-send-it
+      message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server  <span style="color: #CDC673;">"smtp.163.com"</span>
+      smtpmail-smtp-service <span style="color: #CDC673;">"465"</span>
+      <span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">smtpmail-auth-credentials (())</span>
+      smtpmail-auth-credentials <span style="color: #CDC673;">"~/.authinfo.gpg"</span>
+      smtpmail-stream-type  'starttls)
+
+(<span style="color: #FF1493;">setq</span> mu4e-maildir <span style="color: #CDC673;">"~/Workspace/mails"</span>
+      <span style="color: #8B8878;">;;</span><span style="color: #8B8878; font-style: italic;">mu4e-trash-folder "/Trash"</span>
+      <span style="color: #8B8878;">;;</span><span style="color: #8B8878; font-style: italic;">mu4e-refile-folder "/Archive"</span>
+      <span style="color: #8B8878;">;;</span><span style="color: #8B8878; font-style: italic;">mu4e-sent-folder "/Sent"</span>
+      <span style="color: #8B8878;">;;</span><span style="color: #8B8878; font-style: italic;">mu4e-drafts-folder "/Drafts"</span>
+	      mu4e-compose-signature-auto-include nil
+      mu4e-view-show-images t
+      mu4e-view-show-addresses t)
+
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">&#37197;&#32622;&#26700;&#38754;&#36890;&#30693;</span>
+(<span style="color: #FF1493;">with-eval-after-load</span> 'mu4e-alert
+  <span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">Enable Desktop notifications</span>
+  (mu4e-alert-set-default-style 'notifier)) <span style="color: #8B8878;">; </span><span style="color: #8B8878; font-style: italic;">For linux</span>
+
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">Bookmarks &#20801;&#35768;&#32467;&#21512; b (&#20808;&#23548;&#24555;&#25463;&#38190;) &#33258;&#23450;&#20041;&#24555;&#25463;&#38190;&#20197;&#24555;&#36895;&#25628;&#32034; Email</span>
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">configure the bookmarks.</span>
+(<span style="color: #FF1493;">setq</span> mu4e-bookmarks
+      '( (<span style="color: #CDC673;">"flag:unread AND NOT flag:trashed"</span>                    <span style="color: #CDC673;">"Unread messages"</span>                  ?u)
+	 (<span style="color: #CDC673;">"date:today..now"</span>                                     <span style="color: #CDC673;">"Today's messages"</span>                 ?t)
+	 (<span style="color: #CDC673;">"date:7d..now"</span>                                        <span style="color: #CDC673;">"Last 7 days"</span>                      ?w)
+	 (<span style="color: #CDC673;">"date:1d..now AND NOT list:emacs-orgmode.gnu.org"</span>     <span style="color: #CDC673;">"Last 1 days"</span>                      ?o)
+	 (<span style="color: #CDC673;">"date:1d..now AND list:emacs-orgmode.gnu.org"</span>         <span style="color: #CDC673;">"Last 1 days (org mode)"</span>           ?m)
+	 (<span style="color: #CDC673;">"maildir:/sent"</span>                                       <span style="color: #CDC673;">"sent"</span>                             ?s)
+	 (<span style="color: #CDC673;">"maildir:/drafts"</span>                                     <span style="color: #CDC673;">"drafts"</span>                           ?d)
+	 (<span style="color: #CDC673;">"mime:image/*"</span>                                        <span style="color: #CDC673;">"Messages with images"</span>             ?p)))
+
+<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">Show mu4e maildirs summary in mu4e-main-view</span>
+(<span style="color: #FF1493;">use-package</span> <span style="color: #AF87FF;">mu4e-maildirs-extension</span>
+  <span style="color: #FF1493;">:init</span>
+  (mu4e-maildirs-extension)
+  )
+
+(<span style="color: #FF1493;">use-package</span> <span style="color: #AF87FF;">mu4e-views</span>)
+(<span style="color: #FF1493;">use-package</span> <span style="color: #AF87FF;">mu4e-overview</span>)
+
+(<span style="color: #FF1493;">provide</span> '<span style="color: #AF87FF;">init-mu4e</span>)
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1eb1fb6" class="outline-4">
+<h4 id="org1eb1fb6"><span class="section-number-4">2.2.3</span> 建立索引</h4>
+<div class="outline-text-4" id="text-2-2-3">
+<div class="org-src-container">
+<pre class="src src-sh">$ mu index --rebuild --maildir=~/Workspace/mails <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#30446;&#24405;&#35201;&#26681;&#25454;&#33258;&#24049;&#30446;&#24405;&#20462;&#25913;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6eace42" class="outline-4">
+<h4 id="org6eace42"><span class="section-number-4">2.2.4</span> 快捷键绑定</h4>
+<div class="outline-text-4" id="text-2-2-4">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">快捷键</th>
+<th scope="col" class="org-left">命令</th>
+<th scope="col" class="org-left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">R</td>
+<td class="org-left">回复邮件 (Reply)</td>
+<td class="org-left">用于在 headers / message view 执行回复邮件动作</td>
+</tr>
+
+<tr>
+<td class="org-left">F</td>
+<td class="org-left">转发邮件 (Forward)</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">C</td>
+<td class="org-left">写邮件 (Compose)</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">E</td>
+<td class="org-left">编辑邮件 (Edit)</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">s</td>
+<td class="org-left">搜索邮件 (search)</td>
+<td class="org-left">执行 mu find 命令搜索邮件</td>
+</tr>
+
+<tr>
+<td class="org-left">j</td>
+<td class="org-left">跳转到 maildir (jump-to-maildir)</td>
+<td class="org-left">在 maildir 之间跳转</td>
+</tr>
+
+<tr>
+<td class="org-left">b</td>
+<td class="org-left">书签搜索 (bookmark-search)</td>
+<td class="org-left">为经常使用的搜索配置书签，以快速执行邮件搜索动作</td>
+</tr>
+
+<tr>
+<td class="org-left">B</td>
+<td class="org-left">修改书签索引 (edit bookmark-search)</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">.</td>
+<td class="org-left">切换显示原始消息视图 (raw view (toggle))</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">q</td>
+<td class="org-left">退出</td>
+<td class="org-left">可作用于 main / headers / messages / raw 等视图用于退出当前视图</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org322f2d7" class="outline-3">
+<h3 id="org322f2d7"><span class="section-number-3">2.3</span> gnupg</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+生成gpg密钥
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ gpg --full-generate-key
+$ gpg --list-key
+$ gpg --list-secret-keys
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org89428a0" class="outline-3">
+<h3 id="org89428a0"><span class="section-number-3">2.4</span> 参考链接</h3>
+<div class="outline-text-3" id="text-2-4">
+<ul class="org-ul">
+<li><a href="https://junahan.netlify.app/post/emacs-mu4e/">使用 Emacs Mu4e 作为邮件客户端</a></li>
+<li><a href="https://www.dazhuanlan.com/2019/12/30/5e09cf997638b/">在 emacs 中用 mu4e 来收邮件</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org735cce5" class="outline-2">
+<h2 id="org735cce5"><span class="section-number-2">3</span> emacs画图</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+语言设置
+设置 org-babel-load-languages 变量 增加允许语言设置, ditaa 为 t
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp">(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(<span style="color: #8B8878;">;; </span><span style="color: #8B8878; font-style: italic;">other Babel languages</span>
+   (ditaa . t)
+   (plantuml . t)
+   (dot . t)
+   (xxx . t)
+   ))
+<span style="color: #8B8878;">;;</span><span style="color: #8B8878; font-style: italic;">&#29983;&#25104;&#22270;&#20687;&#26102;&#19981;&#20104;&#25552;&#31034;</span>
+
+(<span style="color: #FF1493;">setq</span> org-confirm-babel-evaluate nil)
+
+(<span style="color: #FF1493;">setq</span> org-ditta-jar-path (expand-file-name <span style="color: #CDC673;">"~/.emacs.d/elpa/contrib/scripts/ditta.jar"</span>))
+(<span style="color: #FF1493;">setq</span> org-plantuml-jar-path (expand-file-name <span style="color: #CDC673;">"~/.emacs.d/elpa/contrib/scripts/plantuml.jar"</span>))
+</pre>
+</div>
+
+<p>
+这样设置后,可以按照以下方式调用:
+</p>
+
+<p>
+#+BEGIN_SRC ditaa :file some_filename.png :cmdline -r -s 0.8
+#+BEGIN_SRC plantuml :file export-file-name :cmdline -charset UTF-8
+如果不进行以上设置,通过begin_src将不会成功,需要按照以下方式调用:
+</p>
+
+<p>
+#+begin_ditaa test.png -r -s 0.8
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb08124d" class="outline-2">
+<h2 id="orgb08124d"><span class="section-number-2">4</span> 技巧</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>替换时输入换行
+<code>C-q C-j</code></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org346c14c" class="outline-2">
+<h2 id="org346c14c"><span class="section-number-2">5</span> 问题记录</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org7ddc3ad" class="outline-3">
+<h3 id="org7ddc3ad"><span class="section-number-3">5.1</span> no public key</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+gpg &#x2013;homedir ~/.emacs.d/elpa/gnupg &#x2013;keyserver hkp://keys.gnupg.net &#x2013;recv-keys 066DAFCB81E42C40
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

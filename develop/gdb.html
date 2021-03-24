@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-03-23 Tue 09:14 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>gdb</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">gdb</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org77a8c1c">1. Linux Coredump文件</a>
+<ul>
+<li><a href="#org3e3aeaa">1.1. coredump文件命名</a></li>
+</ul>
+</li>
+<li><a href="#org9540e7f">2. gdb</a>
+<ul>
+<li><a href="#org752e673">2.1. 指定从文件读取gdb命令</a></li>
+<li><a href="#org117f822">2.2. 调试在main函数之前运行的函数</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org77a8c1c" class="outline-2">
+<h2 id="org77a8c1c"><span class="section-number-2">1</span> Linux Coredump文件</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+coredump文件时进程崩溃时产生的磁盘文件，包含了进程崩溃时内存的映像，该文件可以用调试器（例如gdb）来调试，用于查看进程崩溃时的状态信息。
+</p>
+</div>
+
+<div id="outline-container-org3e3aeaa" class="outline-3">
+<h3 id="org3e3aeaa"><span class="section-number-3">1.1</span> coredump文件命名</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+默认情况下coredump文件名为core，查询coredump文件路径：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat /proc/sys/kernel/core_pattern</span>
+core
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">sysctl kernel.core_pattern</span>
+kernel.core_partern = core
+</pre>
+</div>
+
+<p>
+coredump文件模板配置：
+</p>
+
+<dl class="org-dl">
+<dt><code>%%</code></dt><dd>单个%字符</dd>
+<dt><code>%c</code></dt><dd>进程崩溃时的文件大小软限制</dd>
+<dt><code>%e</code></dt><dd>进程或者线程的comm值，通常是可执行文件的文件名（不包括路径，最长为15个字符），该值可能被修改（/proc/pid/comm   /proc/pid/task/tid/comm）</dd>
+<dt><code>%E</code></dt><dd>可执行文件的路径名</dd>
+<dt><code>%g</code></dt><dd>转储进程的GID</dd>
+<dt><code>%h</code></dt><dd>主机名（hostname）</dd>
+<dt><code>%i</code></dt><dd>触发核心转储的TID(线程所在PID命名空间内部）</dd>
+<dt><code>%I</code></dt><dd>触发核心转储的TID(初始PID命名空间）</dd>
+<dt><code>%p</code></dt><dd>进程的PID（进程所在PID命名空间）</dd>
+<dt><code>%P</code></dt><dd>进程的PID（初始PID命名空间）</dd>
+<dt><code>%s</code></dt><dd>引发转储的信号</dd>
+<dt><code>%t</code></dt><dd>转储的时间戳</dd>
+<dt><code>%u</code></dt><dd>进程的UID</dd>
+</dl>
+
+<p>
+配置coredump文件模板示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">echo "/var/log/core_%e_%p" &gt; /proc/sys/kernel/core_pattern</span>
+&#25110;&#32773;&#20351;&#29992;
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">sysctl -w kernel.core_patterm=/var/log/core_%e_%p</span>
+</pre>
+</div>
+
+<p>
+要产生core文件，还需要设置RLIMIT_CORE限制，如果为0则不产生core文件。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ulimit -c</span>
+0
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ulimit -c core&#25991;&#20214;&#22823;&#23567;&#38480;&#21046;      //&#35774;&#32622;core&#25991;&#20214;&#22823;&#23567;&#38480;&#21046;</span>
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ulimit -c unlimited             //&#19981;&#38480;&#21046;core&#25991;&#20214;&#22823;&#23567;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9540e7f" class="outline-2">
+<h2 id="org9540e7f"><span class="section-number-2">2</span> gdb</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org752e673" class="outline-3">
+<h3 id="org752e673"><span class="section-number-3">2.1</span> 指定从文件读取gdb命令</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">gdb --command=gdb-command-file -p pid</span>
+</pre>
+</div>
+
+<p>
+&#x2013;command可以用来从文件读取gdb配置命令，在文件中配置断点或者其他调试信息。
+以下是一个快速调试nginx进程的示例:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">gdb nginx --command=nginx.gdb</span>
+
+<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat nginx.gdb</span>
+<span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">set enviroment NAME=VALUE&#21487;&#20197;&#29992;&#26469;&#35774;&#32622;&#36827;&#31243;&#30340;&#29615;&#22659;&#21464;&#37327;</span>
+<span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">set arg &#21487;&#20197;&#29992;&#26469;&#35774;&#32622;&#36827;&#31243;&#21551;&#21160;&#21442;&#25968;</span>
+<span style="color: #FF1493;">set</span> follow-fork-mode child  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#35774;&#32622;&#36319;&#36394;&#23376;&#36827;&#31243;</span>
+
+b ngx_event_pipe_write_to_downstream   <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#26029;&#28857;</span>
+b ngx_http_upstream_process_downstream
+b ngx_http_upstream_process_upstream
+</pre>
+</div>
+
+<p>
+快速调试进程的脚本，（以下用nginx worker进程示例）：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">! /bin/</span><span style="color: #FF1493;">bash</span>
+
+<span style="color: #FF8C00; font-weight: bold;">ngx_pid</span>=<span style="color: #AF87FF; font-weight: bold;">`ps axjf | grep "nginx: worker process" | grep -m 1 -v "grep" | awk '{ print $2 }'`</span>
+gdb -p $<span style="color: #FF8C00; font-weight: bold;">ngx_pid</span> --command=nginx.gdb
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org117f822" class="outline-3">
+<h3 id="org117f822"><span class="section-number-3">2.2</span> 调试在main函数之前运行的函数</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-03-23 Tue 09:14</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
