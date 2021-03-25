@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2021-03-25 Thu 09:59 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DPDK</title>
@@ -227,6 +227,17 @@
 <li><a href="#orgd0e097a">1. 简介</a></li>
 <li><a href="#org268d808">2. 编译</a></li>
 <li><a href="#org67f4403">3. 数据结构</a></li>
+<li><a href="#org464c5c5">4. 初始化</a>
+<ul>
+<li><a href="#org0ee8bec">4.1. 配置初始化 rte_config_init</a></li>
+<li><a href="#org63be849">4.2. 内存初始化 rte_eal_memory_init</a>
+<ul>
+<li><a href="#orgab17e47">4.2.1. 内存结构关系</a></li>
+<li><a href="#org84b31ea">4.2.2. 初始化流程</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -315,11 +326,104 @@ $ echo 64 &gt; /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_huge
 </p>
 </div>
 </div>
+
+<div id="outline-container-org464c5c5" class="outline-2">
+<h2 id="org464c5c5"><span class="section-number-2">4</span> 初始化</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org0ee8bec" class="outline-3">
+<h3 id="org0ee8bec"><span class="section-number-3">4.1</span> 配置初始化 rte_config_init</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+配置结构如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c">  <span style="color: #CDC673; font-weight: bold; font-style: italic;">/**</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;">   * The global RTE configuration structure.</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;">   */</span>
+  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">rte_config</span> {
+	  <span style="color: #5FD7FF; font-weight: bold;">uint32_t</span> <span style="color: #FF8C00; font-weight: bold;">main_lcore</span>;         <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; Id of the main lcore </span><span style="color: #8B8878;">*/</span>
+	  <span style="color: #5FD7FF; font-weight: bold;">uint32_t</span> <span style="color: #FF8C00; font-weight: bold;">lcore_count</span>;        <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; Number of available logical cores. </span><span style="color: #8B8878;">*/</span>
+	  <span style="color: #5FD7FF; font-weight: bold;">uint32_t</span> <span style="color: #FF8C00; font-weight: bold;">numa_node_count</span>;    <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; Number of detected NUMA nodes. </span><span style="color: #8B8878;">*/</span>
+	  <span style="color: #5FD7FF; font-weight: bold;">uint32_t</span> <span style="color: #FF8C00; font-weight: bold;">numa_nodes</span>[RTE_MAX_NUMA_NODES]; <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; List of detected NUMA nodes. </span><span style="color: #8B8878;">*/</span>
+	  <span style="color: #5FD7FF; font-weight: bold;">uint32_t</span> <span style="color: #FF8C00; font-weight: bold;">service_lcore_count</span>;<span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; Number of available service cores. </span><span style="color: #8B8878;">*/</span>
+	  <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">rte_lcore_role_t</span> <span style="color: #FF8C00; font-weight: bold;">lcore_role</span>[RTE_MAX_LCORE]; <span style="color: #8B8878;">/**</span><span style="color: #8B8878; font-style: italic;">&lt; State of cores. </span><span style="color: #8B8878;">*/</span>
+
+	  <span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">Primary or secondary configuration </span><span style="color: #8B8878;">*/</span>
+	  <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">rte_proc_type_t</span> <span style="color: #FF8C00; font-weight: bold;">process_type</span>;
+
+	  <span style="color: #8B8878;">/** </span><span style="color: #8B8878; font-style: italic;">PA or VA mapping mode </span><span style="color: #8B8878;">*/</span>
+	  <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">rte_iova_mode</span> <span style="color: #FF8C00; font-weight: bold;">iova_mode</span>;
+
+	  <span style="color: #CDC673; font-weight: bold; font-style: italic;">/**</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;">           * Pointer to memory configuration, which may be shared across multiple</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;">           * DPDK instances</span>
+<span style="color: #CDC673; font-weight: bold; font-style: italic;">           */</span>
+	  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">rte_mem_config</span> *<span style="color: #FF8C00; font-weight: bold;">mem_config</span>;
+  } <span style="color: #FF8C00; font-weight: bold;">__rte_packed</span>;
+
+
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">early configuration structure, when memory config is not mmapped </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">rte_mem_config</span> <span style="color: #FF8C00; font-weight: bold;">early_mem_config</span>;
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Address of global and public configuration </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">rte_config</span> <span style="color: #FF8C00; font-weight: bold;">rte_config</span> = {
+	.mem_config = &amp;early_mem_config,
+};
+</pre>
+</div>
+
+<p>
+rte_config_init函数由rte_eal_init调用。
+dpdk的配置通过创建文件，将文件用mmap映射并标记为共享，子进程可以通过读取文件描述副，并映射到自身的地址空间，达到共享配置的目的，以下为简要的逻辑说明：
+</p>
+
+<div id="org857e8f2" class="figure">
+<p><img src="plantuml/dpdk/rte-config-init.png" alt="rte-config-init.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org63be849" class="outline-3">
+<h3 id="org63be849"><span class="section-number-3">4.2</span> 内存初始化 rte_eal_memory_init</h3>
+<div class="outline-text-3" id="text-4-2">
+</div>
+<div id="outline-container-orgab17e47" class="outline-4">
+<h4 id="orgab17e47"><span class="section-number-4">4.2.1</span> 内存结构关系</h4>
+<div class="outline-text-4" id="text-4-2-1">
+
+<div id="orgb2d9e74" class="figure">
+<p><img src="dot/dpdk/rte_mem_config.png" alt="rte_mem_config.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org84b31ea" class="outline-4">
+<h4 id="org84b31ea"><span class="section-number-4">4.2.2</span> 初始化流程</h4>
+<div class="outline-text-4" id="text-4-2-2">
+
+<div id="org8166e00" class="figure">
+<p><img src="plantuml/dpdk/memory-init.png" alt="memory-init.png" />
+</p>
+</div>
+
+
+<div id="orgf2337c3" class="figure">
+<p><img src="plantuml/dpdk/eal-memalloc-init.png" alt="eal-memalloc-init.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="date">Created: 2021-03-25 Thu 09:59</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

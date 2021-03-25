@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-24 Wed 12:36 -->
+<!-- 2021-03-25 Thu 09:59 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VPP学习</title>
@@ -228,10 +228,10 @@
 <li><a href="#org49c5d75">1. VPP初始化</a>
 <ul>
 <li><a href="#orgd281dad">1.1. 简介</a></li>
-<li><a href="#org306a120">1.2. 编译</a>
+<li><a href="#org3ff8b37">1.2. 编译</a>
 <ul>
 <li><a href="#org8237075">1.2.1. 克隆项目</a></li>
-<li><a href="#org73ba7f8">1.2.2. 编译</a></li>
+<li><a href="#orgc9bb107">1.2.2. 编译</a></li>
 <li><a href="#org15578a5">1.2.3. 单独编译插件</a></li>
 </ul>
 </li>
@@ -268,7 +268,7 @@
 <li><a href="#org3afb88d">3.3. Pools</a></li>
 <li><a href="#orgac75e03">3.4. Hashes</a>
 <ul>
-<li><a href="#orge05b312">3.4.1. 数据结构</a></li>
+<li><a href="#org40c5f06">3.4.1. 数据结构</a></li>
 </ul>
 </li>
 <li><a href="#org2e63355">3.5. Timekeeping</a></li>
@@ -282,7 +282,7 @@
 </li>
 <li><a href="#org56726e8">3.7. 单向共享内存队列 svm queue</a>
 <ul>
-<li><a href="#org260fdfb">3.7.1. 数据结构</a></li>
+<li><a href="#orgbe7a75a">3.7.1. 数据结构</a></li>
 <li><a href="#org98a3337">3.7.2. 接口</a></li>
 <li><a href="#orgce1d2eb">3.7.3. 内存结构</a></li>
 </ul>
@@ -351,7 +351,7 @@
 </li>
 <li><a href="#org236c7f4">10. 协议栈/LDP/VCL</a>
 <ul>
-<li><a href="#org883fb2b">10.1. 数据结构</a></li>
+<li><a href="#orgcc1148c">10.1. 数据结构</a></li>
 <li><a href="#orgce81889">10.2. app注册逻辑</a>
 <ul>
 <li><a href="#org831b1e0">10.2.1. ldp_constructor</a></li>
@@ -383,20 +383,20 @@
 <ul>
 <li><a href="#org77447e8">11.1. 收包类的node</a>
 <ul>
-<li><a href="#org52157dd">11.1.1. dpdk-input</a></li>
+<li><a href="#orgbe48adb">11.1.1. dpdk-input</a></li>
 <li><a href="#org5513c05">11.1.2. tuntap-input</a></li>
 </ul>
 </li>
 <li><a href="#org3daf867">11.2. flow-report-process</a></li>
 <li><a href="#orgf5598cd">11.3. ip4-input</a></li>
-<li><a href="#org2a82847">11.4. dpdk-input</a></li>
+<li><a href="#org215cacd">11.4. dpdk-input</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="org1ac130a" class="figure">
+<div id="org1ffd380" class="figure">
 <p><img src="dot/vpp/vpp-framwork.png" alt="vpp-framwork.png" />
 </p>
 </div>
@@ -414,8 +414,8 @@ VPP(Vector Packet Processing), VPP是由思科开源的一个可扩展的框架�
 </div>
 </div>
 
-<div id="outline-container-org306a120" class="outline-3">
-<h3 id="org306a120"><span class="section-number-3">1.2</span> 编译</h3>
+<div id="outline-container-org3ff8b37" class="outline-3">
+<h3 id="org3ff8b37"><span class="section-number-3">1.2</span> 编译</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 <a href="https://wiki.fd.io/view/VPP/Pulling,_Building,_Running,_Hacking_and_Pushing_VPP_Code">链接：https://wiki.fd.io/view/VPP/Pulling,_Building,_Running,_Hacking_and_Pushing_VPP_Code</a>
@@ -437,8 +437,8 @@ VPP(Vector Packet Processing), VPP是由思科开源的一个可扩展的框架�
 </div>
 
 
-<div id="outline-container-org73ba7f8" class="outline-4">
-<h4 id="org73ba7f8"><span class="section-number-4">1.2.2</span> 编译</h4>
+<div id="outline-container-orgc9bb107" class="outline-4">
+<h4 id="orgc9bb107"><span class="section-number-4">1.2.2</span> 编译</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <div class="org-src-container">
 <pre class="src src-shell"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">if vpp&lt;08.10</span>
@@ -738,7 +738,7 @@ node 的注册，使用gcc的 <code>__attribute__((__constructor__))</code> 构�
 
 
 
-<div id="org12764af" class="figure">
+<div id="org59ce172" class="figure">
 <p><img src="./dot/vpp/v_reg_node.png" alt="v_reg_node.png" />
 </p>
 </div>
@@ -818,18 +818,18 @@ VLIB_NODE_FN用于定义 vlib_node_registration_t 结构中的 function（node�
 函数  <code>register_node()</code> 的调用顺序：
 </p>
 
-<div id="org572ad53" class="figure">
+<div id="org0a92483" class="figure">
 <p><img src="./plantuml/vpp/reg_node_call_stack.png" alt="reg_node_call_stack.png" />
 </p>
 </div>
 
 
-<div id="org14741fa" class="figure">
+<div id="org2931266" class="figure">
 <p><img src="./plantuml/vpp/reg_node_fun.png" alt="reg_node_fun.png" />
 </p>
 </div>
 
-<div id="orgf04cf22" class="figure">
+<div id="org1fffc4d" class="figure">
 <p><img src="./plantuml/vpp/reg_node_fun.png" alt="reg_node_fun.png" />
 </p>
 </div>
@@ -1164,8 +1164,8 @@ bihash_8_8.h
 </div>
 
 
-<div id="outline-container-orge05b312" class="outline-4">
-<h4 id="orge05b312"><span class="section-number-4">3.4.1</span> 数据结构</h4>
+<div id="outline-container-org40c5f06" class="outline-4">
+<h4 id="org40c5f06"><span class="section-number-4">3.4.1</span> 数据结构</h4>
 <div class="outline-text-4" id="text-3-4-1">
 <p>
 初始化参数
@@ -1299,7 +1299,7 @@ bihash_8_8.h
 tw_timer_wheel_init初始化的过程大致如下图：
 </p>
 
-<div id="orgbfb7bc8" class="figure">
+<div id="org0e2fba2" class="figure">
 <p><img src="./dot/vpp/timer_wheel.png" alt="timer_wheel.png" />
 </p>
 </div>
@@ -1317,7 +1317,7 @@ tw_timer_wheel_init初始化的过程大致如下图：
 tw_timer_start添加timer过程：
 </p>
 
-<div id="orga0f1b22" class="figure">
+<div id="org89bdef0" class="figure">
 <p><img src="./dot/vpp/timer_wheel_start.png" alt="timer_wheel_start.png" />
 </p>
 </div>
@@ -1327,7 +1327,7 @@ tw_timer_start添加timer过程：
 tw_timer_expire_timers处理过期timer的过程:
 </p>
 
-<div id="org535e0c9" class="figure">
+<div id="org6dcdce3" class="figure">
 <p><img src="./dot/vpp/timer_wheel_expire.png" alt="timer_wheel_expire.png" />
 </p>
 </div>
@@ -1366,8 +1366,8 @@ tw_timer_4t_3w_4sl_ov.h
 <h3 id="org56726e8"><span class="section-number-3">3.7</span> 单向共享内存队列 svm queue</h3>
 <div class="outline-text-3" id="text-3-7">
 </div>
-<div id="outline-container-org260fdfb" class="outline-4">
-<h4 id="org260fdfb"><span class="section-number-4">3.7.1</span> 数据结构</h4>
+<div id="outline-container-orgbe7a75a" class="outline-4">
+<h4 id="orgbe7a75a"><span class="section-number-4">3.7.1</span> 数据结构</h4>
 <div class="outline-text-4" id="text-3-7-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">_svm_queue</span>
@@ -1491,7 +1491,7 @@ tw_timer_4t_3w_4sl_ov.h
 <h4 id="orgce1d2eb"><span class="section-number-4">3.7.3</span> 内存结构</h4>
 <div class="outline-text-4" id="text-3-7-3">
 
-<div id="orgfb27751" class="figure">
+<div id="org662dc02" class="figure">
 <p><img src="./dot/vpp/svm_queue.png" alt="svm_queue.png" />
 </p>
 </div>
@@ -2395,7 +2395,7 @@ VPP以很高的速度检查二进制API消息输入队列. vpp依据数据平面
 许多vpp的二进制API包含客户端的请求消息和简单的状态响应.
 下面是一个示例, 设置接口的管理状态:
 </p>
-<pre class="example" id="orgcb352b4">
+<pre class="example" id="org6bfc0d8">
 void
 set_flags (test_main_t * tm, int up_down)
 {
@@ -2487,30 +2487,30 @@ vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构
 <h2 id="org236c7f4"><span class="section-number-2">10</span> 协议栈/LDP/VCL</h2>
 <div class="outline-text-2" id="text-10">
 </div>
-<div id="outline-container-org883fb2b" class="outline-3">
-<h3 id="org883fb2b"><span class="section-number-3">10.1</span> 数据结构</h3>
+<div id="outline-container-orgcc1148c" class="outline-3">
+<h3 id="orgcc1148c"><span class="section-number-3">10.1</span> 数据结构</h3>
 <div class="outline-text-3" id="text-10-1">
 
-<div id="org791a596" class="figure">
+<div id="org620733d" class="figure">
 <p><img src="./dot/vpp/app_worker_st.png" alt="app_worker_st.png" />
 </p>
 </div>
 
 
 
-<div id="org2672633" class="figure">
+<div id="orge3abac2" class="figure">
 <p><img src="./dot/vpp/vls_vcl_st.png" alt="vls_vcl_st.png" />
 </p>
 </div>
 
 
-<div id="orga0bb363" class="figure">
+<div id="org388cfcf" class="figure">
 <p><img src="./dot/vpp/ldp_st.png" alt="ldp_st.png" />
 </p>
 </div>
 
 
-<div id="org1683e2e" class="figure">
+<div id="org99da0fa" class="figure">
 <p><img src="./dot/vpp/session_queue.png" alt="session_queue.png" />
 </p>
 </div>
@@ -2546,7 +2546,7 @@ vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构
 </div>
 
 
-<div id="org80d8560" class="figure">
+<div id="org4713341" class="figure">
 <p><img src="./plantuml/vpp/ldp_constructor.png" alt="ldp_constructor.png" />
 </p>
 </div>
@@ -2573,7 +2573,7 @@ vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构
 <dt>vcl_sapi_attach</dt><dd>使用socket连接到vpp</dd>
 </dl>
 
-<div id="orgfdf79c9" class="figure">
+<div id="orgb86f5be" class="figure">
 <p><img src="plantuml/vpp/sapi-attach.png" alt="sapi-attach.png" />
 </p>
 </div>
@@ -2583,7 +2583,7 @@ vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构
 </dl>
 
 
-<div id="org50c3109" class="figure">
+<div id="org4e9c4ec" class="figure">
 <p><img src="plantuml/vpp/bapi-attach.png" alt="bapi-attach.png" />
 </p>
 </div>
@@ -2599,7 +2599,7 @@ vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构
 <h3 id="org3c30342"><span class="section-number-3">10.4</span> socket过程</h3>
 <div class="outline-text-3" id="text-10-4">
 
-<div id="org72eb75a" class="figure">
+<div id="org3249749" class="figure">
 <p><img src="./plantuml/vpp/socket.png" alt="socket.png" />
 </p>
 </div>
@@ -2610,7 +2610,7 @@ vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构
 <h3 id="org753a489"><span class="section-number-3">10.5</span> connect过程</h3>
 <div class="outline-text-3" id="text-10-5">
 
-<div id="org4f54f1e" class="figure">
+<div id="org93b5d74" class="figure">
 <p><img src="./plantuml/vpp/connect.png" alt="connect.png" />
 </p>
 </div>
@@ -2677,9 +2677,8 @@ app   attach reply handle
 <p>
 基于共享内存的单向队列
 </p>
-
-<p>
-ssvm_client_init_memfd
+<div class="org-src-container">
+<pre class="src src-fundamental">ssvm_client_init_memfd
 fifo_segment_attach
 vcl_segnemt_attach
 vcl_session_app_add_segment_handler
@@ -2691,7 +2690,8 @@ vl_sock_api_send_fd_msg
 session_send_fds
 mq_send_add_segment_cb
 app_worker_add_segment_notify
-</p>
+</pre>
+</div>
 
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">session_cb_vft_t</span> <span style="color: #FF8C00; font-weight: bold;">session_mq_cb_vft</span> = {
@@ -2758,8 +2758,8 @@ svm_queue_send_singnal_inline
 <h3 id="org77447e8"><span class="section-number-3">11.1</span> 收包类的node</h3>
 <div class="outline-text-3" id="text-11-1">
 </div>
-<div id="outline-container-org52157dd" class="outline-4">
-<h4 id="org52157dd"><span class="section-number-4">11.1.1</span> dpdk-input</h4>
+<div id="outline-container-orgbe48adb" class="outline-4">
+<h4 id="orgbe48adb"><span class="section-number-4">11.1.1</span> dpdk-input</h4>
 </div>
 
 
@@ -2783,15 +2783,15 @@ svm_queue_send_singnal_inline
 </div>
 
 
-<div id="outline-container-org2a82847" class="outline-3">
-<h3 id="org2a82847"><span class="section-number-3">11.4</span> dpdk-input</h3>
+<div id="outline-container-org215cacd" class="outline-3">
+<h3 id="org215cacd"><span class="section-number-3">11.4</span> dpdk-input</h3>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-24 Wed 12:36</p>
+<p class="date">Created: 2021-03-25 Thu 09:59</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
