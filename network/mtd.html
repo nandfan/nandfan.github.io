@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 15:12 -->
+<!-- 2021-09-05 Sun 16:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>移动目标防御系统实现总结</title>
@@ -195,7 +195,7 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
 <!--/*--><![CDATA[/*><!--*/
      function CodeHighlightOn(elem, id)
      {
@@ -246,7 +246,7 @@
 </p>
 
 <div id="outline-container-orgdc9ae8f" class="outline-2">
-<h2 id="orgdc9ae8f"><span class="section-number-2">1</span> 介绍</h2>
+<h2 id="orgdc9ae8f"><span class="section-number-2">1.</span> 介绍</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 移动目标防御系统主要用来防止进行内网渗透，以保证内网主机的安全。
@@ -259,14 +259,14 @@
 </div>
 
 <div id="outline-container-orgb6cd78b" class="outline-2">
-<h2 id="orgb6cd78b"><span class="section-number-2">2</span> 技术原理</h2>
+<h2 id="orgb6cd78b"><span class="section-number-2">2.</span> 技术原理</h2>
 <div class="outline-text-2" id="text-2">
 </div>
 <div id="outline-container-org043ac5c" class="outline-3">
-<h3 id="org043ac5c"><span class="section-number-3">2.1</span> 网络拓扑</h3>
+<h3 id="org043ac5c"><span class="section-number-3">2.1.</span> 网络拓扑</h3>
 <div class="outline-text-3" id="text-2-1">
 
-<div id="orgfd44039" class="figure">
+<div id="orgca9d077" class="figure">
 <p><img src="./image/mtd/architecture.png" alt="architecture.png" />
 </p>
 </div>
@@ -274,7 +274,7 @@
 </div>
 
 <div id="outline-container-org5d88bca" class="outline-3">
-<h3 id="org5d88bca"><span class="section-number-3">2.2</span> 原理说明</h3>
+<h3 id="org5d88bca"><span class="section-number-3">2.2.</span> 原理说明</h3>
 <div class="outline-text-3" id="text-2-2">
 <ol class="org-ol">
 <li>内网的主机通过dhcp动态获取ip（rip），地址未C段地址范围。</li>
@@ -289,7 +289,7 @@
 </div>
 
 <div id="outline-container-org2c90847" class="outline-3">
-<h3 id="org2c90847"><span class="section-number-3">2.3</span> ip变换原理</h3>
+<h3 id="org2c90847"><span class="section-number-3">2.3.</span> ip变换原理</h3>
 <div class="outline-text-3" id="text-2-3">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -337,7 +337,7 @@
 </div>
 
 <div id="outline-container-orgfa595c0" class="outline-4">
-<h4 id="orgfa595c0"><span class="section-number-4">2.3.1</span> dhcp分配ip过程</h4>
+<h4 id="orgfa595c0"><span class="section-number-4">2.3.1.</span> dhcp分配ip过程</h4>
 <div class="outline-text-4" id="text-2-3-1">
 <ol class="org-ol">
 <li>内网的主机通过dhcp动态获取ip（rip），地址为C段地址范围。</li>
@@ -347,7 +347,7 @@
 
 
 
-<div id="org84778f9" class="figure">
+<div id="org5c447b4" class="figure">
 <p><img src="plantuml/mtd/dhcp.png" alt="dhcp.png" />
 </p>
 </div>
@@ -355,7 +355,7 @@
 </div>
 
 <div id="outline-container-orgd51723f" class="outline-4">
-<h4 id="orgd51723f"><span class="section-number-4">2.3.2</span> host1和host2通信</h4>
+<h4 id="orgd51723f"><span class="section-number-4">2.3.2.</span> host1和host2通信</h4>
 <div class="outline-text-4" id="text-2-3-2">
 <ol class="org-ol">
 <li>网络内部的主机通讯需要通过域名，每个主机可以通过nslookup查询本机的域名。</li>
@@ -364,7 +364,7 @@
 </ol>
 
 
-<div id="orgd04c474" class="figure">
+<div id="orgcc5f835" class="figure">
 <p><img src="plantuml/mtd/connect.png" alt="connect.png" />
 </p>
 </div>
@@ -372,7 +372,7 @@
 </div>
 
 <div id="outline-container-org9266f56" class="outline-4">
-<h4 id="org9266f56"><span class="section-number-4">2.3.3</span> 内网某台主机被控制后，在内网扫描过程</h4>
+<h4 id="org9266f56"><span class="section-number-4">2.3.3.</span> 内网某台主机被控制后，在内网扫描过程</h4>
 <div class="outline-text-4" id="text-2-3-3">
 <ol class="org-ol">
 <li>首先内网中的主机之间通信，只能通过虚ip进行通信，其他一律送入蜜罐平台，对其行文进行诱惑以及分析记录。</li>
@@ -380,7 +380,7 @@
 </ol>
 
 
-<div id="org20daa6f" class="figure">
+<div id="orgca6d142" class="figure">
 <p><img src="plantuml/mtd/attack.png" alt="attack.png" />
 </p>
 </div>
@@ -392,7 +392,7 @@
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 15:12</p>
+<p class="date">Created: 2021-09-05 Sun 16:30</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

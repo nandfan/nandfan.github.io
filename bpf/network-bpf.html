@@ -1,0 +1,2069 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-10-29 Fri 21:15 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BPF之网络</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">BPF之网络</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgc8d9816">1. BPF技术的网络应用</a></li>
+<li><a href="#org5ea50c4">2. 网络分析策略</a></li>
+<li><a href="#orge02fbea">3. 传统工具</a>
+<ul>
+<li><a href="#org34015ce">3.1. ss</a></li>
+<li><a href="#org8f5aba2">3.2. ip</a></li>
+<li><a href="#org9f95c32">3.3. nstat</a></li>
+<li><a href="#orga5d8f20">3.4. netstat</a></li>
+<li><a href="#orgd5400af">3.5. sar</a></li>
+<li><a href="#orga97b4fc">3.6. nicstat</a></li>
+<li><a href="#orgdd1b58c">3.7. ethtool</a></li>
+<li><a href="#orgac05afd">3.8. tcpdump</a></li>
+<li><a href="#org8a11705">3.9. /proc</a></li>
+</ul>
+</li>
+<li><a href="#org53e71c1">4. BPF工具</a>
+<ul>
+<li><a href="#orgc2eea1c">4.1. sockstat</a></li>
+<li><a href="#org0cacddd">4.2. sofamily</a></li>
+<li><a href="#org62741fe">4.3. soprotocol</a></li>
+<li><a href="#org714f7ab">4.4. soconnect</a></li>
+<li><a href="#orgb4138c9">4.5. soaccept</a></li>
+<li><a href="#org4d1671f">4.6. socketio</a></li>
+<li><a href="#org2fe42ae">4.7. socksize</a></li>
+<li><a href="#org5b122bb">4.8. sockstat</a></li>
+<li><a href="#orgc3bb150">4.9. sormem</a></li>
+<li><a href="#org540a050">4.10. soconnlat</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgc8d9816" class="outline-2">
+<h2 id="orgc8d9816"><span class="section-number-2">1</span> BPF技术的网络应用</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li><p>
+cilium：容器网络连接和安全策略
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">git clone git@github.com:cilium/cilium.git
+</pre>
+</div></li>
+
+<li><p>
+katran：Facebook的katran高效网络负载均衡器
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">git clone git@github.com:facebookincubator/katran.git
+</pre>
+</div></li>
+</ul>
+
+
+
+<p>
+Queueing in the Linux Network Stack – Dan Siemon
+<a href="https://www.coverfire.com/articles/queueing-in-the-linux-network-stack">https://www.coverfire.com/articles/queueing-in-the-linux-network-stack</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5ea50c4" class="outline-2">
+<h2 id="org5ea50c4"><span class="section-number-2">2</span> 网络分析策略</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>使用基于计数器的工具来理解基本的网络统计信息：网络包速率和吞吐量，如果正在使用TCP，那么查看TCP连接率和TCP重传率（例如，使用ss、nstat、netstat和sar工具）。</li>
+
+<li>通过跟踪新TCP连接的建立和时长来定性分析负载，并且寻找低效之处（例如使用BCC的tcplife）。</li>
+
+<li>检查是否达到了网络接口吞吐量上限（例如使用sar或者nicstat中的接口使用率百分比）。</li>
+
+<li>跟踪TCP重传和其他不常见的TCP事件（例如BCC的tcpretrans、tcpdrop和skb:kfree_skb跟踪点）。</li>
+
+<li>测量DNS解析延迟（例如BCC的gethostlatency）。</li>
+
+<li><p>
+从各个不同的角度测量网络延迟：连接延迟、首字节延迟、软件栈各层之间的延迟等。
+</p>
+
+<p>
+a. 注意：网络延迟测试在有不同负载的情况下可能由于网络中的缓存肿胀问题而有大幅度的变化（排队过量导致的延迟）。如果可能的话，应该在有负载的情况下和空闲网络中分别测量这些延迟，进行比较。
+</p></li>
+
+<li>使用负载生成工具来探索主机之间的网络吞吐量上限，同时检查在已知负载的情况下发生的网络事件（例如使用iperf和netperf）。</li>
+
+<li>从本章的“BPF工具”小节中选择合适的工具。</li>
+
+<li>使用高频CPU性能分析抓取内核调用栈信息，以量化CPU资源在网络协议和驱动程序之间的使用情况。</li>
+
+<li>使用跟踪点和kprobes来探索网络软件栈的内部情况。</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orge02fbea" class="outline-2">
+<h2 id="orge02fbea"><span class="section-number-2">3</span> 传统工具</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org34015ce" class="outline-3">
+<h3 id="org34015ce"><span class="section-number-3">3.1</span> ss</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+ss是一个套接字统计工具，可以简要输出当前打开的套接字信息。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ ss --help
+Usage: ss [ OPTIONS ]
+       ss [ OPTIONS ] [ FILTER ]
+   -h, --help          this message
+   -V, --version       output version information
+   -n, --numeric       don<span style="color: #CDC673;">'t resolve service names</span>
+<span style="color: #CDC673;">   -r, --resolve       resolve host names</span>
+<span style="color: #CDC673;">   -a, --all           display all sockets</span>
+<span style="color: #CDC673;">   -l, --listening     display listening sockets</span>
+<span style="color: #CDC673;">   -o, --options       show timer information</span>
+<span style="color: #CDC673;">   -e, --extended      show detailed socket information</span>
+<span style="color: #CDC673;">   -m, --memory        show socket memory usage</span>
+<span style="color: #CDC673;">   -p, --processes     show process using socket</span>
+<span style="color: #CDC673;">   -i, --info          show internal TCP information</span>
+<span style="color: #CDC673;">       --tipcinfo      show internal tipc socket information</span>
+<span style="color: #CDC673;">   -s, --summary       show socket usage summary</span>
+<span style="color: #CDC673;">       --tos           show tos and priority information</span>
+<span style="color: #CDC673;">       --cgroup        show cgroup information</span>
+<span style="color: #CDC673;">   -b, --bpf           show bpf filter socket information</span>
+<span style="color: #CDC673;">   -E, --events        continually display sockets as they are destroyed</span>
+<span style="color: #CDC673;">   -Z, --context       display process SELinux security contexts</span>
+<span style="color: #CDC673;">   -z, --contexts      display process and socket SELinux security contexts</span>
+<span style="color: #CDC673;">   -N, --net           switch to the specified network namespace name</span>
+
+<span style="color: #CDC673;">   -4, --ipv4          display only IP version 4 sockets</span>
+<span style="color: #CDC673;">   -6, --ipv6          display only IP version 6 sockets</span>
+<span style="color: #CDC673;">   -0, --packet        display PACKET sockets</span>
+<span style="color: #CDC673;">   -t, --tcp           display only TCP sockets</span>
+<span style="color: #CDC673;">   -M, --mptcp         display only MPTCP sockets</span>
+<span style="color: #CDC673;">   -S, --sctp          display only SCTP sockets</span>
+<span style="color: #CDC673;">   -u, --udp           display only UDP sockets</span>
+<span style="color: #CDC673;">   -d, --dccp          display only DCCP sockets</span>
+<span style="color: #CDC673;">   -w, --raw           display only RAW sockets</span>
+<span style="color: #CDC673;">   -x, --unix          display only Unix domain sockets</span>
+<span style="color: #CDC673;">       --tipc          display only TIPC sockets</span>
+<span style="color: #CDC673;">       --vsock         display only vsock sockets</span>
+<span style="color: #CDC673;">   -f, --family=FAMILY display sockets of type FAMILY</span>
+<span style="color: #CDC673;">       FAMILY := {inet|inet6|link|unix|netlink|vsock|tipc|xdp|help}</span>
+
+<span style="color: #CDC673;">   -K, --kill          forcibly close sockets, display what was closed</span>
+<span style="color: #CDC673;">   -H, --no-header     Suppress header line</span>
+<span style="color: #CDC673;">   -O, --oneline       socket'</span>s data printed on a single line
+       --inet-sockopt  show various inet socket options
+
+   -A, --query=QUERY, --socket=QUERY
+       QUERY := {all|inet|tcp|mptcp|udp|raw|unix|unix_dgram|unix_stream|unix_seqpacket|packet|netlink|vsock_stream|vsock_dgram|tipc}[,QUERY]
+
+   -D, --diag=FILE     Dump raw information about TCP sockets to FILE
+   -F, --filter=FILE   read filter information from FILE
+       FILTER := [ state STATE-FILTER ] [ EXPRESSION ]
+       STATE-FILTER := {all|connected|synchronized|bucket|big|TCP-STATES}
+     TCP-STATES := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|closed|close-wait|last-ack|listening|closing}
+      connected := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
+       synchronized := {established|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
+	 bucket := {syn-recv|time-wait}
+	big := {established|syn-sent|fin-wait-{1,2}|closed|close-wait|last-ack|listening|closing}
+
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>-t 只显示TCP套接字信息</li>
+<li>-i 显示TCP内部信息</li>
+<li>-e 显示扩展的套接字信息</li>
+<li>-p 显示进程信息</li>
+<li>-m 内存用量</li>
+</ul>
+
+
+<div class="org-src-container">
+<pre class="src src-shell">$ ss -tiepm
+State      Recv-Q       Send-Q                  Local Address:Port                    Peer Address:Port               Process
+ESTAB      0            0                       10.91.128.129:38520                  10.91.128.246:ms-wbt-server       users:((<span style="color: #CDC673;">"remmina"</span>,<span style="color: #FF8C00;">pid</span>=118215,<span style="color: #FF8C00;">fd</span>=54)) timer:(keepalive,1.796ms,0) uid:1000 ino:1484710 sk:306 cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
+     skmem:(r0,rb4697728,t0,tb87040,f4096,w0,o0,bl0,d0) sack cubic wscale:0,7 rto:208 rtt:7.884/8.453 ato:52 mss:1460 pmtu:1500 rcvmss:1460 advmss:1460 cwnd:10 bytes_sent:248979 bytes_acked:248980 bytes_received:5791517 segs_out:12332 segs_in:15857 data_segs_out:4211 data_segs_in:13099 send 14.8Mbps lastsnd:70208 lastrcv:1204 lastack:1204 pacing_rate 29.6Mbps delivery_rate 92Mbps delivered:4212 app_limited busy:94592ms rcv_rtt:115.524 rcv_space:405247 rcv_ssthresh:2308280 minrtt:0.264
+ESTAB      0            0                           127.0.0.1:58280                      127.0.0.1:1089                users:((<span style="color: #CDC673;">"chromium"</span>,<span style="color: #FF8C00;">pid</span>=2223,<span style="color: #FF8C00;">fd</span>=206)) timer:(keepalive,1.032ms,0) uid:1000 ino:1532896 sk:308 cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
+     skmem:(r0,rb131072,t0,tb2626560,f0,w0,o0,bl0,d43) ts sack cubic wscale:7,7 rto:204 rtt:0.053/0.036 ato:40 mss:32768 pmtu:65535 rcvmss:1966 advmss:65483 cwnd:10 bytes_sent:2240 bytes_acked:2241 bytes_received:3817 segs_out:85 segs_in:96 data_segs_out:19 data_segs_in:20 send 49.5Gbps lastsnd:43968 lastrcv:43968 lastack:43968 pacing_rate 97.8Gbps delivery_rate 21.8Gbps delivered:20 app_limited rcv_space:65495 rcv_ssthresh:65495 minrtt:0.012
+ESTAB      0            0                       10.91.128.129:52894                  10.91.128.246:65432               users:((<span style="color: #CDC673;">"ssh"</span>,<span style="color: #FF8C00;">pid</span>=101147,<span style="color: #FF8C00;">fd</span>=3)) timer:(keepalive,99min,0) uid:1000 ino:1208090 sk:30d cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
+     skmem:(r0,rb2432752,t0,tb87040,f0,w0,o0,bl0,d0) sack cubic wscale:0,7 rto:204 rtt:2.912/0.439 ato:40 mss:1460 pmtu:1500 rcvmss:1460 advmss:1460 cwnd:10 bytes_sent:17168 bytes_acked:17169 bytes_received:1356800 segs_out:12571 segs_in:12238 data_segs_out:399 data_segs_in:12217 send 40.1Mbps lastsnd:8449972 lastrcv:8449888 lastack:1228204 pacing_rate 80.2Mbps delivery_rate 144Mbps delivered:400 app_limited busy:2280ms rcv_rtt:12095.8 rcv_space:99500 rcv_ssthresh:1215736 minrtt:0.141
+ESTAB      0            0                       10.91.128.129:38204                    10.96.113.9:https               ino:1505288 sk:30e cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
+     skmem:(r0,rb131072,t0,tb87040,f0,w0,o0,bl0,d0) ts cubic rto:232 rtt:28.16/0.095 ato:40 mss:1448 pmtu:1500 rcvmss:1448 advmss:1448 cwnd:10 bytes_sent:24975 bytes_acked:24976 bytes_received:33078 segs_out:622 segs_in:636 data_segs_out:406 data_segs_in:229 send 4.11Mbps lastsnd:6344 lastrcv:6316 lastack:6316 pacing_rate 8.23Mbps delivery_rate 418kbps delivered:407 app_limited busy:11284ms rcv_space:14480 rcv_ssthresh:64088 minrtt:27.729
+ESTAB      0            0                       10.91.128.129:59654                 198.252.206.25:https               users:((<span style="color: #CDC673;">"chromium"</span>,<span style="color: #FF8C00;">pid</span>=2223,<span style="color: #FF8C00;">fd</span>=243)) timer:(keepalive,29sec,0) uid:1000 ino:1063964 sk:30f cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
+     skmem:(r0,rb131072,t0,tb87040,f0,w0,o0,bl0,d1) ts sack cubic wscale:9,7 rto:452 rtt:250.283/15.596 ato:40 mss:1448 pmtu:1500 rcvmss:1448 advmss:1448 cwnd:3 ssthresh:4 bytes_sent:15603 bytes_retrans:1935 bytes_acked:13669 bytes_received:24422 segs_out:2259 segs_in:2296 data_segs_out:365 data_segs_in:320 send 139kbps lastsnd:243300 lastrcv:243300 lastack:15324 pacing_rate 167kbps delivery_rate 53kbps delivered:357 app_limited busy:102288ms retrans:0/47 dsack_dups:38 rcv_rtt:287.25 rcv_space:14480 rcv_ssthresh:64088 minrtt:224.562
+
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>rto:208 TCP重传超时</li>
+<li>rtt:7.884/8.453 平均往返时间为7.884，8.453为平均偏差</li>
+<li>mss:1460  最大传输单元</li>
+<li>cwnd:10 拥塞窗口</li>
+<li>bytes_acked:248980 成功传输的字节数</li>
+<li>pacing_rate 29.6Mbps 节奏控制率为29.6Mb/s</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8f5aba2" class="outline-3">
+<h3 id="org8f5aba2"><span class="section-number-3">3.2</span> ip</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-shell">$ ip --help
+Usage: ip [ OPTIONS ] OBJECT { COMMAND | <span style="color: #FF1493;">help</span> }
+       ip [ -force ] -batch filename
+where  OBJECT := { link | address | addrlabel | route | rule | neigh | ntable |
+	   tunnel | tuntap | maddress | mroute | mrule | monitor | xfrm |
+	   netns | l2tp | fou | macsec | tcp_metrics | token | netconf | ila |
+	   vrf | sr | nexthop | mptcp }
+       OPTIONS := { -V[ersion] | -s[tatistics] | -d[etails] | -r[esolve] |
+	    -h[uman-readable] | -iec | -j[son] | -p[retty] |
+	    -f[amily] { inet | inet6 | mpls | bridge | link } |
+	    -4 | -6 | -I | -D | -M | -B | -0 |
+	    -l[oops] { maximum-addr-flush-attempts } | -br[ief] |
+	    -o[neline] | -t[imestamp] | -ts[hort] | -b[atch] [filename] |
+	    -rc[vbuf] [size] | -n[etns] name | -N[umeric] | -a[ll] |
+	    -c[olor]}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>ip -s link 打印接口的统计信息</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">$ ip -s link
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped missed  mcast
+    258223038  2809707  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    258223038  2809707  0       0       0       0
+2: enp9s0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether b4:2e:99:92:bd:48 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped missed  mcast
+    4852566883 4281257  0       0       0       144201
+    TX: bytes  packets  errors  dropped carrier collsns
+    495452705  2359896  0       0       0       0
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9f95c32" class="outline-3">
+<h3 id="org9f95c32"><span class="section-number-3">3.3</span> nstat</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+nstat可以打印出由内核维护的各种网络指标。
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ nstat -s
+<span style="color: #8B8878;">#</span><span style="color: #8B8878;">kernel</span>
+IpInReceives                    6986079            0.0
+IpInDelivers                    6986075            0.0
+IpOutRequests                   5323166            0.0
+IpOutDiscards                   26488              0.0
+IpOutNoRoutes                   82                 0.0
+IcmpInMsgs                      17                 0.0
+IcmpInDestUnreachs              1                  0.0
+IcmpInEchos                     16                 0.0
+IcmpOutMsgs                     120                0.0
+IcmpOutDestUnreachs             104                0.0
+IcmpOutEchoReps                 16                 0.0
+IcmpMsgInType3                  1                  0.0
+IcmpMsgInType8                  16                 0.0
+IcmpMsgOutType0                 16                 0.0
+IcmpMsgOutType3                 104                0.0
+TcpActiveOpens                  3354               0.0
+TcpPassiveOpens                 165                0.0
+TcpAttemptFails                 520                0.0
+TcpEstabResets                  794                0.0
+TcpInSegs                       5830510            0.0
+TcpOutSegs                      4977635            0.0
+TcpRetransSegs                  3589               0.0
+TcpInErrs                       40                 0.0
+TcpOutRsts                      1223               0.0
+UdpInDatagrams                  1156721            0.0
+UdpNoPorts                      155                0.0
+UdpOutDatagrams                 529007             0.0
+UdpSndbufErrors                 26488              0.0
+Ip6InReceives                   109                0.0
+Ip6InDelivers                   86                 0.0
+Ip6OutRequests                  371                0.0
+Ip6OutNoRoutes                  77096              0.0
+Ip6InMcastPkts                  107                0.0
+Ip6OutMcastPkts                 371                0.0
+Ip6InOctets                     9904               0.0
+Ip6OutOctets                    22920              0.0
+Ip6InMcastOctets                9752               0.0
+Ip6OutMcastOctets               22920              0.0
+Ip6InNoECTPkts                  109                0.0
+Icmp6InMsgs                     2                  0.0
+Icmp6OutMsgs                    287                0.0
+Icmp6InMLDv2Reports             2                  0.0
+Icmp6OutRouterSolicits          278                0.0
+Icmp6OutNeighborSolicits        1                  0.0
+Icmp6OutMLDv2Reports            8                  0.0
+Icmp6InType143                  2                  0.0
+Icmp6OutType133                 278                0.0
+Icmp6OutType135                 1                  0.0
+Icmp6OutType143                 8                  0.0
+Udp6InDatagrams                 84                 0.0
+Udp6OutDatagrams                84                 0.0
+TcpExtTW                        540                0.0
+TcpExtDelayedACKs               45222              0.0
+TcpExtDelayedACKLocked          27                 0.0
+TcpExtDelayedACKLost            711                0.0
+TcpExtTCPHPHits                 3845100            0.0
+TcpExtTCPPureAcks               172042             0.0
+TcpExtTCPHPAcks                 1471072            0.0
+TcpExtTCPSackRecovery           35                 0.0
+TcpExtTCPSACKReorder            36                 0.0
+TcpExtTCPFullUndo               1                  0.0
+TcpExtTCPDSACKUndo              12                 0.0
+TcpExtTCPLossUndo               52                 0.0
+TcpExtTCPLostRetransmit         1828               0.0
+TcpExtTCPSackFailures           3                  0.0
+TcpExtTCPLossFailures           2                  0.0
+TcpExtTCPFastRetrans            607                0.0
+TcpExtTCPSlowStartRetrans       3                  0.0
+TcpExtTCPTimeouts               2588               0.0
+TcpExtTCPLossProbes             624                0.0
+TcpExtTCPLossProbeRecovery      13                 0.0
+TcpExtTCPSackRecoveryFail       12                 0.0
+TcpExtTCPBacklogCoalesce        961                0.0
+TcpExtTCPDSACKOldSent           734                0.0
+TcpExtTCPDSACKOfoSent           18                 0.0
+TcpExtTCPDSACKRecv              395                0.0
+TcpExtTCPAbortOnData            151                0.0
+TcpExtTCPAbortOnClose           351                0.0
+TcpExtTCPAbortOnTimeout         240                0.0
+TcpExtTCPAbortFailed            5                  0.0
+TcpExtTCPDSACKIgnoredNoUndo     279                0.0
+TcpExtTCPSackShifted            923                0.0
+TcpExtTCPSackMerged             424                0.0
+TcpExtTCPSackShiftFallback      486                0.0
+TcpExtTCPRcvCoalesce            193772             0.0
+TcpExtTCPOFOQueue               23108              0.0
+TcpExtTCPOFOMerge               15                 0.0
+TcpExtTCPChallengeACK           47                 0.0
+TcpExtTCPSYNChallenge           46                 0.0
+TcpExtTCPAutoCorking            3674               0.0
+TcpExtTCPFromZeroWindowAdv      8                  0.0
+TcpExtTCPToZeroWindowAdv        8                  0.0
+TcpExtTCPWantZeroWindowAdv      29                 0.0
+TcpExtTCPSynRetrans             1252               0.0
+TcpExtTCPOrigDataSent           2096215            0.0
+TcpExtTCPHystartTrainDetect     10                 0.0
+TcpExtTCPHystartTrainCwnd       392                0.0
+TcpExtTCPHystartDelayDetect     4                  0.0
+TcpExtTCPHystartDelayCwnd       761                0.0
+TcpExtTCPKeepAlive              21477              0.0
+TcpExtTCPDelivered              2097753            0.0
+TcpExtTCPAckCompressed          7729               0.0
+TcpExtTcpTimeoutRehash          2363               0.0
+TcpExtTcpDuplicateDataRehash    312                0.0
+TcpExtTCPDSACKRecvSegs          395                0.0
+IpExtInNoRoutes                 2                  0.0
+IpExtInMcastPkts                378                0.0
+IpExtOutMcastPkts               17010              0.0
+IpExtInOctets                   5256125624         0.0
+IpExtOutOctets                  871438998          0.0
+IpExtInMcastOctets              32650              0.0
+IpExtOutMcastOctets             3272806            0.0
+IpExtInNoECTPkts                7143075            0.0
+IpExtInECT0Pkts                 2                  0.0
+</pre>
+</div>
+
+<p>
+默认情况下运行该工具会重置这些计数器，可以使用 <b>-s</b> 选项来避免重置。 <b>-d</b> 选项使用守护进程模式定期获取统计信息。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga5d8f20" class="outline-3">
+<h3 id="orga5d8f20"><span class="section-number-3">3.4</span> netstat</h3>
+<div class="outline-text-3" id="text-3-4">
+<ul class="org-ul">
+<li><b>-s</b> 获取网络软件栈统计信息</li>
+<li><b>-i</b> 网络接口统计信息</li>
+<li><b>-r</b> 列出路由表</li>
+<li><b>-c</b> 持续输出</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgd5400af" class="outline-3">
+<h3 id="orgd5400af"><span class="section-number-3">3.5</span> sar</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+sar是一个系统活动报表工具，能够打印各种网络统计信息报表。
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sar --help
+Usage: sar [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]
+Main options and reports (report name between square brackets):
+    -B  Paging statistics [A_PAGE]
+    -b  I/O and transfer rate statistics [A_IO]
+    -d  Block devices statistics [A_DISK]
+    -F [ MOUNT ]
+	Filesystems statistics [A_FS]
+    -H  Hugepages utilization statistics [A_HUGE]
+    -I { &lt;int_list&gt; | SUM | ALL }
+	Interrupts statistics [A_IRQ]
+    -m { &lt;keyword&gt; [,...] | ALL }
+	Power management statistics [A_PWR_...]
+	Keywords are:
+	CPU CPU instantaneous clock frequency
+	FAN Fans speed
+	FREQ    CPU average clock frequency
+	IN  Voltage inputs
+	TEMP    Devices temperature
+	USB USB devices plugged into the system
+    -n { &lt;keyword&gt; [,...] | ALL }
+	Network statistics [A_NET_...]
+	Keywords are:
+	DEV Network interfaces
+	EDEV    Network interfaces (errors)
+	NFS NFS client
+	NFSD    NFS server
+	SOCK    Sockets (v4)
+	IP  IP traffic  (v4)
+	EIP IP traffic  (v4) (errors)
+	ICMP    ICMP traffic    (v4)
+	EICMP   ICMP traffic    (v4) (errors)
+	TCP TCP traffic (v4)
+	ETCP    TCP traffic (v4) (errors)
+	UDP UDP traffic (v4)
+	SOCK6   Sockets (v6)
+	IP6 IP traffic  (v6)
+	EIP6    IP traffic  (v6) (errors)
+	ICMP6   ICMP traffic    (v6)
+	EICMP6  ICMP traffic    (v6) (errors)
+	UDP6    UDP traffic (v6)
+	FC  Fibre channel HBAs
+	SOFT    Software-based network processing
+    -q [ &lt;keyword&gt; [,...] | PSI | ALL ]
+	System load and pressure-stall statistics
+	Keywords are:
+	LOAD    Queue length and load average statistics [A_QUEUE]
+	CPU Pressure-stall CPU statistics [A_PSI_CPU]
+	IO  Pressure-stall I/O statistics [A_PSI_IO]
+	MEM Pressure-stall memory statistics [A_PSI_MEM]
+    -r [ ALL ]
+	Memory utilization statistics [A_MEMORY]
+    -S  Swap space utilization statistics [A_MEMORY]
+    -u [ ALL ]
+	CPU utilization statistics [A_CPU]
+    -v  Kernel tables statistics [A_KTABLES]
+    -W  Swapping statistics [A_SWAP]
+    -w  Task creation and system switching statistics [A_PCSW]
+    -y  TTY devices statistics [A_SERIAL]
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>-n DEV   网络接口统计信息</li>
+<li>-n EDEV  网络接口错误统计信息</li>
+</ul>
+
+<p>
+一下命令每秒输出一次
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sar -n SOCK,TCP,ETCP,DEV 1
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga97b4fc" class="outline-3">
+<h3 id="orga97b4fc"><span class="section-number-3">3.6</span> nicstat</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+打印网络接口的统计信息。
+</p>
+</div>
+</div>
+<div id="outline-container-orgdd1b58c" class="outline-3">
+<h3 id="orgdd1b58c"><span class="section-number-3">3.7</span> ethtool</h3>
+<div class="outline-text-3" id="text-3-7">
+<p>
+ethtool可以利用 <b>-i</b> 和 <b>-k</b> 选项检查网络接口的静态配置信息，也可以使用 <b>-S</b>  打印驱动程序的统计信息。
+</p>
+</div>
+</div>
+<div id="outline-container-orgac05afd" class="outline-3">
+<h3 id="orgac05afd"><span class="section-number-3">3.8</span> tcpdump</h3>
+</div>
+<div id="outline-container-org8a11705" class="outline-3">
+<h3 id="org8a11705"><span class="section-number-3">3.9</span> /proc</h3>
+</div>
+</div>
+
+<div id="outline-container-org53e71c1" class="outline-2">
+<h2 id="org53e71c1"><span class="section-number-2">4</span> BPF工具</h2>
+<div class="outline-text-2" id="text-4">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">工具</th>
+<th scope="col" class="org-left">来源</th>
+<th scope="col" class="org-left">目标</th>
+<th scope="col" class="org-left">介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">sockstat</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">套接字统计信息总览</td>
+</tr>
+
+<tr>
+<td class="org-left">sofamily</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">按进程统计新套接字的协议</td>
+</tr>
+
+<tr>
+<td class="org-left">soprotocol</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">按进程统计新套接字的传输协议</td>
+</tr>
+
+<tr>
+<td class="org-left">soconnect</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">跟踪套接字的IP协议的主动连接的细节信息</td>
+</tr>
+
+<tr>
+<td class="org-left">soaccept</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">跟踪套接字的IP协议的被动连接的细节信息</td>
+</tr>
+
+<tr>
+<td class="org-left">socketio</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">套接字细节信息统计，包括I/O统计</td>
+</tr>
+
+<tr>
+<td class="org-left">socksize</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">按进程展示套接字I/O尺寸直方图</td>
+</tr>
+
+<tr>
+<td class="org-left">sormem</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">展示套接字接收缓冲区用量和溢出情况</td>
+</tr>
+
+<tr>
+<td class="org-left">soconnlat</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">统计IP套接字连接延迟，并输出调用栈信息</td>
+</tr>
+
+<tr>
+<td class="org-left">so1stbyte</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">套接字</td>
+<td class="org-left">统计IP套接字的首字节延迟</td>
+</tr>
+
+<tr>
+<td class="org-left">tcpconnect</td>
+<td class="org-left">BCC/BT/BPF书</td>
+<td class="org-left">TCP</td>
+<td class="org-left">跟踪TCP主动连接（connect）</td>
+</tr>
+
+<tr>
+<td class="org-left">tcpaccept</td>
+<td class="org-left">BCC/BT/BPF</td>
+<td class="org-left">TCP</td>
+<td class="org-left">跟踪TCP被动连接（accept）</td>
+</tr>
+
+<tr>
+<td class="org-left">tcplife</td>
+<td class="org-left">BCC/BFP书</td>
+<td class="org-left">TCP</td>
+<td class="org-left">跟踪TCP连接时长，带连接细节信息</td>
+</tr>
+
+<tr>
+<td class="org-left">tcptop</td>
+<td class="org-left">BCC</td>
+<td class="org-left">TCP</td>
+<td class="org-left">按目的地址展示TCP发送和接收吞吐量</td>
+</tr>
+
+<tr>
+<td class="org-left">tcpretrans</td>
+<td class="org-left">BCC/BT</td>
+<td class="org-left">TCP</td>
+<td class="org-left">跟踪TCP重传，带地址和TCP状态</td>
+</tr>
+
+<tr>
+<td class="org-left">tcpsynbl</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">TCP</td>
+<td class="org-left">以直方图展示TCP SYN积压队列</td>
+</tr>
+
+<tr>
+<td class="org-left">tcpwin</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">TCP</td>
+<td class="org-left">跟踪TCP发送中的阻塞窗口的细节信息</td>
+</tr>
+
+<tr>
+<td class="org-left">tcpnagle</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">TCP</td>
+<td class="org-left">跟踪TCP中nagle算法的用量，以及发送延迟</td>
+</tr>
+
+<tr>
+<td class="org-left">udpconnect</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">UDP</td>
+<td class="org-left">跟踪本机发起的UDP连接</td>
+</tr>
+
+<tr>
+<td class="org-left">gethostlatency</td>
+<td class="org-left">BPF书/BT</td>
+<td class="org-left">DNS</td>
+<td class="org-left">通过库函数调用，跟踪DNS查找延迟</td>
+</tr>
+
+<tr>
+<td class="org-left">ipecn</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">IP</td>
+<td class="org-left">跟踪IP入栈显式阻塞通知（ ECN）的细节</td>
+</tr>
+
+<tr>
+<td class="org-left">superping</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">ICMP</td>
+<td class="org-left">测量网络软件栈中的ICMP echo时间</td>
+</tr>
+
+<tr>
+<td class="org-left">qdisc-fq(..)</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">qdiscs</td>
+<td class="org-left">展示FQ队列管理器的延迟</td>
+</tr>
+
+<tr>
+<td class="org-left">netsize</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">网络</td>
+<td class="org-left">展示网络设备I/O尺寸</td>
+</tr>
+
+<tr>
+<td class="org-left">nettxlat</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">网络</td>
+<td class="org-left">展示网络设备发送延迟</td>
+</tr>
+
+<tr>
+<td class="org-left">skbdrop</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">skbs</td>
+<td class="org-left">跟踪sk_buff丢弃情况，带有内核调用栈信息</td>
+</tr>
+
+<tr>
+<td class="org-left">skblife</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">skbs</td>
+<td class="org-left">在网络软件栈各层之间跟踪sk_buff的延迟</td>
+</tr>
+
+<tr>
+<td class="org-left">ieee80211scan</td>
+<td class="org-left">BPF书</td>
+<td class="org-left">WiFi</td>
+<td class="org-left">跟踪IEEE 802.11 WiFi的扫描情况</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+<div id="outline-container-orgc2eea1c" class="outline-3">
+<h3 id="orgc2eea1c"><span class="section-number-3">4.1</span> sockstat</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+该工具打印套接字的统计信息，统计每秒套接字相关的系统调用统计次数！
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #8B8878;">#</span><span style="color: #8B8878;">! /usr/bin/</span><span style="color: #FF1493;">bpftrace</span>
+
+BEGIN
+{
+    <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;\n "</span>);
+}
+
+tracepoint:syscalls:sys_enter_accept*,
+tracepoint:syscalls:sys_enter_connect,
+tracepoint:syscalls:sys_enter_bind,
+tracepoint:syscalls:sys_enter_socket*,
+kprobe:sock_recvmsg,
+kprobe:sock_sendmsg
+{
+    @[probe] = count();
+}
+
+interval:s:1
+{
+    <span style="color: #FF1493;">time</span>();
+    print(@);
+    clear(@);
+}
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./sockstat.bt
+Attaching 10 probes...
+&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;
+ 13:04:38
+@[tracepoint:syscalls:sys_enter_socket]: 12
+@[kprobe:sock_sendmsg]: 516
+@[kprobe:sock_recvmsg]: 2515
+
+13:04:39
+@[kprobe:sock_sendmsg]: 623
+@[kprobe:sock_recvmsg]: 2741
+
+^C13:04:41
+@[tracepoint:syscalls:sys_enter_connect]: 1
+@[tracepoint:syscalls:sys_enter_bind]: 6
+@[tracepoint:syscalls:sys_enter_socket]: 8
+@[kprobe:sock_sendmsg]: 856
+@[kprobe:sock_recvmsg]: 3647
+
+</pre>
+</div>
+
+<p>
+上述结果中 <b>kprobe:sock_recvmsg</b> 调用频率较高，可以使用一下bpftrace单行程序获取对应的进程名：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace -e <span style="color: #CDC673;">'kprobe:sock_sendmsg { @[comm] = count(); }'</span>
+Attaching 1 probe...
+^C
+
+@[Chrome_IOThread]: 1
+@[ThreadPoolForeg]: 1
+@[i3bar]: 1
+@[systemd-network]: 1
+@[systemd-timesyn]: 1
+@[at-spi2-registr]: 2
+@[]: 3
+@[remmina]: 3
+@[Qt bearer threa]: 4
+@[fcitx5]: 10
+@[i3status]: 12
+@[rxvt-unicode]: 13
+@[Chrome_ChildIOT]: 23
+@[chromium]: 37
+@[compton]: 90
+@[Xorg]: 132
+@[quic_client]: 2321
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0cacddd" class="outline-3">
+<h3 id="org0cacddd"><span class="section-number-3">4.2</span> sofamily</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+这里的跟踪函数调用相对不频繁，因此工具的额外消耗可以忽略不计。
+</p>
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;linux/socket.h&gt;</span>
+
+<span style="color: #AF87FF;">BEGIN</span>
+{
+    <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;socket connect/accept&#25805;&#20316;&#65292;&#20351;&#29992; Ctrl-C &#32467;&#26463;&#65281;\n"</span>);
+    <span style="color: #FF8C00;">@fam2str</span>[AF_UNSPEC] = <span style="color: #CDC673;">"AF_UNSPEC"</span>;
+    <span style="color: #FF8C00;">@fam2str</span>[AF_UNIX] = <span style="color: #CDC673;">"AF_UNIX"</span>;
+    <span style="color: #FF8C00;">@fam2str</span>[AF_INET] = <span style="color: #CDC673;">"AF_INET"</span>;
+    <span style="color: #FF8C00;">@fam2str</span>[AF_INET6] = <span style="color: #CDC673;">"AF_INET6"</span>;
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_connect
+{
+    <span style="color: #FF8C00;">@connect</span>[<span style="color: #FF1493;">comm</span>, args-&gt;uservaddr-&gt;sa_family,
+	     <span style="color: #FF8C00;">@fam2str</span>[args-&gt;uservaddr-&gt;sa_family]] = <span style="color: #FF1493;">count</span>();
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_accept,
+<span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_enter_accept4
+{
+    <span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>] = args-&gt;upeer_sockaddr;
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_exit_accept,
+<span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_accept4
+/<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]/
+{
+    <span style="color: #FF1493;">if</span> (args-&gt;ret &gt; 0) {
+	   <span style="color: #FF8C00;">$sa</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+	   <span style="color: #FF8C00;">@accept</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">$sa</span>-&gt;sa_family, <span style="color: #FF8C00;">@fam2str</span>[<span style="color: #FF8C00;">$sa</span>-&gt;sa_family]] = <span style="color: #FF1493;">count</span>();
+       }
+       <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
+}
+
+<span style="color: #AF87FF;">END</span>
+{
+    <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@sockaddr</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@fam2str</span>);
+}
+</pre>
+</div>
+
+<p>
+对于connect系统调用，所有信息都在入口出获取。accept则不同，需要在如后处将sockaddr结构体指针存入hash表，出口处再次查询读取地址类型信息，因为sockaddr结构体是在系统调用内部填充的。
+</p>
+
+<p>
+运行示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./sofamily.bt
+Attaching 7 probes...
+&#36319;&#36394;socket connect/accept&#25805;&#20316;&#65292;&#20351;&#29992; Ctrl-C &#32467;&#26463;&#65281;
+^C
+
+@accept[Xorg, 1, AF_UNIX]: 8
+@accept[dbus-daemon, 1, AF_UNIX]: 8
+
+@connect[BatteryStatusNo, 1, AF_UNIX]: 1
+@connect[Bluez D-Bus thr, 1, AF_UNIX]: 1
+@connect[systemd, 1, AF_UNIX]: 1
+@connect[(upowerd), 1, AF_UNIX]: 1
+@connect[upowerd, 1, AF_UNIX]: 1
+@connect[rofi, 1, AF_UNIX]: 2
+@connect[ThreadPoolSingl, 1, AF_UNIX]: 2
+@connect[Chrome_ChildIOT, 10, AF_INET6]: 2
+@connect[i3status, 10, AF_INET6]: 2
+@connect[ThreadPoolForeg, 1, AF_UNIX]: 2
+@connect[chromium, 1, AF_UNIX]: 13
+@connect[ThreadPoolForeg, 0, AF_UNSPEC]: 18
+@connect[Chrome_ChildIOT, 2, AF_INET]: 18
+@connect[ThreadPoolForeg, 2, AF_INET]: 33
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org62741fe" class="outline-3">
+<h3 id="org62741fe"><span class="section-number-3">4.3</span> soprotocol</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+soprotocol按进程名和传输协议来跟踪新套接字的建立。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;net/sock.h&gt;</span>
+
+<span style="color: #AF87FF;">BEGIN</span>
+{
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;socket connect/accept&#25805;&#20316;&#65292;&#20351;&#29992; Ctrl-C &#32467;&#26463;&#65281;\n"</span>);
+	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_IP] = <span style="color: #CDC673;">"IPPROTO_IP"</span>;
+	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_ICMP] = <span style="color: #CDC673;">"IPPROTO_ICMP"</span>;
+	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_TCP] = <span style="color: #CDC673;">"IPPROTO_TCP"</span>;
+	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_UDP] = <span style="color: #CDC673;">"IPPROTO_UDP"</span>;
+}
+
+<span style="color: #AF87FF;">kprobe</span>:security_socket_accept,
+<span style="color: #AF87FF;">kprobe</span>:security_socket_connect
+{
+	<span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
+	<span style="color: #FF8C00;">$protocol</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;sk_protocol &amp; 0xff;
+	<span style="color: #FF8C00;">@connect</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">$protocol</span>, <span style="color: #FF8C00;">@prot2str</span>[<span style="color: #FF8C00;">$protocol</span>],
+			 <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name] = <span style="color: #FF1493;">count</span>();
+}
+
+<span style="color: #AF87FF;">END</span>
+{
+	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@prot2str</span>);
+}
+</pre>
+</div>
+
+<p>
+sock结构体中的sk-&gt;__sk_common.skc_prot-&gt;name 保存的是协议名称，未来可能会改变该字段的内容，甚至消失。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> <span style="color: #FF8C00;">tcp_prot</span> = {
+	.name                   = <span style="color: #CDC673;">"TCP"</span>,
+	.owner                  = THIS_MODULE,
+	.close                  = tcp_close,
+	.connect                  = tcp_v4_connect,
+	.disconnect             = tcp_disconnect,
+	.accept                 = inet_csk_accept,
+	.ioctl                  = tcp_ioctl,
+	.init                   = tcp_v4_init_sock,
+	[...]
+};
+</pre>
+</div>
+
+<p>
+运行示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./soprotocol.bt
+Attaching 4 probes...
+&#36319;&#36394;socket connect/accept&#25805;&#20316;&#65292;&#20351;&#29992; Ctrl-C &#32467;&#26463;&#65281;
+^C
+
+@connect[Bluez D-Bus thr, 0, IPPROTO_IP, UNIX]: 1
+@connect[i3, 0, IPPROTO_IP, UNIX]: 1
+@connect[i3-msg, 0, IPPROTO_IP, UNIX]: 1
+@connect[i3status, 17, IPPROTO_UDP, UDPv6]: 1
+@connect[BatteryStatusNo, 0, IPPROTO_IP, UNIX]: 1
+@connect[ThreadPoolForeg, 0, IPPROTO_IP, UNIX]: 2
+@connect[rofi, 0, IPPROTO_IP, UNIX]: 2
+@connect[pulseaudio, 0, IPPROTO_IP, UNIX]: 2
+@connect[ThreadPoolSingl, 0, IPPROTO_IP, UNIX]: 2
+@connect[Chrome_ChildIOT, 17, IPPROTO_UDP, UDPv6]: 3
+@connect[dbus-send, 0, IPPROTO_IP, UNIX]: 4
+@connect[xprop, 0, IPPROTO_IP, UNIX]: 8
+@connect[dbus-daemon, 0, IPPROTO_IP, UNIX]: 11
+@connect[chromium, 0, IPPROTO_IP, UNIX]: 13
+@connect[Chrome_ChildIOT, 6, IPPROTO_TCP, TCP]: 14
+@connect[Xorg, 0, IPPROTO_IP, UNIX]: 16
+@connect[ThreadPoolForeg, 17, IPPROTO_UDP, UDP]: 19
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org714f7ab" class="outline-3">
+<h3 id="org714f7ab"><span class="section-number-3">4.4</span> soconnect</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+soconnect展示了IP协议套接字的connect请求。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;linux/in.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;linux/in6.h&gt;</span>
+
+<span style="color: #AF87FF;">BEGIN</span>
+{
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6s %-16s FAM %-16s %-5s %8s %s\n"</span>, <span style="color: #CDC673;">"PID"</span>, <span style="color: #CDC673;">"PROCESS"</span>,
+	       <span style="color: #CDC673;">"ADDRESS"</span>, <span style="color: #CDC673;">"PORT"</span>, <span style="color: #CDC673;">"LAT(us)"</span>, <span style="color: #CDC673;">"RESULT"</span>);
+
+	<span style="color: #FF8C00;">@err2str</span>[0] = <span style="color: #CDC673;">"Success"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EPERM] = <span style="color: #CDC673;">"Permission denied"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EINTR] = <span style="color: #CDC673;">"Interrupted"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EBADF] = <span style="color: #CDC673;">"Invalid sockfd"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EAGAIN] = <span style="color: #CDC673;">"Routing cache insuff"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EACCES] = <span style="color: #CDC673;">"Perm, denied (EACCES)"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EFAULT] = <span style="color: #CDC673;">"Sock struct addr invalid"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ENOTSOCK] = <span style="color: #CDC673;">"FD not a socket"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EPROTOTYPE] = <span style="color: #CDC673;">"Socket protocol error"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EAFNOSUPPORT] = <span style="color: #CDC673;">"Address family invalid"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EADDRINUSE] = <span style="color: #CDC673;">"Local addr in use"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EADDRNOTAVAIL] = <span style="color: #CDC673;">"NO port avaiable"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ENETUNREACH] = <span style="color: #CDC673;">"Network unreachable"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EISCONN] = <span style="color: #CDC673;">"Already connected"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ETIMEDOUT] = <span style="color: #CDC673;">"Timeout"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ECONNREFUSED] = <span style="color: #CDC673;">"Connet refused"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EALREADY] = <span style="color: #CDC673;">"Not ye completed"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EINPROGRESS] = <span style="color: #CDC673;">"In progress"</span>;
+
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_connect
+/args-&gt;uservaddr-&gt;sa_family == AF_INET ||
+	    args-&gt;uservaddr-&gt;sa_family == AF_INET6/
+{
+	<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>] = args-&gt;uservaddr;
+	<span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">nsecs</span>;
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_exit_connect
+/<span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]/
+{
+	<span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6d %-16s %-3d "</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]-&gt;sa_family);
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]-&gt;sa_family == AF_INET) {
+		<span style="color: #FF8C00;">$s</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+		<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s</span>-&gt;sin_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s</span>-&gt;sin_port &lt;&lt; 8) &amp; 0xff00);
+		<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+		       <span style="color: #FF1493;">ntop</span>(AF_INET, <span style="color: #FF8C00;">$s</span>-&gt;sin_addr.s_addr),
+		       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+	} <span style="color: #FF1493;">else</span> {
+		<span style="color: #FF8C00;">$s6</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in6</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+		<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &lt;&lt; 8) &amp; 0xff00);
+		<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+		       <span style="color: #FF1493;">ntop</span>(AF_INET6, <span style="color: #FF8C00;">$s6</span>-&gt;sin6_addr.in6_u.u6_addr8),
+		       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+	}
+
+	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
+	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]);
+}
+
+<span style="color: #AF87FF;">END</span>
+{
+	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@start</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@err2str</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@sockaddr</span>);
+}
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./soconnect.bt
+Attaching 4 probes...
+PID    PROCESS          FAM ADDRESS          PORT   LAT(us) RESULT
+1258   i3status         10  2001:7fd::1      821         21 Network unreachable
+1258   i3status         10  2001:7fd::1      821         22 Network unreachable
+4980   Chrome_ChildIOT  10  2001:4860:4860::8888 821         15 Network unreachable
+4980   Chrome_ChildIOT  2   127.0.0.1        673         75 In progress
+5576   v2ray            2   45.63.31.69      561         44 In progress
+4980   ThreadPoolForeg  2   114.114.114.114  565          8 Success
+4980   ThreadPoolForeg  2   202.89.233.101   512          8 Success
+4980   ThreadPoolForeg  2   202.89.233.100   512          1 Success
+4980   Chrome_ChildIOT  2   202.89.233.101   699         49 In progress
+4980   Chrome_ChildIOT  10  2001:4860:4860::8888 821         10 Network unreachable
+4980   ThreadPoolForeg  2   114.114.114.114  565         10 Success
+4980   ThreadPoolForeg  2   40.126.52.151    512         10 Success
+4980   ThreadPoolForeg  2   40.126.52.2      512          1 Success
+4980
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb4138c9" class="outline-3">
+<h3 id="orgb4138c9"><span class="section-number-3">4.5</span> soaccept</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+soaccept展示了IP协议套接字的接收请求。
+</p>
+
+
+
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;linux/in.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;linux/in6.h&gt;</span>
+
+<span style="color: #AF87FF;">BEGIN</span>
+{
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6s %-16s FAM %-16s %-5s %8s %s\n"</span>, <span style="color: #CDC673;">"PID"</span>, <span style="color: #CDC673;">"PROCESS"</span>,
+	       <span style="color: #CDC673;">"ADDRESS"</span>, <span style="color: #CDC673;">"PORT"</span>, <span style="color: #CDC673;">"LAT(us)"</span>, <span style="color: #CDC673;">"RESULT"</span>);
+
+	<span style="color: #FF8C00;">@err2str</span>[0] = <span style="color: #CDC673;">"Success"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EPERM] = <span style="color: #CDC673;">"Permission denied"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EINTR] = <span style="color: #CDC673;">"Interrupted"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EBADF] = <span style="color: #CDC673;">"Invalid sockfd"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EAGAIN] = <span style="color: #CDC673;">"None to accept"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ENOMEM] = <span style="color: #CDC673;">"Out of memory"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EFAULT] = <span style="color: #CDC673;">"Sock struct addr invalid"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EINVAL] = <span style="color: #CDC673;">"Args invalid"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ENFILE] = <span style="color: #CDC673;">"System FD limit"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EMFILE] = <span style="color: #CDC673;">"Process FD limit"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EPROTO] = <span style="color: #CDC673;">"Protocol error"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ENOTSOCK] = <span style="color: #CDC673;">"FD not a socket"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[EOPNOTSUPP] = <span style="color: #CDC673;">"Not SOCK_STREAM"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ECONNABORTED] = <span style="color: #CDC673;">"Aborted"</span>;
+	<span style="color: #FF8C00;">@err2str</span>[ENOBUFS] = <span style="color: #CDC673;">"Memory (ENOBUFS)"</span>;
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_accept,
+<span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_enter_accept4
+{
+	<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>] = args-&gt;upeer_sockaddr;
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_exit_accept,
+<span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_accept4
+/<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]/
+{
+	<span style="color: #FF8C00;">$sa</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)<span style="color: #FF8C00;">$sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+	<span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET || <span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET6) {
+		<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6d %-16s %-3d "</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">@sa</span>-&gt;sa_family);
+		<span style="color: #FF8C00;">$error</span> = args-&gt;ret &gt; 0 ? 0 : - args-&gt;ret;
+
+		<span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET) {
+			<span style="color: #FF8C00;">$s</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+			<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s</span>-&gt;sin_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s</span>-&gt;sin_port &lt;&lt; 8) &amp; 0xff00);
+			<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+			       <span style="color: #FF1493;">ntop</span>(AF_INET, <span style="color: #FF8C00;">$s</span>-&gt;sin_addr.s_addr),
+			       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+		} <span style="color: #FF1493;">else</span> {
+			<span style="color: #FF8C00;">$s6</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in6</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+			<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &lt;&lt; 8) &amp; 0xff00);
+			<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+			       <span style="color: #FF1493;">ntop</span>(AF_INET6, <span style="color: #FF8C00;">$s6</span>-&gt;sin6_addr.in6_u.u6_addr8),
+			       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+		}
+
+		<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
+	}
+}
+
+<span style="color: #AF87FF;">END</span>
+{
+	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@err2str</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@sockaddr</span>);
+}
+
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./soaccept.bt
+Attaching 6 probes...
+PID    PROCESS          FAM ADDRESS          PORT   LAT(us) RESULT
+5576   v2ray            2   127.0.0.1        734
+5576   v2ray            2   127.0.0.1        748
+5576   v2ray            2   127.0.0.1        762
+5576   v2ray            2   127.0.0.1        764
+5576   v2ray            2   127.0.0.1        514
+5576   v2ray            2   127.0.0.1        518
+5576   v2ray            2   127.0.0.1        522
+5576   v2ray            2   127.0.0.1        526
+5576   v2ray            2   127.0.0.1        530
+5576   v2ray            2   127.0.0.1        534
+5576   v2ray            2   127.0.0.1        536
+5576   v2ray            2   127.0.0.1        538
+5576   v2ray            2   127.0.0.1        544
+5576   v2ray            2   127.0.0.1        554
+5576   v2ray            2   127.0.0.1        558
+5576   v2ray            2   127.0.0.1        562
+5576   v2ray            2   127.0.0.1        566
+^C
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4d1671f" class="outline-3">
+<h3 id="org4d1671f"><span class="section-number-3">4.6</span> socketio</h3>
+<div class="outline-text-3" id="text-4-6">
+<p>
+socketio 按进程、方向、协议和端口来展示套接字的I/O统计信息。
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;net/sock.h&gt;</span>
+
+<span style="color: #AF87FF;">kprobe</span>:sock_recvmsg
+{
+	<span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
+	<span style="color: #FF8C00;">$dport</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_dport;
+	<span style="color: #FF8C00;">$dport</span> = (<span style="color: #FF8C00;">$dport</span> &gt;&gt; 8) | ((<span style="color: #FF8C00;">$dport</span> &lt;&lt; 8) &amp; 0xff00);
+	<span style="color: #FF8C00;">@io</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #CDC673;">"read"</span>, <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name, <span style="color: #FF8C00;">$dport</span>] = <span style="color: #FF1493;">count</span>();
+}
+
+
+<span style="color: #AF87FF;">kprobe</span>:sock_sendmsg
+{
+	<span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
+	<span style="color: #FF8C00;">$dport</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_dport;
+	<span style="color: #FF8C00;">$dport</span> = (<span style="color: #FF8C00;">$dport</span> &gt;&gt; 8) | ((<span style="color: #FF8C00;">$dport</span> &lt;&lt; 8) &amp; 0xff00);
+	<span style="color: #FF8C00;">@io</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #CDC673;">"write"</span>, <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name, <span style="color: #FF8C00;">$dport</span>] = <span style="color: #FF1493;">count</span>();
+}
+
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./socketio.bt
+Attaching 2 probes...
+^C
+
+@io[ThreadPoolForeg, 7848, write, UNIX, 0]: 1
+@io[Chrome_ChildIOT, 8023, read, UNIX, 0]: 1
+@io[chromium, 8287, write, UNIX, 0]: 1
+@io[systemd-machine, 647, write, UNIX, 0]: 1
+@io[Chrome_ChildIOT, 8291, read, UNIX, 0]: 1
+@io[Chrome_ChildIOT, 7961, read, UNIX, 0]: 1
+@io[chromium, 8083, write, UNIX, 0]: 1
+@io[Chrome_ChildIOT, 7899, read, UNIX, 0]: 1
+@io[Chrome_ChildIOT, 8056, read, UNIX, 0]: 1
+@io[Chrome_ChildIOT, 7891, read, UNIX, 0]: 1
+@io[i3bar, 1240, read, UNIX, 0]: 1
+@io[systemd-logind, 645, write, UNIX, 0]: 1
+@io[chromium, 7922, write, UNIX, 0]: 1
+@io[chromium, 7889, write, UNIX, 0]: 1
+@io[chromium, 8023, write, UNIX, 0]: 1
+@io[chromium, 8056, write, UNIX, 0]: 1
+@io[chromium, 7961, write, UNIX, 0]: 1
+@io[Chrome_ChildIOT, 8083, read, UNIX, 0]: 1
+@io[i3bar, 1240, write, UNIX, 0]: 1
+[...]
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2fe42ae" class="outline-3">
+<h3 id="org2fe42ae"><span class="section-number-3">4.7</span> socksize</h3>
+<div class="outline-text-3" id="text-4-7">
+<p>
+socksize按进程和操作方向统计套接字的I/O数量和字节数。
+</p>
+
+<p>
+#+begin_src bpftrace
+  #! /usr/bin/bpftrace
+</p>
+
+<p>
+#include &lt;linux/fs.h&gt;
+#include &lt;net/sock.h&gt;
+</p>
+
+<p>
+kprobe:sock_recvmsg,
+	    kprobe:sock_sendmsg
+{
+	@socket[tid] = arg0;
+}
+</p>
+
+
+<p>
+kretprobe:sock_recvmsg
+{
+	//retval为64位整数， 而返回值是32位
+	if (retval &lt; 0x7fffffff) {
+		@read_bytes[comm] = hist(retval);
+	}
+	delete(@socket[tid]);
+}
+</p>
+
+<p>
+kretprobe:sock_sendmsg
+{
+	if (retval &lt; 0x7fffffff) {
+		@write_bytes[comm] = hist(retval);
+	}
+	delete(@socket[tid]);
+}
+</p>
+
+<p>
+END
+{
+	clear(@socket);
+}
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5b122bb" class="outline-3">
+<h3 id="org5b122bb"><span class="section-number-3">4.8</span> sockstat</h3>
+<div class="outline-text-3" id="text-4-8">
+<p>
+该工具打印套接字的统计信息，统计每秒套接字相关的系统调用统计次数！
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #8B8878;">#</span><span style="color: #8B8878;">! /usr/bin/</span><span style="color: #FF1493;">bpftrace</span>
+
+BEGIN
+{
+    <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;\n "</span>);
+}
+
+tracepoint:syscalls:sys_enter_accept*,
+tracepoint:syscalls:sys_enter_connect,
+tracepoint:syscalls:sys_enter_bind,
+tracepoint:syscalls:sys_enter_socket*,
+kprobe:sock_recvmsg,
+kprobe:sock_sendmsg
+{
+    @[probe] = count();
+}
+
+interval:s:1
+{
+    <span style="color: #FF1493;">time</span>();
+    print(@);
+    clear(@);
+}
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./sockstat.bt
+Attaching 10 probes...
+&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;
+ 13:04:38
+@[tracepoint:syscalls:sys_enter_socket]: 12
+@[kprobe:sock_sendmsg]: 516
+@[kprobe:sock_recvmsg]: 2515
+
+13:04:39
+@[kprobe:sock_sendmsg]: 623
+@[kprobe:sock_recvmsg]: 2741
+
+^C13:04:41
+@[tracepoint:syscalls:sys_enter_connect]: 1
+@[tracepoint:syscalls:sys_enter_bind]: 6
+@[tracepoint:syscalls:sys_enter_socket]: 8
+@[kprobe:sock_sendmsg]: 856
+@[kprobe:sock_recvmsg]: 3647
+
+</pre>
+</div>
+
+<p>
+上述结果中 <b>kprobe:sock_recvmsg</b> 调用频率较高，可以使用一下bpftrace单行程序获取对应的进程名：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace -e <span style="color: #CDC673;">'kprobe:sock_sendmsg { @[comm] = count(); }'</span>
+Attaching 1 probe...
+^C
+
+@[Chrome_IOThread]: 1
+@[ThreadPoolForeg]: 1
+@[i3bar]: 1
+@[systemd-network]: 1
+@[systemd-timesyn]: 1
+@[at-spi2-registr]: 2
+@[]: 3
+@[remmina]: 3
+@[Qt bearer threa]: 4
+@[fcitx5]: 10
+@[i3status]: 12
+@[rxvt-unicode]: 13
+@[Chrome_ChildIOT]: 23
+@[chromium]: 37
+@[compton]: 90
+@[Xorg]: 132
+@[quic_client]: 2321
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./socksize.bt
+Attaching 5 probes...
+^C
+
+[...]
+@read_bytes[QThread]:
+[1]                    3 |@@@@                                                |
+    [2, 4)                 0 |                                                    |
+    [4, 8)                 2 |@@@                                                 |
+    [8, 16)                3 |@@@@                                                |
+    [16, 32)              24 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               |
+    [32, 64)              12 |@@@@@@@@@@@@@@@@@@                                  |
+    [64, 128)             33 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @read_bytes[v2ray]:
+[16, 32)              40 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [32, 64)               0 |                                                    |
+    [64, 128)              0 |                                                    |
+    [128, 256)            40 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @read_bytes[i3status]:
+[16, 32)              32 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           |
+    [32, 64)               4 |@@@@@                                               |
+    [64, 128)              0 |                                                    |
+    [128, 256)            12 |@@@@@@@@@@@@@@@                                     |
+    [256, 512)            12 |@@@@@@@@@@@@@@@                                     |
+    [512, 1K)              4 |@@@@@                                               |
+    [1K, 2K)               4 |@@@@@                                               |
+    [2K, 4K)              40 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+
+    @write_bytes[dbus-daemon]:
+[256, 512)             1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[Chrome_IOThread]:
+[256, 512)             2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[i3bar]:
+[2K, 4K)               2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[gdbus]:
+[128, 256)             2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[at-spi2-registr]:
+[4, 8)                 1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [8, 16)                1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[NetworkManager]:
+[32, 64)               2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[ThreadPoolForeg]:
+[64, 128)              3 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[chromium]:
+[64, 128)              3 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [128, 256)             3 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[nm-applet]:
+[4, 8)                 2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  |
+    [8, 16)                3 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [16, 32)               1 |@@@@@@@@@@@@@@@@@                                   |
+
+    @write_bytes[Qt bearer threa]:
+[16, 32)               4 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [32, 64)               4 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[fcitx5]:
+[16, 32)               6 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [32, 64)               2 |@@@@@@@@@@@@@@@@@                                   |
+    [64, 128)              2 |@@@@@@@@@@@@@@@@@                                   |
+
+    @write_bytes[Chrome_ChildIOT]:
+[64, 128)              6 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [128, 256)             2 |@@@@@@@@@@@@@@@@@                                   |
+    [256, 512)             2 |@@@@@@@@@@@@@@@@@                                   |
+    [512, 1K)              4 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  |
+
+    @write_bytes[qv2ray]:
+[4, 8)                10 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [8, 16)                0 |                                                    |
+    [16, 32)               0 |                                                    |
+    [32, 64)               0 |                                                    |
+    [64, 128)             10 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+    @write_bytes[rxvt-unicode]:
+[16, 32)              22 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [32, 64)               0 |                                                    |
+    [64, 128)              4 |@@@@@@@@@                                           |
+
+    @write_bytes[i3status]:
+[16, 32)              26 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [32, 64)               4 |@@@@@@@@                                            |
+    [...]
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc3bb150" class="outline-3">
+<h3 id="orgc3bb150"><span class="section-number-3">4.9</span> sormem</h3>
+<div class="outline-text-3" id="text-4-9">
+<p>
+sormem跟踪套接字的接收队列，以直方图展示队列长度与可调节的上限对比。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;net/sock.h&gt;</span>
+
+<span style="color: #AF87FF;">BEGIN</span>
+{
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;socket &#25509;&#25910;&#32531;&#20914;&#21306;&#22823;&#23567;&#65292;Ctrl-C&#32467;&#26463;.\n"</span>);
+}
+
+<span style="color: #AF87FF;">kprobe</span>:sock_recvmsg
+{
+	<span style="color: #FF8C00;">$sock</span> = ((<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>)-&gt;sk;
+	<span style="color: #FF8C00;">@rmem_alloc</span> = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$sock</span>-&gt;sk_backlog.rmem_alloc.counter);
+	<span style="color: #FF8C00;">@rmem_limit</span> = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$sock</span>-&gt;sk_rcvbuf &amp; 0xffffffff);
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">sock</span>:sock_rcvqueue_full
+{
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%s rmem_alloc %d &gt; rcvbuf %d, skb size %d\n"</span>, <span style="color: #FF1493;">probe</span>,
+	       args-&gt;rmem_alloc, args-&gt;sk_rcvbuf, args-&gt;truesize);
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">sock</span>:sock_exceed_buf_limit
+{
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%s rmem_alloc %d, allocated %d\n"</span>, <span style="color: #FF1493;">probe</span>,
+	       args-&gt;rmem_alloc, args-&gt;allocated);
+
+}
+
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace  ./sormem.bt
+Attaching 4 probes...
+&#36319;&#36394;socket &#25509;&#25910;&#32531;&#20914;&#21306;&#22823;&#23567;&#65292;Ctrl-C&#32467;&#26463;.
+^C
+
+@rmem_alloc:
+[0]                  296 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [1]                    0 |                                                    |
+    [2, 4)                 0 |                                                    |
+    [4, 8)                 0 |                                                    |
+    [8, 16)                0 |                                                    |
+    [16, 32)               0 |                                                    |
+    [32, 64)               0 |                                                    |
+    [64, 128)              0 |                                                    |
+    [128, 256)             0 |                                                    |
+    [256, 512)             0 |                                                    |
+    [512, 1K)              2 |                                                    |
+    [1K, 2K)              63 |@@@@@@@@@@@                                         |
+    [2K, 4K)               0 |                                                    |
+    [4K, 8K)               8 |@                                                   |
+    [8K, 16K)             36 |@@@@@@                                              |
+    [16K, 32K)             0 |                                                    |
+    [32K, 64K)             8 |@                                                   |
+
+    @rmem_limit:
+[64K, 128K)           12 |@@                                                  |
+    [128K, 256K)         306 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    [256K, 512K)           0 |                                                    |
+    [512K, 1M)             0 |                                                    |
+    [1M, 2M)               0 |                                                    |
+    [2M, 4M)              95 |@@@@@@@@@@@@@@@@                                    |
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org540a050" class="outline-3">
+<h3 id="org540a050"><span class="section-number-3">4.10</span> soconnlat</h3>
+<div class="outline-text-3" id="text-4-10">
+<p>
+soconnlat以直方图的形式统计套接字连接延迟，同时带有用户态调用栈信息。通过代码路径来识别不同的连接。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;asm-generic/errno.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;linux/in.h&gt;</span>
+
+<span style="color: #AF87FF;">BEGIN</span>
+{
+	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;IP connect&#30340;&#24310;&#36831;(&#29992;&#25143;&#24577;&#35843;&#29992;&#26632;)&#65292;Ctrl-C&#32467;&#26463;.\n"</span>);
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_connect
+/args-&gt;uservaddr-&gt;sa_family == AF_INET ||
+	    args-&gt;uservaddr-&gt;sa_family == AF_INET6/
+{
+	<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">nsecs</span>;
+	<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">ustack</span>();
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_exit_connect
+{
+	<span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
+	<span style="color: #FF8C00;">@us</span>[<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>], <span style="color: #FF1493;">comm</span>] = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$dur_us</span>);
+	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]);
+	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>]);
+}
+
+<span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:<span style="color: #5FD7FF;">sys_exit_poll</span>*,
+	    <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_epoll*,
+	    <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_select*,
+	    <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_pselect*
+	    /<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>] &amp;&amp; args-&gt;ret &gt; 0/
+	    {
+		    <span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
+		    <span style="color: #FF8C00;">@us</span>[<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>], <span style="color: #FF1493;">comm</span>] = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$dur_us</span>);
+		    <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]);
+		    <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>]);
+	    }
+
+<span style="color: #AF87FF;">END</span>
+{
+	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@conn_start</span>);<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@conn_stack</span>);
+}
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-10-29 Fri 21:15</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

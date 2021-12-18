@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2021-09-05 Sun 16:29 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>linux文件系统</title>
@@ -195,7 +195,7 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
 <!--/*--><![CDATA[/*><!--*/
      function CodeHighlightOn(elem, id)
      {
@@ -275,45 +275,45 @@
 </div>
 
 <div id="outline-container-org6e4cd6e" class="outline-2">
-<h2 id="org6e4cd6e"><span class="section-number-2">1</span> 文件系统操作</h2>
+<h2 id="org6e4cd6e"><span class="section-number-2">1.</span> 文件系统操作</h2>
 <div class="outline-text-2" id="text-1">
 </div>
 <div id="outline-container-orgd4617fc" class="outline-3">
-<h3 id="orgd4617fc"><span class="section-number-3">1.1</span> 全局结构</h3>
+<h3 id="orgd4617fc"><span class="section-number-3">1.1.</span> 全局结构</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 文件系统结构的链表头
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_system_type</span> *<span style="color: #FF8C00; font-weight: bold;">file_systems</span>;
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> *<span style="color: #FF8C00;">file_systems</span>;
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_system_type</span> {
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25991;&#20214;&#31995;&#32479;&#21517;&#31216; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">name</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25346;&#36733;&#26631;&#24535;  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fs_flags</span>;
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">FS_REQUIRES_DEV</span>         1
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">FS_BINARY_MOUNTDATA</span>     2
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">FS_HAS_SUBTYPE</span>          4
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">FS_USERNS_MOUNT</span>         8       <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Can be mounted by userns root </span><span style="color: #8B8878;">*/</span>
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">FS_DISALLOW_NOTIFY_PERM</span> 16      <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Disable fanotify permission events </span><span style="color: #8B8878;">*/</span>
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00; font-weight: bold;">FS_RENAME_DOES_D_MOVE</span>   32768   <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">FS will handle d_move() during rename() internally. </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> (*init_fs_context)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">fs_context</span> *);
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">fs_parameter_spec</span> *<span style="color: #FF8C00; font-weight: bold;">parameters</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#27492;&#25991;&#20214;&#25991;&#20214;&#31995;&#32479;&#30340;&#26032;&#23454;&#20363;&#34987;&#25346;&#36733;&#26159;&#35843;&#29992;  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">struct</span> dentry *(*mount) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_system_type</span> *, <span style="color: #5FD7FF; font-weight: bold;">int</span>,
-		       <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *, <span style="color: #5FD7FF; font-weight: bold;">void</span> *);
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#27492;&#25991;&#20214;&#31995;&#32479;&#30340;&#23454;&#20363;&#34987;&#20851;&#38381;&#26102;&#35843;&#29992;  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">void</span> (*kill_sb) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">super_block</span> *);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">module</span> *<span style="color: #FF8C00; font-weight: bold;">owner</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#36830;&#25509;&#25152;&#26377;&#24050;&#27880;&#20876;&#25991;&#20214;&#31995;&#32479;&#30340;&#25351;&#38024; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_system_type</span> * <span style="color: #FF8C00; font-weight: bold;">next</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#30456;&#21516;&#25991;&#20214;&#31995;&#32479;&#30340;&#36229;&#32423;&#22359;&#32467;&#26500; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">hlist_head</span> <span style="color: #FF8C00; font-weight: bold;">fs_supers</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">......</span>
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25991;&#20214;&#31995;&#32479;&#21517;&#31216;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25346;&#36733;&#26631;&#24535;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fs_flags</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_REQUIRES_DEV</span>         1
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_BINARY_MOUNTDATA</span>     2
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_HAS_SUBTYPE</span>          4
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_USERNS_MOUNT</span>         8       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Can be mounted by userns root</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_DISALLOW_NOTIFY_PERM</span> 16      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Disable fanotify permission events</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_RENAME_DOES_D_MOVE</span>   32768   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">FS will handle d_move() during rename() internally.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">init_fs_context</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fs_context</span> *);
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fs_parameter_spec</span> *<span style="color: #FF8C00;">parameters</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27492;&#25991;&#20214;&#25991;&#20214;&#31995;&#32479;&#30340;&#26032;&#23454;&#20363;&#34987;&#25346;&#36733;&#26159;&#35843;&#29992;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry</span> *(*<span style="color: #87D700;">mount</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> *, <span style="color: #5FD7FF;">int</span>,
+		       <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *, <span style="color: #5FD7FF;">void</span> *);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27492;&#25991;&#20214;&#31995;&#32479;&#30340;&#23454;&#20363;&#34987;&#20851;&#38381;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">kill_sb</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_block</span> *);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36830;&#25509;&#25152;&#26377;&#24050;&#27880;&#20876;&#25991;&#20214;&#31995;&#32479;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> * <span style="color: #FF8C00;">next</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30456;&#21516;&#25991;&#20214;&#31995;&#32479;&#30340;&#36229;&#32423;&#22359;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span> <span style="color: #FF8C00;">fs_supers</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
 };
 
 </pre>
@@ -322,25 +322,25 @@
 </div>
 
 <div id="outline-container-orgef75f7e" class="outline-3">
-<h3 id="orgef75f7e"><span class="section-number-3">1.2</span> 注册</h3>
+<h3 id="orgef75f7e"><span class="section-number-3">1.2.</span> 注册</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 注册文件系统通过调用 <code>register_filesystem</code> 将新的文件系统加入 <code>file_systems</code> 链表中.
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">register_filesystem</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_system_type</span> * <span style="color: #FF8C00; font-weight: bold;">fs</span>)
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">register_filesystem</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> * <span style="color: #FF8C00;">fs</span>)
 {
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">res</span> = 0;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_system_type</span> ** <span style="color: #FF8C00; font-weight: bold;">p</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">res</span> = 0;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> ** <span style="color: #FF8C00;">p</span>;
 
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">......</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
 	write_lock(&amp;file_systems_lock);
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#26597;&#25214;&#25991;&#20214;&#31995;&#32479;&#20013;&#26159;&#21542;&#24050;&#32463;&#27880;&#20876;&#36807;, &#22914;&#26524;&#27809;&#26377;, &#36820;&#22238;&#38142;&#34920;&#26411;&#23614;&#25991;&#20214;&#31995;&#32479;&#30340;next&#25351;&#38024; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26597;&#25214;&#25991;&#20214;&#31995;&#32479;&#20013;&#26159;&#21542;&#24050;&#32463;&#27880;&#20876;&#36807;, &#22914;&#26524;&#27809;&#26377;, &#36820;&#22238;&#38142;&#34920;&#26411;&#23614;&#25991;&#20214;&#31995;&#32479;&#30340;next&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
 	p = find_filesystem(fs-&gt;name, strlen(fs-&gt;name));
 	<span style="color: #FF1493;">if</span> (*p)
 		res = -EBUSY;
 	<span style="color: #FF1493;">else</span>
-		*p = fs;  <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">&#23558;&#26032;&#25991;&#20214;&#31995;&#32479;&#20018;&#20837;&#38142;&#34920;</span>
+		*p = fs;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#26032;&#25991;&#20214;&#31995;&#32479;&#20018;&#20837;&#38142;&#34920;</span>
 	write_unlock(&amp;file_systems_lock);
 	<span style="color: #FF1493;">return</span> res;
 }
@@ -351,7 +351,7 @@
 </div>
 
 <div id="outline-container-org394066a" class="outline-2">
-<h2 id="org394066a"><span class="section-number-2">2</span> proc文件系统</h2>
+<h2 id="org394066a"><span class="section-number-2">2.</span> proc文件系统</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 proc文件系统是一个虚拟文件系统，通过proc文件系统，可以获取有关内核子系统的信息。sysctl机制与此文件系统密切相关。proc文件系统提供了一种接口，使得可以简cat或者echo等程序来修改内核参数。通常proc文件系统装载在/proc路径（当然也可以装载到其他位置）。
@@ -359,7 +359,7 @@ proc文件系统是一个虚拟文件系统，通过proc文件系统，可以获
 </div>
 
 <div id="outline-container-org4fa81bb" class="outline-3">
-<h3 id="org4fa81bb"><span class="section-number-3">2.1</span> /proc内容</h3>
+<h3 id="org4fa81bb"><span class="section-number-3">2.1.</span> /proc内容</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 其内容大致分为以下几类：
@@ -377,7 +377,7 @@ proc文件系统是一个虚拟文件系统，通过proc文件系统，可以获
 </div>
 
 <div id="outline-container-orge22b9d4" class="outline-4">
-<h4 id="orge22b9d4"><span class="section-number-4">2.1.1</span> 特定于进程的数据</h4>
+<h4 id="orge22b9d4"><span class="section-number-4">2.1.1.</span> 特定于进程的数据</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
 /proc目录中有很多用进程PID命名的文件夹，文件夹中的文件包含了相应进程的数据。
@@ -397,7 +397,7 @@ proc文件系统是一个虚拟文件系统，通过proc文件系统，可以获
 </div>
 
 <div id="outline-container-orgef74ebb" class="outline-4">
-<h4 id="orgef74ebb"><span class="section-number-4">2.1.2</span> 一般性的系统信息</h4>
+<h4 id="orgef74ebb"><span class="section-number-4">2.1.2.</span> 一般性的系统信息</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
 /proc目录中还有一些文件，包含了一般性的系统信息。
@@ -477,7 +477,7 @@ d9e88000-db53ffff : System RAM
 </div>
 
 <div id="outline-container-org00bb86b" class="outline-4">
-<h4 id="org00bb86b"><span class="section-number-4">2.1.3</span> 网络信息</h4>
+<h4 id="org00bb86b"><span class="section-number-4">2.1.3.</span> 网络信息</h4>
 <div class="outline-text-4" id="text-2-1-3">
 <p>
 /proc/net子目录提供了内核的各种网络选项有关的数据。其中保存了各种协议和设备数据。
@@ -497,7 +497,7 @@ d9e88000-db53ffff : System RAM
 </div>
 
 <div id="outline-container-org39dd3df" class="outline-4">
-<h4 id="org39dd3df"><span class="section-number-4">2.1.4</span> 系统控制参数</h4>
+<h4 id="org39dd3df"><span class="section-number-4">2.1.4.</span> 系统控制参数</h4>
 <div class="outline-text-4" id="text-2-1-4">
 <p>
 用于动态地检查和修改内核行为的系统控制参数。通过sysctl系统调用也能修改这些参数，但是需要的工作量更多，因
@@ -521,60 +521,60 @@ sysctl参数由一个独立的子目录/proc/sys管理，它进一步划分为�
 
 
 <div id="outline-container-org3b1321d" class="outline-3">
-<h3 id="org3b1321d"><span class="section-number-3">2.2</span> 数据结构</h3>
+<h3 id="org3b1321d"><span class="section-number-3">2.2.</span> 数据结构</h3>
 <div class="outline-text-3" id="text-2-2">
 </div>
 <div id="outline-container-org2d66751" class="outline-4">
-<h4 id="org2d66751"><span class="section-number-4">2.2.1</span> proc数据项的表示</h4>
+<h4 id="org2d66751"><span class="section-number-4">2.2.1.</span> proc数据项的表示</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
 proc中的每个数据项都由proc_dir_entry的一个实例描述，其定义如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_dir_entry</span> {
-	<span style="color: #5FD7FF; font-weight: bold;">atomic_t</span> <span style="color: #FF8C00; font-weight: bold;">in_use</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">refcount_t</span> <span style="color: #FF8C00; font-weight: bold;">refcnt</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">list_head</span> <span style="color: #FF8C00; font-weight: bold;">pde_openers</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">who did -&gt;open, but not -&gt;release </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">protects -&gt;pde_openers and all struct pde_opener instances </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">spinlock_t</span> <span style="color: #FF8C00; font-weight: bold;">pde_unload_lock</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">completion</span> *<span style="color: #FF8C00; font-weight: bold;">pde_unload_completion</span>;
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">inode_operations</span> *<span style="color: #FF8C00; font-weight: bold;">proc_iops</span>;
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> {
+	<span style="color: #5FD7FF;">atomic_t</span> <span style="color: #FF8C00;">in_use</span>;
+	<span style="color: #5FD7FF;">refcount_t</span> <span style="color: #FF8C00;">refcnt</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">pde_openers</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">who did -&gt;open, but not -&gt;release</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">protects -&gt;pde_openers and all struct pde_opener instances</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">spinlock_t</span> <span style="color: #FF8C00;">pde_unload_lock</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">completion</span> *<span style="color: #FF8C00;">pde_unload_completion</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> *<span style="color: #FF8C00;">proc_iops</span>;
 	<span style="color: #FF1493;">union</span> {
 		<span style="color: #8B8878;">/*  */</span>
-		<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_ops</span> *<span style="color: #FF8C00; font-weight: bold;">proc_ops</span>;
+		<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_ops</span> *<span style="color: #FF8C00;">proc_ops</span>;
 		<span style="color: #8B8878;">/*  */</span>
-		<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_operations</span> *<span style="color: #FF8C00; font-weight: bold;">proc_dir_ops</span>;
+		<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> *<span style="color: #FF8C00;">proc_dir_ops</span>;
 	};
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">dentry_operations</span> *<span style="color: #FF8C00; font-weight: bold;">proc_dops</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry_operations</span> *<span style="color: #FF8C00;">proc_dops</span>;
 	<span style="color: #FF1493;">union</span> {
-		<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">seq_operations</span> *<span style="color: #FF8C00; font-weight: bold;">seq_ops</span>;
-		<span style="color: #5FD7FF; font-weight: bold;">int</span> (*single_show)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">seq_file</span> *, <span style="color: #5FD7FF; font-weight: bold;">void</span> *);
+		<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">seq_operations</span> *<span style="color: #FF8C00;">seq_ops</span>;
+		<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">single_show</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">seq_file</span> *, <span style="color: #5FD7FF;">void</span> *);
 	};
-	<span style="color: #5FD7FF; font-weight: bold;">proc_write_t</span> <span style="color: #FF8C00; font-weight: bold;">write</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">data</span>;nnn
-	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">state_size</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25991;&#20214;&#30340;inode&#32534;&#21495; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">low_ino</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#30446;&#24405;&#20013;&#30340;&#23376;&#30446;&#24405;&#25110;&#32773;&#31526;&#21495;&#38142;&#25509;&#30340;&#25968;&#37327;  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">nlink_t</span> <span style="color: #FF8C00; font-weight: bold;">nlink</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">kuid_t</span> <span style="color: #FF8C00; font-weight: bold;">uid</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">kgid_t</span> <span style="color: #FF8C00; font-weight: bold;">gid</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">loff_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25351;&#21521;&#29238;&#30446;&#24405;&#30340;&#25351;&#38024; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_dir_entry</span> *<span style="color: #FF8C00; font-weight: bold;">parent</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#23376;&#30446;&#24405;&#26641;&#65292;&#22914;&#26524;&#20301;&#25991;&#20214;&#21017;&#20026;&#31354; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">rb_root</span> <span style="color: #FF8C00; font-weight: bold;">subdir</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#29992;&#26469;&#26500;&#24314;&#23376;&#30446;&#24405;&#25968;&#30340;&#29238;&#33410;&#28857; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">rb_node</span> <span style="color: #FF8C00; font-weight: bold;">subdir_node</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25968;&#25454;&#39033;&#30340;&#25991;&#20214;&#21517;</span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">name</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25991;&#20214;&#26435;&#38480; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">umode_t</span> <span style="color: #FF8C00; font-weight: bold;">mode</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">u8</span> <span style="color: #FF8C00; font-weight: bold;">flags</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25991;&#20214;&#21517;&#38271;&#24230; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">u8</span> <span style="color: #FF8C00; font-weight: bold;">namelen</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">char</span> <span style="color: #FF8C00; font-weight: bold;">inline_name</span>[];
-} <span style="color: #FF8C00; font-weight: bold;">__randomize_layout</span>;
+	<span style="color: #5FD7FF;">proc_write_t</span> <span style="color: #FF8C00;">write</span>;
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>;nnn
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">state_size</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25991;&#20214;&#30340;inode&#32534;&#21495;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">low_ino</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30446;&#24405;&#20013;&#30340;&#23376;&#30446;&#24405;&#25110;&#32773;&#31526;&#21495;&#38142;&#25509;&#30340;&#25968;&#37327;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #5FD7FF;">nlink_t</span> <span style="color: #FF8C00;">nlink</span>;
+	<span style="color: #5FD7FF;">kuid_t</span> <span style="color: #FF8C00;">uid</span>;
+	<span style="color: #5FD7FF;">kgid_t</span> <span style="color: #FF8C00;">gid</span>;
+	<span style="color: #5FD7FF;">loff_t</span> <span style="color: #FF8C00;">size</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#29238;&#30446;&#24405;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">parent</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23376;&#30446;&#24405;&#26641;&#65292;&#22914;&#26524;&#20301;&#25991;&#20214;&#21017;&#20026;&#31354;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rb_root</span> <span style="color: #FF8C00;">subdir</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#26469;&#26500;&#24314;&#23376;&#30446;&#24405;&#25968;&#30340;&#29238;&#33410;&#28857;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rb_node</span> <span style="color: #FF8C00;">subdir_node</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25968;&#25454;&#39033;&#30340;&#25991;&#20214;&#21517;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25991;&#20214;&#26435;&#38480;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">umode_t</span> <span style="color: #FF8C00;">mode</span>;
+	<span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">flags</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25991;&#20214;&#21517;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">namelen</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">inline_name</span>[];
+} <span style="color: #FF8C00;">__randomize_layout</span>;
 
 </pre>
 </div>
@@ -583,34 +583,34 @@ proc中的每个数据项都由proc_dir_entry的一个实例描述，其定义�
 
 
 <div id="outline-container-org7faf88c" class="outline-4">
-<h4 id="org7faf88c"><span class="section-number-4">2.2.2</span> proc inode</h4>
+<h4 id="org7faf88c"><span class="section-number-4">2.2.2.</span> proc inode</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <p>
 proc_inode结构用来支持以面向inode的方式来查看proc文件系统的数据项。
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">union</span> <span style="color: #5FD7FF; font-weight: bold;">proc_op</span> {
-      <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#29992;&#20110;&#33719;&#24471;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#20449;&#24687; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> (*proc_get_link)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">dentry</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">path</span> *);
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> (*proc_show)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">seq_file</span> *<span style="color: #FF8C00; font-weight: bold;">m</span>,
-			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">pid_namespace</span> *<span style="color: #FF8C00; font-weight: bold;">ns</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">pid</span> *<span style="color: #FF8C00; font-weight: bold;">pid</span>,
-			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">task_struct</span> *<span style="color: #FF8C00; font-weight: bold;">task</span>);
-	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">lsm</span>;
+<pre class="src src-c"><span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">proc_op</span> {
+      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#33719;&#24471;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">proc_get_link</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">path</span> *);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">proc_show</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">seq_file</span> *<span style="color: #FF8C00;">m</span>,
+			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>,
+			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">task</span>);
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">lsm</span>;
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_inode</span> {
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25351;&#21521;&#36827;&#31243;&#30340;pid&#23454;&#20363;</span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">pid</span> *<span style="color: #FF8C00; font-weight: bold;">pid</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#35760;&#24405;&#20102;&#25991;&#20214;&#25551;&#36848;&#31526;,&#23545;&#24212;&#20110;/proc/&lt;pid&gt;/fd/&#30446;&#24405;&#19979;&#30340;&#26576;&#20010;&#25991;&#20214; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">fd</span>;
-	<span style="color: #FF1493;">union</span> <span style="color: #5FD7FF; font-weight: bold;">proc_op</span> <span style="color: #FF8C00; font-weight: bold;">op</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_dir_entry</span> *<span style="color: #FF8C00; font-weight: bold;">pde</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">ctl_table_header</span> *<span style="color: #FF8C00; font-weight: bold;">sysctl</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">ctl_table</span> *<span style="color: #FF8C00; font-weight: bold;">sysctl_entry</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">hlist_node</span> <span style="color: #FF8C00; font-weight: bold;">sibling_inodes</span>;
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_ns_operations</span> *<span style="color: #FF8C00; font-weight: bold;">ns_ops</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">inode</span> <span style="color: #FF8C00; font-weight: bold;">vfs_inode</span>;
-} <span style="color: #FF8C00; font-weight: bold;">__randomize_layout</span>;
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#36827;&#31243;&#30340;pid&#23454;&#20363;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;&#20102;&#25991;&#20214;&#25551;&#36848;&#31526;,&#23545;&#24212;&#20110;/proc/&lt;pid&gt;/fd/&#30446;&#24405;&#19979;&#30340;&#26576;&#20010;&#25991;&#20214;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>;
+	<span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">proc_op</span> <span style="color: #FF8C00;">op</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">pde</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table_header</span> *<span style="color: #FF8C00;">sysctl</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> *<span style="color: #FF8C00;">sysctl_entry</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> <span style="color: #FF8C00;">sibling_inodes</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_ns_operations</span> *<span style="color: #FF8C00;">ns_ops</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> <span style="color: #FF8C00;">vfs_inode</span>;
+} <span style="color: #FF8C00;">__randomize_layout</span>;
 
 </pre>
 </div>
@@ -623,9 +623,9 @@ proc_inode结构用来支持以面向inode的方式来查看proc文件系统的�
 如果inode（vfs_inode）结构实例是关联到了proc文件系统的，则通过inode使用container_of机制来获得proc_inode。内核为此定义了以下宏定义：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_inode</span> *<span style="color: #87D700; font-weight: bold;">PROC_I</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">inode</span> *<span style="color: #FF8C00; font-weight: bold;">inode</span>)
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span> *<span style="color: #87D700;">PROC_I</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>)
 {
-	<span style="color: #FF1493;">return</span> container_of(inode, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_inode</span>, vfs_inode);
+	<span style="color: #FF1493;">return</span> container_of(inode, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span>, vfs_inode);
 }
 </pre>
 </div>
@@ -634,10 +634,10 @@ proc_inode结构用来支持以面向inode的方式来查看proc文件系统的�
 </div>
 
 <div id="outline-container-org17a425a" class="outline-3">
-<h3 id="org17a425a"><span class="section-number-3">2.3</span> 初始化</h3>
+<h3 id="org17a425a"><span class="section-number-3">2.3.</span> 初始化</h3>
 <div class="outline-text-3" id="text-2-3">
 
-<div id="org8055144" class="figure">
+<div id="orgebd0123" class="figure">
 <p><img src="./plantuml/filesystem/proc_init.png" alt="proc_init.png" />
 </p>
 </div>
@@ -649,13 +649,13 @@ proc_inode结构用来支持以面向inode的方式来查看proc文件系统的�
 </div>
 
 <div id="outline-container-org1d4b017" class="outline-3">
-<h3 id="org1d4b017"><span class="section-number-3">2.4</span> proc文件系统的装载</h3>
+<h3 id="org1d4b017"><span class="section-number-3">2.4.</span> proc文件系统的装载</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 从用户空间的角度来看，/proc的装载几乎与非虚拟文件系统类似。唯一的区别是，将一个适宜的关键字（通常是proc或none）指定为数据源，而不使用设备文件：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount -t proc proc /proc</span>
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">mount -t proc proc /proc</span>
 </pre>
 </div>
 
@@ -663,9 +663,9 @@ proc_inode结构用来支持以面向inode的方式来查看proc文件系统的�
 内核添加文件系统时，会扫描一个链表(file_system)，以查找和该文件系统相关联的file_system_type实例。proc文件系统的结构如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_system_type</span> <span style="color: #FF8C00; font-weight: bold;">proc_fs_type</span> = {
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> <span style="color: #FF8C00;">proc_fs_type</span> = {
 	.name                   = <span style="color: #CDC673;">"proc"</span>,
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21021;&#22987;&#21270;proc&#25991;&#20214;&#31995;&#32479;&#19978;&#19979;&#25991; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;proc&#25991;&#20214;&#31995;&#32479;&#19978;&#19979;&#25991;</span><span style="color: #8B8878;"> */</span>
 	.init_fs_context        = proc_init_fs_context,
 	.parameters             = proc_fs_parameters,
 	.kill_sb                = proc_kill_sb,
@@ -679,34 +679,34 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">dentry_operations</span> <span style="color: #FF8C00; font-weight: bold;">proc_misc_dentry_ops</span> = {
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry_operations</span> <span style="color: #FF8C00;">proc_misc_dentry_ops</span> = {
 	.d_revalidate   = proc_misc_d_revalidate,
 	.d_delete       = proc_misc_d_delete,
 };
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">inode_operations</span> <span style="color: #FF8C00; font-weight: bold;">proc_file_inode_operations</span> = {
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_file_inode_operations</span> = {
 	.setattr        = proc_notify_change,
 };
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">fs_context_operations</span> <span style="color: #FF8C00; font-weight: bold;">proc_fs_context_ops</span> = {
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fs_context_operations</span> <span style="color: #FF8C00;">proc_fs_context_ops</span> = {
 	.free           = proc_fs_context_free,
 	.parse_param    = proc_parse_param,
 	.get_tree       = proc_get_tree,
 	.reconfigure    = proc_reconfigure,
 };
 
-<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">proc&#30446;&#24405;&#30340;&#25805;&#20316;&#20989;&#25968; </span><span style="color: #8B8878;">*/</span>
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_operations</span> <span style="color: #FF8C00; font-weight: bold;">proc_root_operations</span> = {
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">proc&#30446;&#24405;&#30340;&#25805;&#20316;&#20989;&#25968;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_root_operations</span> = {
 	.read            = generic_read_dir,
 	.iterate_shared  = proc_root_readdir,
 	.llseek         = generic_file_llseek,
 };
-<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">proc&#26681;&#30446;&#24405;&#22522;&#26412;&#27809;&#20160;&#20040;&#25805;&#20316; </span><span style="color: #8B8878;">*/</span>
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">inode_operations</span> <span style="color: #FF8C00; font-weight: bold;">proc_root_inode_operations</span> = {
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">proc&#26681;&#30446;&#24405;&#22522;&#26412;&#27809;&#20160;&#20040;&#25805;&#20316;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_root_inode_operations</span> = {
 	.lookup         = proc_root_lookup,
 	.getattr        = proc_root_getattr,
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_dir_entry</span> <span style="color: #FF8C00; font-weight: bold;">proc_root</span> = {
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> <span style="color: #FF8C00;">proc_root</span> = {
 	.low_ino        = PROC_ROOT_INO,
 	.namelen        = 5,
 	.mode           = S_IFDIR | S_IRUGO | S_IXUGO,
@@ -726,16 +726,16 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 
 
 <div id="outline-container-org93432ff" class="outline-3">
-<h3 id="org93432ff"><span class="section-number-3">2.5</span> 管理/proc数据项</h3>
+<h3 id="org93432ff"><span class="section-number-3">2.5.</span> 管理/proc数据项</h3>
 <div class="outline-text-3" id="text-2-5">
 </div>
 <div id="outline-container-orga1cd7bd" class="outline-4">
-<h4 id="orga1cd7bd"><span class="section-number-4">2.5.1</span> 数据项的创建和注册</h4>
+<h4 id="orga1cd7bd"><span class="section-number-4">2.5.1.</span> 数据项的创建和注册</h4>
 <div class="outline-text-4" id="text-2-5-1">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_dir_entry</span> *<span style="color: #87D700; font-weight: bold;">proc_create</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">name</span>, <span style="color: #5FD7FF; font-weight: bold;">umode_t</span> <span style="color: #FF8C00; font-weight: bold;">mode</span>,
-				   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_dir_entry</span> *<span style="color: #FF8C00; font-weight: bold;">parent</span>,
-				   <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">proc_ops</span> *<span style="color: #FF8C00; font-weight: bold;">proc_ops</span>)
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #87D700;">proc_create</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>, <span style="color: #5FD7FF;">umode_t</span> <span style="color: #FF8C00;">mode</span>,
+				   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">parent</span>,
+				   <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_ops</span> *<span style="color: #FF8C00;">proc_ops</span>)
 </pre>
 </div>
 <p>
@@ -743,7 +743,7 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 </p>
 
 
-<div id="orga6bbfcc" class="figure">
+<div id="org504f2df" class="figure">
 <p><img src="./plantuml/filesystem/proc_create.png" alt="proc_create.png" />
 </p>
 </div>
@@ -752,7 +752,7 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 
 
 <div id="outline-container-orgf366ac6" class="outline-4">
-<h4 id="orgf366ac6"><span class="section-number-4">2.5.2</span> 查找proc数据项</h4>
+<h4 id="orgf366ac6"><span class="section-number-4">2.5.2.</span> 查找proc数据项</h4>
 <div class="outline-text-4" id="text-2-5-2">
 <p>
 用户空间应用程序访问proc文件时，就像是访问常规文件系统中的普通文件一样。换句话说，搜索proc数据项时所经由的代码路径，与VFS例程是相同的。VFS查找过程最终调用inode_operations的lookup函数指针，根据文件名的各个路径分量，来确定文件名所对应的inode。
@@ -778,13 +778,13 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 </div>
 
 <div id="outline-container-org4614672" class="outline-3">
-<h3 id="org4614672"><span class="section-number-3">2.6</span> 读取和写入信息</h3>
+<h3 id="org4614672"><span class="section-number-3">2.6.</span> 读取和写入信息</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 内核使用保存在proc_file_operations中的操作来读写常规proc数据项的内容。该结构中的函数指针，所指向的目标函数如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_operations</span> <span style="color: #FF8C00; font-weight: bold;">proc_reg_file_ops</span> = {
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_reg_file_ops</span> = {
 	.llseek         = proc_reg_llseek,
 	.read           = proc_reg_read,
 	.write          = proc_reg_write,
@@ -796,7 +796,7 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 	.release        = proc_reg_release,
 };
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">file_operations</span> <span style="color: #FF8C00; font-weight: bold;">proc_iter_file_ops</span> = {
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_iter_file_ops</span> = {
 	.llseek         = proc_reg_llseek,
 	.read_iter      = proc_reg_read_iter,
 	.write          = proc_reg_write,
@@ -814,7 +814,7 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 </div>
 
 <div id="outline-container-org256fe5d" class="outline-3">
-<h3 id="org256fe5d"><span class="section-number-3">2.7</span> 查询进程页表</h3>
+<h3 id="org256fe5d"><span class="section-number-3">2.7.</span> 查询进程页表</h3>
 <div class="outline-text-3" id="text-2-7">
 <p>
 是由内和提供的接口集合, 允许用户空间应用通过读取该文件来查询页表和冲定位信息.
@@ -863,11 +863,11 @@ proc_init_fs_context函数主要初始化文件系统上下文，该上下文用
 
 
 <div id="outline-container-orgd2e395f" class="outline-2">
-<h2 id="orgd2e395f"><span class="section-number-2">3</span> 命令</h2>
+<h2 id="orgd2e395f"><span class="section-number-2">3.</span> 命令</h2>
 <div class="outline-text-2" id="text-3">
 </div>
 <div id="outline-container-orgb3fdaf2" class="outline-3">
-<h3 id="orgb3fdaf2"><span class="section-number-3">3.1</span> mount</h3>
+<h3 id="orgb3fdaf2"><span class="section-number-3">3.1.</span> mount</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 通过linux专有的虚拟文件 /proc/mounts， 可以查看当前已挂载的文件系统列表。
@@ -890,12 +890,12 @@ mount 和 umount命令会自动维护/etc/mtab 文件， 但是系统调用 moun
 
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/mount.h&gt;</span>
-<span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">&#23558;source&#25351;&#23450;&#35774;&#22791;&#21253;&#21547;&#30340;&#25991;&#20214;&#31995;&#32479; &#25346;&#36733;&#21040;&#30001;target&#25351;&#23450;&#30340;&#30446;&#24405;&#19979;&#12290;</span>
-<span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">fstype&#26159;&#19968;&#23383;&#31526;&#20018;&#65292; &#29992;&#26469;&#26631;&#35782;&#35774;&#22791;&#25152;&#21547;&#25991;&#20214;&#31995;&#32479;&#30340;&#31867;&#22411;&#65292; &#20363;&#22914;ext4</span>
-<span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">mountflags&#20026;&#19968;&#20301;&#25513;&#30721;&#12290;</span>
-<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">mount</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">source</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">target</span>,
-	  <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">filesystemtype</span>, <span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">long</span> <span style="color: #FF8C00; font-weight: bold;">mountflags</span>,
-	  <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">data</span>);
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;source&#25351;&#23450;&#35774;&#22791;&#21253;&#21547;&#30340;&#25991;&#20214;&#31995;&#32479; &#25346;&#36733;&#21040;&#30001;target&#25351;&#23450;&#30340;&#30446;&#24405;&#19979;&#12290;</span>
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">fstype&#26159;&#19968;&#23383;&#31526;&#20018;&#65292; &#29992;&#26469;&#26631;&#35782;&#35774;&#22791;&#25152;&#21547;&#25991;&#20214;&#31995;&#32479;&#30340;&#31867;&#22411;&#65292; &#20363;&#22914;ext4</span>
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">mountflags&#20026;&#19968;&#20301;&#25513;&#30721;&#12290;</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">mount</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">source</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">target</span>,
+	  <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">filesystemtype</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">mountflags</span>,
+	  <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>);
 </pre>
 </div>
 
@@ -1027,19 +1027,19 @@ int umount2(const char *target, int flags);
 
 
 <div id="outline-container-org4c65dcb" class="outline-4">
-<h4 id="org4c65dcb"><span class="section-number-4">3.1.1</span> bind</h4>
+<h4 id="org4c65dcb"><span class="section-number-4">3.1.1.</span> bind</h4>
 </div>
 
 <div id="outline-container-orgd5c243e" class="outline-4">
-<h4 id="orgd5c243e"><span class="section-number-4">3.1.2</span> move</h4>
+<h4 id="orgd5c243e"><span class="section-number-4">3.1.2.</span> move</h4>
 </div>
 
 <div id="outline-container-orgc0afad4" class="outline-4">
-<h4 id="orgc0afad4"><span class="section-number-4">3.1.3</span> rbind</h4>
+<h4 id="orgc0afad4"><span class="section-number-4">3.1.3.</span> rbind</h4>
 </div>
 
 <div id="outline-container-orgaa9dd42" class="outline-4">
-<h4 id="orgaa9dd42"><span class="section-number-4">3.1.4</span> make-shared</h4>
+<h4 id="orgaa9dd42"><span class="section-number-4">3.1.4.</span> make-shared</h4>
 <div class="outline-text-4" id="text-3-1-4">
 <p>
 **
@@ -1052,7 +1052,7 @@ int umount2(const char *target, int flags);
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="date">Created: 2021-09-05 Sun 16:29</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

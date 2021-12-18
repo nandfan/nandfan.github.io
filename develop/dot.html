@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2021-12-18 Sat 10:22 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>dot编程语法</title>
@@ -40,7 +40,7 @@
   }
   pre.src {
     position: relative;
-    overflow: auto;
+    overflow: visible;
     padding-top: 1.2em;
   }
   pre.src:before {
@@ -52,7 +52,7 @@
     padding: 3px;
     border: 1px solid black;
   }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
+  pre.src:hover:before { display: inline;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
@@ -195,26 +195,50 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
 </script>
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -400,9 +424,9 @@ A -&gt; C;
 提供一个上下文来设置, 例如为所有node指定默认颜色; 另一个例子是:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">test</span>{
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">test</span>{
 	<span style="color: #FF1493;">subgraph</span> {
-		<span style="color: #FF8C00; font-weight: bold;">rank =</span> <span style="color: #AF87FF;">same</span>;
+		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>;
 		A; B; C;
 	}
 }
@@ -410,7 +434,7 @@ A -&gt; C;
 </div>
 
 
-<div id="orga4db7c8" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_rank_same.png" alt="dot_rank_same.png" />
 </p>
 </div>
@@ -445,13 +469,13 @@ graph 可以被指定为 <code>strict</code>, 例如, 在有向图中,尾node和
 <pre class="src src-dot"><span style="color: #FF1493;">strict graph</span> {
   a -- b
   a -- b
-  b -- a [<span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">blue</span>]
+  b -- a [<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">blue</span>]
 }
 </pre>
 </div>
 
 
-<div id="orgb42ebdc" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_strict.png" alt="dot_strict.png" />
 </p>
 </div>
@@ -3101,10 +3125,10 @@ Dot允许标准的C语言的 int 和 double 类型.  对于BOOL类型, true或�
 示例:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
   <span style="color: #FF1493;">graph</span> [class=<span style="color: #CDC673;">"cats"</span>];
 
-  <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_big</span> {
+  <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_big</span> {
     <span style="color: #FF1493;">graph</span> [class=<span style="color: #CDC673;">"big_cats"</span>];
 
     <span style="color: #CDC673;">"Lion"</span> [class=<span style="color: #CDC673;">"yellow social"</span>];
@@ -3115,7 +3139,7 @@ Dot允许标准的C语言的 int 和 double 类型.  对于BOOL类型, true或�
 </div>
 
 
-<div id="orgda407a5" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_class.png" alt="dot_class.png" />
 </p>
 </div></dd>
@@ -3157,9 +3181,9 @@ edge的值可以是单色, 也可以是 colorList.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
-  a -&gt; b [<span style="color: #FF8C00; font-weight: bold;">dir=</span><span style="color: #AF87FF;">both</span> <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"red:blue"</span>]
-  c -&gt; d [<span style="color: #FF8C00; font-weight: bold;">dir=</span><span style="color: #AF87FF;">none</span> <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"green:red;0.25:blue"</span>]
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+  a -&gt; b [<span style="color: #FF8C00;">dir=</span><span style="color: #AF87FF;">both</span> <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"red:blue"</span>]
+  c -&gt; d [<span style="color: #FF8C00;">dir=</span><span style="color: #AF87FF;">none</span> <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"green:red;0.25:blue"</span>]
 }
 </pre>
 </div>
@@ -3202,10 +3226,10 @@ edge的值可以是单色, 也可以是 colorList.
 为false时, node的排列不参考edge
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
   a -&gt; c;
   a -&gt; b;
-  b -&gt; c [<span style="color: #FF8C00; font-weight: bold;">constraint=</span><span style="color: #AF87FF;">false</span>];
+  b -&gt; c [<span style="color: #FF8C00;">constraint=</span><span style="color: #AF87FF;">false</span>];
 }
 </pre>
 </div>
@@ -5795,11 +5819,11 @@ polygon-based几何形状可以node属性(regular peripheries orientation)来影
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
   {
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">margin=</span>0 <span style="color: #FF8C00; font-weight: bold;">fontcolor=</span><span style="color: #CDC673;">blue</span> <span style="color: #FF8C00; font-weight: bold;">fontsize=</span>32 <span style="color: #FF8C00; font-weight: bold;">width=</span>0.5 <span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">circle</span> <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">filled</span>]
-    b [<span style="color: #FF8C00; font-weight: bold;">fillcolor=</span><span style="color: #CDC673;">yellow</span> <span style="color: #FF8C00; font-weight: bold;">fixedsize=</span><span style="color: #AF87FF;">true</span> <span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"a very long label"</span>]
-    d [<span style="color: #FF8C00; font-weight: bold;">fixedsize=</span>shape <span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"an even longer label"</span>]
+    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">margin=</span>0 <span style="color: #FF8C00;">fontcolor=</span><span style="color: #CDC673;">blue</span> <span style="color: #FF8C00;">fontsize=</span>32 <span style="color: #FF8C00;">width=</span>0.5 <span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">circle</span> <span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>]
+    b [<span style="color: #FF8C00;">fillcolor=</span><span style="color: #CDC673;">yellow</span> <span style="color: #FF8C00;">fixedsize=</span><span style="color: #AF87FF;">true</span> <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"a very long label"</span>]
+    d [<span style="color: #FF8C00;">fixedsize=</span>shape <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"an even longer label"</span>]
   }
   a -&gt; {c d}
   b -&gt; {c d}
@@ -5808,13 +5832,13 @@ polygon-based几何形状可以node属性(regular peripheries orientation)来影
 </div>
 
 
-<div id="orgcbd6348" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_size.png" alt="dot_size.png" />
 </p>
 </div>
 
 
-<div id="orgde85159" class="figure">
+<div class="figure">
 <p><img src="./image/dot/fixed.gif" alt="fixed.gif" />
 </p>
 </div>
@@ -5866,13 +5890,13 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 示例:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">structs</span> {
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">record</span>];
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">rankdir=LR</span>
-    struct1 [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"</span>];
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">struct1 [label="&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"; shape=Mrecord];</span>
-    struct2 [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
-    struct3 [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"hello&amp;#92;nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">structs</span> {
+    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>];
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">rankdir=LR</span>
+    struct1 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"</span>];
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">struct1 [label="&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"; shape=Mrecord];</span>
+    struct2 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
+    struct3 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"hello&amp;#92;nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
     struct1:f1 -&gt; struct2:f0;
     struct1:f2 -&gt; struct3:here;
 }
@@ -5884,7 +5908,7 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 </p>
 
 
-<div id="org8517ea3" class="figure">
+<div class="figure">
 <p><img src="./image/dot/record.gif" alt="record.gif" />
 </p>
 </div>
@@ -5894,7 +5918,7 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 </p>
 
 
-<div id="orgf8b8496" class="figure">
+<div class="figure">
 <p><img src="./image/dot/record2.gif" alt="record2.gif" />
 </p>
 </div>
@@ -5904,7 +5928,7 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 </p>
 
 
-<div id="orgea67bc6" class="figure">
+<div class="figure">
 <p><img src="./image/dot/mrecord.gif" alt="mrecord.gif" />
 </p>
 </div>
@@ -5926,25 +5950,25 @@ style属性可用于修改node的外观, 目前, 有8个样式值: filled, invis
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
-  <span style="color: #FF8C00; font-weight: bold;">rankdir=</span><span style="color: #AF87FF;">LR</span>
-  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">blue</span>]
-  node1 [<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">filled</span>]
-  node2 [<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00; font-weight: bold;">fillcolor=</span><span style="color: #CDC673;">red</span>]
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+  <span style="color: #FF8C00;">rankdir=</span><span style="color: #AF87FF;">LR</span>
+  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">blue</span>]
+  node1 [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>]
+  node2 [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00;">fillcolor=</span><span style="color: #CDC673;">red</span>]
   node0 -&gt; node1 -&gt; node2
 }
 </pre>
 </div>
 
 
-<div id="org707a73f" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_fill.png" alt="dot_fill.png" />
 </p>
 </div></dd>
 </dl>
 
 
-<div id="org21520d5" class="figure">
+<div class="figure">
 <p><img src="./image/dot/fill.gif" alt="fill.gif" />
 </p>
 </div>
@@ -5961,12 +5985,12 @@ rounded示例:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">R</span> {
-  <span style="color: #FF8C00; font-weight: bold;">rankdir=</span><span style="color: #AF87FF;">LR</span>
-  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">rounded</span>]
-  node1 [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">box</span>]
-  node2 [<span style="color: #FF8C00; font-weight: bold;">fillcolor=</span><span style="color: #CDC673;">yellow</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"rounded,filled"</span>, <span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">diamond</span>]
-  node3 [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">record</span>, <span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"{ a | b | c }"</span>]
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">R</span> {
+  <span style="color: #FF8C00;">rankdir=</span><span style="color: #AF87FF;">LR</span>
+  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">rounded</span>]
+  node1 [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>]
+  node2 [<span style="color: #FF8C00;">fillcolor=</span><span style="color: #CDC673;">yellow</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"rounded,filled"</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">diamond</span>]
+  node3 [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>, <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{ a | b | c }"</span>]
 
   node1 -&gt; node2 -&gt; node3
 }
@@ -5974,13 +5998,13 @@ rounded示例:
 </div>
 
 
-<div id="orga2a1611" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_round.png" alt="dot_round.png" />
 </p>
 </div>
 
 
-<div id="org69275cb" class="figure">
+<div class="figure">
 <p><img src="./image/dot/round.gif" alt="round.gif" />
 </p>
 </div></dd>
@@ -6068,125 +6092,125 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 <div class="org-src-container">
-<pre class="src src-html"><span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Table element </span><span style="color: #8B8878;">--&gt;</span>
+<pre class="src src-html"><span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Table element </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">TABLE</span>
-  <span style="color: #FF8C00; font-weight: bold;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
-  <span style="color: #FF8C00; font-weight: bold;">BGCOLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00; font-weight: bold;">BORDER</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">CELLBORDER</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">CELLPADDING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">CELLSPACING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00; font-weight: bold;">COLUMNS</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">FIXEDSIZE</span>=<span style="color: #CDC673;">"FALSE|TRUE"</span>
-  <span style="color: #FF8C00; font-weight: bold;">GRADIENTANGLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">HEIGHT</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">HREF</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">ID</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">PORT</span>=<span style="color: #CDC673;">"portName"</span>
-  <span style="color: #FF8C00; font-weight: bold;">ROWS</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">SIDES</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">STYLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">TARGET</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">TITLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">TOOLTIP</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">VALIGN</span>=<span style="color: #CDC673;">"MIDDLE|BOTTOM|TOP"</span>
-  <span style="color: #FF8C00; font-weight: bold;">WIDTH</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #87D700;">TABLE</span>
+  <span style="color: #FF8C00;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
+  <span style="color: #FF8C00;">BGCOLOR</span>=<span style="color: #CDC673;">"color"</span>
+  <span style="color: #FF8C00;">BORDER</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">CELLBORDER</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">CELLPADDING</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">CELLSPACING</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
+  <span style="color: #FF8C00;">COLUMNS</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">FIXEDSIZE</span>=<span style="color: #CDC673;">"FALSE|TRUE"</span>
+  <span style="color: #FF8C00;">GRADIENTANGLE</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">HEIGHT</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">HREF</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">ID</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">PORT</span>=<span style="color: #CDC673;">"portName"</span>
+  <span style="color: #FF8C00;">ROWS</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">SIDES</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">STYLE</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">TARGET</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">TITLE</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">TOOLTIP</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">VALIGN</span>=<span style="color: #CDC673;">"MIDDLE|BOTTOM|TOP"</span>
+  <span style="color: #FF8C00;">WIDTH</span>=<span style="color: #CDC673;">"value"</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Table row </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Table row </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">TR</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">TR</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Table cell </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Table cell </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">TD</span>
-  <span style="color: #FF8C00; font-weight: bold;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT|TEXT"</span>
-  <span style="color: #FF8C00; font-weight: bold;">BALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
-  <span style="color: #FF8C00; font-weight: bold;">BGCOLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00; font-weight: bold;">BORDER</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">CELLPADDING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">CELLSPACING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00; font-weight: bold;">COLSPAN</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">FIXEDSIZE</span>=<span style="color: #CDC673;">"FALSE|TRUE"</span>
-  <span style="color: #FF8C00; font-weight: bold;">GRADIENTANGLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">HEIGHT</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">HREF</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">ID</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">PORT</span>=<span style="color: #CDC673;">"portName"</span>
-  <span style="color: #FF8C00; font-weight: bold;">ROWSPAN</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">SIDES</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">STYLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">TARGET</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">TITLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">TOOLTIP</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00; font-weight: bold;">VALIGN</span>=<span style="color: #CDC673;">"MIDDLE|BOTTOM|TOP"</span>
-  <span style="color: #FF8C00; font-weight: bold;">WIDTH</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #87D700;">TD</span>
+  <span style="color: #FF8C00;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT|TEXT"</span>
+  <span style="color: #FF8C00;">BALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
+  <span style="color: #FF8C00;">BGCOLOR</span>=<span style="color: #CDC673;">"color"</span>
+  <span style="color: #FF8C00;">BORDER</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">CELLPADDING</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">CELLSPACING</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
+  <span style="color: #FF8C00;">COLSPAN</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">FIXEDSIZE</span>=<span style="color: #CDC673;">"FALSE|TRUE"</span>
+  <span style="color: #FF8C00;">GRADIENTANGLE</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">HEIGHT</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">HREF</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">ID</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">PORT</span>=<span style="color: #CDC673;">"portName"</span>
+  <span style="color: #FF8C00;">ROWSPAN</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">SIDES</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">STYLE</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">TARGET</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">TITLE</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">TOOLTIP</span>=<span style="color: #CDC673;">"value"</span>
+  <span style="color: #FF8C00;">VALIGN</span>=<span style="color: #CDC673;">"MIDDLE|BOTTOM|TOP"</span>
+  <span style="color: #FF8C00;">WIDTH</span>=<span style="color: #CDC673;">"value"</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Font specification </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Font specification </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">FONT</span>
-  <span style="color: #FF8C00; font-weight: bold;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00; font-weight: bold;">FACE</span>=<span style="color: #CDC673;">"fontname"</span>
-  <span style="color: #FF8C00; font-weight: bold;">POINT-SIZE</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #87D700;">FONT</span>
+  <span style="color: #FF8C00;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
+  <span style="color: #FF8C00;">FACE</span>=<span style="color: #CDC673;">"fontname"</span>
+  <span style="color: #FF8C00;">POINT-SIZE</span>=<span style="color: #CDC673;">"value"</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Line break </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Line break </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">BR</span>
-  <span style="color: #FF8C00; font-weight: bold;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
+&lt;<span style="color: #87D700;">BR</span>
+  <span style="color: #FF8C00;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
 /&gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Image inclusion </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Image inclusion </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">IMG</span>
-  <span style="color: #FF8C00; font-weight: bold;">SCALE</span>=<span style="color: #CDC673;">"FALSE|TRUE|WIDTH|HEIGHT|BOTH"</span>
-  <span style="color: #FF8C00; font-weight: bold;">SRC</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #87D700;">IMG</span>
+  <span style="color: #FF8C00;">SCALE</span>=<span style="color: #CDC673;">"FALSE|TRUE|WIDTH|HEIGHT|BOTH"</span>
+  <span style="color: #FF8C00;">SRC</span>=<span style="color: #CDC673;">"value"</span>
 /&gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Italic style </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Italic style </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">I</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">I</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Bold style </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Bold style </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">B</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">B</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Underline text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Underline text </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">U</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">U</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Overline text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Overline text </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">O</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">O</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Subscript text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Subscript text </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">SUB</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">SUB</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Superscript text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Superscript text </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">SUP</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">SUP</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Strike-through text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Strike-through text </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">S</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">S</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Horizontal rule </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Horizontal rule </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">HR</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">HR</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 /&gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">Vertical rule </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Vertical rule </span><span style="color: #8B8878;">--&gt;</span>
 
-&lt;<span style="color: #87D700; font-weight: bold;">VR</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878; font-style: italic;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #87D700;">VR</span>
+  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
 /&gt;
 
 </pre>
@@ -6309,17 +6333,17 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">structs</span> {
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">plaintext</span>]
-    struct1 [<span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">structs</span> {
+    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">plaintext</span>]
+    struct1 [<span style="color: #FF8C00;">label=</span>&lt;
 &lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span>&gt;
   &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD&gt;left&lt;/TD&gt;&lt;TD PORT=<span style="color: #CDC673;">"f1"</span>&gt;mid dle&lt;/TD&gt;&lt;TD PORT=<span style="color: #CDC673;">"f2"</span>&gt;right&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;];
-    struct2 [<span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;
+    struct2 [<span style="color: #FF8C00;">label=</span>&lt;
 &lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span>&gt;
   &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD PORT=<span style="color: #CDC673;">"f0"</span>&gt;one&lt;/TD&gt;&lt;TD&gt;two&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;];
-    struct3 [<span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;
+    struct3 [<span style="color: #FF8C00;">label=</span>&lt;
 &lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span> CELLPADDING=<span style="color: #CDC673;">"4"</span>&gt;
   &lt;<span style="color: #AF87FF;">TR</span>&gt;
     &lt;TD ROWSPAN=<span style="color: #CDC673;">"3"</span>&gt;hello&lt;<span style="color: #AF87FF;">BR</span>/&gt;world&lt;/TD&gt;
@@ -6342,13 +6366,13 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </div>
 
 
-<div id="orge5e31c2" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_html1.png" alt="dot_html1.png" />
 </p>
 </div>
 
 
-<div id="orgb992c5a" class="figure">
+<div class="figure">
 <p><img src="./image/dot/html1.gif" alt="html1.gif" />
 </p>
 </div>
@@ -6360,7 +6384,7 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 
 
 
-<div id="orgc2ed9a1" class="figure">
+<div class="figure">
 <p><img src="./image/dot/html2.gif" alt="html2.gif" />
 </p>
 </div>
@@ -6369,18 +6393,18 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 上图的源码:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
-  <span style="color: #FF8C00; font-weight: bold;">rankdir=</span><span style="color: #AF87FF;">LR</span>
-  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">plaintext</span>]
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+  <span style="color: #FF8C00;">rankdir=</span><span style="color: #AF87FF;">LR</span>
+  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">plaintext</span>]
   a [
-     <span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;
+     <span style="color: #FF8C00;">label=</span>&lt;
 &lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span>&gt;
   &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD ROWSPAN=<span style="color: #CDC673;">"3"</span> BGCOLOR=<span style="color: #CDC673;">"yellow"</span>&gt;class&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
   &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD PORT=<span style="color: #CDC673;">"here"</span> BGCOLOR=<span style="color: #CDC673;">"lightblue"</span>&gt;qualifier&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;
   ]
-    b [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">ellipse</span> <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">filled</span>
-  <span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;
+    b [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">ellipse</span> <span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>
+  <span style="color: #FF8C00;">label=</span>&lt;
 &lt;TABLE BGCOLOR=<span style="color: #CDC673;">"bisque"</span>&gt;
   &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD COLSPAN=<span style="color: #CDC673;">"3"</span>&gt;elephant&lt;/TD&gt;
       &lt;TD ROWSPAN=<span style="color: #CDC673;">"2"</span> BGCOLOR=<span style="color: #CDC673;">"chartreuse"</span>
@@ -6397,14 +6421,14 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 &lt;/TABLE&gt;&gt;
   ]
   c [
-  <span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;long line 1&lt;<span style="color: #AF87FF;">BR</span>/&gt;line 2&lt;<span style="color: #AF87FF;">BR</span> ALIGN=<span style="color: #CDC673;">"LEFT"</span>/&gt;line 3&lt;<span style="color: #AF87FF;">BR</span> ALIGN=<span style="color: #CDC673;">"RIGHT"</span>/&gt;&gt;
+  <span style="color: #FF8C00;">label=</span>&lt;long line 1&lt;<span style="color: #AF87FF;">BR</span>/&gt;line 2&lt;<span style="color: #AF87FF;">BR</span> ALIGN=<span style="color: #CDC673;">"LEFT"</span>/&gt;line 3&lt;<span style="color: #AF87FF;">BR</span> ALIGN=<span style="color: #CDC673;">"RIGHT"</span>/&gt;&gt;
   ]
 
-  <span style="color: #FF1493;">subgraph</span> { <span style="color: #FF8C00; font-weight: bold;">rank=</span><span style="color: #AF87FF;">same</span> b c }
-  a:here -&gt; b:there [<span style="color: #FF8C00; font-weight: bold;">dir=</span><span style="color: #AF87FF;">both</span> <span style="color: #FF8C00; font-weight: bold;">arrowtail =</span> <span style="color: #AF87FF;">diamond</span>]
+  <span style="color: #FF1493;">subgraph</span> { <span style="color: #FF8C00;">rank=</span><span style="color: #AF87FF;">same</span> b c }
+  a:here -&gt; b:there [<span style="color: #FF8C00;">dir=</span><span style="color: #AF87FF;">both</span> <span style="color: #FF8C00;">arrowtail =</span> <span style="color: #AF87FF;">diamond</span>]
   c -&gt; b
-  d [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">triangle</span>]
-  d -&gt; c [<span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;
+  d [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">triangle</span>]
+  d -&gt; c [<span style="color: #FF8C00;">label=</span>&lt;
 &lt;TABLE&gt;
   &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD BGCOLOR=<span style="color: #CDC673;">"red"</span> WIDTH=<span style="color: #CDC673;">"10"</span>&gt; &lt;/TD&gt;
       &lt;TD&gt;Edge labels&lt;<span style="color: #AF87FF;">BR</span>/&gt;also&lt;/TD&gt;
@@ -6426,7 +6450,7 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 
-<div id="org4faae24" class="figure">
+<div class="figure">
 <p><img src="./image/dot/html3.gif" alt="html3.gif" />
 </p>
 </div>
@@ -6437,7 +6461,7 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 
-<div id="org45c8225" class="figure">
+<div class="figure">
 <p><img src="./image/dot/html4.gif" alt="html4.gif" />
 </p>
 </div>
@@ -6462,7 +6486,7 @@ tee [shape=none margin=0 label=
   &lt;/table&gt;&gt;]
 </pre>
 
-<div id="org3b7424b" class="figure">
+<div class="figure">
 <p><img src="./image/dot/tee.gif" alt="tee.gif" />
 </p>
 </div>
@@ -7889,7 +7913,7 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 <li>无向图 graph</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">graph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
+<pre class="src src-dot"><span style="color: #FF1493;">graph</span> <span style="color: #87D700;">G</span> {
     a -- b;
     b -- c;
     c -- d;
@@ -7899,7 +7923,7 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div id="orgfdf8287" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_graph.png" alt="dot_graph.png" />
 </p>
 </div>
@@ -7908,14 +7932,14 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 <li>有向图 digraph</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
     a -&gt; b;
 }
 </pre>
 </div>
 
 
-<div id="org660d554" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_digraph.png" alt="dot_digraph.png" />
 </p>
 </div>
@@ -7927,10 +7951,10 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 子图必需以 <code>cluster</code> 字符串开头进行声明.
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
     a -&gt; b;
     b -&gt; c;
-    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_test</span> {
+    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_test</span> {
 	d -&gt; e;
     }
 }
@@ -7938,7 +7962,7 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div id="orgb34eac0" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_subgraph.png" alt="dot_subgraph.png" />
 </p>
 </div>
@@ -8479,40 +8503,40 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">action</span> {
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">layout = dot; //&#40664;&#35748;&#24067;&#23616;&#26041;&#24335;&#65292;&#20027;&#35201;&#29992;&#20110;&#26377;&#21521;&#22270;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">layout=neato; // &#22522;&#20110;spring-model(&#21448;&#31216;force-based)&#31639;&#27861;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">layout=twopi; // &#24452;&#21521;&#24067;&#23616;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">layout=circo; // &#22278;&#29615;&#24067;&#23616;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">layout=fdp; // &#29992;&#20110;&#26080;&#21521;&#22270;</span>
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">action</span> {
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout = dot; //&#40664;&#35748;&#24067;&#23616;&#26041;&#24335;&#65292;&#20027;&#35201;&#29992;&#20110;&#26377;&#21521;&#22270;</span>
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=neato; // &#22522;&#20110;spring-model(&#21448;&#31216;force-based)&#31639;&#27861;</span>
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=twopi; // &#24452;&#21521;&#24067;&#23616;</span>
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=circo; // &#22278;&#29615;&#24067;&#23616;</span>
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=fdp; // &#29992;&#20110;&#26080;&#21521;&#22270;</span>
 
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">shape &#35774;&#32622;node&#24418;&#29366;</span>
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">record</span>]
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">shape &#35774;&#32622;node&#24418;&#29366;</span>
+    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">record</span>]
 
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">style &#35774;&#32622;edge&#30340;&#26679;&#24335;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">edge [style=dashed];</span>
-    node0 [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&lt;head&gt; head|&lt;body&gt; body|&lt;foot&gt; foot"</span>]
-    node2 [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"mind"</span>]
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">style &#35774;&#32622;edge&#30340;&#26679;&#24335;</span>
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">edge [style=dashed];</span>
+    node0 [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;head&gt; head|&lt;body&gt; body|&lt;foot&gt; foot"</span>]
+    node2 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"mind"</span>]
 
-    node0:head:n -&gt; node2:n [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"n"</span>]
-    node0:head:ne -&gt; node2:ne [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"ne"</span>]
-    node0:head:e -&gt; node2:e [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"e"</span>]
-    node0:head:se -&gt; node2:se [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"se"</span>]
-    node0:head:s -&gt; node2:s [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"s"</span>]
-    node0:head:sw -&gt; node2:sw [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"sw"</span>]
-    node0:head:w -&gt; node2:w [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"w"</span>]
-    node0:head:nw -&gt; node2:nw [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"nw"</span>]
-    node0:head:c -&gt; node2:c [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"c"</span>]
-    node0:head:_ -&gt; node2:_ [<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"_"</span>]
+    node0:head:n -&gt; node2:n [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"n"</span>]
+    node0:head:ne -&gt; node2:ne [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"ne"</span>]
+    node0:head:e -&gt; node2:e [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"e"</span>]
+    node0:head:se -&gt; node2:se [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"se"</span>]
+    node0:head:s -&gt; node2:s [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"s"</span>]
+    node0:head:sw -&gt; node2:sw [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"sw"</span>]
+    node0:head:w -&gt; node2:w [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"w"</span>]
+    node0:head:nw -&gt; node2:nw [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"nw"</span>]
+    node0:head:c -&gt; node2:c [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"c"</span>]
+    node0:head:_ -&gt; node2:_ [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"_"</span>]
 
-    node0:body[<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">filled</span> <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">lightblue</span>]
+    node0:body[<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span> <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">lightblue</span>]
 }
 
 </pre>
 </div>
 
 
-<div id="org45226d4" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_direction.png" alt="dot_direction.png" />
 </p>
 </div>
@@ -8544,19 +8568,19 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
-    <span style="color: #FF8C00; font-weight: bold;">size=</span><span style="color: #CDC673;">"4,4"</span>;
-    main [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">box</span>]; <span style="color: #8B8878;">/*</span><span style="color: #8B8878; font-style: italic;">&#27880;&#37322;*/</span>
-    main -&gt; parse [<span style="color: #FF8C00; font-weight: bold;">weight=</span>8];
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+    <span style="color: #FF8C00;">size=</span><span style="color: #CDC673;">"4,4"</span>;
+    main [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>]; <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#27880;&#37322;*/</span>
+    main -&gt; parse [<span style="color: #FF8C00;">weight=</span>8];
     parse -&gt; execute;
-    main -&gt; init [<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">dotted</span>];
+    main -&gt; init [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">dotted</span>];
     main -&gt; cleanup;
     execute -&gt; {make_string; printf}
     init -&gt; make_string;
-    <span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">red</span>];
-    main -&gt; printf [<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">bold</span>,<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"100 times"</span>];
-    make_string [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"make a\nstring"</span>];
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">".7 .3 1.0"</span>];
+    <span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">red</span>];
+    main -&gt; printf [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">bold</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"100 times"</span>];
+    make_string [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"make a\nstring"</span>];
+    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">".7 .3 1.0"</span>];
     execute -&gt; compare;
 }
 
@@ -8564,7 +8588,7 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div id="org66c50a4" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_layout.png" alt="dot_layout.png" />
 </p>
 </div>
@@ -8588,20 +8612,20 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
     a-&gt;b-&gt;c;
     b-&gt;d;
-    a[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00; font-weight: bold;">sides=</span>5,<span style="color: #FF8C00; font-weight: bold;">peripheries=</span>3,<span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">lightblue</span>,<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #AF87FF;">filled</span>];
-    c[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00; font-weight: bold;">sides=</span>4,<span style="color: #FF8C00; font-weight: bold;">skew=</span>.4,<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"hello world"</span>];
-    d[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">invtriangle</span>];
-    e[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00; font-weight: bold;">sides=</span>4,<span style="color: #FF8C00; font-weight: bold;">distortion=</span>.7];
+    a[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00;">sides=</span>5,<span style="color: #FF8C00;">peripheries=</span>3,<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">lightblue</span>,<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>];
+    c[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00;">sides=</span>4,<span style="color: #FF8C00;">skew=</span>.4,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"hello world"</span>];
+    d[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">invtriangle</span>];
+    e[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00;">sides=</span>4,<span style="color: #FF8C00;">distortion=</span>.7];
 }
 
 </pre>
 </div>
 
 
-<div id="orge41d9ba" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_polygon.png" alt="dot_polygon.png" />
 </p>
 </div>
@@ -8619,11 +8643,11 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">structs</span> {
-<span style="color: #FF1493;">node</span>[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">record</span>];
-    struct1[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; left|&lt;f1&gt; mid\ dle|&lt;f2&gt; right"</span>];
-    struct2[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
-    struct3[<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"hello\nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">structs</span> {
+<span style="color: #FF1493;">node</span>[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>];
+    struct1[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; left|&lt;f1&gt; mid\ dle|&lt;f2&gt; right"</span>];
+    struct2[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
+    struct3[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"hello\nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
     struct1-&gt;struct2;
     struct1-&gt;struct3;
 }
@@ -8631,7 +8655,7 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 </div>
 
 
-<div id="orgf533df3" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_record.png" alt="dot_record.png" />
 </p>
 </div>
@@ -8645,23 +8669,23 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 比如一个hash表的内容，可能具有下列结构：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">st_hash_type</span> {
-    <span style="color: #5FD7FF; font-weight: bold;">int</span> (*compare) ();
-    <span style="color: #5FD7FF; font-weight: bold;">int</span> (*hash) ();
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_hash_type</span> {
+    <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">compare</span>) ();
+    <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">hash</span>) ();
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">st_table_entry</span> {
-    <span style="color: #5FD7FF; font-weight: bold;">unsigned</span> <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">hash</span>;
-    <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">key</span>;
-    <span style="color: #5FD7FF; font-weight: bold;">char</span> *<span style="color: #FF8C00; font-weight: bold;">record</span>;
-    <span style="color: #5FD7FF; font-weight: bold;">st_table_entry</span> *<span style="color: #FF8C00; font-weight: bold;">next</span>;
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_table_entry</span> {
+    <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hash</span>;
+    <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">key</span>;
+    <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">record</span>;
+    <span style="color: #5FD7FF;">st_table_entry</span> *<span style="color: #FF8C00;">next</span>;
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">st_table</span> {
-    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">st_hash_type</span> *<span style="color: #FF8C00; font-weight: bold;">type</span>;
-    <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">num_bins</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">slot count </span><span style="color: #8B8878;">*/</span>
-    <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">num_entries</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">total number of entries </span><span style="color: #8B8878;">*/</span>
-    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">st_table_entry</span> **<span style="color: #FF8C00; font-weight: bold;">bins</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">slot </span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_table</span> {
+    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_hash_type</span> *<span style="color: #FF8C00;">type</span>;
+    <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">num_bins</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">slot count</span><span style="color: #8B8878;"> */</span>
+    <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">num_entries</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">total number of entries</span><span style="color: #8B8878;"> */</span>
+    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_table_entry</span> **<span style="color: #FF8C00;">bins</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">slot</span><span style="color: #8B8878;"> */</span>
 };
 </pre>
 </div>
@@ -8672,28 +8696,28 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">st2</span>{
-	<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>;
-	<span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10;
-	<span style="color: #FF8C00; font-weight: bold;">rankdir=</span>TB;
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">st2</span>{
+	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>;
+	<span style="color: #FF8C00;">fontsize =</span> 10;
+	<span style="color: #FF8C00;">rankdir=</span>TB;
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"record"</span>];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>];
 
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"crimson"</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"solid"</span>];
+	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"crimson"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"solid"</span>];
 
-	st_hash_type [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"{&lt;head&gt;st_hash_type|(*compare)|(*hash)}"</span>];
-	st_table_entry [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"{&lt;head&gt;st_table_entry|hash|key|record|&lt;next&gt;next}"</span>];
-	st_table [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"{st_table|&lt;type&gt;type|num_bins|num_entries|&lt;bins&gt;bins}"</span>];
+	st_hash_type [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;head&gt;st_hash_type|(*compare)|(*hash)}"</span>];
+	st_table_entry [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;head&gt;st_table_entry|hash|key|record|&lt;next&gt;next}"</span>];
+	st_table [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{st_table|&lt;type&gt;type|num_bins|num_entries|&lt;bins&gt;bins}"</span>];
 
 	st_table:bins -&gt; st_table_entry:head;
 	st_table:type -&gt; st_hash_type:head;
-	st_table_entry:next -&gt; st_table_entry:head [<span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"dashed"</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"forestgreen"</span>];
+	st_table_entry:next -&gt; st_table_entry:head [<span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"dashed"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"forestgreen"</span>];
 }
 </pre>
 </div>
 
 
-<div id="org2073796" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_hash.png" alt="dot_hash.png" />
 </p>
 </div>
@@ -8711,19 +8735,19 @@ hash表的实例
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">st</span>{
-	<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>;
-	<span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10;
-	<span style="color: #FF8C00; font-weight: bold;">rankdir =</span> <span style="color: #AF87FF;">LR</span>;
-	<span style="color: #FF8C00; font-weight: bold;">rotate =</span> 90;
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">st</span>{
+	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>;
+	<span style="color: #FF8C00;">fontsize =</span> 10;
+	<span style="color: #FF8C00;">rankdir =</span> <span style="color: #AF87FF;">LR</span>;
+	<span style="color: #FF8C00;">rotate =</span> 90;
 
-	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"record"</span>, <span style="color: #FF8C00; font-weight: bold;">width=</span>.1, <span style="color: #FF8C00; font-weight: bold;">height=</span>.1];
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"record"</span>];
+	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>, <span style="color: #FF8C00;">width=</span>.1, <span style="color: #FF8C00;">height=</span>.1];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>];
 
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"crimson"</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"solid"</span>];
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"plaintext"</span>];
+	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"crimson"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"solid"</span>];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"plaintext"</span>];
 
-	st_table [<span style="color: #FF8C00; font-weight: bold;">label=</span>&lt;
+	st_table [<span style="color: #FF8C00;">label=</span>&lt;
 		  &lt;table border=<span style="color: #CDC673;">"0"</span> cellborder=<span style="color: #CDC673;">"1"</span> cellspacing=<span style="color: #CDC673;">"0"</span> align=<span style="color: #CDC673;">"left"</span>&gt;
 		  &lt;tr&gt;
 		  &lt;td&gt;st_table&lt;/td&gt;
@@ -8740,13 +8764,13 @@ hash表的实例
 		  &lt;/table&gt;
 		  &gt;];
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"record"</span>];
-	num_bins [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">" &lt;b1&gt; | &lt;b2&gt; | &lt;b3&gt; | &lt;b4&gt; | &lt;b5&gt; "</span>, <span style="color: #FF8C00; font-weight: bold;">height=</span>2];
-	<span style="color: #FF1493;">node</span>[ <span style="color: #FF8C00; font-weight: bold;">width=</span>2 ];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>];
+	num_bins [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">" &lt;b1&gt; | &lt;b2&gt; | &lt;b3&gt; | &lt;b4&gt; | &lt;b5&gt; "</span>, <span style="color: #FF8C00;">height=</span>2];
+	<span style="color: #FF1493;">node</span>[ <span style="color: #FF8C00;">width=</span>2 ];
 
-	entry_1 [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;next}"</span>];
-	entry_2 [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
-	entry_3 [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
+	entry_1 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;next}"</span>];
+	entry_2 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
+	entry_3 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
 
 	st_table:bins -&gt; num_bins:b1;
 	num_bins:b1 -&gt; entry_1:e;
@@ -8758,7 +8782,7 @@ hash表的实例
 </div>
 
 
-<div id="org8876a16" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_hash_table.png" alt="dot_hash_table.png" />
 </p>
 </div>
@@ -8786,41 +8810,41 @@ IDP支持层为一个相对独立的子系统，其中包括如数据库管理�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">idp_modules</span>{
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">idp_modules</span>{
 
-	<span style="color: #FF8C00; font-weight: bold;">rankdir =</span> TB;
-	<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 12;
+	<span style="color: #FF8C00;">rankdir =</span> TB;
+	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
+	<span style="color: #FF8C00;">fontsize =</span> 12;
 
-	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 12, <span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #CDC673;">"record"</span> ];
-	<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 12 ];
+	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12, <span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"record"</span> ];
+	<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12 ];
 
-	    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_sl</span>{
-		<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"IDP&#25903;&#25345;&#23618;"</span>;
-		<span style="color: #FF8C00; font-weight: bold;">bgcolor=</span><span style="color: #CDC673;">"mintcream"</span>;
-		<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"Mrecord"</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"filled"</span>];
-		network_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#32593;&#32476;&#31649;&#29702;&#22120;"</span>];
-		log_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#26085;&#24535;&#31649;&#29702;&#22120;"</span>];
-		module_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#27169;&#22359;&#31649;&#29702;&#22120;"</span>];
-		conf_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#37197;&#32622;&#31649;&#29702;&#22120;"</span>];
-		db_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#25968;&#25454;&#24211;&#31649;&#29702;&#22120;"</span>];
+	    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_sl</span>{
+		<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"IDP&#25903;&#25345;&#23618;"</span>;
+		<span style="color: #FF8C00;">bgcolor=</span><span style="color: #CDC673;">"mintcream"</span>;
+		<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"Mrecord"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>];
+		network_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#32593;&#32476;&#31649;&#29702;&#22120;"</span>];
+		log_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#26085;&#24535;&#31649;&#29702;&#22120;"</span>];
+		module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#27169;&#22359;&#31649;&#29702;&#22120;"</span>];
+		conf_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#37197;&#32622;&#31649;&#29702;&#22120;"</span>];
+		db_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#25968;&#25454;&#24211;&#31649;&#29702;&#22120;"</span>];
 	    };
 
-	    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_md</span>{
-		<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#21487;&#25554;&#25300;&#27169;&#22359;&#38598;"</span>;
-		<span style="color: #FF8C00; font-weight: bold;">bgcolor=</span><span style="color: #CDC673;">"lightcyan"</span>;
-		<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"chartreuse2"</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"filled"</span>];
-		mod_dev [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#24320;&#21457;&#25903;&#25345;&#27169;&#22359;"</span>];
-		mod_dm [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#25968;&#25454;&#24314;&#27169;&#27169;&#22359;"</span>];
-		mod_dp [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#37096;&#32626;&#21457;&#24067;&#27169;&#22359;"</span>];
+	    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_md</span>{
+		<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21487;&#25554;&#25300;&#27169;&#22359;&#38598;"</span>;
+		<span style="color: #FF8C00;">bgcolor=</span><span style="color: #CDC673;">"lightcyan"</span>;
+		<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"chartreuse2"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>];
+		mod_dev [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24320;&#21457;&#25903;&#25345;&#27169;&#22359;"</span>];
+		mod_dm [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#25968;&#25454;&#24314;&#27169;&#27169;&#22359;"</span>];
+		mod_dp [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#37096;&#32626;&#21457;&#24067;&#27169;&#22359;"</span>];
 	    };
 
-	mod_dp -&gt; mod_dev [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
-	mod_dp -&gt; mod_dm [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
-	mod_dp -&gt; module_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00; font-weight: bold;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
-	mod_dev -&gt; mod_dm [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
-	mod_dev -&gt; module_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00; font-weight: bold;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
-	mod_dm -&gt; module_mgr [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00; font-weight: bold;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
+	mod_dp -&gt; mod_dev [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
+	mod_dp -&gt; mod_dm [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
+	mod_dp -&gt; module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
+	mod_dev -&gt; mod_dm [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
+	mod_dev -&gt; module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
+	mod_dm -&gt; module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
 
 	}
 }
@@ -8828,7 +8852,7 @@ IDP支持层为一个相对独立的子系统，其中包括如数据库管理�
 </div>
 
 
-<div id="orgfc60b27" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_IDP.png" alt="dot_IDP.png" />
 </p>
 </div>
@@ -8841,29 +8865,29 @@ IDP支持层为一个相对独立的子系统，其中包括如数据库管理�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">automata_0</span> {
-	<span style="color: #FF8C00; font-weight: bold;">size =</span> <span style="color: #CDC673;">"8.5, 11"</span>;
-	<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10;
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">automata_0</span> {
+	<span style="color: #FF8C00;">size =</span> <span style="color: #CDC673;">"8.5, 11"</span>;
+	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
+	<span style="color: #FF8C00;">fontsize =</span> 10;
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">circle</span>, <span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10];
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">circle</span>, <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
+	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
 
-	0 [ <span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">lightgrey</span> ];
-	2 [ <span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">doublecircle</span> ];
-	0 -&gt; 2 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"a "</span> ];
-	0 -&gt; 1 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"other "</span> ];
-	1 -&gt; 2 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"a "</span> ];
-	1 -&gt; 1 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"other "</span> ];
-	2 -&gt; 2 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"a "</span> ];
-	2 -&gt; 1 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"other "</span> ];
-	<span style="color: #CDC673;">"Machine: a"</span> [ <span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">plaintext</span> ];
+	0 [ <span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">lightgrey</span> ];
+	2 [ <span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">doublecircle</span> ];
+	0 -&gt; 2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"a "</span> ];
+	0 -&gt; 1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"other "</span> ];
+	1 -&gt; 2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"a "</span> ];
+	1 -&gt; 1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"other "</span> ];
+	2 -&gt; 2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"a "</span> ];
+	2 -&gt; 1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"other "</span> ];
+	<span style="color: #CDC673;">"Machine: a"</span> [ <span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span> ];
 }
 </pre>
 </div>
 
 
-<div id="org56868e2" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_auto_state.png" alt="dot_auto_state.png" />
 </p>
 </div>
@@ -8882,35 +8906,35 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">module_lc</span>{
-	<span style="color: #FF8C00; font-weight: bold;">rankdir=</span>TB;
-	<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 12;
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 12, <span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #CDC673;">"Mrecord"</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"filled"</span>];
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 12, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"darkgreen"</span> ];
-	installed [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#24050;&#23433;&#35013;&#29366;&#24577;"</span>];
-	resolved [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#24050;&#23601;&#32490;&#29366;&#24577;"</span>];
-	uninstalled [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#24050;&#21368;&#36733;&#29366;&#24577;"</span>];
-	starting [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#27491;&#22312;&#21551;&#21160;"</span>];
-	active [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#24050;&#28608;&#27963;(&#36816;&#34892;)&#29366;&#24577;"</span>];
-	stopping [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#27491;&#22312;&#20572;&#27490;"</span>];
-	start [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">""</span>, <span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"circle"</span>, <span style="color: #FF8C00; font-weight: bold;">width=</span>0.5, <span style="color: #FF8C00; font-weight: bold;">fixedsize=</span><span style="color: #AF87FF;">true</span>, <span style="color: #FF8C00; font-weight: bold;">style=</span><span style="color: #CDC673;">"filled"</span>, <span style="color: #FF8C00; font-weight: bold;">color=</span><span style="color: #CDC673;">"black"</span>];
-	start -&gt; installed [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;"</span>];
-	installed -&gt; uninstalled [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#21368;&#36733;"</span>];
-	installed -&gt; resolved [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#20934;&#22791;"</span>];
-	installed -&gt; installed [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#26356;&#26032;"</span>];
-	resolved -&gt; installed [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#26356;&#26032;"</span>];
-	resolved -&gt; uninstalled [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#21368;&#36733;"</span>];
-	resolved -&gt; starting [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#21551;&#21160;"</span>];
-	starting -&gt; active [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">""</span>];
-	active -&gt; stopping [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"&#20572;&#27490;"</span>];
-	stopping -&gt; resolved [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">""</span>];
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">module_lc</span>{
+	<span style="color: #FF8C00;">rankdir=</span>TB;
+	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
+	<span style="color: #FF8C00;">fontsize =</span> 12;
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12, <span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"Mrecord"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>];
+	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"darkgreen"</span> ];
+	installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#23433;&#35013;&#29366;&#24577;"</span>];
+	resolved [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#23601;&#32490;&#29366;&#24577;"</span>];
+	uninstalled [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#21368;&#36733;&#29366;&#24577;"</span>];
+	starting [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#27491;&#22312;&#21551;&#21160;"</span>];
+	active [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#28608;&#27963;(&#36816;&#34892;)&#29366;&#24577;"</span>];
+	stopping [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#27491;&#22312;&#20572;&#27490;"</span>];
+	start [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">""</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"circle"</span>, <span style="color: #FF8C00;">width=</span>0.5, <span style="color: #FF8C00;">fixedsize=</span><span style="color: #AF87FF;">true</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"black"</span>];
+	start -&gt; installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;"</span>];
+	installed -&gt; uninstalled [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21368;&#36733;"</span>];
+	installed -&gt; resolved [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20934;&#22791;"</span>];
+	installed -&gt; installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#26356;&#26032;"</span>];
+	resolved -&gt; installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#26356;&#26032;"</span>];
+	resolved -&gt; uninstalled [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21368;&#36733;"</span>];
+	resolved -&gt; starting [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21551;&#21160;"</span>];
+	starting -&gt; active [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">""</span>];
+	active -&gt; stopping [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20572;&#27490;"</span>];
+	stopping -&gt; resolved [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">""</span>];
 }
 </pre>
 </div>
 
 
-<div id="org61ab414" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_osgi.png" alt="dot_osgi.png" />
 </p>
 </div>
@@ -8926,16 +8950,16 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">ast</span>{
-	<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10;
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">ast</span>{
+	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
+	<span style="color: #FF8C00;">fontsize =</span> 10;
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">circle</span>, <span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10];
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10];
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #CDC673;">"plaintext"</span>];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">circle</span>, <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
+	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"plaintext"</span>];
 
-	mul [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"mul(*)"</span>];
-	add [<span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"add(+)"</span>];
+	mul [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"mul(*)"</span>];
+	add [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"add(+)"</span>];
 
 	add -&gt; 3
 	add -&gt; 4;
@@ -8946,7 +8970,7 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 </div>
 
 
-<div id="org0cdcd11" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_ast.png" alt="dot_ast.png" />
 </p>
 </div>
@@ -8961,30 +8985,30 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span>{
-	<span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>
-	<span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10
-	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10, <span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #CDC673;">"record"</span> ];
-	<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00; font-weight: bold;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 10 ];
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span>{
+	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>
+	<span style="color: #FF8C00;">fontsize =</span> 10
+	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"record"</span> ];
+	<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>, <span style="color: #FF8C00;">fontsize =</span> 10 ];
 
-	Animal [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"{Animal |+ name : Stringl+ age : intl|+ die() : voidl}"</span> ];
+	Animal [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"{Animal |+ name : Stringl+ age : intl|+ die() : voidl}"</span> ];
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">clusterAnimalImpl</span>{
-		<span style="color: #FF8C00; font-weight: bold;">bgcolor=</span><span style="color: #CDC673;">"yellow"</span>
-		Dog [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"{Dog||+ bark() : voidl}"</span> ];
-		Cat [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"{Cat||+ meow() : voidl}"</span> ];
+	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">clusterAnimalImpl</span>{
+		<span style="color: #FF8C00;">bgcolor=</span><span style="color: #CDC673;">"yellow"</span>
+		Dog [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"{Dog||+ bark() : voidl}"</span> ];
+		Cat [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"{Cat||+ meow() : voidl}"</span> ];
 		};
-		<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00; font-weight: bold;">arrowhead =</span> <span style="color: #CDC673;">"empty"</span> ];
+		<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00;">arrowhead =</span> <span style="color: #CDC673;">"empty"</span> ];
 		Dog-&gt;Animal;
 		Cat-&gt;Animal;
-		Dog-&gt;Cat [<span style="color: #FF8C00; font-weight: bold;">arrowhead=</span><span style="color: #CDC673;">"none"</span>, <span style="color: #FF8C00; font-weight: bold;">label=</span><span style="color: #CDC673;">"0..*"</span>];
+		Dog-&gt;Cat [<span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>, <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"0..*"</span>];
 	}
 }
 </pre>
 </div>
 
 
-<div id="org2586dfb" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_uml.png" alt="dot_uml.png" />
 </p>
 </div>
@@ -8997,69 +9021,69 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 脚本：
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">finite_state_machine</span> {
-	<span style="color: #FF8C00; font-weight: bold;">rankdir =</span> <span style="color: #AF87FF;">LR</span>;
-	<span style="color: #FF8C00; font-weight: bold;">size =</span> <span style="color: #CDC673;">"8,5"</span>
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">doublecircle</span>];
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">finite_state_machine</span> {
+	<span style="color: #FF8C00;">rankdir =</span> <span style="color: #AF87FF;">LR</span>;
+	<span style="color: #FF8C00;">size =</span> <span style="color: #CDC673;">"8,5"</span>
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">doublecircle</span>];
 	<span style="color: #AF87FF;">LR</span>_0 <span style="color: #AF87FF;">LR</span>_3 <span style="color: #AF87FF;">LR</span>_4 <span style="color: #AF87FF;">LR</span>_8;
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">circle</span>];
-	<span style="color: #AF87FF;">LR</span>_0 -&gt; <span style="color: #AF87FF;">LR</span>_2 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"SS(B)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_0 -&gt; <span style="color: #AF87FF;">LR</span>_1 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"SS(S)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_1 -&gt; <span style="color: #AF87FF;">LR</span>_3 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S($end)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"SS(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"SS(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_4 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(A)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_5 -&gt; <span style="color: #AF87FF;">LR</span>_7 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_5 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_6 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_6 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_7 -&gt; <span style="color: #AF87FF;">LR</span>_8 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_7 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_8 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_8 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">circle</span>];
+	<span style="color: #AF87FF;">LR</span>_0 -&gt; <span style="color: #AF87FF;">LR</span>_2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(B)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_0 -&gt; <span style="color: #AF87FF;">LR</span>_1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(S)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_1 -&gt; <span style="color: #AF87FF;">LR</span>_3 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S($end)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(b)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(a)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_4 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(A)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_5 -&gt; <span style="color: #AF87FF;">LR</span>_7 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_5 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_6 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_6 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_7 -&gt; <span style="color: #AF87FF;">LR</span>_8 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_7 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_8 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
+	<span style="color: #AF87FF;">LR</span>_8 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
 }
 </pre>
 </div>
 
 
-<div id="org4b84680" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_state_graph.png" alt="dot_state_graph.png" />
 </p>
 </div>
 
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">G</span> {
-	<span style="color: #FF8C00; font-weight: bold;">compound =</span> <span style="color: #AF87FF;">true</span>  <span style="color: #8B8878;">// </span><span style="color: #8B8878; font-style: italic;">&#20801;&#35768;&#23376;&#22270;&#38388;&#23384;&#22312;&#36793;</span>
-	<span style="color: #FF8C00; font-weight: bold;">ranksep =</span> 1
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">record</span>]
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+	<span style="color: #FF8C00;">compound =</span> <span style="color: #AF87FF;">true</span>  <span style="color: #8B8878;">// </span><span style="color: #8B8878;">&#20801;&#35768;&#23376;&#22270;&#38388;&#23384;&#22312;&#36793;</span>
+	<span style="color: #FF8C00;">ranksep =</span> 1
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">record</span>]
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_hardware</span> {
-		<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"hardware"</span>
-		<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">lightblue</span>
+	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_hardware</span> {
+		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"hardware"</span>
+		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">lightblue</span>
 		CPU Memory
 	}
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_kernel</span> {
-		<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"kernel"</span>
-		<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">green</span>
+	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_kernel</span> {
+		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"kernel"</span>
+		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">green</span>
 		Init IPC
 	}
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_libc</span> {
-		<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"libc"</span>
-		<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">yellow</span>
+	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_libc</span> {
+		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"libc"</span>
+		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">yellow</span>
 		glibc
 	}
 
-	CPU -&gt; Init [<span style="color: #FF8C00; font-weight: bold;">lhead =</span> cluster_kernel <span style="color: #FF8C00; font-weight: bold;">ltail =</span> cluster_hardware]
-	IPC -&gt; glibc [<span style="color: #FF8C00; font-weight: bold;">lhead =</span> cluster_libc <span style="color: #FF8C00; font-weight: bold;">ltail =</span> cluster_kernel]
+	CPU -&gt; Init [<span style="color: #FF8C00;">lhead =</span> cluster_kernel <span style="color: #FF8C00;">ltail =</span> cluster_hardware]
+	IPC -&gt; glibc [<span style="color: #FF8C00;">lhead =</span> cluster_libc <span style="color: #FF8C00;">ltail =</span> cluster_kernel]
 }
 </pre>
 </div>
 
 
-<div id="org5ee5616" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_compount.png" alt="dot_compount.png" />
 </p>
 </div>
@@ -9071,144 +9095,144 @@ TCP IP 状态流程图
 
 <div class="org-src-container">
 <pre class="src src-dot"><span style="color: #FF1493;">digraph</span> {
-	<span style="color: #FF8C00; font-weight: bold;">compound=</span><span style="color: #AF87FF;">true</span>
-	<span style="color: #FF8C00; font-weight: bold;">fontsize=</span>10
-	<span style="color: #FF8C00; font-weight: bold;">margin=</span><span style="color: #CDC673;">"0,0"</span>
-	<span style="color: #FF8C00; font-weight: bold;">ranksep =</span> .75
-	<span style="color: #FF8C00; font-weight: bold;">nodesep =</span> .65
+	<span style="color: #FF8C00;">compound=</span><span style="color: #AF87FF;">true</span>
+	<span style="color: #FF8C00;">fontsize=</span>10
+	<span style="color: #FF8C00;">margin=</span><span style="color: #CDC673;">"0,0"</span>
+	<span style="color: #FF8C00;">ranksep =</span> .75
+	<span style="color: #FF8C00;">nodesep =</span> .65
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">Mrecord</span> <span style="color: #FF8C00; font-weight: bold;">fontname=</span><span style="color: #CDC673;">"Inconsolata, Consolas"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize=</span>12, <span style="color: #FF8C00; font-weight: bold;">penwidth=</span>0.5]
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">fontname=</span><span style="color: #CDC673;">"Inconsolata, Consolas"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize=</span>10, <span style="color: #FF8C00; font-weight: bold;">arrowhead=</span><span style="color: #AF87FF;">normal</span>]
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">Mrecord</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Inconsolata, Consolas"</span>, <span style="color: #FF8C00;">fontsize=</span>12, <span style="color: #FF8C00;">penwidth=</span>0.5]
+	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Inconsolata, Consolas"</span>, <span style="color: #FF8C00;">fontsize=</span>10, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #AF87FF;">normal</span>]
 
 
-	<span style="color: #CDC673;">"TCP/IP State Transition"</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #CDC673;">"plaintext"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 16]
+	<span style="color: #CDC673;">"TCP/IP State Transition"</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"plaintext"</span>, <span style="color: #FF8C00;">fontsize =</span> 16]
 
-	<span style="color: #8B8878;">// </span><span style="color: #8B8878; font-style: italic;">now start server state transition</span>
-	<span style="color: #CDC673;">"CLOSED"</span> -&gt; <span style="color: #CDC673;">"LISTEN"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>];
-	<span style="color: #CDC673;">"LISTEN"</span> -&gt; <span style="color: #CDC673;">"SENT_REVD"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
-	<span style="color: #CDC673;">"SENT_REVD"</span> -&gt; <span style="color: #CDC673;">"ESTABLISHED"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 20]
-	<span style="color: #CDC673;">"ESTABLISHED"</span> -&gt; <span style="color: #CDC673;">"CLOSE_WAIT"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 20]
+	<span style="color: #8B8878;">// </span><span style="color: #8B8878;">now start server state transition</span>
+	<span style="color: #CDC673;">"CLOSED"</span> -&gt; <span style="color: #CDC673;">"LISTEN"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>];
+	<span style="color: #CDC673;">"LISTEN"</span> -&gt; <span style="color: #CDC673;">"SENT_REVD"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
+	<span style="color: #CDC673;">"SENT_REVD"</span> -&gt; <span style="color: #CDC673;">"ESTABLISHED"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 20]
+	<span style="color: #CDC673;">"ESTABLISHED"</span> -&gt; <span style="color: #CDC673;">"CLOSE_WAIT"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 20]
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_passive_close</span> {
-		<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>
-		<span style="color: #FF8C00; font-weight: bold;">margin =</span> 10
+	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_passive_close</span> {
+		<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>
+		<span style="color: #FF8C00;">margin =</span> 10
 
-		passive_close [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#34987;&#21160;&#20851;&#38381;"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 14]
+		passive_close [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#34987;&#21160;&#20851;&#38381;"</span>, <span style="color: #FF8C00;">fontsize =</span> 14]
 
-		<span style="color: #CDC673;">"CLOSE_WAIT"</span> -&gt; <span style="color: #CDC673;">"LAST_ACK"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 10]
+		<span style="color: #CDC673;">"CLOSE_WAIT"</span> -&gt; <span style="color: #CDC673;">"LAST_ACK"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00;">weight =</span> 10]
 	}
-	<span style="color: #CDC673;">"LAST_ACK"</span> -&gt; <span style="color: #CDC673;">"CLOSED"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+	<span style="color: #CDC673;">"LAST_ACK"</span> -&gt; <span style="color: #CDC673;">"CLOSED"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
 
-	<span style="color: #8B8878;">// </span><span style="color: #8B8878; font-style: italic;">now start client state transition</span>
-	<span style="color: #CDC673;">"CLOSED"</span> -&gt; <span style="color: #CDC673;">"SYN_SENT"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>];
-	<span style="color: #CDC673;">"SYN_SENT"</span> -&gt; <span style="color: #CDC673;">"ESTABLISHED"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 25]
-	<span style="color: #CDC673;">"SYN_SENT"</span> -&gt; <span style="color: #CDC673;">"SENT_REVD"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
-	<span style="color: #CDC673;">"ESTABLISHED"</span> -&gt; <span style="color: #CDC673;">"FIN_WAIT_1"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 20]
+	<span style="color: #8B8878;">// </span><span style="color: #8B8878;">now start client state transition</span>
+	<span style="color: #CDC673;">"CLOSED"</span> -&gt; <span style="color: #CDC673;">"SYN_SENT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>];
+	<span style="color: #CDC673;">"SYN_SENT"</span> -&gt; <span style="color: #CDC673;">"ESTABLISHED"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 25]
+	<span style="color: #CDC673;">"SYN_SENT"</span> -&gt; <span style="color: #CDC673;">"SENT_REVD"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
+	<span style="color: #CDC673;">"ESTABLISHED"</span> -&gt; <span style="color: #CDC673;">"FIN_WAIT_1"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00;">weight =</span> 20]
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700; font-weight: bold;">cluster_active_close</span> {
-		<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>
-		<span style="color: #FF8C00; font-weight: bold;">margin =</span> 10
+	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_active_close</span> {
+		<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>
+		<span style="color: #FF8C00;">margin =</span> 10
 
-		active_<span style="color: #AF87FF;">open</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#20027;&#21160;&#20851;&#38381;"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 14]
+		active_<span style="color: #AF87FF;">open</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#20027;&#21160;&#20851;&#38381;"</span>, <span style="color: #FF8C00;">fontsize =</span> 14]
 
-		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"FIN_WAIT_2"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
-		<span style="color: #CDC673;">"FIN_WAIT_2"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
-		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"CLOSING"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
-		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
-		<span style="color: #CDC673;">"CLOSING"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>]
+		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"FIN_WAIT_2"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+		<span style="color: #CDC673;">"FIN_WAIT_2"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
+		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"CLOSING"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
+		<span style="color: #CDC673;">"CLOSING"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>]
 	}
 
-	<span style="color: #CDC673;">"TIME_WAIT"</span> -&gt; <span style="color: #CDC673;">"CLOSED"</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"2MSL&#36229;&#26102;"</span>]
+	<span style="color: #CDC673;">"TIME_WAIT"</span> -&gt; <span style="color: #CDC673;">"CLOSED"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"2MSL&#36229;&#26102;"</span>]
 }
 </pre>
 </div>
 
 
-<div id="org68ec46c" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_tcp1.png" alt="dot_tcp1.png" />
 </p>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">rankdot</span> {
-	<span style="color: #FF8C00; font-weight: bold;">compound=</span><span style="color: #AF87FF;">true</span>
-	<span style="color: #FF8C00; font-weight: bold;">margin=</span><span style="color: #CDC673;">"0,0"</span>
-	<span style="color: #FF8C00; font-weight: bold;">ranksep =</span> .75
-	<span style="color: #FF8C00; font-weight: bold;">nodesep =</span> 1
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">rankdot</span> {
+	<span style="color: #FF8C00;">compound=</span><span style="color: #AF87FF;">true</span>
+	<span style="color: #FF8C00;">margin=</span><span style="color: #CDC673;">"0,0"</span>
+	<span style="color: #FF8C00;">ranksep =</span> .75
+	<span style="color: #FF8C00;">nodesep =</span> 1
 	pad = .5
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878; font-style: italic;">splines = ortho</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">splines = ortho</span>
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">Mrecord</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00; font-weight: bold;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize=</span>14]
-	<span style="color: #FF1493;">edge</span> [charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00; font-weight: bold;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize=</span>11, <span style="color: #FF8C00; font-weight: bold;">arrowhead =</span> <span style="color: #AF87FF;">normal</span>]
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">Mrecord</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>14]
+	<span style="color: #FF1493;">edge</span> [charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>11, <span style="color: #FF8C00;">arrowhead =</span> <span style="color: #AF87FF;">normal</span>]
 
 
-	CLOSED -&gt; LISTEN [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 100];
+	CLOSED -&gt; LISTEN [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 100];
 
-	<span style="color: #CDC673;">"TCP/IP State Transition"</span> [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #CDC673;">"plaintext"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize =</span> 16]
+	<span style="color: #CDC673;">"TCP/IP State Transition"</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"plaintext"</span>, <span style="color: #FF8C00;">fontsize =</span> 16]
 
 	{
-		<span style="color: #FF8C00; font-weight: bold;">rank =</span> <span style="color: #AF87FF;">same</span>
+		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
 		SYN_RCVD SYN_SENT
-		<span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00; font-weight: bold;">width =</span> 0]
+		<span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00;">width =</span> 0]
 
-		SYN_SENT -&gt; <span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#20851;&#38381;&#25110;&#32773;&#36229;&#26102;"</span>]
-		<span style="color: #8B8878;">// </span><span style="color: #8B8878; font-style: italic;">SYN_SENT -&gt; SYN_RCVD &#36825;&#20010;&#19968;&#34892;&#20195;&#30721;&#21644;&#19978;&#19968;&#34892;&#20914;&#31361;&#20102;&#65292;syn_sent &#20250;&#22312;syn_rcvd&#21491;&#36793;</span>
-		SYN_RCVD -&gt; SYN_SENT [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">dir =</span> <span style="color: #AF87FF;">back</span>, <span style="color: #FF8C00; font-weight: bold;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
+		SYN_SENT -&gt; <span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#20851;&#38381;&#25110;&#32773;&#36229;&#26102;"</span>]
+		<span style="color: #8B8878;">// </span><span style="color: #8B8878;">SYN_SENT -&gt; SYN_RCVD &#36825;&#20010;&#19968;&#34892;&#20195;&#30721;&#21644;&#19978;&#19968;&#34892;&#20914;&#31361;&#20102;&#65292;syn_sent &#20250;&#22312;syn_rcvd&#21491;&#36793;</span>
+		SYN_RCVD -&gt; SYN_SENT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">dir =</span> <span style="color: #AF87FF;">back</span>, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
 	}
 
-	LISTEN -&gt; SYN_RCVD [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
-	SYN_RCVD -&gt; LISTEN [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;RST"</span>]
-	CLOSED:es -&gt; SYN_SENT [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>]
+	LISTEN -&gt; SYN_RCVD [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
+	SYN_RCVD -&gt; LISTEN [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;RST"</span>]
+	CLOSED:es -&gt; SYN_SENT [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>]
 
 	{
-		<span style="color: #FF8C00; font-weight: bold;">rank =</span> <span style="color: #AF87FF;">same</span>
+		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
 		ESTABLISHED CLOSE_WAIT
 
-		ESTABLISHED -&gt; CLOSE_WAIT [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
+		ESTABLISHED -&gt; CLOSE_WAIT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
 	}
 
-	SYN_RCVD -&gt; ESTABLISHED [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 9]
-	SYN_SENT -&gt; ESTABLISHED  [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 10]
+	SYN_RCVD -&gt; ESTABLISHED [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 9]
+	SYN_SENT -&gt; ESTABLISHED  [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 10]
 
 	{
-		<span style="color: #FF8C00; font-weight: bold;">rank =</span> <span style="color: #AF87FF;">same</span>
+		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
 
 		FIN_WAIT_1
 		CLOSING
 		LAST_ACK
-		<span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00; font-weight: bold;">width =</span> 0]
+		<span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00;">width =</span> 0]
 
-		FIN_WAIT_1 -&gt; CLOSING [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
-		LAST_ACK -&gt; <span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+		FIN_WAIT_1 -&gt; CLOSING [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
+		LAST_ACK -&gt; <span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
 	}
 
-	CLOSE_WAIT -&gt; LAST_ACK [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 10]
+	CLOSE_WAIT -&gt; LAST_ACK [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00;">weight =</span> 10]
 
 	{
-		<span style="color: #FF8C00; font-weight: bold;">rank =</span> <span style="color: #AF87FF;">same</span>
+		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
 		FIN_WAIT_2  TIME_WAIT
 
-		<span style="color: #AF87FF;">point</span>_3 [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00; font-weight: bold;">width =</span> 0]
-		TIME_WAIT -&gt; <span style="color: #AF87FF;">point</span>_3 [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"2MSL&#36229;&#26102;"</span>]
+		<span style="color: #AF87FF;">point</span>_3 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00;">width =</span> 0]
+		TIME_WAIT -&gt; <span style="color: #AF87FF;">point</span>_3 [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"2MSL&#36229;&#26102;"</span>]
 	}
 
-	ESTABLISHED -&gt; FIN_WAIT_1 [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>]
-	FIN_WAIT_1 -&gt; FIN_WAIT_2 [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 15]
-	FIN_WAIT_2 -&gt; TIME_WAIT [<span style="color: #FF8C00; font-weight: bold;">style =</span> blod, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 10]
+	ESTABLISHED -&gt; FIN_WAIT_1 [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>]
+	FIN_WAIT_1 -&gt; FIN_WAIT_2 [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 15]
+	FIN_WAIT_2 -&gt; TIME_WAIT [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 10]
 
-	CLOSING -&gt; TIME_WAIT [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 15]
-	FIN_WAIT_1 -&gt; TIME_WAIT [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+	CLOSING -&gt; TIME_WAIT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 15]
+	FIN_WAIT_1 -&gt; TIME_WAIT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
 
-	<span style="color: #AF87FF;">point</span>_3 -&gt; <span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00; font-weight: bold;">arrowhead =</span> <span style="color: #AF87FF;">none</span>, <span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00; font-weight: bold;">weight =</span> 10]
-	<span style="color: #AF87FF;">point</span>_2 -&gt; <span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00; font-weight: bold;">arrowhead =</span> <span style="color: #AF87FF;">none</span>, <span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>]
-	<span style="color: #AF87FF;">point</span>_1 -&gt; CLOSED [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dotted</span>]
+	<span style="color: #AF87FF;">point</span>_3 -&gt; <span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00;">arrowhead =</span> <span style="color: #AF87FF;">none</span>, <span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">weight =</span> 10]
+	<span style="color: #AF87FF;">point</span>_2 -&gt; <span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00;">arrowhead =</span> <span style="color: #AF87FF;">none</span>, <span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>]
+	<span style="color: #AF87FF;">point</span>_1 -&gt; CLOSED [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>]
 }
 
 </pre>
 </div>
 
 
-<div id="orgd5fb2e1" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_tcp2.png" alt="dot_tcp2.png" />
 </p>
 </div>
@@ -9222,22 +9246,22 @@ TCP IP 状态流程图
 epoll 相关数据结构及关系
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700; font-weight: bold;">rankdot</span> {
-	<span style="color: #FF8C00; font-weight: bold;">compound=</span><span style="color: #AF87FF;">true</span>
-	<span style="color: #FF8C00; font-weight: bold;">margin=</span><span style="color: #CDC673;">"0,0"</span>
-	<span style="color: #FF8C00; font-weight: bold;">ranksep =</span> .75
-	<span style="color: #FF8C00; font-weight: bold;">nodesep =</span> 1
+<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">rankdot</span> {
+	<span style="color: #FF8C00;">compound=</span><span style="color: #AF87FF;">true</span>
+	<span style="color: #FF8C00;">margin=</span><span style="color: #CDC673;">"0,0"</span>
+	<span style="color: #FF8C00;">ranksep =</span> .75
+	<span style="color: #FF8C00;">nodesep =</span> 1
 	pad = .5
-	<span style="color: #FF8C00; font-weight: bold;">rankdir =</span> <span style="color: #AF87FF;">LR</span>
+	<span style="color: #FF8C00;">rankdir =</span> <span style="color: #AF87FF;">LR</span>
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00; font-weight: bold;">shape=</span><span style="color: #AF87FF;">record</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00; font-weight: bold;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize=</span>14]
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00; font-weight: bold;">style =</span> <span style="color: #AF87FF;">dashed</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00; font-weight: bold;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00; font-weight: bold;">fontsize=</span>11]
+	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>14]
+	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>11]
 
-	epoll [<span style="color: #FF8C00; font-weight: bold;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"epoll &#30456;&#20851;&#32467;&#26500;&#21450;&#37096;&#20998;&#20851;&#31995;"</span>]
+	epoll [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"epoll &#30456;&#20851;&#32467;&#26500;&#21450;&#37096;&#20998;&#20851;&#31995;"</span>]
 
 	eventpoll [
-		   <span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">cornflowerblue</span>,
-		   <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&lt;eventpoll&gt; struct \n eventpoll |</span>
+		   <span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">cornflowerblue</span>,
+		   <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;eventpoll&gt; struct \n eventpoll |</span>
 <span style="color: #CDC673;">                   &lt;lock&gt; spinlock_t lock; |</span>
 <span style="color: #CDC673;">                   &lt;mutex&gt; struct mutex mtx; |</span>
 <span style="color: #CDC673;">                   &lt;wq&gt; wait_queue_head_t wq; |</span>
@@ -9253,8 +9277,8 @@ epoll 相关数据结构及关系
 		   ]
 
 	epitem [
-		<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">sienna</span>,
-		<span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&lt;epitem&gt; struct \n epitem  |</span>
+		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>,
+		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;epitem&gt; struct \n epitem  |</span>
 <span style="color: #CDC673;">                &lt;rb&gt;struct rb_node rbn;\nstruct rcu_head rcu; |</span>
 <span style="color: #CDC673;">                &lt;rdllink&gt; struct list_head rdllink; |</span>
 <span style="color: #CDC673;">                &lt;next&gt; struct epitem *next; |</span>
@@ -9268,8 +9292,8 @@ epoll 相关数据结构及关系
 		]
 
 	epitem2 [
-		 <span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">sienna</span>,
-		 <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&lt;epitem&gt; struct \n epitem |</span>
+		 <span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>,
+		 <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;epitem&gt; struct \n epitem |</span>
 <span style="color: #CDC673;">                 &lt;rb&gt;struct rb_node rbn;\nstruct rcu_head rcu; |</span>
 <span style="color: #CDC673;">                 &lt;rdllink&gt; struct list_head rdllink; |</span>
 <span style="color: #CDC673;">                 &lt;next&gt; struct epitem *next; |</span>
@@ -9279,26 +9303,26 @@ epoll 相关数据结构及关系
 		 ]
 
 	eppoll_entry [
-		      <span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">darkviolet</span>,
-		      <span style="color: #FF8C00; font-weight: bold;">label =</span> <span style="color: #CDC673;">"&lt;entry&gt; struct \n eppoll_entry |</span>
+		      <span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">darkviolet</span>,
+		      <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;entry&gt; struct \n eppoll_entry |</span>
 <span style="color: #CDC673;">                      &lt;llink&gt; struct list_head llink; |</span>
 <span style="color: #CDC673;">                      &lt;base&gt; struct epitem *base; |</span>
 <span style="color: #CDC673;">                      &lt;wait&gt; wait_queue_entry_t wait; |</span>
 <span style="color: #CDC673;">                      &lt;whead&gt; wait_queue_head_t *whead;"</span>
 		      ]
 
-	epitem:ep -&gt; eventpoll:se [<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">sienna</span>]
-	epitem2:ep -&gt; eventpoll:se [<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">sienna</span>]
-	eventpoll:ovflist -&gt; epitem:next -&gt; epitem2:next [<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">cornflowerblue</span>]
-	eventpoll:rdllist -&gt; epitem:rdllink -&gt; epitem2:rdllink [<span style="color: #FF8C00; font-weight: bold;">dir =</span> <span style="color: #AF87FF;">both</span>]
-	eppoll_entry:llink -&gt; epitem:pwqlist [<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">darkviolet</span>]
-	eppoll_entry:base -&gt; epitem:nw  [<span style="color: #FF8C00; font-weight: bold;">color =</span> <span style="color: #CDC673;">darkviolet</span>]
+	epitem:ep -&gt; eventpoll:se [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>]
+	epitem2:ep -&gt; eventpoll:se [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>]
+	eventpoll:ovflist -&gt; epitem:next -&gt; epitem2:next [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">cornflowerblue</span>]
+	eventpoll:rdllist -&gt; epitem:rdllink -&gt; epitem2:rdllink [<span style="color: #FF8C00;">dir =</span> <span style="color: #AF87FF;">both</span>]
+	eppoll_entry:llink -&gt; epitem:pwqlist [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">darkviolet</span>]
+	eppoll_entry:base -&gt; epitem:nw  [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">darkviolet</span>]
 }
 </pre>
 </div>
 
 
-<div id="org875cde9" class="figure">
+<div class="figure">
 <p><img src="./dot/dot/dot_epoll_struct.png" alt="dot_epoll_struct.png" />
 </p>
 </div>
@@ -9313,8 +9337,8 @@ epoll 相关数据结构及关系
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2021-12-18 Sat 10:22</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

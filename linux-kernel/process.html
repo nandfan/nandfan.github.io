@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-23 Tue 17:49 -->
+<!-- 2021-11-06 Sat 11:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>进程管理</title>
+<title>进程以及进程管理</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
 <style type="text/css">
@@ -40,7 +40,7 @@
   }
   pre.src {
     position: relative;
-    overflow: auto;
+    overflow: visible;
     padding-top: 1.2em;
   }
   pre.src:before {
@@ -52,7 +52,7 @@
     padding: 3px;
     border: 1px solid black;
   }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
+  pre.src:hover:before { display: inline;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
@@ -195,31 +195,55 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
 </script>
 </head>
 <body>
 <div id="content">
-<h1 class="title">进程管理</h1>
+<h1 class="title">进程以及进程管理</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
@@ -228,40 +252,57 @@
 <ul>
 <li><a href="#orgceab7ba">1.1. 进程的优先级</a></li>
 <li><a href="#org8ffd325">1.2. 进程状态</a></li>
-<li><a href="#org873b51a">1.3. 内核抢占</a></li>
+<li><a href="#orgc919a23">1.3. 内核抢占</a></li>
 <li><a href="#orgab6fd79">1.4. 标识进程</a></li>
 <li><a href="#orgf58f88d">1.5. 进程描述符</a></li>
 <li><a href="#org592a4d3">1.6. 进程的参数、环境变量和用户栈</a></li>
-<li><a href="#org681cb70">1.7. 进程的创建</a>
+</ul>
+</li>
+<li><a href="#org3191c3e">2. 进程命名空间</a>
 <ul>
-<li><a href="#org8cd9842">1.7.1. 进程的写时复制</a></li>
-<li><a href="#orgcedeee2">1.7.2. fork</a></li>
-</ul>
-</li>
-<li><a href="#org51d37c1">1.8. 内核线程</a></li>
-</ul>
-</li>
-<li><a href="#orgc3e609e">2. 操作进程的工具</a></li>
-<li><a href="#org8a2e497">3. 进程管理</a>
+<li><a href="#org7e5e911">2.1. 创建方法</a></li>
+<li><a href="#orgca553d3">2.2. 实现</a></li>
+<li><a href="#org568306b">2.3. 进程ID号</a>
 <ul>
-<li><a href="#orgeb1befa">3.1. 核心调度器</a>
+<li><a href="#org1e9bfdf">2.3.1. 进程ID</a></li>
+<li><a href="#org50bdbc5">2.3.2. 管理PID</a>
 <ul>
-<li><a href="#org1ba15fc">3.1.1. 周期性调度器</a></li>
-<li><a href="#orgb69a484">3.1.2. 主调度器</a></li>
-<li><a href="#orga948416">3.1.3. fork交互</a></li>
-<li><a href="#org5b43da8">3.1.4. 上下文切换</a></li>
+<li><a href="#org07f13fe">2.3.2.1. 数据结构</a></li>
+<li><a href="#org5cfe8a3">2.3.2.2. 函数</a></li>
 </ul>
 </li>
-<li><a href="#orgc332b0c">3.2. 完全公平调度类</a>
+<li><a href="#orgae2bd37">2.3.3. 生成PID</a></li>
+</ul>
+</li>
+<li><a href="#org8475afe">2.4. 进程关系</a></li>
+</ul>
+</li>
+<li><a href="#org1eefb70">3. 进程管理相关系统调用</a>
 <ul>
-<li><a href="#org07f13fe">3.2.1. 数据结构</a></li>
-<li><a href="#orgf222e2a">3.2.2. CFS操作</a></li>
+<li><a href="#orgb6d9faa">3.1. 进程复制</a>
+<ul>
+<li><a href="#org6b9e307">3.1.1. 写时复制</a></li>
+<li><a href="#orgf6c711c">3.1.2. 执行系统调用</a></li>
+<li><a href="#orgcae32a5">3.1.3. do_fork实现</a></li>
 </ul>
 </li>
-<li><a href="#org5ac74e9">3.3. 实时调度类</a></li>
-<li><a href="#orgcd75862">3.4. 内核抢占</a></li>
+<li><a href="#org681cb70">3.2. 进程的创建</a>
+<ul>
+<li><a href="#org8cd9842">3.2.1. 进程的写时复制</a></li>
+<li><a href="#orgcedeee2">3.2.2. fork</a>
+<ul>
+<li><a href="#org4688b9a">3.2.2.1. do_fork</a></li>
+<li><a href="#org4b53191">3.2.2.2. 复制进程</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a href="#org51d37c1">3.3. 内核线程</a></li>
+<li><a href="#orgb15c74a">3.4. 启动新程序（execve）</a></li>
+<li><a href="#orgc9d9425">3.5. 退出进程</a></li>
+</ul>
+</li>
+<li><a href="#orgc3e609e">4. 操作进程的工具</a></li>
 </ul>
 </div>
 </div>
@@ -327,15 +368,15 @@
 
 
 
-<div id="orgdc74eed" class="figure">
+<div class="figure">
 <p><img src="./dot/process/pro_trans.png" alt="pro_trans.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org873b51a" class="outline-3">
-<h3 id="org873b51a"><span class="section-number-3">1.3</span> 内核抢占</h3>
+<div id="outline-container-orgc919a23" class="outline-3">
+<h3 id="orgc919a23"><span class="section-number-3">1.3</span> 内核抢占</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 linux进程管理结构中还需要另外两种进程状态：内核态和用户态。这反映出现代CPU至少有两种不同的执行状态，一个具有全部的权限，另一个会受到很多限制。
@@ -397,32 +438,451 @@ POSIX标准规定一个多线程应用中的所有线程都必须由相同的PID
 <h3 id="org592a4d3"><span class="section-number-3">1.6</span> 进程的参数、环境变量和用户栈</h3>
 <div class="outline-text-3" id="text-1-6">
 
-<div id="orgad098e1" class="figure">
+<div class="figure">
 <p><img src="./dot/process/argv.png" alt="argv.png" />
 </p>
 </div>
 
 
-<div id="org7c4e90a" class="figure">
+<div class="figure">
 <p><img src="./dot/process/envp.png" alt="envp.png" />
 </p>
 </div>
 
 
-<div id="org733526e" class="figure">
+<div class="figure">
 <p><img src="./dot/process/stack.png" alt="stack.png" />
 </p>
 </div>
 </div>
 </div>
+</div>
+
+
+
+
+<div id="outline-container-org3191c3e" class="outline-2">
+<h2 id="org3191c3e"><span class="section-number-2">2</span> 进程命名空间</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org7e5e911" class="outline-3">
+<h3 id="org7e5e911"><span class="section-number-3">2.1</span> 创建方法</h3>
+<div class="outline-text-3" id="text-2-1">
+<ul class="org-ul">
+<li>在用fork或者clone系统调用创建进程时，通过特定选项控制是否和父进程共享命名空间，还是建立新的命名空间。</li>
+
+<li>通过unshare将进程的某些部分从父进程分离，其中包括命名空间。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgca553d3" class="outline-3">
+<h3 id="orgca553d3"><span class="section-number-3">2.2</span> 实现</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+每个进程结构都包含了指向命名空间结构的指针。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/process/proc-ns.png" alt="proc-ns.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org568306b" class="outline-3">
+<h3 id="org568306b"><span class="section-number-3">2.3</span> 进程ID号</h3>
+<div class="outline-text-3" id="text-2-3">
+</div>
+<div id="outline-container-org1e9bfdf" class="outline-4">
+<h4 id="org1e9bfdf"><span class="section-number-4">2.3.1</span> 进程ID</h4>
+<div class="outline-text-4" id="text-2-3-1">
+<p>
+进程ID用来标识一个进程，fork或者clone时，都会为进程分配一个进程ID。
+</p>
+
+<p>
+进程除了进程ID还有其他类型的ID。
+</p>
+
+<ul class="org-ul">
+<li>线程组ID （CLONE_THREAD），即TGID。 如果进程没有线程，则PID和TGID相同。</li>
+<li>进程组ID</li>
+<li>会话ID</li>
+</ul>
+
+<p>
+由于命名空间的特性，进程需要区分全局ID和局部ID（命名空间内）。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org50bdbc5" class="outline-4">
+<h4 id="org50bdbc5"><span class="section-number-4">2.3.2</span> 管理PID</h4>
+<div class="outline-text-4" id="text-2-3-2">
+</div>
+<div id="outline-container-org07f13fe" class="outline-5">
+<h5 id="org07f13fe"><span class="section-number-5">2.3.2.1</span> 数据结构</h5>
+<div class="outline-text-5" id="text-2-3-2-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">PID&#21629;&#21517;&#31354;&#38388;&#30340;&#34920;&#31034;&#26041;&#24335;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kref</span> <span style="color: #FF8C00;">kref</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pidmap</span> <span style="color: #FF8C00;">pidmap</span>[PIDMAP_ENTRIES];
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">last_pid</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#21629;&#21517;&#31354;&#38388;&#20869;&#30340; init&#36827;&#31243;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">child_reaper</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kmem_cache</span> *<span style="color: #FF8C00;">pid_cachep</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;ns&#22312;ns&#23618;&#27425;&#32467;&#26500;&#20013;&#30340;&#28145;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#29238;&#21629;&#21517;&#31354;&#38388;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">parent</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">vfsmount</span> *<span style="color: #FF8C00;">proc_mnt</span>;
+};
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29305;&#23450;&#21629;&#21517;&#31354;&#38388;&#20013;&#21487;&#35265;&#30340;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">upid</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;ID&#25968;&#20540;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">nr</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">nr&#25152;&#23646;&#30340;&#21629;&#21517;&#31354;&#38388;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> <span style="color: #FF8C00;">pid_chain</span>;
+};
+
+
+<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">pid_type</span>
+{
+	<span style="color: #FF8C00;">PIDTYPE_PID</span>,
+	<span style="color: #FF8C00;">PIDTYPE_PGID</span>,
+	<span style="color: #FF8C00;">PIDTYPE_SID</span>,
+	<span style="color: #FF8C00;">PIDTYPE_MAX</span>
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> {
+	<span style="color: #5FD7FF;">atomic_t</span> <span style="color: #FF8C00;">count</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27599;&#31181;ID&#31867;&#22411;&#30340;&#25955;&#21015;&#34920;&#34920;&#22836;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span> <span style="color: #FF8C00;">tasks</span>[PIDTYPE_MAX];
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rcu_head</span> <span style="color: #FF8C00;">rcu</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27599;&#39033;&#37117;&#20195;&#34920;&#19968;&#20010;&#21629;&#21517;&#31354;&#38388;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">upid</span> <span style="color: #FF8C00;">numbers</span>[1];
+};
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="./image/process/proc-pid-ns-st.png" alt="proc-pid-ns-st.png" />
+</p>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_link</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20316;&#25955;&#21015;&#34920;&#20803;&#32032;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> <span style="color: #FF8C00;">node</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#36827;&#31243;&#25152;&#23646;&#30340;pid&#32467;&#26500;&#23454;&#20363;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>;
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">PID/PID hash table linkage.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_link</span> <span style="color: #FF8C00;">pids</span>[PIDTYPE_MAX];
+};
+</pre>
+</div>
+
+
+<p>
+pid实例和task_struct结构的关联：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fastcall</span> attach_pid(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">task</span>, <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">pid_type</span> <span style="color: #FF8C00;">type</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_link</span> *<span style="color: #FF8C00;">link</span>;
+	link = &amp;task-&gt;pids[type];
+	link-&gt;pid = pid;
+	hlist_add_head_rcu(&amp;link-&gt;node, &amp;pid-&gt;tasks[type]);
+}
+<span style="color: #8B8878;">/*</span>
+
+<span style="color: #8B8878;">task_struct &#33021;&#22815;&#36890;&#36807;task_struct-&gt;pids[type]-&gt;pid&#35775;&#38382;pid&#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">pid&#23454;&#20363;&#21487;&#20197;&#36890;&#36807;pid-&gt;tasks[type]&#25214;&#21040;task_struct&#12290;</span>
+
+<span style="color: #8B8878;">*/</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5cfe8a3" class="outline-5">
+<h5 id="org5cfe8a3"><span class="section-number-5">2.3.2.2</span> 函数</h5>
+<div class="outline-text-5" id="text-2-3-2-2">
+<p>
+为了能够通过给定的命名空间和PID数值来查找pid实例，内核提供了一个散列表：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span> *<span style="color: #FF8C00;">pid_hash</span>;
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>获取和task_struct关联的pid实例</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #87D700;">task_pid</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">task</span>);
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #87D700;">task_tgid</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">task</span>);
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #87D700;">task_pgrp</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">task</span>);
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>获取到pid实例后，获取upid</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">pid_t</span> <span style="color: #87D700;">pid_nr_ns</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>);
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>通过task_struct和ns获取upid的辅助函数</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">pid_t</span> <span style="color: #87D700;">task_pid_nr_ns</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">tsk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>)
+<span style="color: #5FD7FF;">pid_t</span> <span style="color: #87D700;">task_tgid_nr_ns</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">tsk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>)
+<span style="color: #5FD7FF;">pid_t</span> <span style="color: #87D700;">task_pgrp_nr_ns</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">tsk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>)
+<span style="color: #5FD7FF;">pid_t</span> <span style="color: #87D700;">task_session_nr_ns</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">tsk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>)
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li>通过数字PID和命名空间，获取pid实例</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">upid&#30340;&#23454;&#20363;&#37117;&#20445;&#23384;&#22312;pid_hash&#25955;&#21015;&#34920;&#20013;&#65292;&#36890;&#36807;&#21629;&#21517;&#31354;&#38388;&#30340;pid nr&#21644;ns&#65292;&#35745;&#31639;hash&#20301;&#32622;&#65292;&#23601;&#33021;&#25214;&#21040;upid&#23454;&#20363;&#65292;</span>
+<span style="color: #8B8878;">&#22312;&#36890;&#36807;container_of &#21644;&#21629;&#21517;&#31354;&#38388;&#30340;&#28145;&#24230;&#65288;level&#65289;&#65292; &#23601;&#33021;&#36716;&#25442;&#24471;&#21040;pid&#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> * <span style="color: #87D700;">fastcall</span> find_pid_ns(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">nr</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> *<span style="color: #FF8C00;">elem</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">upid</span> *<span style="color: #FF8C00;">pnr</span>;
+
+	hlist_for_each_entry_rcu(pnr, elem,
+			&amp;pid_hash[pid_hashfn(nr, ns)], pid_chain)
+		<span style="color: #FF1493;">if</span> (pnr-&gt;nr == nr &amp;&amp; pnr-&gt;ns == ns)
+			<span style="color: #FF1493;">return</span> container_of(pnr, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span>,
+					numbers[ns-&gt;level]);
+
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>通过数字PID和命名空间，以及PID类型，获取task_struct实例</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">&#39318;&#20808;&#36890;&#36807;find_pid_ns&#33719;&#21462;pid&#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">&#36890;&#36807;pid-&gt;tasks[type]&#21462;&#20986;task_struct&#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #87D700;">find_task_by_pid_type_ns</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">nr</span>,
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>)
+{
+	<span style="color: #FF1493;">return</span> pid_task(find_pid_ns(nr, ns), type);
+}
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> * <span style="color: #87D700;">fastcall</span> pid_task(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>, <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">pid_type</span> <span style="color: #FF8C00;">type</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">result</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">if</span> (pid) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> *<span style="color: #FF8C00;">first</span>;
+		first = rcu_dereference(pid-&gt;tasks[type].first);
+		<span style="color: #FF1493;">if</span> (first)
+			result = hlist_entry(first, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span>, pids[(type)].node);
+	}
+	<span style="color: #FF1493;">return</span> result;
+}
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgae2bd37" class="outline-4">
+<h4 id="orgae2bd37"><span class="section-number-4">2.3.3</span> 生成PID</h4>
+<div class="outline-text-4" id="text-2-3-3">
+<p>
+内核使用位图来分配PID，每个命名空间都有一个pid位图。
+</p>
+
+<p>
+分配函数：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #87D700;">alloc_pid</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>;
+	<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">pid_type</span> <span style="color: #FF8C00;">type</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>, <span style="color: #FF8C00;">nr</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">tmp</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">upid</span> *<span style="color: #FF8C00;">upid</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">...</span><span style="color: #8B8878;">*/</span>
+	tmp = ns;
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">        &#20174;&#21019;&#24314;&#30340;&#21629;&#21517;&#31354;&#38388;&#24320;&#22987;&#65292;&#21040;&#20840;&#23616;&#21629;&#21517;&#31354;&#38388;&#65292;&#20998;&#21035;&#20998;&#37197;&#23545;&#24212;&#30340;PID&#65292;</span>
+<span style="color: #8B8878;">        &#24182;&#26356;&#26032;&#23545;&#24212;&#30340;upid&#23454;&#20363;&#65288;numbers&#65289;&#12290;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #FF1493;">for</span> (i = ns-&gt;level; i &gt;= 0; i--) {
+		nr = alloc_pidmap(tmp);
+		pid-&gt;numbers[i].nr = nr;
+		pid-&gt;numbers[i].ns = tmp;
+		tmp = tmp-&gt;parent;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;upid&#21152;&#20837;pid_hash&#25955;&#21015;&#34920;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">for</span> (i = ns-&gt;level; i &gt;= 0; i--) {
+		upid = &amp;pid-&gt;numbers[i];
+		hlist_add_head_rcu(&amp;upid-&gt;pid_chain,
+				&amp;pid_hash[pid_hashfn(upid-&gt;nr, upid-&gt;ns)]);
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8475afe" class="outline-3">
+<h3 id="org8475afe"><span class="section-number-3">2.4</span> 进程关系</h3>
+<div class="outline-text-3" id="text-2-4">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20445;&#23384;&#23376;&#36827;&#31243;&#30340;&#38142;&#34920;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">children</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#20804;&#24351;&#36827;&#31243;&#24444;&#27492;&#38142;&#25509;&#65292;&#20854;&#29238;&#36827;&#31243;&#30340;children&#25351;&#21521;&#35813;&#38142;&#34920;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">sibling</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1eefb70" class="outline-2">
+<h2 id="org1eefb70"><span class="section-number-2">3</span> 进程管理相关系统调用</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgb6d9faa" class="outline-3">
+<h3 id="orgb6d9faa"><span class="section-number-3">3.1</span> 进程复制</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+linux上的复制进程的3个系统调用: fork 、vfork、 clone。
+</p>
+
+<ul class="org-ul">
+<li>fork 是个重量级调用，建立父进程的完整副本。为了减少该调用的工作量，linux使用写时复制机制。</li>
+<li>vfork类似于fork，但是并不创建父进程数据的副本，父子进程之间共享数据。   vfork的设计用于子进程形成后，立即执行execve系统调用加载新程序的情形。在子进程退出或者开始新程序之前，内核保证父进程处于阻塞状态。</li>
+<li>clone 用于产生线程，可以对父子进程之间的共享、复制进行精确控制。</li>
+</ul>
+</div>
+
+<div id="outline-container-org6b9e307" class="outline-4">
+<h4 id="org6b9e307"><span class="section-number-4">3.1.1</span> 写时复制</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+如果在fork时复制父进程的所有数据，需要大量的内存，并且耗时较长。如果子进程复制后，立即使用exec加载新程序，则之前的复制操作都是多余的，因为新进程的地址空间会重新初始化。
+</p>
+
+<p>
+基于以上原因，linux在fork时，只复制父进程的页表，也就是说，fork后，父子进程指向相同的物理内存页。 此时父子进程会将页表的页标记为只读。
+</p>
+
+<p>
+当父子进程的一个进程试图向复制的内存页写入数据时，会引发缺页异常。内核然后查看额外的内存管理数据结构，检查该页是否可以用读写模式访问（例如COW页），还是只能以只读模式访问（引发段错误）。
+</p>
+
+<p>
+COW机制使得内核尽可能延迟内存页的复制，而且很多情况下不需要复制。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf6c711c" class="outline-4">
+<h4 id="orgf6c711c"><span class="section-number-4">3.1.2</span> 执行系统调用</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<p>
+fork、vfork、clone系统调用的入口点分别是sys_fork、sys_vfork、sys_clone函数。这几个系统调用会处理器寄存器提取用户空间提供的信息，然后调用与体系结构无关的do_fork函数，来复制进程。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">do_fork</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">clone_flags</span>,
+	      <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">stack_start</span>,
+	      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> *<span style="color: #FF8C00;">regs</span>,
+	      <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">stack_size</span>,
+	      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *parent_tidptr,
+	      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *child_tidptr)
+</pre>
+</div>
+<ul class="org-ul">
+<li>clone_flags是标志集合，用来指定控制复制过程的一些属性。 最低字节指定了子进程终止时发送给父进程的信号。其他高位字节保存了各种常数。</li>
+<li>stack_start 用户状态下的栈的起始地址。</li>
+<li>regs 是指向寄存器集合的指针，其中以原始形式保存了调用参数。该参数类型为特定于体系结构的struct pt_regs，按照系统调用执行时寄存器在内核栈上测存储顺序，保存了所有寄存器。</li>
+<li>stack_size 用户状态下栈的大小。（通常不需要，设置为0）</li>
+<li>parent_tidptr和child_tidptr 是指向用户空间中地址的指针，分别指向父子进程的PID。 NPTL库的线程实现需要该参数。</li>
+</ul>
+
+<p>
+典型的fork调用实现方式：
+</p>
+<div class="org-src-container">
+<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_fork</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> *<span style="color: #FF8C00;">regs</span>)
+{
+	<span style="color: #FF1493;">return</span> do_fork(SIGCHLD, regs-&gt;rsp, regs, 0, <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+}
+
+asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_vfork</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> *<span style="color: #FF8C00;">regs</span>)
+{
+	<span style="color: #FF1493;">return</span> do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, regs-&gt;rsp, regs, 0,
+		    <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+}
+
+asmlinkage <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sys_clone</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> <span style="color: #FF8C00;">regs</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">clone_flags</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">newsp</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *parent_tidptr, *<span style="color: #FF8C00;">child_tidptr</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36890;&#36807;&#23492;&#23384;&#22120;&#25552;&#21462;&#21442;&#25968;</span><span style="color: #8B8878;"> */</span>
+	clone_flags = regs.ebx;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25552;&#21462;&#20256;&#20837;&#30340;&#26632;&#22320;&#22336;</span><span style="color: #8B8878;"> */</span>
+	newsp = regs.ecx;
+	parent_tidptr = (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)regs.edx;
+	child_tidptr = (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)regs.edi;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>newsp)
+		newsp = regs.esp;
+	<span style="color: #FF1493;">return</span> do_fork(clone_flags, newsp, &amp;regs, 0, parent_tidptr, child_tidptr);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcae32a5" class="outline-4">
+<h4 id="orgcae32a5"><span class="section-number-4">3.1.3</span> do_fork实现</h4>
+</div>
+</div>
 
 <div id="outline-container-org681cb70" class="outline-3">
-<h3 id="org681cb70"><span class="section-number-3">1.7</span> 进程的创建</h3>
-<div class="outline-text-3" id="text-1-7">
+<h3 id="org681cb70"><span class="section-number-3">3.2</span> 进程的创建</h3>
+<div class="outline-text-3" id="text-3-2">
 </div>
 <div id="outline-container-org8cd9842" class="outline-4">
-<h4 id="org8cd9842"><span class="section-number-4">1.7.1</span> 进程的写时复制</h4>
-<div class="outline-text-4" id="text-1-7-1">
+<h4 id="org8cd9842"><span class="section-number-4">3.2.1</span> 进程的写时复制</h4>
+<div class="outline-text-4" id="text-3-2-1">
 <p>
 在使用fork创建子进程时，子进程和父进程共享地址空间，当父进程或者子进程需要写入的时候，才会复制数据。这么做可以避免一些不必要的复制，而且很多时候，在fork之后，会立即执行exec，之前的拷贝都是无用功。
 </p>
@@ -430,48 +890,277 @@ POSIX标准规定一个多线程应用中的所有线程都必须由相同的PID
 </div>
 
 <div id="outline-container-orgcedeee2" class="outline-4">
-<h4 id="orgcedeee2"><span class="section-number-4">1.7.2</span> fork</h4>
-<div class="outline-text-4" id="text-1-7-2">
+<h4 id="orgcedeee2"><span class="section-number-4">3.2.2</span> fork</h4>
+<div class="outline-text-4" id="text-3-2-2">
 <p>
-fork调用最终是通过kernel_clone()函数来实现的， kernel_clone又会调用copy_process()函数。
-</p>
-
-<ul class="org-ul">
-<li><p>
-kernel_clone
-</p>
-
-
-<div id="org0ab6fb8" class="figure">
-<p><img src="plantuml/process/fork.png" alt="fork.png" />
+fork调用最终是通过do_fork函数来实现的， do_fork又会调用copy_process()函数。
 </p>
 </div>
 
-<p>
-在调用copy_process生成子进程的数据之后，内核还需要作以下操作：
+<div id="outline-container-org4688b9a" class="outline-5">
+<h5 id="org4688b9a"><span class="section-number-5">3.2.2.1</span> do_fork</h5>
+<div class="outline-text-5" id="text-3-2-2-1">
+
+<div class="figure">
+<p><img src="plantuml/process/do_fork.png" alt="do_fork.png" />
 </p>
+</div>
+
 <ul class="org-ul">
-<li>由于fork需要返回子进程的pid，所以需要获取PID。如果指定创建新的PID命名空间，则pid_vnr()返回命名空间对应的PID。</li>
-<li>通过wake_up_new_task唤醒子进程，也就是直接将子进程的task_struct添加到调度队列。</li>
-<li>如果使用了vfork，必须启用子进程的completions机制，通过task_struct的vfork_done成员来实现，父进程在该变量上睡眠，直到子进程退出。 通过这种方法，可以确保使用vfork生成的子进程的父进程一直处于不活动的状态，直至子进程退出，或者执行一个新的程序。父进程的临时睡眠状态，也确保两个进程不会彼此干扰或操作对方的地址空间。</li>
-</ul></li>
-
 <li><p>
-copy_process
+由于fork需要返回子进程的pid，所以需要获取PID。如果指定创建新的PID命名空间，则需要调用task_pid_nr_ns获取在父命名空间中为新进程选择的PID，即发出fork调用的命名空间。
 </p>
-
-<div id="org8e1f1a9" class="figure">
-<p><img src="plantuml/process/copy_process.png" alt="copy_process.png" />
-</p>
+<div class="org-src-container">
+<pre class="src src-c">nr = (clone_flags &amp; CLONE_NEWPID) ? task_pid_nr_ns(p, current-&gt;nsproxy-&gt;pid_ns) : task_pid_vnr(p);
+</pre>
 </div></li>
+<li>如果要使用Ptrace监控新进程，那么在创建新进程后会立即向其发送SIGSTOP信号。</li>
+
+<li>通过wake_up_new_task唤醒子进程，也就是直接将子进程的task_struct添加到调度队列。</li>
+
+<li>如果使用了vfork，必须启用子进程的completions机制，通过task_struct的vfork_done成员来实现，父进程在该变量上睡眠，直到子进程退出。 通过这种方法，可以确保使用vfork生成的子进程的父进程一直处于不活动的状态，直至子进程退出，或者执行一个新的程序。父进程的临时睡眠状态，也确保两个进程不会彼此干扰或操作对方的地址空间。</li>
 </ul>
 </div>
 </div>
+
+<div id="outline-container-org4b53191" class="outline-5">
+<h5 id="org4b53191"><span class="section-number-5">3.2.2.2</span> 复制进程</h5>
+<div class="outline-text-5" id="text-3-2-2-2">
+<p>
+do_fork中大多数的工作由copy_process函数完成。
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/process/copy_process.png" alt="copy_process.png" />
+</p>
 </div>
 
+<ul class="org-ul">
+<li>首先内核会检测一些没有意义的标志组合，例如既要创建一个新的命名空间（CLONE_NEWNS），同时又要与父进程共享所有的文件系统信息（CLONE_FS）。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #87D700;">copy_process</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">clone_flags</span>,
+					<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">stack_start</span>,
+					<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> *<span style="color: #FF8C00;">regs</span>,
+					<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">stack_size</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *child_tidptr,
+					<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">retval</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">p</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cgroup_callbacks_done</span> = 0;
+
+	<span style="color: #FF1493;">if</span> ((clone_flags &amp; (CLONE_NEWNS|CLONE_FS)) == (CLONE_NEWNS|CLONE_FS))
+		<span style="color: #FF1493;">return</span> ERR_PTR(-EINVAL);
+</pre>
+</div>
+
+<p>
+此处注意，linux有时候在函数执行成功时，返回指针，错误时返回错误吗。 但是由于C语言函数只有一个固定类型的返回值，因此所有错误码都必须编码到指针中。 linux虚拟地址空间中有一个从0到至少4KB的区域，该区域没有任何有意义的信息，内核重用该地址空间来编码错误码。  ERR_PTR是一个辅助宏，用于将数值编码为指针。
+</p>
+
+<ul class="org-ul">
+<li>再用CLONE_THREAD创建线程时，必须用CLONE_SIGHAND激活信号共享。通常，一个信号无法发送到线程组的各个线程。</li>
+
+<li>只有父子进程共享虚拟地址空间时（CLONE_VM），才能提供共享的信号处理程序。</li>
+</ul>
+
+<p>
+<b>dup_task_struct</b>
+</p>
+
+<p>
+内核通过dup_task_struct来拷贝父进程的task_struct，创建新的task_struct。 父子进程的task_struct实例只有一个成员不同：新进程分配了新的核心态栈，即 task_struct-&gt;stack。 通常和thread_info一同保存在一个联合中，thread_info保存了线程所需的所有特定与处理器的底层信息。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">thread_union</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">thread_info</span> <span style="color: #FF8C00;">thread_info</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">stack</span>[THREAD_SIZE/<span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">long</span>)];
+};
+</pre>
+</div>
+
+<p>
+大多数体系结构上，使用一两个内存页来保存 thread_union 的实例。在IA-32上，两个内存页是默认设置，因此可用的内核栈长度略小于8 KiB，其中一部分被 thread_info 实例占据。
+</p>
+
+<p>
+注意： 配置选项 4KSTACKS 会将栈长度降低到4 KiB，即一页。如果系统上有许多进程在运行，比较有利的，每个进程可以节省一个页面。但是，对于经常趋向于使用过多栈空间的外部驱动程序来说，可能会有问题。标准发布版所提供的内核，其所有核心部分都已经设计为能够在4KiB栈长度配置下运转流畅。
+</p>
+
+<p>
+thread_info 保存了特定于体系结构的汇编语言代码需要访问的那部分进程数据。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">thread_info</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span>      *<span style="color: #FF8C00;">task</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">main task structure</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">exec_domain</span>      *<span style="color: #FF8C00;">exec_domain</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">execution domain</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">flags</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">low level flags</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">status</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">thread synchronous flags</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">cpu</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">current CPU</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">preempt_count</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">0 =&gt; preemptable, &lt;0 =&gt; BUG</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">mm_segment_t</span>            <span style="color: #FF8C00;">addr_limit</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">restart_block</span>    <span style="color: #FF8C00;">restart_block</span>;
+};
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>task指向进程task_struct实例的指针。</li>
+<li>exec_domain 用于实现执行区间 （execution domain）。 执行区间用于在一类计算机上实现多种的ABI（Application Binary Interface，应用程序二进制接口）。例如，在AMD64系统的64bit模式下运行32bit应用程序。</li>
+<li>flags 可以保存各种特定于进程的标志。 例如： TIF_SIGPENDING（进程有待决信号时置位）， TIF_NEED_RESCHED（表示该进程需要调度器选择另一个进程执行）。</li>
+<li>cpu 表示进程执行的cpu。</li>
+<li>preempt_count 用于实现内核抢占。</li>
+<li>addr_limit 指定了进程可以使用的虚拟地址上限。适用于普通进程。</li>
+<li>restart_block 用于实现信号机制。</li>
+</ul>
+
+<p>
+下图说明了task_struct、thread_info和内核栈的关系。 如果内核的某个组件使用过多的栈空间时，内核栈可能溢出到thread_info部分。另外在紧急情况下输出调用栈回溯时将会导致错误信息的出现，因此内核提供了 kstack_end 函数，用于判断给出的地址是否位于栈的有效部分之内。
+</p>
+
+
+<div class="figure">
+<p><img src="image/process/task-thread.png" alt="task-thread.png" />
+</p>
+</div>
+
+
+<p>
+dup_task_struct会复制副进程的task_struct和thread_info实例的内容，但新进程会分配新的thread_info实例，并将task-&gt;stack 指向该thread_info实例。 此时父子进程的task_struct除了栈指针之外，完全相同。
+</p>
+
+<p>
+所有体系结构都将两个名为current和current_thread_info符号定义为宏或函数：
+</p>
+<ul class="org-ul">
+<li>current_thread_info 可以获得指向当前执行进程的thread_info实例的指针。其地址可以根据内核栈指针确定，thread_info实例总是位于栈顶。 每个进程分别使用各自的内核栈，所以进程到栈的映射是唯一的。</li>
+<li>current 给出当前进程的task_struct实例的指针， current = current_thread_info()-&gt;task 。</li>
+</ul>
+
+
+<p>
+此后，内核检查资源限制，是否超过用户允许创建的最大进程数：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">user-&gt;processes &#20445;&#23384;&#29992;&#25143;&#24403;&#21069;&#30340;&#36827;&#31243;&#25968;&#37327;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">if</span> (atomic_read(&amp;p-&gt;user-&gt;processes) &gt;=
+		p-&gt;signal-&gt;rlim[RLIMIT_NPROC].rlim_cur) {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36229;&#36807;&#21518;&#65292;&#26816;&#26597;&#26159;&#21542;&#26159;root &#25110;&#32773;&#20998;&#37197;&#20102;&#29305;&#21035;&#26435;&#38480;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>capable(CAP_SYS_ADMIN) &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>capable(CAP_SYS_RESOURCE) &amp;&amp;
+	    p-&gt;user != current-&gt;nsproxy-&gt;user_ns-&gt;root_user)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">bad_fork_free</span>;
+}
+</pre>
+</div>
+
+
+<p>
+如果没有超过资源限制，则调用 sched_fork，使得调度器有机会对新进程设置。 本质上，scked_fork初始化一些统计字段，如果是多处理器，可能会在各个CPU之间对可用进程重新均衡，还将进程的状态设置为TASK_RUNNING。 注意：此时还没有运行，只是为防止内核其他部分将进程状态改为运行并调度。
+</p>
+
+<p>
+接下来会通过一系列的 <code>copy_xyz</code> 例程来复制或者共享内核子系统的资源。如果设置了某个CLONE_XYZ标志，则父子进程会共享对应的资源，否则会创建对应资源的副本。 通常，CLONE标志设置的越多，需要完成的工作越少，父子进程更有机会操作彼此的数据结构。
+</p>
+
+<ul class="org-ul">
+<li>如果 COPY_SYSVSEM 置位，则 copy_semundo 使用父进程的System V信号量。</li>
+
+<li>如果 CLONE_FILES 置位，则 copy_files 使用父进程的文件描述符；否则创建新的 files 结构，其中包含的信息与父进程相同。</li>
+
+<li>如果 CLONE_FS 置位，则 copy_files 使用父进程的文件系统上下文（ task_struct-&gt;fs ）。这是一个fs_struct类型的结构，包含了诸如根目录、进程的当前工作目录之类的信息。</li>
+
+<li>如果 CLONE_SIGHAND 或 CLONE_THREAD 置位，则 copy_sighand 使用父进程的信号处理程序。</li>
+
+<li>如果 CLONE_THREAD 置位，则 copy_signal 与父进程共同使用信号处理中不特定于处理程序的部分（task_struct-&gt;signal）。</li>
+
+<li>如果 CLONE_VM 置位，则 copy_mm 使父子进程共享同一地址空间。在这种情况下，两个进程使用同一个 mm_struct 实例， task_struct-&gt;mm 指针即指向该实例。</li>
+<li>如果 CLONE_VM 没有置位，并不意味着需要复制父进程的整个地址空间。内核只会创建页表，但并不复制页的实际内容（COW机制）。</li>
+
+<li>copy_namespace 比较特殊， 用于建立子进程的命名空间。控制是否与父进程共享命名空间的标志为 CLONE_NEWxyz 格式。 如果没有指定对应的标志，则代表与父进程共享对应的命名空间；如果指定了CLONE_NEWxyz标志，则代表创建一个新的命名空间。</li>
+
+<li>copy_thread是一个特定于体系结构的函数，用于复制进程中特定于线程的数据（task_struct-&gt;thread）。</li>
+</ul>
+
+<p>
+<b>接下来继续讨论 copy_process 函数：</b>
+</p>
+
+<p>
+<code>分支进程：调用fork或者clone的进程</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-c">
+p-&gt;pid = pid_nr(pid); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;pid</span>
+p-&gt;tgid = p-&gt;pid;
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#32447;&#31243;&#65292;&#21017;&#32447;&#31243;&#32452;ID&#21644;&#20998;&#25903;&#36827;&#31243;&#65288;&#35843;&#29992;fork&#25110;&#32773;clone&#30340;&#36827;&#31243;&#65289;&#30456;&#21516;</span>
+<span style="color: #FF1493;">if</span> (clone_flags &amp; CLONE_THREAD)
+	p-&gt;tgid = current-&gt;tgid;
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">CLONE_PARENT re-uses the old parent</span><span style="color: #8B8878;"> */</span>
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#32447;&#31243;&#65292;&#29238;&#36827;&#31243;&#24212;&#35813;&#26159;&#20998;&#25903;&#36827;&#31243;&#30340;&#29238;&#36827;&#31243;&#65292;&#38750;&#32447;&#31243;&#30340;&#26222;&#36890;&#36827;&#31243;&#21487;&#20197;&#36890;&#36807;&#35774;&#32622;CLONE_PARENT&#26631;&#24535;&#26469;&#36798;&#21040;&#21516;&#26679;&#30340;&#30446;&#30340;</span>
+<span style="color: #FF1493;">if</span> (clone_flags &amp; (CLONE_PARENT|CLONE_THREAD))
+	p-&gt;real_parent = current-&gt;real_parent;
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#26222;&#36890;&#36827;&#31243;&#65292;&#29238;&#36827;&#31243;&#20026;&#20998;&#25903;&#36827;&#31243;</span>
+<span style="color: #FF1493;">else</span>
+	p-&gt;real_parent = current;
+p-&gt;parent = p-&gt;real_parent;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c">p-&gt;group_leader = p;
+......
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#32447;&#31243;&#65292;&#20854;&#32452;&#38271;&#26159;&#24403;&#21069;&#36827;&#31243;&#30340;&#32452;&#38271;&#12290;</span>
+<span style="color: #FF1493;">if</span> (clone_flags &amp; CLONE_THREAD) {
+	p-&gt;group_leader = current-&gt;group_leader;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;&#29238;&#36827;&#31243;children&#38142;&#34920;&#19982;&#29238;&#36827;&#31243;&#38142;&#25509;</span>
+<span style="color: #87D700;">add_parent</span>(p);
+
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">thread_group_leader&#26816;&#26597;&#26032;&#36827;&#31243;&#30340; pid &#21644; tgid &#26159;&#21542;&#30456;&#21516;&#12290;</span>
+<span style="color: #8B8878;">&#30456;&#21516;&#65292;&#21017;&#35813;&#36827;&#31243;&#26159;&#32447;&#31243;&#32452;&#32452;&#38271;&#65292;&#27492;&#26102;&#38656;&#35201;&#23436;&#25104;&#26356;&#22810;&#24037;&#20316;&#65306;</span>
+<span style="color: #8B8878;">  - &#22914;&#26524;&#36890;&#36807;CLONE_NEWPID&#21019;&#24314;&#26032;&#30340;&#21629;&#21517;&#31354;&#38388;&#65292;&#21017;&#24403;&#21069;&#36827;&#31243;&#24212;&#24403;&#20316;&#20026;&#21629;&#21517;&#31354;&#38388;&#30340;init&#36827;&#31243;&#12290;</span>
+<span style="color: #8B8878;">  - &#26032;&#36827;&#31243;&#24517;&#39035;&#28155;&#21152;&#21040;&#24403;&#21069;&#36827;&#31243;&#32452;&#21644;&#20250;&#35805;&#12290;</span>
+<span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">if</span> (thread_group_leader(p)) {
+	<span style="color: #FF1493;">if</span> (clone_flags &amp; CLONE_NEWPID)
+		p-&gt;nsproxy-&gt;pid_ns-&gt;child_reaper = p;
+
+	p-&gt;signal-&gt;tty = current-&gt;signal-&gt;tty;
+	set_task_pgrp(p, task_pgrp_nr(current));
+	set_task_session(p, task_session_nr(current));
+	attach_pid(p, PIDTYPE_PGID, task_pgrp(current));
+	attach_pid(p, PIDTYPE_SID, task_session(current));
+	list_add_tail_rcu(&amp;p-&gt;tasks, &amp;init_task.tasks);
+	__get_cpu_var(process_counts)++;
+}
+<span style="color: #87D700;">attach_pid</span>(p, PIDTYPE_PID, pid);
+......
+<span style="color: #FF1493;">return</span> p;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
 <div id="outline-container-org51d37c1" class="outline-3">
-<h3 id="org51d37c1"><span class="section-number-3">1.8</span> 内核线程</h3>
-<div class="outline-text-3" id="text-1-8">
+<h3 id="org51d37c1"><span class="section-number-3">3.3</span> 内核线程</h3>
+<div class="outline-text-3" id="text-3-3">
 <p>
 内核线程是直接有内核本身启动的进程。内核线程实际上是将内核函数委托给独立的进程，与系统中的其他进程一起运行。内核线程通常成为内核守护进程。
 </p>
@@ -498,28 +1187,141 @@ copy_process
 内核线程的创建函数：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #CDC673; font-weight: bold; font-style: italic;">/**</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * &#22312;&#24403;&#21069;node&#21019;&#24314;&#20869;&#26680;&#32447;&#31243;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@threadfn</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#20869;&#26680;&#32447;&#31243;&#23558;&#35201;&#25191;&#34892;&#30340;&#20989;&#25968;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@data</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#20256;&#36882;&#32473; </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@</span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">threadfn</span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">()</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">&#20989;&#25968;&#30340;&#21442;&#25968;&#25351;&#38024;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@namefmt</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#20869;&#26680;&#32447;&#31243;&#30340;&#21517;&#31216;&#26684;&#24335;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@arg</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">...:  </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@namefmt</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">&#30340;&#21442;&#25968;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> *</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * &#35813;&#20989;&#25968;&#21019;&#24314;&#20869;&#26680;&#32447;&#31243;&#21518;&#65292;&#19981;&#20250;&#31435;&#21363;&#36816;&#34892;&#65292;&#38656;&#35201;&#36890;&#36807;wake_up_process&#20989;&#25968;&#21551;&#21160;&#12290;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> */</span>
-<span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">kthread_create</span>(<span style="color: #FF8C00; font-weight: bold;">threadfn</span>, <span style="color: #FF8C00; font-weight: bold;">data</span>, <span style="color: #FF8C00; font-weight: bold;">namefmt</span>, <span style="color: #FF8C00; font-weight: bold;">arg</span>...) \
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">fn&#26159;&#29992;&#20110;&#32447;&#31243;&#25191;&#34892;&#30340;&#20989;&#25968;&#65292; flags&#21487;&#20197;&#25351;&#23450;CLONE&#26631;&#24535;&#12290;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_thread</span>(<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">fn</span>)(<span style="color: #5FD7FF;">void</span> *), <span style="color: #5FD7FF;">void</span> * <span style="color: #FF8C00;">arg</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">flags</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> <span style="color: #FF8C00;">regs</span>;
+
+	memset(&amp;regs, 0, <span style="color: #FF1493;">sizeof</span>(regs));
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26500;&#24314;pt_regs &#23492;&#23384;&#22120;&#23454;&#20363;</span><span style="color: #8B8878;"> */</span>
+	regs.ebx = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>) fn;
+	regs.edx = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>) arg;
+
+	regs.xds = __USER_DS;
+	regs.xes = __USER_DS;
+	regs.xfs = __KERNEL_PERCPU;
+	regs.orig_eax = -1;
+	regs.eip = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>) kernel_thread_helper;
+	regs.xcs = __KERNEL_CS | get_kernel_rpl();
+	regs.eflags = X86_EFLAGS_IF | X86_EFLAGS_SF | X86_EFLAGS_PF | 0x2;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Ok, create the new process..</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">return</span> do_fork(flags | CLONE_VM | CLONE_UNTRACED, 0, &amp;regs, 0, <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+}
+</pre>
+</div>
+
+<p>
+注意：
+</p>
+<ul class="org-ul">
+<li>内核线程在内核态执行，而非用户态。</li>
+<li>只能访问虚拟地址空间的内核部分，不能访问用户虚拟地址空间。</li>
+</ul>
+
+<p>
+当用户进程在内核态执行时（例如系统调用），虚拟地址空间的用户空间部分由 mm 指向的mm_struct实例描述。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> {
+...
+	<span style="color: #FF1493;">struct</span> mm_struct *mm, *active_mm;
+...
+}
+</pre>
+</div>
+
+<p>
+由于内核线程不与任何特定的用户层进程相关，所以不需要倒换虚拟地址空间的用户层部分，所以会遵循 <b>惰性TLB处理</b> 。 由于内核线程运行之前可能是任意用户层进程在执行，内核线程不能修改其内容，所以会将mm设置为空指针，但是由于内核必须知道当前用户空间包含的内容，所以将active_mm中保存指向mm_struct实例的指针。
+</p>
+
+<p>
+假如在内核线程之后，运行的进程与之前是同一个进程，此时内核并不需要修改用户空间地址表，TLB的信息仍然有效，只有在内核线程之后运行的进程和之前不同时，才需要切换（并清除TLB）。
+</p>
+
+<p>
+<b>看一下代码比较直观：</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span>
+<span style="color: #87D700;">context_switch</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rq</span> *<span style="color: #FF8C00;">rq</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">prev</span>,
+	       <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">next</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">mm_struct</span> *<span style="color: #FF8C00;">mm</span>, *<span style="color: #FF8C00;">oldmm</span>;
+
+	<span style="color: #87D700;">prepare_task_switch</span>(<span style="color: #5FD7FF;">rq</span>, prev, next);
+	mm = next-&gt;mm;
+	oldmm = prev-&gt;active_mm;
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * For paravirt, this is coupled with an exit in switch_to to</span>
+<span style="color: #8B8878;">         * combine the page table reload and the switch backend into</span>
+<span style="color: #8B8878;">         * one hypercall.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #87D700;">arch_enter_lazy_cpu_mode</span>();
+
+	<span style="color: #FF1493;">if</span> (unlikely(<span style="color: #CDC673; font-weight: bold;">!</span>mm)) {
+		next-&gt;active_mm = oldmm;
+		atomic_inc(&amp;oldmm-&gt;mm_count);
+		enter_lazy_tlb(oldmm, next);
+	} <span style="color: #FF1493;">else</span>
+		switch_mm(oldmm, mm, next);
+
+	<span style="color: #FF1493;">if</span> (unlikely(<span style="color: #CDC673; font-weight: bold;">!</span>prev-&gt;mm)) {
+		prev-&gt;active_mm = <span style="color: #AF87FF;">NULL</span>;
+		rq-&gt;prev_mm = oldmm;
+	}
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * Since the runqueue lock will be released by the next</span>
+<span style="color: #8B8878;">         * task (which is an invalid locking op but in the case</span>
+<span style="color: #8B8878;">         * of the scheduler it's an obvious special-case), so we</span>
+<span style="color: #8B8878;">         * do an early lockdep release here:</span>
+<span style="color: #8B8878;">         */</span>
+<span style="color: #FF1493;">#if</span><span style="color: #FF1493; font-weight: bold;">n</span><span style="color: #FF1493;">def</span> __ARCH_WANT_UNLOCKED_CTXSW
+	spin_release(&amp;rq-&gt;lock.dep_map, 1, _THIS_IP_);
+<span style="color: #FF1493;">#endif</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Here we just switch the register state and the stack.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #87D700;">switch_to</span>(prev, next, prev);
+
+	<span style="color: #87D700;">barrier</span>();
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * this_rq must be evaluated again because prev may have moved</span>
+<span style="color: #8B8878;">         * CPUs since it called schedule(), thus the 'rq' on its stack</span>
+<span style="color: #8B8878;">         * frame will be invalid.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #87D700;">finish_task_switch</span>(<span style="color: #5FD7FF;">this_rq</span>(), prev);
+}
+
+</pre>
+</div>
+
+
+<p>
+<b>使用kthread_create创建内核线程：</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> * &#22312;&#24403;&#21069;node&#21019;&#24314;&#20869;&#26680;&#32447;&#31243;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@threadfn</span><span style="color: #CDC673;">: &#20869;&#26680;&#32447;&#31243;&#23558;&#35201;&#25191;&#34892;&#30340;&#20989;&#25968;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@data</span><span style="color: #CDC673;">: &#20256;&#36882;&#32473; </span><span style="color: #AF87FF;">@</span><span style="color: #AF87FF;">threadfn</span><span style="color: #AF87FF;">()</span><span style="color: #CDC673;">&#20989;&#25968;&#30340;&#21442;&#25968;&#25351;&#38024;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@namefmt</span><span style="color: #CDC673;">: &#20869;&#26680;&#32447;&#31243;&#30340;&#21517;&#31216;&#26684;&#24335;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@arg</span><span style="color: #CDC673;">...:  </span><span style="color: #AF87FF;">@namefmt</span><span style="color: #CDC673;">&#30340;&#21442;&#25968;</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> * &#35813;&#20989;&#25968;&#21019;&#24314;&#20869;&#26680;&#32447;&#31243;&#21518;&#65292;&#19981;&#20250;&#31435;&#21363;&#36816;&#34892;&#65292;&#38656;&#35201;&#36890;&#36807;wake_up_process&#20989;&#25968;&#21551;&#21160;&#12290;</span>
+<span style="color: #CDC673;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">kthread_create</span>(<span style="color: #FF8C00;">threadfn</span>, <span style="color: #FF8C00;">data</span>, <span style="color: #FF8C00;">namefmt</span>, <span style="color: #FF8C00;">arg</span>...) \
 	kthread_create_on_node(threadfn, data, NUMA_NO_NODE, namefmt, ##arg)
 
-<span style="color: #CDC673; font-weight: bold; font-style: italic;">/**</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * &#21019;&#24314;&#20869;&#26680;&#32447;&#31243;&#24182;&#36816;&#34892;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@threadfn</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#23558;&#35201;&#36816;&#34892;&#30340;&#20989;&#25968;&#65292;&#30452;&#21040;&#34987;signal_pending(current)&#32456;&#27490;.</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@data</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@threadfn</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">&#21442;&#25968;&#25351;&#38024;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@namefmt</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: &#32447;&#31243;&#21517;&#31216;&#26684;&#24335;</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> *</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> */</span>
-<span style="color: #FF1493;">#define</span> <span style="color: #87D700; font-weight: bold;">kthread_run</span>(<span style="color: #FF8C00; font-weight: bold;">threadfn</span>, <span style="color: #FF8C00; font-weight: bold;">data</span>, <span style="color: #FF8C00; font-weight: bold;">namefmt</span>, ...)                          \
+<span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> * &#21019;&#24314;&#20869;&#26680;&#32447;&#31243;&#24182;&#36816;&#34892;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@threadfn</span><span style="color: #CDC673;">: &#23558;&#35201;&#36816;&#34892;&#30340;&#20989;&#25968;&#65292;&#30452;&#21040;&#34987;signal_pending(current)&#32456;&#27490;.</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@data</span><span style="color: #CDC673;">: </span><span style="color: #AF87FF;">@threadfn</span><span style="color: #CDC673;">&#21442;&#25968;&#25351;&#38024;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@namefmt</span><span style="color: #CDC673;">: &#32447;&#31243;&#21517;&#31216;&#26684;&#24335;</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">kthread_run</span>(<span style="color: #FF8C00;">threadfn</span>, <span style="color: #FF8C00;">data</span>, <span style="color: #FF8C00;">namefmt</span>, ...)                          \
 ({                                                                         \
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">task_struct</span> *<span style="color: #FF8C00; font-weight: bold;">__k</span>                                            \
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">__k</span>                                            \
 		= kthread_create(threadfn, data, namefmt, ## __VA_ARGS__); \
 	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IS_ERR(__k))                                                  \
 		wake_up_process(__k);                                      \
@@ -527,23 +1329,91 @@ copy_process
 })
 </pre>
 </div>
+</div>
+</div>
+
+<div id="outline-container-orgb15c74a" class="outline-3">
+<h3 id="orgb15c74a"><span class="section-number-3">3.4</span> 启动新程序（execve）</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+execve系统调用入口点 sys_execve
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">do_execve</span>(<span style="color: #5FD7FF;">char</span> * <span style="color: #FF8C00;">filename</span>,
+	      <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *__user *argv,
+	      <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *__user *envp,
+	      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> * <span style="color: #FF8C00;">regs</span>)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="plantuml/process/do_execve.png" alt="do_execve.png" />
+</p>
+</div>
 
 <p>
-内核线程是运行在内核态而非用户态，所以只能访问虚拟地址空间的内核部分。
+Linux可以支持不同格式的可执行文件格式，标准格式是ELF。
 </p>
 
 <p>
-内核线程不需要和任何特定的用户进程相关，所以内核并不需要切换虚拟地址空间的用户空间（task_struct的mm成员指向）。由于内核线程之前可能是任意用户进程执行，内核线程不能修改其内容，为了强调用户空间部分不能访问，将task_struct的mm成员设置为空，而将active_mm指向用户空间的mm_struct。
+通常二进制格式处理程序需要执行一下操作：
+</p>
+<ul class="org-ul">
+<li>释放原进程使用的所有资源。</li>
+<li>将应用程序映射到虚拟地址空间中。需要考虑下列段的处理：
+<ul class="org-ul">
+<li>text段包含程序的可执行代码。 start_code 和 end_code 指定该段在地址空间中驻留的区域。</li>
+<li>预先初始化的数据（在编译时间指定了具体值的变量）位于 start_data 和 end_data 之间，映射自可执行文件的对应段。</li>
+<li>堆（heap）用于动态内存分配，亦置于虚拟地址空间中。 start_brk 和 brk 指定了其边界。</li>
+<li>栈的位置由 start_stack 定义。几乎所有的计算机上栈都是自动地向下增长。</li>
+<li>程序的参数和环境也映射到虚拟地址空间中，分别位于 arg_start 和 arg_end 之间，以及env_start 和 env_end 之间。</li>
+</ul></li>
+<li>设置进程的指令指针和其他特定于体系结构的寄存器，以便在调度器选择该进程时开始执行程序的main函数。</li>
+</ul>
+
+
+
+<p>
+<b>二进制格式</b>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binfmt</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">lh</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">module</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">load_binary &#29992;&#20110;&#21152;&#36733;&#26222;&#36890;&#31243;&#24207;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">load_binary</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binprm</span> *, <span style="color: #FF1493;">struct</span>  <span style="color: #5FD7FF;">pt_regs</span> * <span style="color: #FF8C00;">regs</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">load_shlib &#29992;&#20110;&#21152;&#36733;&#20849;&#20139;&#24211;&#65292;&#21363;&#21160;&#24577;&#24211;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">load_shlib</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">core_dump &#29992;&#20110;&#22312;&#31243;&#24207;&#38169;&#35823;&#30340;&#24773;&#20917;&#19979;&#36755;&#20986;&#20869;&#23384;&#36716;&#20648;&#12290;&#35813;&#36716;&#20648;&#38543;&#21518;&#21487;&#20351;&#29992;&#35843;&#35797;&#22120;&#65288;&#20363;&#22914;&#65292; gdb &#65289;&#20998;&#26512;&#65292;&#20197;&#20415;&#35299;&#20915;&#38382;&#39064;&#12290; min_coredump &#26159;&#29983;&#25104;&#20869;&#23384;&#36716;&#20648;&#26102;&#65292;&#20869;&#23384;&#36716;&#20648;&#25991;&#20214;&#38271;&#24230;&#30340;&#19979;&#30028;&#65288;&#36890;&#24120;&#65292;&#36825;&#26159;&#19968;&#20010;&#20869;&#23384;&#39029;&#30340;&#38271;&#24230;&#65289;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">core_dump</span>)(<span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">signr</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pt_regs</span> *<span style="color: #FF8C00;">regs</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">limit</span>);
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">min_coredump</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">minimal dump size</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hasvdso</span>;
+};
+</pre>
+</div>
+
+<p>
+每种二进制格式首先必须使用 register_binfmt 向内核注册。该函数的目的是向一个链表增加一种新的二进制格式，该链表的表头是 fs/exec.c 中的全局变量 formats 。 linux_binfmt 实例通过其 next 成员彼此连接起来。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc9d9425" class="outline-3">
+<h3 id="orgc9d9425"><span class="section-number-3">3.5</span> 退出进程</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+exit -&gt; sys_exit -&gt;  do_exit
 </p>
 </div>
 </div>
 </div>
-
 
 
 <div id="outline-container-orgc3e609e" class="outline-2">
-<h2 id="orgc3e609e"><span class="section-number-2">2</span> 操作进程的工具</h2>
-<div class="outline-text-2" id="text-2">
+<h2 id="orgc3e609e"><span class="section-number-2">4</span> 操作进程的工具</h2>
+<div class="outline-text-2" id="text-4">
 <dl class="org-dl">
 <dt>STRACE</dt><dd>打印一个正在运行的进程和它的子进程调用的每个系统调用的轨迹。使用 <code>-static</code> 编译程序会的高一个更加干净的、不带有大量动态库的输出轨迹。</dd>
 <dt>PS</dt><dd>列出当前系统中的进程</dd>
@@ -553,203 +1423,12 @@ copy_process
 </dl>
 </div>
 </div>
-
-<div id="outline-container-org8a2e497" class="outline-2">
-<h2 id="org8a2e497"><span class="section-number-2">3</span> 进程管理</h2>
-<div class="outline-text-2" id="text-3">
-</div>
-<div id="outline-container-orgeb1befa" class="outline-3">
-<h3 id="orgeb1befa"><span class="section-number-3">3.1</span> 核心调度器</h3>
-<div class="outline-text-3" id="text-3-1">
-</div>
-<div id="outline-container-org1ba15fc" class="outline-4">
-<h4 id="org1ba15fc"><span class="section-number-4">3.1.1</span> 周期性调度器</h4>
-<div class="outline-text-4" id="text-3-1-1">
-<p>
-周期性调度器由 scheduler_tick 函数实现.
-</p>
-
-<p>
-内核按照频率HZ自动调用该函数
-</p>
-
-<ol class="org-ol">
-<li>管理内核中与整个系统和各个进程的调度相关的统计量</li>
-<li>激活负责当前进程的调度类的周期性调度方法</li>
-</ol>
-</div>
-</div>
-
-<div id="outline-container-orgb69a484" class="outline-4">
-<h4 id="orgb69a484"><span class="section-number-4">3.1.2</span> 主调度器</h4>
-<div class="outline-text-4" id="text-3-1-2">
-<p>
-schedule();
-</p>
-
-<p>
-__sched 前缀用于可能调用schedule的函数.
-</p>
-
-<p>
-context_switch
-</p>
-</div>
-</div>
-
-
-<div id="outline-container-orga948416" class="outline-4">
-<h4 id="orga948416"><span class="section-number-4">3.1.3</span> fork交互</h4>
-</div>
-
-
-
-<div id="outline-container-org5b43da8" class="outline-4">
-<h4 id="org5b43da8"><span class="section-number-4">3.1.4</span> 上下文切换</h4>
-<div class="outline-text-4" id="text-3-1-4">
-<p>
-内核为每个进程维持一个上下文。上下文就是内核重新启动一个被抢占的进程所需的状态，由一些对象值组成，包括通用亩的寄存器、浮点寄存器、程序计数器、用户栈、状态寄存器、内核栈和各种内核数据结构（例如描述地址空间的页表、宝航当前进程信息的进程表，进程已打开文件的文件表）。
-</p>
-
-<p>
-某一时刻，内核决定使用先前的一个被抢占的进程来抢占当前进程，这种决策叫调度。内核选择一个新的进程运行，称之为内核调度了这个进程。内核调度新进程运行后使用 <code>上下文切换</code> 的机制来将控制权转移到新的进程。上下文切换过程：
-</p>
-<ol class="org-ol">
-<li>保存当前进程的上下文</li>
-<li>恢复某个先前被抢占的进程的上下文</li>
-<li>将控制权传递给新进程</li>
-</ol>
-
-
-<p>
-context_switch
-</p>
-
-<p>
-调用 switch_to 之前:
-A &gt;&gt;&gt; B;  prev = A, next = B
-B &gt;&gt;&gt; C;  prev = B, next = C
-C &gt;&gt;&gt; A;  prev = C, next = A
-</p>
-
-<p>
-当再次调度到A时, 需要让A进程知道上次运行的进程是C.
-为了让A进程知道是从C进程切换过来的, 使用switch_to宏, 可以理解为switch_to是带有两个参数的宏, 返回一个指向此前运行进程的指针.本质上等同与一下逻辑:
-	prev = switch_to(prev, next);
-</p>
-</div>
-</div>
-</div>
-
-
-<div id="outline-container-orgc332b0c" class="outline-3">
-<h3 id="orgc332b0c"><span class="section-number-3">3.2</span> 完全公平调度类</h3>
-<div class="outline-text-3" id="text-3-2">
-<div class="org-src-container">
-<pre class="src src-C">
-<span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878; font-style: italic;"> * All the scheduling class methods:</span>
-<span style="color: #8B8878; font-style: italic;"> </span><span style="color: #8B8878;">*/</span>
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">sched_class</span> <span style="color: #FF8C00; font-weight: bold;">fair_sched_class</span> = {
-	.next                   = &amp;idle_sched_class,
-	.enqueue_task           = enqueue_task_fair,
-	.dequeue_task           = dequeue_task_fair,
-	.yield_task             = yield_task_fair,
-
-	.check_preempt_curr     = check_preempt_wakeup,
-
-	.pick_next_task         = pick_next_task_fair,
-	.put_prev_task          = put_prev_task_fair,
-
-<span style="color: #FF1493;">#ifdef</span> CONFIG_SMP
-	.load_balance           = load_balance_fair,
-	.move_one_task          = move_one_task_fair,
-<span style="color: #FF1493;">#endif</span>
-
-	.set_curr_task          = set_curr_task_fair,
-	.task_tick          = task_tick_fair,
-	.task_new               = task_new_fair,
-};
-
-
-
-</pre>
-</div>
-</div>
-
-<div id="outline-container-org07f13fe" class="outline-4">
-<h4 id="org07f13fe"><span class="section-number-4">3.2.1</span> 数据结构</h4>
-</div>
-
-
-<div id="outline-container-orgf222e2a" class="outline-4">
-<h4 id="orgf222e2a"><span class="section-number-4">3.2.2</span> CFS操作</h4>
-</div>
-</div>
-
-
-<div id="outline-container-org5ac74e9" class="outline-3">
-<h3 id="org5ac74e9"><span class="section-number-3">3.3</span> 实时调度类</h3>
-<div class="outline-text-3" id="text-3-3">
-<div class="org-src-container">
-<pre class="src src-c">
-<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">*INDENT-OFF* </span><span style="color: #8B8878;">*/</span>
-
-<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">sched_class</span> <span style="color: #FF8C00; font-weight: bold;">rt_sched_class</span> = {
-	.next                   = &amp;fair_sched_class,
-	.enqueue_task           = enqueue_task_rt,
-	.dequeue_task           = dequeue_task_rt,
-	.yield_task             = yield_task_rt,
-
-	.check_preempt_curr     = check_preempt_curr_rt,
-
-	.pick_next_task         = pick_next_task_rt,
-	.put_prev_task          = put_prev_task_rt,
-
-<span style="color: #FF1493;">#ifdef</span> CONFIG_SMP
-	.load_balance           = load_balance_rt,
-	.move_one_task          = move_one_task_rt,
-<span style="color: #FF1493;">#endif</span>
-
-	.set_curr_task          = set_curr_task_rt,
-	.task_tick              = task_tick_rt,
-};
-<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">*INDENT-ON* </span><span style="color: #8B8878;">*/</span>
-
-</pre>
-</div>
-</div>
-</div>
-
-
-
-
-<div id="outline-container-orgcd75862" class="outline-3">
-<h3 id="orgcd75862"><span class="section-number-3">3.4</span> 内核抢占</h3>
-<div class="outline-text-3" id="text-3-4">
-<div class="org-src-container">
-<pre class="src src-c">
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">thread_info</span> {
-...
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> preempt_count; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">0 =&gt; &#21487;&#25250;&#21344;, &lt;0 =&gt; BUG </span><span style="color: #8B8878;">*/</span>
-...
-};
-
-</pre>
-</div>
-
-<p>
-成员preempt_count值为0, 可以被抢占, 否则不行.
-</p>
-</div>
-</div>
-</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-23 Tue 17:49</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2021-11-06 Sat 11:30</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

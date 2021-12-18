@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-24 Wed 09:28 -->
+<!-- 2021-09-05 Sun 16:29 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>debian安装总结</title>
@@ -195,7 +195,7 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
 <!--/*--><![CDATA[/*><!--*/
      function CodeHighlightOn(elem, id)
      {
@@ -225,35 +225,249 @@
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#org53a93d1">1. debian</a></li>
-<li><a href="#orgb3307ab">2. 配置汇总</a></li>
+<li><a href="#orgb3307ab">2. 配置汇总</a>
+<ul>
+<li><a href="#org18ca0cd">2.1. 修改默认终端</a></li>
+<li><a href="#org58137ff">2.2. 字体配置</a></li>
+<li><a href="#org3dc5121">2.3. vncserver</a></li>
+<li><a href="#orgd62b911">2.4. linux电源相关的ACPI事件设置</a></li>
+<li><a href="#orgba964df">2.5. qv2ray</a></li>
+</ul>
+</li>
+<li><a href="#org56c94ca">3. 问题处理</a>
+<ul>
+<li><a href="#org5f294ae">3.1. 字体问题</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-org53a93d1" class="outline-2">
-<h2 id="org53a93d1"><span class="section-number-2">1</span> debian</h2>
+<h2 id="org53a93d1"><span class="section-number-2">1.</span> debian</h2>
 </div>
 
 
 <div id="outline-container-orgb3307ab" class="outline-2">
-<h2 id="orgb3307ab"><span class="section-number-2">2</span> 配置汇总</h2>
+<h2 id="orgb3307ab"><span class="section-number-2">2.</span> 配置汇总</h2>
 <div class="outline-text-2" id="text-2">
-<ul class="org-ul">
-<li><p>
-修改默认终端
-</p>
+</div>
+<div id="outline-container-org18ca0cd" class="outline-3">
+<h3 id="org18ca0cd"><span class="section-number-3">2.1.</span> 修改默认终端</h3>
+<div class="outline-text-3" id="text-2-1">
 <div class="org-src-container">
 <pre class="src src-sh">$ sudo update-alternatives --config x-terminal-emulator
 </pre>
-</div></li>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org58137ff" class="outline-3">
+<h3 id="org58137ff"><span class="section-number-3">2.2.</span> 字体配置</h3>
+<div class="outline-text-3" id="text-2-2">
+</div>
+</div>
+
+<div id="outline-container-org3dc5121" class="outline-3">
+<h3 id="org3dc5121"><span class="section-number-3">2.3.</span> vncserver</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+tigervncserver
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ man tigervncserver
+</pre>
+</div>
+
+<p>
+工作目录： $HOME/.vnc
+</p>
+
+<p>
+配置文件： $HOME/.vnc/vnc.conf    /etc/vnc.conf
+</p>
+
+<p>
+桌面环境启动脚本： $HOME/.vnc/Xvnc-session
+</p>
+
+<p>
+password文件： $HOME/.vnc/passwd
+</p>
+
+
+<p>
+Xvnc-session文件内容
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">  $ cat Xvnc-session
+<span style="color: #8B8878;">#</span><span style="color: #8B8878;">! /bin/sh</span>
+
+<span style="color: #FF1493;">test</span> x<span style="color: #CDC673;">"$SHELL"</span> = x<span style="color: #CDC673;">""</span> &amp;&amp; <span style="color: #FF8C00;">SHELL</span>=/bin/bash
+<span style="color: #FF1493;">test</span> x<span style="color: #CDC673;">"$1"</span>     = x<span style="color: #CDC673;">""</span> &amp;&amp; <span style="color: #FF1493;">set</span> -- default
+
+vncconfig -iconic &amp;
+i3 &amp;
+</pre>
+</div>
+
+
+<p>
+vncserver@.service内容：
+</p>
+<div class="org-src-container">
+<pre class="src src-fundmental"># Vncserver service file for Debian or Ubuntu with systemd
+#
+#  Install vncserver and tools
+#  e.g. apt-get install tightvncserver autocutsel gksu
+#
+# 1. Copy this file to /etc/systemd/system/vncserver@:1.service
+# 2. Edit User=
+#    e.g "User=paul"
+# 3. Edit the vncserver parameters appropriately in the ExecStart= line!
+#    e.g. the -localhost option only allows connections from localhost (or via ssh tunnels)
+# 4. Run `systemctl daemon-reload`
+# 5. Run `systemctl enable vncserver@:&lt;display&gt;.service`
+#
+
+[Unit]
+Description=Remote desktop service (VNC)
+After=syslog.target network.target
+
+[Service]
+Type=forking
+User=fanyf
+WorkingDirectory=/home/fanyf
+
+# Clean any existing files in /tmp/.X11-unix environment
+ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill %i &gt; /dev/null 2&gt;&amp;1 || :'
+#ExecStart=/usr/bin/vncserver -geometry 1800x1000 -depth 16 -dpi 120 -alwaysshared -localhost %i
+ExecStart=/usr/bin/vncserver %i
+ExecStop=/usr/bin/vncserver -kill %i
+
+[Install]
+WantedBy=multi-user.target
+</pre>
+</div>
+
+<p>
+启动vncserver
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo cp vncserver@.service /etc/systemd/system/
+$ sudo systemctl enable vncserver@:1
+$ sudo systemctl start vncserver@:1
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd62b911" class="outline-3">
+<h3 id="orgd62b911"><span class="section-number-3">2.4.</span> linux电源相关的ACPI事件设置</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+systemd-logind处理相关的事件
+</p>
+
+<p>
+配置文件为:
+</p>
+<div class="org-src-container">
+<pre class="src src-fundmental">/etc/systemd/logind.conf
+/etc/systemd/logind.conf.d/*.conf
+/run/systemd/logind.conf.d/*.conf
+/usr/lib/systemd/logind.conf.d/*.conf
+</pre>
+</div>
+
+<p>
+文件说明
+</p>
+<div class="org-src-container">
+<pre class="src src-fundmental">####### 可以执行的动作 #############
+# ignore  无操作
+# poweroff 关机
+# reboot  重启
+# halt 关机，但不关闭电源
+# kexec
+# suspend 睡眠
+# hibernate 休眠
+# hibrid-sleep 同时休眠到内存和硬盘
+# suspend-then-hibernate 先睡眠，超时后休眠
+# lock 锁屏
+####################
+#电源键的行为
+#HandlePowerKey=poweroff
+#挂起键的行为
+#HandleSuspendKey=suspend
+#休眠键的行为
+#HandleHibernateKey=hibernate
+#合上盖子的行为
+#HandleLidSwitch=suspend
+#如果使用外部电源，且此变量不是默认值，则合上盖子使用此值
+#HandleLidSwitchExternalPower=suspend
+#如果主机插入了扩展坞或者连接多个显示器时，合上盖子的行为
+#HandleLidSwitchDocked=ignore
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgba964df" class="outline-3">
+<h3 id="orgba964df"><span class="section-number-3">2.5.</span> qv2ray</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+NOTE: Replace $YOUR_DISTRIBUTION with your distribution code (stable/unstable/focal/groovy&#x2026;) below.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental"># Install some prerequisites needed by adding GPG public keys
+$ sudo apt-get install gnupg ca-certificates curl
+
+# Import our GPG key. Notice the hyphen at the end of line.
+$ curl -sSL https://qv2ray.net/debian/pubkey.gpg | sudo apt-key add -
+
+# Add the our official APT repository:
+$ echo <span style="color: #CDC673;">"deb [arch=amd64] https://qv2ray.net/debian/ $YOUR_DISTRIBUTION main"</span> | sudo tee /etc/apt/sources.list.d/qv2ray.list
+
+# To update the APT index:
+$ sudo apt-get update
+
+# You can install Qv2ray from APT now:
+$ sudo apt-get install qv2ray
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org56c94ca" class="outline-2">
+<h2 id="org56c94ca"><span class="section-number-2">3.</span> 问题处理</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org5f294ae" class="outline-3">
+<h3 id="org5f294ae"><span class="section-number-3">3.1.</span> 字体问题</h3>
+<div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li><p>
+wireshark goldendict等QT应用字体过大
+</p>
+
+<p>
+使用 <b>qt5ct</b> 工具配置默认字体
+</p></li>
 </ul>
+</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-24 Wed 09:28</p>
+<p class="date">Created: 2021-09-05 Sun 16:29</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

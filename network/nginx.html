@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-23 Tue 11:55 -->
+<!-- 2021-09-05 Sun 16:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Nginx</title>
@@ -195,7 +195,7 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
 <!--/*--><![CDATA[/*><!--*/
      function CodeHighlightOn(elem, id)
      {
@@ -233,7 +233,7 @@
 <li><a href="#org3f6bb1d">1.5. header filter和body filter</a></li>
 <li><a href="#orgad9ae82">1.6. 连接处理过程</a></li>
 <li><a href="#org6a60ae4">1.7. 阶段处理</a></li>
-<li><a href="#org4da8d00">1.8. 方向代理请求处理</a></li>
+<li><a href="#org1ed6854">1.8. 反向代理请求处理</a></li>
 </ul>
 </li>
 <li><a href="#org374de2a">2. nginx epoll</a>
@@ -267,40 +267,40 @@
 </p>
 
 <div id="outline-container-org74a6113" class="outline-2">
-<h2 id="org74a6113"><span class="section-number-2">1</span> nginx http</h2>
+<h2 id="org74a6113"><span class="section-number-2">1.</span> nginx http</h2>
 <div class="outline-text-2" id="text-1">
 </div>
 <div id="outline-container-org65b749e" class="outline-3">
-<h3 id="org65b749e"><span class="section-number-3">1.1</span> http模块结构</h3>
+<h3 id="org65b749e"><span class="section-number-3">1.1.</span> http模块结构</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> {
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#35299;&#26512;&#37197;&#32622;&#21069;&#35843;&#29992; </span><span style="color: #8B8878;">*/</span>
-	ngx_int_t   (*preconfiguration)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>);
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#35299;&#26512;&#37197;&#32622;&#21518;&#35843;&#29992; </span><span style="color: #8B8878;">*/</span>
-	ngx_int_t   (*postconfiguration)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35299;&#26512;&#37197;&#32622;&#21069;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">ngx_int_t</span>   (*<span style="color: #87D700;">preconfiguration</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35299;&#26512;&#37197;&#32622;&#21518;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">ngx_int_t</span>   (*<span style="color: #87D700;">postconfiguration</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>);
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21019;&#24314;main&#37197;&#32622; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">void</span>       *(*create_main_conf)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>);
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21021;&#22987;&#21270;main&#37197;&#32622; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">char</span>       *(*init_main_conf)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">conf</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21019;&#24314;main&#37197;&#32622;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>       *(*<span style="color: #87D700;">create_main_conf</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;main&#37197;&#32622;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">char</span>       *(*<span style="color: #87D700;">init_main_conf</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">conf</span>);
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21019;&#24314;server&#37197;&#32622; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">void</span>       *(*create_srv_conf)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21019;&#24314;server&#37197;&#32622;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>       *(*<span style="color: #87D700;">create_srv_conf</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>);
 	<span style="color: #8B8878;">/* */</span>
-	<span style="color: #5FD7FF; font-weight: bold;">char</span>       *(*merge_srv_conf)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">prev</span>, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">conf</span>);
+	<span style="color: #5FD7FF;">char</span>       *(*<span style="color: #87D700;">merge_srv_conf</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">prev</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">conf</span>);
 
 	<span style="color: #8B8878;">/**/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">void</span>       *(*create_loc_conf)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>);
+	<span style="color: #5FD7FF;">void</span>       *(*<span style="color: #87D700;">create_loc_conf</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>);
 	<span style="color: #8B8878;">/**/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">char</span>       *(*merge_loc_conf)(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">prev</span>, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">conf</span>);
-} <span style="color: #5FD7FF; font-weight: bold;">ngx_http_module_t</span>;
+	<span style="color: #5FD7FF;">char</span>       *(*<span style="color: #87D700;">merge_loc_conf</span>)(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">prev</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">conf</span>);
+} <span style="color: #5FD7FF;">ngx_http_module_t</span>;
 </pre>
 </div>
 </div>
 </div>
 <div id="outline-container-orge388d91" class="outline-3">
-<h3 id="orge388d91"><span class="section-number-3">1.2</span> 处理阶段</h3>
+<h3 id="orge388d91"><span class="section-number-3">1.2.</span> 处理阶段</h3>
 <div class="outline-text-3" id="text-1-2">
 <dl class="org-dl">
 <dt>NGX_HTTP_POST_READ_PHASE</dt><dd>在接收到完整的http头部后处理</dd>
@@ -319,18 +319,18 @@
 </div>
 
 <div id="outline-container-org6669dde" class="outline-3">
-<h3 id="org6669dde"><span class="section-number-3">1.3</span> NGX_HTTP_CONTENT_PHASE的两种介入方式</h3>
+<h3 id="org6669dde"><span class="section-number-3">1.3.</span> NGX_HTTP_CONTENT_PHASE的两种介入方式</h3>
 <div class="outline-text-3" id="text-1-3">
 <ol class="org-ol">
 <li><p>
 和其他阶段相同，通过向ngx_http_core_main_conf_t结构中的phases数组中添加处理方法。
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">ngx_int_t</span>
-<span style="color: #87D700; font-weight: bold;">ngx_http_gzip_static_init</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>)
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">ngx_int_t</span>
+<span style="color: #87D700;">ngx_http_gzip_static_init</span>(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>)
 {
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_http_handler_pt</span>        *<span style="color: #FF8C00; font-weight: bold;">h</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_http_core_main_conf_t</span>  *<span style="color: #FF8C00; font-weight: bold;">cmcf</span>;
+	<span style="color: #5FD7FF;">ngx_http_handler_pt</span>        *<span style="color: #FF8C00;">h</span>;
+	<span style="color: #5FD7FF;">ngx_http_core_main_conf_t</span>  *<span style="color: #FF8C00;">cmcf</span>;
 	cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
 	h = ngx_array_push(&amp;cmcf-&gt;phases[NGX_HTTP_CONTENT_PHASE].handlers);
 	*h = ngx_http_gzip_static_handler;
@@ -342,10 +342,10 @@
 通过向location配置结构ngx_http_core_loc_conf_t中的handler成员赋值，来定义处理方法。
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF; font-weight: bold;">char</span> *
-<span style="color: #87D700; font-weight: bold;">ngx_http_proxy_pass</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_conf_t</span> *<span style="color: #FF8C00; font-weight: bold;">cf</span>, <span style="color: #5FD7FF; font-weight: bold;">ngx_command_t</span> *<span style="color: #FF8C00; font-weight: bold;">cmd</span>, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">conf</span>)
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">char</span> *
+<span style="color: #87D700;">ngx_http_proxy_pass</span>(<span style="color: #5FD7FF;">ngx_conf_t</span> *<span style="color: #FF8C00;">cf</span>, <span style="color: #5FD7FF;">ngx_command_t</span> *<span style="color: #FF8C00;">cmd</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">conf</span>)
 {
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_http_core_loc_conf_t</span>   *<span style="color: #FF8C00; font-weight: bold;">clcf</span>;
+	<span style="color: #5FD7FF;">ngx_http_core_loc_conf_t</span>   *<span style="color: #FF8C00;">clcf</span>;
 	clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
 	clcf-&gt;handler = ngx_http_proxy_handler;
 	......
@@ -367,10 +367,10 @@
 </div>
 
 <div id="outline-container-orgc72b819" class="outline-3">
-<h3 id="orgc72b819"><span class="section-number-3">1.4</span> 初始化</h3>
+<h3 id="orgc72b819"><span class="section-number-3">1.4.</span> 初始化</h3>
 <div class="outline-text-3" id="text-1-4">
 
-<div id="org38ceb78" class="figure">
+<div id="org46ad6d0" class="figure">
 <p><img src="./plantuml/nginx/http_block.png" alt="http_block.png" />
 </p>
 </div>
@@ -379,15 +379,15 @@
 
 
 <div id="outline-container-org3f6bb1d" class="outline-3">
-<h3 id="org3f6bb1d"><span class="section-number-3">1.5</span> header filter和body filter</h3>
+<h3 id="org3f6bb1d"><span class="section-number-3">1.5.</span> header filter和body filter</h3>
 </div>
 
 
 <div id="outline-container-orgad9ae82" class="outline-3">
-<h3 id="orgad9ae82"><span class="section-number-3">1.6</span> 连接处理过程</h3>
+<h3 id="orgad9ae82"><span class="section-number-3">1.6.</span> 连接处理过程</h3>
 <div class="outline-text-3" id="text-1-6">
 
-<div id="org82c88ac" class="figure">
+<div id="org5ed6115" class="figure">
 <p><img src="plantuml/nginx/connect-proc.png" alt="connect-proc.png" />
 </p>
 </div>
@@ -395,7 +395,7 @@
 </div>
 
 <div id="outline-container-org6a60ae4" class="outline-3">
-<h3 id="org6a60ae4"><span class="section-number-3">1.7</span> 阶段处理</h3>
+<h3 id="org6a60ae4"><span class="section-number-3">1.7.</span> 阶段处理</h3>
 <div class="outline-text-3" id="text-1-7">
 <p>
 checker方法整理：
@@ -413,25 +413,25 @@ checker方法整理：
 </ul>
 
 
-<div id="org7c8707b" class="figure">
+<div id="org33a49bc" class="figure">
 <p><img src="plantuml/nginx/phase-proc.png" alt="phase-proc.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org4da8d00" class="outline-3">
-<h3 id="org4da8d00"><span class="section-number-3">1.8</span> 方向代理请求处理</h3>
+<div id="outline-container-org1ed6854" class="outline-3">
+<h3 id="org1ed6854"><span class="section-number-3">1.8.</span> 反向代理请求处理</h3>
 <div class="outline-text-3" id="text-1-8">
 
-<div id="org3a15347" class="figure">
+<div id="org4d4bb92" class="figure">
 <p><img src="plantuml/nginx/proxy.png" alt="proxy.png" />
 </p>
 </div>
 
 
 
-<div id="orgb6b25bb" class="figure">
+<div id="orgc005feb" class="figure">
 <p><img src="plantuml/nginx/proxy-resp.png" alt="proxy-resp.png" />
 </p>
 </div>
@@ -440,14 +440,14 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org374de2a" class="outline-2">
-<h2 id="org374de2a"><span class="section-number-2">2</span> nginx epoll</h2>
+<h2 id="org374de2a"><span class="section-number-2">2.</span> nginx epoll</h2>
 <div class="outline-text-2" id="text-2">
 </div>
 <div id="outline-container-org2d5895e" class="outline-3">
-<h3 id="org2d5895e"><span class="section-number-3">2.1</span> epoll处理事件</h3>
+<h3 id="org2d5895e"><span class="section-number-3">2.1.</span> epoll处理事件</h3>
 <div class="outline-text-3" id="text-2-1">
 
-<div id="org2f1bf23" class="figure">
+<div id="org4d96627" class="figure">
 <p><img src="plantuml/nginx/epoll-event.png" alt="epoll-event.png" />
 </p>
 </div>
@@ -456,47 +456,47 @@ checker方法整理：
 </div>
 
 <div id="outline-container-orgbe3c421" class="outline-2">
-<h2 id="orgbe3c421"><span class="section-number-2">3</span> 数据结构</h2>
+<h2 id="orgbe3c421"><span class="section-number-2">3.</span> 数据结构</h2>
 <div class="outline-text-2" id="text-3">
 </div>
 <div id="outline-container-org2fc49bd" class="outline-3">
-<h3 id="org2fc49bd"><span class="section-number-3">3.1</span> 内存池</h3>
+<h3 id="org2fc49bd"><span class="section-number-3">3.1.</span> 内存池</h3>
 <div class="outline-text-3" id="text-3-1">
 </div>
 <div id="outline-container-org438dc71" class="outline-4">
-<h4 id="org438dc71"><span class="section-number-4">3.1.1</span> 结构关系</h4>
+<h4 id="org438dc71"><span class="section-number-4">3.1.1.</span> 结构关系</h4>
 <div class="outline-text-4" id="text-3-1-1">
 <div class="org-src-container">
 <pre class="src src-c">
-<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">ngx_pool_large_s</span>  <span style="color: #5FD7FF; font-weight: bold;">ngx_pool_large_t</span>;
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">ngx_pool_large_s</span> {
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_large_t</span>     *<span style="color: #FF8C00; font-weight: bold;">next</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">void</span>                 *<span style="color: #FF8C00; font-weight: bold;">alloc</span>;
+<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ngx_pool_large_s</span>  <span style="color: #5FD7FF;">ngx_pool_large_t</span>;
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ngx_pool_large_s</span> {
+	<span style="color: #5FD7FF;">ngx_pool_large_t</span>     *<span style="color: #FF8C00;">next</span>;
+	<span style="color: #5FD7FF;">void</span>                 *<span style="color: #FF8C00;">alloc</span>;
 };
 
 <span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> {
-	<span style="color: #5FD7FF; font-weight: bold;">u_char</span>               *<span style="color: #FF8C00; font-weight: bold;">last</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">u_char</span>               *<span style="color: #FF8C00; font-weight: bold;">end</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span>           *<span style="color: #FF8C00; font-weight: bold;">next</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_uint_t</span>            <span style="color: #FF8C00; font-weight: bold;">failed</span>;
-} <span style="color: #5FD7FF; font-weight: bold;">ngx_pool_data_t</span>;
+	<span style="color: #5FD7FF;">u_char</span>               *<span style="color: #FF8C00;">last</span>;
+	<span style="color: #5FD7FF;">u_char</span>               *<span style="color: #FF8C00;">end</span>;
+	<span style="color: #5FD7FF;">ngx_pool_t</span>           *<span style="color: #FF8C00;">next</span>;
+	<span style="color: #5FD7FF;">ngx_uint_t</span>            <span style="color: #FF8C00;">failed</span>;
+} <span style="color: #5FD7FF;">ngx_pool_data_t</span>;
 
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">ngx_pool_s</span> {
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_data_t</span>       <span style="color: #FF8C00; font-weight: bold;">d</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">size_t</span>                <span style="color: #FF8C00; font-weight: bold;">max</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span>           *<span style="color: #FF8C00; font-weight: bold;">current</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_chain_t</span>          *<span style="color: #FF8C00; font-weight: bold;">chain</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_large_t</span>     *<span style="color: #FF8C00; font-weight: bold;">large</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_cleanup_t</span>   *<span style="color: #FF8C00; font-weight: bold;">cleanup</span>;
-	<span style="color: #5FD7FF; font-weight: bold;">ngx_log_t</span>            *<span style="color: #FF8C00; font-weight: bold;">log</span>;
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ngx_pool_s</span> {
+	<span style="color: #5FD7FF;">ngx_pool_data_t</span>       <span style="color: #FF8C00;">d</span>;
+	<span style="color: #5FD7FF;">size_t</span>                <span style="color: #FF8C00;">max</span>;
+	<span style="color: #5FD7FF;">ngx_pool_t</span>           *<span style="color: #FF8C00;">current</span>;
+	<span style="color: #5FD7FF;">ngx_chain_t</span>          *<span style="color: #FF8C00;">chain</span>;
+	<span style="color: #5FD7FF;">ngx_pool_large_t</span>     *<span style="color: #FF8C00;">large</span>;
+	<span style="color: #5FD7FF;">ngx_pool_cleanup_t</span>   *<span style="color: #FF8C00;">cleanup</span>;
+	<span style="color: #5FD7FF;">ngx_log_t</span>            *<span style="color: #FF8C00;">log</span>;
 };
 
 </pre>
 </div>
 
 
-<div id="orge16e6b2" class="figure">
+<div id="orgcb02ae7" class="figure">
 <p><img src="dot/nginx/pool.png" alt="pool.png" />
 </p>
 </div>
@@ -504,18 +504,18 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org070d357" class="outline-4">
-<h4 id="org070d357"><span class="section-number-4">3.1.2</span> 接口</h4>
+<h4 id="org070d357"><span class="section-number-4">3.1.2.</span> 接口</h4>
 <div class="outline-text-4" id="text-3-1-2">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #87D700; font-weight: bold;">ngx_create_pool</span>(<span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>, <span style="color: #5FD7FF; font-weight: bold;">ngx_log_t</span> *<span style="color: #FF8C00; font-weight: bold;">log</span>);
-<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">ngx_destroy_pool</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #FF8C00; font-weight: bold;">pool</span>);
-<span style="color: #5FD7FF; font-weight: bold;">void</span> <span style="color: #87D700; font-weight: bold;">ngx_reset_pool</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #FF8C00; font-weight: bold;">pool</span>);
+<pre class="src src-c"><span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #87D700;">ngx_create_pool</span>(<span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">ngx_log_t</span> *<span style="color: #FF8C00;">log</span>);
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ngx_destroy_pool</span>(<span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #FF8C00;">pool</span>);
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ngx_reset_pool</span>(<span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #FF8C00;">pool</span>);
 
-<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">ngx_palloc</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #FF8C00; font-weight: bold;">pool</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>);
-<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">ngx_pnalloc</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #FF8C00; font-weight: bold;">pool</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>);
-<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">ngx_pcalloc</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #FF8C00; font-weight: bold;">pool</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>);
-<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #87D700; font-weight: bold;">ngx_pmemalign</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #FF8C00; font-weight: bold;">pool</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">size</span>, <span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">alignment</span>);
-<span style="color: #5FD7FF; font-weight: bold;">ngx_int_t</span> <span style="color: #87D700; font-weight: bold;">ngx_pfree</span>(<span style="color: #5FD7FF; font-weight: bold;">ngx_pool_t</span> *<span style="color: #FF8C00; font-weight: bold;">pool</span>, <span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">p</span>);
+<span style="color: #5FD7FF;">void</span> *<span style="color: #87D700;">ngx_palloc</span>(<span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #FF8C00;">pool</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>);
+<span style="color: #5FD7FF;">void</span> *<span style="color: #87D700;">ngx_pnalloc</span>(<span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #FF8C00;">pool</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>);
+<span style="color: #5FD7FF;">void</span> *<span style="color: #87D700;">ngx_pcalloc</span>(<span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #FF8C00;">pool</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>);
+<span style="color: #5FD7FF;">void</span> *<span style="color: #87D700;">ngx_pmemalign</span>(<span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #FF8C00;">pool</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">alignment</span>);
+<span style="color: #5FD7FF;">ngx_int_t</span> <span style="color: #87D700;">ngx_pfree</span>(<span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #FF8C00;">pool</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">p</span>);
 
 </pre>
 </div>
@@ -524,20 +524,20 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org37bb5e9" class="outline-3">
-<h3 id="org37bb5e9"><span class="section-number-3">3.2</span> hash</h3>
+<h3 id="org37bb5e9"><span class="section-number-3">3.2.</span> hash</h3>
 <div class="outline-text-3" id="text-3-2">
 </div>
 <div id="outline-container-org3905105" class="outline-4">
-<h4 id="org3905105"><span class="section-number-4">3.2.1</span> 数据结构关系</h4>
+<h4 id="org3905105"><span class="section-number-4">3.2.1.</span> 数据结构关系</h4>
 <div class="outline-text-4" id="text-3-2-1">
 
-<div id="org99e0fed" class="figure">
+<div id="org465f0f8" class="figure">
 <p><img src="./dot/nginx/hash_st.png" alt="hash_st.png" />
 </p>
 </div>
 
 
-<div id="org20c4694" class="figure">
+<div id="org999af96" class="figure">
 <p><img src="./dot/nginx/hash_relation.png" alt="hash_relation.png" />
 </p>
 </div>
@@ -552,14 +552,14 @@ checker方法整理：
 
 
 
-<div id="orgd9f668b" class="figure">
+<div id="orgbbfc2ed" class="figure">
 <p><img src="./dot/nginx/wc_hash_relation.png" alt="wc_hash_relation.png" />
 </p>
 </div>
 
 
 
-<div id="orga41608f" class="figure">
+<div id="org8f22f0a" class="figure">
 <p><img src="./dot/nginx/hash_wc_key_relation.png" alt="hash_wc_key_relation.png" />
 </p>
 </div>
@@ -567,14 +567,14 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org6327dfc" class="outline-4">
-<h4 id="org6327dfc"><span class="section-number-4">3.2.2</span> 初始化流程</h4>
+<h4 id="org6327dfc"><span class="section-number-4">3.2.2.</span> 初始化流程</h4>
 <div class="outline-text-4" id="text-3-2-2">
 <ul class="org-ul">
 <li>精确匹配正则初始化</li>
 </ul>
 
 
-<div id="org50dfbfe" class="figure">
+<div id="orgfee7021" class="figure">
 <p><img src="./plantuml/nginx/hash_init.png" alt="hash_init.png" />
 </p>
 </div>
@@ -592,13 +592,13 @@ checker方法整理：
 </p>
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">if</span> (conf-&gt;keys-&gt;dns_wc_head.nelts) {
-	ngx_qsort(conf-&gt;keys-&gt;dns_wc_head.elts, (<span style="color: #5FD7FF; font-weight: bold;">size_t</span>) conf-&gt;keys-&gt;dns_wc_head.nelts, <span style="color: #FF1493;">sizeof</span>(ngx_hash_key_t),ngx_http_cmp_referer_wildcards);
+	ngx_qsort(conf-&gt;keys-&gt;dns_wc_head.elts, (<span style="color: #5FD7FF;">size_t</span>) conf-&gt;keys-&gt;dns_wc_head.nelts, <span style="color: #FF1493;">sizeof</span>(ngx_hash_key_t),ngx_http_cmp_referer_wildcards);
 	hash.hash = <span style="color: #AF87FF;">NULL</span>;
 	hash.temp_pool = cf-&gt;temp_pool;
 	<span style="color: #FF1493;">if</span> (ngx_hash_wildcard_init(&amp;hash, conf-&gt;keys-&gt;dns_wc_head.elts, conf-&gt;keys-&gt;dns_wc_head.nelts)
 	    != NGX_OK)
 		<span style="color: #FF1493;">return</span> NGX_CONF_ERROR;
-	conf-&gt;hash.wc_head = (<span style="color: #5FD7FF; font-weight: bold;">ngx_hash_wildcard_t</span> *) hash.hash;
+	conf-&gt;hash.wc_head = (<span style="color: #5FD7FF;">ngx_hash_wildcard_t</span> *) hash.hash;
 }
 </pre>
 </div></li>
@@ -613,7 +613,7 @@ checker方法整理：
 </ul>
 
 
-<div id="org4769ac2" class="figure">
+<div id="org70fc5f8" class="figure">
 <p><img src="./dot/nginx/wc_hash_init.png" alt="wc_hash_init.png" />
 </p>
 </div>
@@ -621,10 +621,10 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org0e92fc7" class="outline-4">
-<h4 id="org0e92fc7"><span class="section-number-4">3.2.3</span> 添加流程</h4>
+<h4 id="org0e92fc7"><span class="section-number-4">3.2.3.</span> 添加流程</h4>
 <div class="outline-text-4" id="text-3-2-3">
 
-<div id="orga8e115c" class="figure">
+<div id="org300f9e2" class="figure">
 <p><img src="./plantuml/nginx/wc_hash_add.png" alt="wc_hash_add.png" />
 </p>
 </div>
@@ -634,13 +634,13 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org7b72b30" class="outline-2">
-<h2 id="org7b72b30"><span class="section-number-2">4</span> 正则使用</h2>
+<h2 id="org7b72b30"><span class="section-number-2">4.</span> 正则使用</h2>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-23 Tue 11:55</p>
+<p class="date">Created: 2021-09-05 Sun 16:30</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

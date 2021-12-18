@@ -1,0 +1,3122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-12-16 Thu 23:31 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux网络概览</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Linux网络概览</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgee9ca8d">1. 概览</a></li>
+<li><a href="#orgf478f95">2. 网络访问层</a>
+<ul>
+<li><a href="#orgad4c57d">2.1. 网络设备</a>
+<ul>
+<li><a href="#orgdf5f6be">2.1.1. 数据结构</a></li>
+<li><a href="#orgff31bad">2.1.2. 注册网络设备</a></li>
+</ul>
+</li>
+<li><a href="#org5521e22">2.2. 接收分组</a>
+<ul>
+<li><a href="#org5b6ea4c">2.2.1. 传统方法</a></li>
+<li><a href="#org4737974">2.2.2. 对高速接口的支持（NAPI）</a></li>
+</ul>
+</li>
+<li><a href="#org2422a53">2.3. 发送分组</a></li>
+</ul>
+</li>
+<li><a href="#org2da134e">3. 网络层</a>
+<ul>
+<li><a href="#orgbe0dcda">3.1. IPv4</a></li>
+<li><a href="#orgfda5b0b">3.2. 接收分组</a></li>
+<li><a href="#orgddc8e96">3.3. 交付到本地传输层</a>
+<ul>
+<li><a href="#org4fdfeb9">3.3.1. 分片合并</a></li>
+<li><a href="#org12561d2">3.3.2. 交付到传输层</a></li>
+</ul>
+</li>
+<li><a href="#org4e143e1">3.4. 分组转发</a></li>
+<li><a href="#org7d63d42">3.5. 发送分组</a>
+<ul>
+<li><a href="#orgc5bfb85">3.5.1. 转移到网络层</a></li>
+<li><a href="#org1cc2895">3.5.2. 分组分片</a></li>
+<li><a href="#org88fbda3">3.5.3. 路由</a></li>
+</ul>
+</li>
+<li><a href="#org30abbe7">3.6. netfilter</a>
+<ul>
+<li><a href="#org5fdd1ad">3.6.1. 扩展网络功能</a></li>
+<li><a href="#orgeca5fca">3.6.2. 调用挂钩函数</a></li>
+<li><a href="#org57f1a5b">3.6.3. 扫描挂钩表</a></li>
+<li><a href="#org85e0537">3.6.4. 激活挂钩函数</a></li>
+</ul>
+</li>
+<li><a href="#org89ef5fc">3.7. IPv6</a></li>
+</ul>
+</li>
+<li><a href="#orgf081b17">4. 传输层</a>
+<ul>
+<li><a href="#org100e97f">4.1. UDP</a></li>
+<li><a href="#org7277d67">4.2. TCP</a>
+<ul>
+<li><a href="#org9d12e63">4.2.1. TCP首部</a></li>
+<li><a href="#orgd4871de">4.2.2. 接收TCP数据</a></li>
+<li><a href="#org8889b3c">4.2.3. 三次握手</a></li>
+<li><a href="#org55f6091">4.2.4. 被动连接建立</a></li>
+<li><a href="#orgbd525af">4.2.5. 主动连接的建立</a></li>
+<li><a href="#orgc190ef1">4.2.6. 分组传输</a></li>
+<li><a href="#org6437fc8">4.2.7. 接收分组</a></li>
+<li><a href="#org557b4d2">4.2.8. 发送分组</a></li>
+<li><a href="#orge2cb534">4.2.9. 连接终止</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org192ab9b">5. 应用层</a>
+<ul>
+<li><a href="#org876f9d1">5.1. socket数据结构</a></li>
+<li><a href="#org6046b09">5.2. 套接字和文件</a></li>
+<li><a href="#org9209146">5.3. socketcall系统调用</a></li>
+<li><a href="#orgd8a9d84">5.4. 创建套接字</a></li>
+<li><a href="#orgad11219">5.5. 接受数据</a></li>
+<li><a href="#org70ad926">5.6. 发送数据</a></li>
+</ul>
+</li>
+<li><a href="#org44efa99">6. 内核内部的网络通信</a>
+<ul>
+<li><a href="#org7c50a8a">6.1. 通信函数</a></li>
+<li><a href="#orga458c94">6.2. netlink机制</a>
+<ul>
+<li><a href="#orgdddebfd">6.2.1. 数据结构</a>
+<ul>
+<li><a href="#org78ffb17">6.2.1.1. 地址结构</a></li>
+<li><a href="#org77a7a52">6.2.1.2. netlink协议族</a></li>
+<li><a href="#org3fb44fa">6.2.1.3. 消息格式</a></li>
+<li><a href="#org11b7daa">6.2.1.4. 跟踪netlink连接</a></li>
+<li><a href="#org94f5455">6.2.1.5. 特定于协议的操作</a></li>
+</ul>
+</li>
+<li><a href="#orgab47c4e">6.2.2. 编程接口</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgee9ca8d" class="outline-2">
+<h2 id="orgee9ca8d"><span class="section-number-2">1</span> 概览</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+<a href="./dot/net/fw.html">./dot/net/fw.html</a>
+</p>
+
+<ul class="org-ul">
+<li>内核中的网络分层</li>
+</ul>
+
+<div class="figure">
+<p><img src="./dot/net/net-layer.png" alt="net-layer.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>套接字缓冲区和网络分组数据之间的关联</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="./dot/net/sk-buff-pkt.png" alt="sk-buff-pkt.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>操作套接字缓冲区的标准函数</li>
+</ul>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">函数</th>
+<th scope="col" class="org-left">语义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">alloc_skb</td>
+<td class="org-left">分配一个新的 sk_buff 实例</td>
+</tr>
+
+<tr>
+<td class="org-left">skb_copy</td>
+<td class="org-left">创建套接字缓冲区和相关数据的一个副本</td>
+</tr>
+
+<tr>
+<td class="org-left">skb_clone</td>
+<td class="org-left">创建套接字缓冲区的一个副本，但原本和副本将使用同一分组数据</td>
+</tr>
+
+<tr>
+<td class="org-left">skb_tailroom</td>
+<td class="org-left">返回数据末端空闲空间的长度</td>
+</tr>
+
+<tr>
+<td class="org-left">skb_headroom</td>
+<td class="org-left">返回数据起始处空闲空间的长度</td>
+</tr>
+
+<tr>
+<td class="org-left">skb_realloc_headroom</td>
+<td class="org-left">在数据起始处创建更多的空闲空间。现存数据不变</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#32473;&#23450;&#30340;&#22871;&#25509;&#23383;&#32531;&#20914;&#21306;&#33719;&#21462;&#20256;&#36755;&#23618;&#39318;&#37096;&#30340;&#22320;&#22336;&#12290;</span><span style="color: #8B8878;">*/</span>
+<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #87D700;">skb_transport_header</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#20256;&#36755;&#23618;&#39318;&#37096;&#37325;&#32622;&#20026;&#25968;&#25454;&#37096;&#20998;&#30340;&#36215;&#22987;&#20301;&#32622;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_reset_transport_header</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26681;&#25454;&#25968;&#25454;&#37096;&#20998;&#20013;&#32473;&#23450;&#30340;&#20559;&#31227;&#37327;&#26469;&#35774;&#32622;&#20256;&#36755;&#23618;&#39318;&#37096;&#30340;&#36215;&#22987;&#22320;&#22336;&#12290;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_set_transport_header</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+					    <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>)
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">MAC&#23618;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #87D700;">skb_mac_header</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_reset_mac_header</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_set_mac_header</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>)
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32593;&#32476;&#23618;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #87D700;">skb_network_header</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_reset_network_header</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_set_network_header</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>)
+</pre>
+</div>
+
+
+<p>
+套接字缓冲区等待队列使用  <b>struct sk_buff_head</b> 结构来描述：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">next &#21644; prev &#29992;&#20110;&#21019;&#24314;&#24490;&#29615;&#38142;&#34920;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>  *<span style="color: #FF8C00;">next</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>  *<span style="color: #FF8C00;">prev</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#31561;&#24453;&#38431;&#21015;&#30340;&#38271;&#24230;&#65292;&#21363;&#38431;&#21015;&#20013;&#25104;&#21592;&#30340;&#25968;&#30446;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">qlen</span>;
+	<span style="color: #5FD7FF;">spinlock_t</span>      <span style="color: #FF8C00;">lock</span>;
+};
+</pre>
+</div>
+
+
+
+<div class="figure">
+<p><img src="dot/net/sk-buff-head.png" alt="sk-buff-head.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf478f95" class="outline-2">
+<h2 id="orgf478f95"><span class="section-number-2">2</span> 网络访问层</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgad4c57d" class="outline-3">
+<h3 id="orgad4c57d"><span class="section-number-3">2.1</span> 网络设备</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+内核中，使用 struct net_device 表示网络设备，在分配该结构并填充对应结构后，通过 register_netdev 函数注册到内核。
+</p>
+
+<p>
+register_netdev 函数该函数完成一些初始化任务，并将该设备注册到通用设备机制内。这会创建一个sysfs项 /sys/class/net/&lt;device&gt; ，关联到该设备对应的目录。
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ ls -l  /sys/class/net/
+total 0
+lrwxrwxrwx 1 root root 0 Dec 11 10:26 enp1s0 -&gt; ../../devices/pci0000:00/0000:00:1c.0/0000:01:00.0/net/enp1s0
+lrwxrwxrwx 1 root root 0 Dec 11 10:26 lo -&gt; ../../devices/virtual/net/lo
+lrwxrwxrwx 1 root root 0 Dec 11 10:26 virbr0 -&gt; ../../devices/virtual/net/virbr0
+lrwxrwxrwx 1 root root 0 Dec 11 10:26 virbr1 -&gt; ../../devices/virtual/net/virbr1
+lrwxrwxrwx 1 root root 0 Dec 11 10:26 virbr2 -&gt; ../../devices/virtual/net/virbr2
+lrwxrwxrwx 1 root root 0 Dec 12 10:33 wlx488ad25147fe -&gt; ../../devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1:1.0/net/wlx488ad25147fe
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgdf5f6be" class="outline-4">
+<h4 id="orgdf5f6be"><span class="section-number-4">2.1.1</span> 数据结构</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+内核中，每个网络命名空间的网络设备都会遵循下列机制：
+</p>
+<ul class="org-ul">
+<li>所有的网络设备都保存在一个单链表中，表头为 dev_base 。</li>
+<li>按设备名散列。辅助函数 dev_get_by_name(struct net *net, const char *name) 根据设备名在该散列表上查找网络设备。</li>
+<li>按接口索引散列。辅助函数 dev_get_by_index(struct net *net, int ifindex) 根据给定的接口索引查找 net_device 实例。</li>
+</ul>
+
+<p>
+net_device 结构包含了与特定设备相关的所有信息：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>
+{
+	<span style="color: #8B8878;">/**/</span>
+	<span style="color: #5FD7FF;">char</span>                    <span style="color: #FF8C00;">name</span>[IFNAMSIZ];
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">device name hash chain</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">name_hlist</span>;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      I/O specific fields</span>
+<span style="color: #8B8878;">         *      FIXME: Merge these and struct ifmap into one</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">mem_end</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">shared mem end</span><span style="color: #8B8878;">       */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">mem_start</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">shared mem start</span><span style="color: #8B8878;">     */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">base_addr</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">device I/O address</span><span style="color: #8B8878;">   */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">irq</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">device IRQ number</span><span style="color: #8B8878;">    */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">state</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">dev_list</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">The device initialization function. Called only once.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">init</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27599;&#20010;&#32593;&#21345;&#30340;&#21807;&#19968;&#32034;&#24341;&#21495;&#65292;&#27880;&#20876;&#32593;&#21345;&#26102;&#21160;&#24577;&#20998;&#37197;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">ifindex</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#26597;&#35810;&#32479;&#35745;&#25968;&#25454;&#65292;&#24182;&#23558;&#25968;&#25454;&#23553;&#35013;&#21040;&#19968;&#20010;&#31867;&#22411;&#20026; net_device_stats &#30340;&#32467;&#26500;&#20013;&#36820;&#22238;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device_stats</span>* (*<span style="color: #87D700;">get_stats</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device_stats</span> <span style="color: #FF8C00;">stats</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#25805;&#20316;&#30828;&#20214;&#39318;&#37096;&#30340;&#20989;&#25968;&#25351;&#38024;&#38598;&#65292;&#20854;&#20013; header_ops-&gt;create&#21644;header_ops-&gt;parse&#65292;</span>
+<span style="color: #8B8878;">           &#20998;&#21035;&#29992;&#20110;&#21019;&#24314;&#19968;&#20010;&#26032;&#30340;&#30828;&#20214;&#39318;&#37096;&#21644;&#20998;&#26512;&#19968;&#20010;&#32473;&#23450;&#30340;&#30828;&#20214;&#39318;&#37096;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">header_ops</span> *<span style="color: #FF8C00;">header_ops</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">flags</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">interface flags (a la BSD)</span><span style="color: #8B8878;">   */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">gflags</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">priv_flags</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Like 'flags' but invisible to userspace.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">padded</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">How much padding added by alloc_netdev()</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">operstate</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RFC2863 operstate</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">link_mode</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">mapping policy to operstate</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">mtu</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26368;&#22823;&#20256;&#36755;&#21333;&#20803;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">type</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#30340;&#30828;&#20214;&#31867;&#22411;&#65292; &#20351;&#29992;&lt;if_arp.h&gt;&#20013;&#23450;&#20041;&#30340;&#24120;&#25968;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">hard_header_len</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">hardware hdr length</span><span style="color: #8B8878;">  */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Interface address info.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">perm_addr</span>[MAX_ADDR_LEN]; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">permanent hw address</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">addr_len</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">hardware address length</span><span style="color: #8B8878;">      */</span>
+
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">promiscuity</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21327;&#35758;&#30456;&#20851;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">atalk_ptr</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">AppleTalk&#25351;&#38024;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">ip_ptr</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IPv4 &#25968;&#25454;</span><span style="color: #8B8878;">    */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">dn_ptr</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">DECnet &#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">ip6_ptr</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IPv6 &#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">ec_ptr</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Econet &#25968;&#25454;</span><span style="color: #8B8878;">  */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">last_rx</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19978;&#27425;&#25509;&#25910;&#25968;&#25454;&#30340;&#26102;&#38388;</span><span style="color: #8B8878;">   */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#30340;&#30828;&#20214;&#22320;&#22336;&#65292;&#20197;&#22826;&#32593;&#21345;&#20026;MAC&#22320;&#22336;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">dev_addr</span>[MAX_ADDR_LEN];
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">broadcast</span>[MAX_ADDR_LEN];<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21521;&#38468;&#25509;&#31449;&#28857;&#21457;&#36865;&#28040;&#24687;&#30340;&#24191;&#25773;&#22320;&#22336;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#31561;&#24453;&#38431;&#21015;&#21024;&#38500;&#24050;&#32463;&#23436;&#25104;&#30340;&#20998;&#32452;&#24182;&#23558;&#20854;&#21457;&#36865;&#20986;&#21435;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">hard_start_xmit</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">trans_start</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19978;&#27425;&#21457;&#36865;&#25968;&#25454;&#30340;&#26102;&#38388;</span><span style="color: #8B8878;">   */</span>
+
+
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Called after device is detached from network.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">uninit</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Called after last user reference disappears.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">destructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#32593;&#21345;&#30828;&#20214;&#23492;&#23384;&#22120;&#24182;&#27880;&#20876;&#31995;&#32479;&#36164;&#28304;&#65292;&#22914;&#20013;&#26029;&#12289;DMA&#12289;IO&#31471;&#21475;&#31561;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">open</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32456;&#27490;&#32593;&#21345;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">stop</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">set_rx_mode</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">set_multicast_list</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">set_mac_address</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">addr</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">validate_addr</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#29305;&#23450;&#20110;&#35774;&#22791;&#30340;&#21629;&#20196;&#21457;&#36865;&#21457;&#36865;&#21040;&#32593;&#21345;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">do_ioctl</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ifreq</span> *<span style="color: #FF8C00;">ifr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">set_config</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ifmap</span> *<span style="color: #FF8C00;">map</span>);
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#35813;&#20989;&#25968;&#30001; eth_change_mtu &#23454;&#29616;&#65292;&#36127;&#36131;&#20462;&#25913;&#26368;&#22823;&#20256;&#36755;&#21333;&#20301;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">change_mtu</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">new_mtu</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#22788;&#29702;&#20998;&#32452;&#20256;&#36755;&#22833;&#36133;&#30340;&#38382;&#39064;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">tx_timeout</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">neigh_setup</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span> *);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35774;&#22791;&#25152;&#23646;&#30340;&#32593;&#32476;&#21629;&#21517;&#31354;&#38388;&#65288;&#30001; struct net &#30340;&#19968;&#20010;&#23454;&#20363;&#34920;&#31034;&#65289;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span>              *<span style="color: #FF8C00;">nd_net</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">class/net/name entry</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span>           <span style="color: #FF8C00;">dev</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">.......</span>
+};
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>name 网络名称存储在name成员中</li>
+</ul>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> 网络设备的命名</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">名称</th>
+<th scope="col" class="org-left">设备类别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">ethX</td>
+<td class="org-left">以太网适配器，无论电缆类型和传输速度如何</td>
+</tr>
+
+<tr>
+<td class="org-left">pppX</td>
+<td class="org-left">通过调制解调器建立的PPP连接</td>
+</tr>
+
+<tr>
+<td class="org-left">isdnX</td>
+<td class="org-left">ISDN卡</td>
+</tr>
+
+<tr>
+<td class="org-left">atmX</td>
+<td class="org-left">异步传输模式（asynchronous transfer mode），高速网卡的接口</td>
+</tr>
+
+<tr>
+<td class="org-left">lo</td>
+<td class="org-left">环回（loopback）设备，用于与本地计算机通信</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgff31bad" class="outline-4">
+<h4 id="orgff31bad"><span class="section-number-4">2.1.2</span> 注册网络设备</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+网络设备的注册过程：
+</p>
+<ul class="org-ul">
+<li>alloc_netdev 分配一个新的 struct net_device 实例，特定于协议的函数会填充该结构。对于以太网设备，该函数是 ether_setup 。fddi （fiber distributed data interface，光纤分布式数据接口）为fddi_setup，tr（token ring，令牌环网）为tr_setup， ltalk （指Apple LocalTalk）为ltalk_setup， hippi （high-performance parallel interface，高性能并行接口）为 hippi_setup，fc （fiber channel，光纤通道）为fc_setup。  内核中的一些伪设备在不绑定到硬件的情况下实现了特定的接口，它们也使用了 net_device 框架。例如， ppp_setup 根据PPP协议初始化设备。</li>
+
+<li>填充完毕后，需要用register_netdev或register_netdevice注册。</li>
+</ul>
+
+<p>
+函数alloc_etherdev(sizeof_priv)用于分配一个struct net_device实例，外加sizeof_priv 字节私有数据区。net_device-&gt;priv 成员指向与设备相关联的特定于驱动程序的数据。
+</p>
+
+<p>
+register_netdevice处理步骤：
+</p>
+
+<div class="figure">
+<p><img src="plantuml/net/register-netdevice.png" alt="register-netdevice.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5521e22" class="outline-3">
+<h3 id="org5521e22"><span class="section-number-3">2.2</span> 接收分组</h3>
+<div class="outline-text-3" id="text-2-2">
+</div>
+<div id="outline-container-org5b6ea4c" class="outline-4">
+<h4 id="org5b6ea4c"><span class="section-number-4">2.2.1</span> 传统方法</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+下图给出了在一个分组到达网络适配器之后，该分组穿过内核到达网络层函数的路径。
+</p>
+
+
+<div class="figure">
+<p><img src="image/net/rx-path.png" alt="rx-path.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c">
+</pre>
+</div>
+<p>
+因为分组是在中断上下文中接收到的，所以处理例程只能执行一些基本的任务，避免系统（或当前CPU）的其他任务延迟太长时间。
+</p>
+
+<p>
+在中断上下文中，数据由3个短函数处理，执行了下列任务：
+</p>
+<ul class="org-ul">
+<li>net_interrupt 是由设备驱动程序设置的中断处理程序。它将确定该中断是否真的是由接收到的分组引发的。如果确实如此，则控制将转移到 net_rx 。</li>
+<li>net_rx 函数是特定于网卡的，首先创建一个新的套接字缓冲区，并将分组的内容从网卡传输到缓冲区（也就是进入了物理内存），然后使用内核源代码中针对各种传输类型的库函数来分析首部数据。这项分析将确定分组数据所使用的网络层协议，例如IP协议。</li>
+<li>netif_rx 函数不是特定于网络驱动程序的，该函数位于 net/core/dev.c 。调用该函数，标志着控制由特定于网卡的代码转移到了网络层的通用接口部分。该函数的作用在于，将接收到的分组放置到一个特定于CPU的等待队列上，并退出中断上下文，使得CPU可以执行其他任务。</li>
+</ul>
+
+<p>
+内核定义 softnet_data 全局数组，用于管理进出分组的等待队列，数组项类型为softnet_data。每个CPU都会创建等待队列，支持分组的并行处理。
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">softnet_data</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">output_queue</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#34920;&#22836;&#65292;&#29992;&#20110;&#24314;&#31435;&#19968;&#20010;&#25152;&#26377;&#36827;&#20837;&#20998;&#32452;&#30340;&#38142;&#34920;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">input_pkt_queue</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">poll_list</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>          *<span style="color: #FF8C00;">completion_queue</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">napi_struct</span>      <span style="color: #FF8C00;">backlog</span>;
+
+};
+</pre>
+</div>
+
+
+<p>
+netif_rx 在结束工作之前将软中断 NET_RX_SOFTIRQ 标记为即将执行，然后退出中断上下文。
+</p>
+
+<p>
+net_rx_action 用作该软中断的处理程序。其代码流程如下：
+<b>这里描述的是一个简化的版本。完整版包含了对高速网络适配器引入的新方法</b>
+</p>
+
+<div class="figure">
+<p><img src="plantuml/net/process-backlog.png" alt="process-backlog.png" />
+</p>
+</div>
+
+<p>
+所有用于从底层的网络访问层接收数据的网络层函数都注册在一个散列表中，通过全局数组ptype_base 实现。
+</p>
+
+<p>
+新的协议通过 dev_add_pack 增加。各个数组项的类型为 struct packet_type ，定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">packet_type</span> {
+	<span style="color: #5FD7FF;">__be16</span>                  <span style="color: #FF8C00;">type</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#21327;&#35758;&#30340;&#26631;&#35782;&#31526;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#19968;&#20010;&#21327;&#35758;&#22788;&#29702;&#31243;&#24207;&#32465;&#23450;&#21040;&#29305;&#23450;&#30340;&#32593;&#21345;&#65292;</span>
+<span style="color: #8B8878;">           NULL &#25351;&#38024;&#34920;&#31034;&#35813;&#22788;&#29702;&#31243;&#24207;&#23545;&#31995;&#32479;&#20013;&#25152;&#26377;&#32593;&#32476;&#35774;&#22791;&#37117;&#26377;&#25928;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#32593;&#32476;&#23618;&#20989;&#25968;&#30340;&#25351;&#38024;&#65292;&#65292;&#22914;&#26524;&#20998;&#32452;&#30340;&#31867;&#22411;&#36866;&#24403;&#65292;&#23558;&#20854;&#20256;&#36882;&#32473;&#35813;&#20989;&#25968;&#12290;</span>
+<span style="color: #8B8878;">           &#20363;&#22914; ipv4 &#20026;ip_rcv</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">func</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *,
+					 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *,
+					 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">packet_type</span> *,
+					 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>          *(*<span style="color: #87D700;">gso_segment</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+						<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">features</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">gso_send_check</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">af_packet_priv</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">list</span>;
+};
+</pre>
+</div>
+
+<p>
+<b>netif_receive_skb</b> 对给定的套接字缓冲区查找适当的处理程序，并调用其 func 函数，将处理分组的职责委托给网络层，这是网络实现中更高的一层。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4737974" class="outline-4">
+<h4 id="org4737974"><span class="section-number-4">2.2.2</span> 对高速接口的支持（NAPI）</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+当设备速度较高时，分组可能以高频率到达，如果使用传统方法接受，会造成中断风暴。因此出现了NAPI来解决该问题。
+</p>
+
+<p>
+NAPI的处理如下：
+</p>
+<ul class="org-ul">
+<li>第一个分组将导致网络适配器发出IRQ。为防止进一步的分组导致发出更多的IRQ，驱动程序会关闭该适配器的Rx IRQ。并将该适配器放置到一个轮询表上。</li>
+<li>只要适配器上还有分组需要处理，内核就一直对轮询表上的设备进行轮询。</li>
+<li>重新启用Rx中断。</li>
+</ul>
+
+<p>
+如果在新的分组到达时，旧的分组仍然处于处理过程中，工作不会因额外的中断而减速。在没有分组还需要处理时，将停止轮询，设备将回复到通常的IRQ驱动的运行方式。
+</p>
+
+<p>
+没有中断支持的情况下，轮询空的接收队列将不必要地浪费时间，但NAPI并非如此。
+NAPI的另一个优点是可以高效地丢弃分组。如果内核确信因为有很多其他工作需要处理，而导致无法处理任何新的分组，那么网络适配器可以直接丢弃分组，无须复制到内核。
+</p>
+
+<p>
+设备需要满足两个条件才能实现NAPI方法：
+</p>
+<ul class="org-ul">
+<li>设备必须能够保留多个接收的分组，例如保存到DMA环形缓冲区中。</li>
+<li>该设备必须能够禁用用于分组接收的IRQ。而且，发送分组或其他通过IRQ进行的操作，都仍然必须是启用的。</li>
+</ul>
+
+<p>
+当系统中存在多个设备时，通过循环轮询各个设备进行处理：
+</p>
+
+<div class="figure">
+<p><img src="image/net/napi-for.png" alt="napi-for.png" />
+</p>
+<p><span class="figure-number">Figure 7: </span>NAPI机制和循环轮询表</p>
+</div>
+
+<p>
+设备都带有一个相对权重，表示与轮询表中其他设备相比，该设备的相对重要性。较快的设备权重较大，较慢的设备权重较小。由于权重指定了在一个轮询的循环中处理多少分组，这确保了内核将更多地注意速度较快的设备。
+</p>
+
+<p>
+支持NAPI的设备必须提供一个 poll 函数。该方法是特定于设备的，在用 netif_napi_add注册网卡时指定。调用该函数注册，表明设备可以且必须用新方法处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> *      netif_napi_add - &#21021;&#22987;&#21270;napi&#30340;&#19978;&#19979;&#25991;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@dev</span><span style="color: #CDC673;">:  &#25351;&#21521;&#35774;&#22791;&#30340;net_device&#23454;&#20363;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@napi</span><span style="color: #CDC673;">: napi &#19978;&#19979;&#25991;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@poll</span><span style="color: #CDC673;">: IRQ&#31105;&#29992;&#26102;&#30340;&#36718;&#35810;&#20989;&#25968;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@weight</span><span style="color: #CDC673;">: &#35774;&#22791;&#25509;&#21475;&#30340;&#30456;&#23545;&#26435;&#37325;</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">netif_napi_add</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
+				  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">napi_struct</span> *<span style="color: #FF8C00;">napi</span>,
+				  <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">poll</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">napi_struct</span> *, <span style="color: #5FD7FF;">int</span>),
+				  <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">weight</span>)
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">napi_struct</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20316;&#36718;&#35810;&#34920;&#30340;&#38142;&#34920;&#20803;&#32032;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">poll_list</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">NAPI_STATE_SCHED&#65306;&#34920;&#31034;&#35774;&#22791;&#23558;&#22312;&#20869;&#26680;&#30340;&#19979;&#19968;&#27425;&#24490;&#29615;&#26102;&#34987;&#36718;&#35810;</span>
+<span style="color: #8B8878;">        NAPI_STATE_DISABLE&#65306;&#34920;&#31034;&#36718;&#35810;&#24050;&#32463;&#32467;&#26463;&#19988;&#27809;&#26377;&#26356;&#22810;&#30340;&#20998;&#32452;&#31561;&#24453;&#22788;&#29702;&#65292;&#20294;&#35774;&#22791;&#23578;&#26410;&#20174;&#36718;&#35810;&#34920;&#31227;&#38500;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">state</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">weight</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#25509;&#21475;&#30340;&#30456;&#23545;&#26435;&#37325;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IRQ&#31105;&#29992;&#26102;&#30340;&#36718;&#35810;&#20989;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">poll</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">napi_struct</span> *, <span style="color: #5FD7FF;">int</span>);
+};
+
+
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">e1000 &#27880;&#20876;&#31034;&#20363;</span>
+<span style="color: #87D700;">netif_napi_add</span>(netdev, &amp;adapter-&gt;napi, e1000_clean, 64);
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>poll函数</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span>
+<span style="color: #87D700;">e1000_clean</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">napi_struct</span> *<span style="color: #FF8C00;">napi</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">budget</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#20808;&#33719;&#21462;&#29305;&#23450;&#20110;&#35774;&#22791;&#30340;&#20449;&#24687;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">e1000_adapter</span> *<span style="color: #FF8C00;">adapter</span> = container_of(napi, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">e1000_adapter</span>, napi);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">poll_dev</span> = adapter-&gt;netdev;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">tx_cleaned</span> = 0, <span style="color: #FF8C00;">work_done</span> = 0;
+
+	adapter = poll_dev-&gt;priv;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#29992;&#29305;&#23450;&#20110;&#30828;&#20214;&#30340;&#26041;&#27861;&#65292;&#20197;&#20174;&#32593;&#32476;&#36866;&#37197;&#22120;&#33719;&#21462;&#20998;&#32452;&#12290;</span>
+<span style="color: #8B8878;">        &#20854;&#20013;&#20250;&#35843;&#29992; netif_receive_skb &#23558;&#20998;&#32452;&#20256;&#36882;&#21040;&#19978;&#19968;&#23618;&#36827;&#34892;&#22788;&#29702;&#12290;</span>
+<span style="color: #8B8878;">         */</span>
+	adapter-&gt;clean_rx(adapter, &amp;adapter-&gt;rx_ring[0],
+			  &amp;work_done, budget);
+
+	<span style="color: #FF1493;">if</span> (tx_cleaned)
+		work_done = budget;
+
+	<span style="color: #FF1493;">if</span> (work_done &lt; budget) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#29702;&#30340;&#20998;&#32452;&#25968;&#30446;&#23567;&#20110;&#39044;&#31639;&#65292;&#21017;Rx&#32531;&#20914;&#21306;&#20026;&#31354;&#12290;</span>
+		<span style="color: #FF1493;">if</span> (likely(adapter-&gt;itr_setting &amp; 3))
+			e1000_set_itr(adapter);
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">netif_rx_complete &#36890;&#30693;&#20869;&#26680;&#20174;&#36718;&#35810;&#34920;&#31227;&#38500;&#35813;&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
+		netif_rx_complete(poll_dev, napi);
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#37325;&#26032;&#21551;&#29992;IRQ</span><span style="color: #8B8878;"> */</span>
+		e1000_irq_enable(adapter);
+	}
+
+	<span style="color: #FF1493;">return</span> work_done;
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>IRQ处理程序</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">irqreturn_t</span> <span style="color: #87D700;">e1000_intr</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">irq</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">netdev</span> = data;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20351;&#29992;&#36741;&#21161;&#20989;&#25968;netdev_priv&#35775;&#38382;&#29305;&#23450;&#20110;&#25509;&#21475;&#30340;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">e1000_adapter</span> *<span style="color: #FF8C00;">adapter</span> = netdev_priv(netdev);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">e1000_hw</span> *<span style="color: #FF8C00;">hw</span> = &amp;adapter-&gt;hw;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">netif_rx_schedule_prep &#20934;&#22791;&#23558;&#35774;&#22791;&#25918;&#32622;&#21040;&#36718;&#35810;&#34920;&#19978;&#12290;</span>
+<span style="color: #8B8878;">        &#26412;&#36136;&#19978;&#65292;&#36825;&#20250;&#23433;&#32622; napi_struct-&gt;flags &#20013;&#30340; NAPI_STATE_SCHED &#26631;&#24535;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (netif_rx_schedule_prep(netdev, &amp;adapter-&gt;napi)) {
+		adapter-&gt;total_tx_bytes = 0;
+		adapter-&gt;total_tx_packets = 0;
+		adapter-&gt;total_rx_bytes = 0;
+		adapter-&gt;total_rx_packets = 0;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#35774;&#22791;&#30340; napi_struct &#28155;&#21152;&#21040;&#36718;&#35810;&#34920;&#65292;&#24182;&#24341;&#21457;&#36719;&#20013;&#26029; NET_RX_SOFTIRQ &#12290;</span>
+<span style="color: #8B8878;">                &#36825;&#20250;&#36890;&#30693;&#20869;&#26680;&#22312; net_rx_action &#20013;&#24320;&#22987;&#36718;&#35810;&#12290;</span><span style="color: #8B8878;"> */</span>
+		__netif_rx_schedule(netdev, &amp;adapter-&gt;napi);
+	} <span style="color: #FF1493;">else</span> {
+		atomic_dec(&amp;adapter-&gt;irq_sem);
+	}
+
+	<span style="color: #FF1493;">return</span> IRQ_HANDLED;
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>处理Rx软中断</li>
+</ol>
+<p>
+net_rx_action是 NET_RX_SOFTIRQ 软中断的处理程序。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">net_rx_action</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">softirq_action</span> *<span style="color: #FF8C00;">h</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> *<span style="color: #FF8C00;">list</span> = &amp;__get_cpu_var(softnet_data).poll_list;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">start_time</span> = jiffies;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">netdev_budget&#25351;&#23450;&#39044;&#31639;&#24635;&#20540;&#65292;&#36890;&#24120;&#35774;&#32622;&#20026;300&#12290;</span>
+<span style="color: #8B8878;">        &#35813;&#20540;&#21487;&#20197;&#36890;&#36807; /proc/sys/net/core/netdev_budget &#25991;&#20214;&#20462;&#25913;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">budget</span> = netdev_budget;
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">have</span>;
+
+	local_irq_disable();
+
+	<span style="color: #FF1493;">while</span> (<span style="color: #CDC673; font-weight: bold;">!</span>list_empty(list)) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">napi_struct</span> *<span style="color: #FF8C00;">n</span>;
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">work</span>, <span style="color: #FF8C00;">weight</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39044;&#31639;&#29992;&#23613; &#25110;&#32773; &#22788;&#29702;&#26102;&#38388;&#36807;&#38271;&#65288;&#36229;&#36807;1&#20010;jiffie&#65289;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF1493;">if</span> (unlikely(budget &lt;= 0 || jiffies != start_time))
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">softnet_break</span>;
+
+		local_irq_enable();
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#35774;&#22791;&#30340;&#26435;&#37325;&#20316;&#20026;&#35774;&#22791;&#26412;&#36523;&#30340;&#39044;&#31639;</span><span style="color: #8B8878;"> */</span>
+		weight = n-&gt;weight;
+
+		work = 0;
+		<span style="color: #FF1493;">if</span> (test_bit(NAPI_STATE_SCHED, &amp;n-&gt;state))
+			work = n-&gt;poll(n, weight); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#29305;&#23450;&#20110;&#35774;&#22791;&#30340;poll&#26041;&#27861;</span>
+
+		WARN_ON_ONCE(work &gt; weight);
+
+		budget -= work; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#24635;&#39044;&#31639;&#20013;&#20943;&#21435;&#24050;&#22788;&#29702;&#30340;&#20998;&#32452;</span>
+		local_irq_disable();
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26816;&#26597;&#24050;&#22788;&#29702;&#30340;&#20998;&#32452;&#21644;&#39044;&#31639;&#26159;&#21542;&#30456;&#31561;&#65292;&#22914;&#26524;&#30456;&#31561;&#65292;&#21017;&#35774;&#22791;&#19978;</span>
+<span style="color: #8B8878;">                &#36824;&#26377;&#31561;&#24453;&#30340;&#20998;&#32452;&#12290;</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (unlikely(work == weight)) {
+			<span style="color: #FF1493;">if</span> (unlikely(napi_disable_pending(n)))
+				__napi_complete(n);
+			<span style="color: #FF1493;">else</span><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#35774;&#22791;&#31227;&#21160;&#21040;&#36718;&#35810;&#34920;&#30340;&#26411;&#23614;</span>
+				list_move_tail(&amp;n-&gt;poll_list, list);
+		}
+
+		netpoll_poll_unlock(have);
+	}
+<span style="color: #AF87FF;">out</span>:
+	local_irq_enable();
+
+	<span style="color: #FF1493;">return</span>;
+
+<span style="color: #AF87FF;">softnet_break</span>:
+	__get_cpu_var(netdev_rx_stat).time_squeeze++;
+	__raise_softirq_irqoff(NET_RX_SOFTIRQ);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+}
+
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>在NAPI之上实现旧式API</li>
+</ol>
+<p>
+旧式的API实现，由一个与softnet队列关联的伪网络设备控制， net/core/dev.c 中的 process_backlog 标准函数用作 poll 方法。如果没有网络适配器将其自身添加到该队列的轮询表，其中只包含这个伪适配器，net_rx_action 通过对 process_backlog 的单一调用来处理队列中的分组，而不管分组的来源设备。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2422a53" class="outline-3">
+<h3 id="org2422a53"><span class="section-number-3">2.3</span> 发送分组</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+net/core/dev.c 中的 <b>dev_queue_xmit</b> 用于将分组放置到发出分组的队列上。最终通过特定于适配器的函数 hard_start_xmit 完成，每个 net_device 结构中都保存对应的函数指针，由硬件设备驱动程序实现。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2da134e" class="outline-2">
+<h2 id="org2da134e"><span class="section-number-2">3</span> 网络层</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgbe0dcda" class="outline-3">
+<h3 id="orgbe0dcda"><span class="section-number-3">3.1</span> IPv4</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+<b>分组格式</b>
+<img src="image/net/IP-format.png" alt="IP-format.png" />
+</p>
+
+<ul class="org-ul">
+<li>version （版本）指定了所用IP协议的版本。</li>
+<li>IHL （IP首部长度）定义了首部的长度。如果不带Option字段，则为20。带选项最长为60，该值限制了记录路由选项。以4字节为一个单位。</li>
+<li>Type of Service （服务类型）用于更复杂的协议选项。</li>
+<li>Length （长度）指定了分组的总长度，即首部加数据的长度。</li>
+<li>Identification ：fragment ID （分片标识），标识了一个分片的IP分组的各个部分。分片方法将同一分片ID指定到同一原始分组的各个数据片，使之可标识为同一分组的成员。各个部分的相对位置由fragment offset （分片偏移量）字段定义。偏移量的单位是64 bit（8字节）。</li>
+<li>Flags 有3个状态标志位用于启用或禁用特定的特性，目前只使用其中两个。
+<ul class="org-ul">
+<li>DF 意为“don’ t fragment”，即指定分组不可拆分为更小的单位。</li>
+<li>MF 表示当前分组是一个更大分组的分片，后面还有其他分片（除了最后一个分片之外，所有分片都会设置该标志位）。</li>
+<li>第三个标志位“保留供未来使用”，但考虑到IPv6的存在，这是不太可能的。</li>
+</ul></li>
+<li>Time to Live (TTL)，指定了从发送者到接收者的传输路径上中间站点的最大数目（或跳数）。</li>
+<li>Protocol 标识了IP分组承载的高层协议（传输层）。例如，TCP和UDP协议都有对应的唯一值。</li>
+<li>Header Checksum 包含了一个校验和，根据首部的内容计算。如果指定的校验和与接收方计算的值不一致，那么可能发生了传输错误，应该丢弃该分组。</li>
+<li>Source Address 和 Destination Address 指定了源和目标的32位IP地址。</li>
+<li>Options 用于扩展IP选项。</li>
+</ul>
+
+
+<p>
+IP首部中所有的数值都以网络字节序存储（大端序）。内核中通过iphdr数据结构来描述：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> {
+<span style="color: #FF1493;">#if</span> <span style="color: #FF1493;">defined</span>(__LITTLE_ENDIAN_BITFIELD)
+	<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">ihl</span>:4,
+		<span style="color: #FF8C00;">version</span>:4;
+<span style="color: #FF1493;">#elif</span> <span style="color: #FF1493;">defined</span> (__BIG_ENDIAN_BITFIELD)
+	<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">version</span>:4,
+		<span style="color: #FF8C00;">ihl</span>:4;
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">tos</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">tot_len</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">id</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">frag_off</span>;
+	<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">ttl</span>;
+	<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">protocol</span>;
+	<span style="color: #5FD7FF;">__sum16</span> <span style="color: #FF8C00;">check</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">saddr</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">daddr</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36873;&#39033;&#20174;&#27492;&#22788;&#24320;&#22987;</span><span style="color: #8B8878;"> */</span>
+};
+</pre>
+</div>
+
+<p>
+ip_rcv 函数是网络层的入口点。分组向上穿过内核的路线如下图：
+<img src="image/net/ip-rcv-path.png" alt="ip-rcv-path.png" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfda5b0b" class="outline-3">
+<h3 id="orgfda5b0b"><span class="section-number-3">3.2</span> 接收分组</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+分组转发到ip_rcv后，大致会进行一下步骤：
+</p>
+<ul class="org-ul">
+<li>检查首部检验和，检查分组长度是否达到ip首部的最小长度。</li>
+<li>调用netfilter挂钩，使得用户空间可以对分组数据进行操作。</li>
+<li>在到达一个挂钩位置时，将在用户空间调用对该标记支持的例程。接下来，在另一个内核函数中继续内核端的处理（分组可能被修改过）。</li>
+<li>此时，接收到的分组到达一个十字路口，需要判断该分组的目的地是本地系统还是远程计算机。根据对分组目的地的判断，需要将分组转发到更高层，或转到互联网络层的输出路径上。</li>
+<li>ip_route_input 负责选择路由。判断路由的结果是，选择一个函数，进行进一步的分组处理。可用的函数是 ip_local_deliver 和 ip_forward 。具体选择哪个函数，取决于分组是交付到本地计算机下一个更高协议层的例程，还是转发到网络中的另一台计算机。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgddc8e96" class="outline-3">
+<h3 id="orgddc8e96"><span class="section-number-3">3.3</span> 交付到本地传输层</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+如果分组的目的地是本地计算机， 则通过 ip_local_deliver 找到适当的传输层函数，将分组转送过去。IP分组通常对应的传输层协议是TCP或UDP。
+</p>
+</div>
+
+<div id="outline-container-org4fdfeb9" class="outline-4">
+<h4 id="org4fdfeb9"><span class="section-number-4">3.3.1</span> 分片合并</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_defrag</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">user</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>;
+
+	IP_INC_STATS_BH(IPSTATS_MIB_REASMREQDS);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Start by cleaning up the memory.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (atomic_read(&amp;ip4_frags.mem) &gt; ip4_frags_ctl.high_thresh)
+		ip_evictor();
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ip_find &#20351;&#29992;&#19968;&#20010;&#22522;&#20110;&#20998;&#29255;ID&#12289;&#28304;&#22320;&#22336;&#12289;&#30446;&#26631;&#22320;&#22336;&#12289;&#20998;&#32452;&#30340;&#21327;&#35758;&#26631;&#35782;&#30340;&#25955;&#21015;&#36807;&#31243;&#65292;</span>
+<span style="color: #8B8878;">        &#26816;&#26597;&#26159;&#21542;&#24050;&#32463;&#20026;&#23545;&#24212;&#30340;&#20998;&#32452;&#21019;&#24314;&#20102;&#31561;&#24453;&#38431;&#21015;&#12290;</span>
+<span style="color: #8B8878;">           &#22914;&#26524;&#27809;&#26377;&#65292;&#21017;&#24314;&#31435;&#19968;&#20010;&#26032;&#30340;&#38431;&#21015;&#65292;&#24182;&#23558;&#24403;&#21069;&#22788;&#29702;&#30340;&#20998;&#32452;&#32622;&#20110;&#20854;&#19978;&#12290;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF1493;">if</span> ((qp = ip_find(ip_hdr(skb), user)) != <span style="color: #AF87FF;">NULL</span>) {
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ret</span>;
+
+		spin_lock(&amp;qp-&gt;q.lock);
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ip_find &#36820;&#22238;&#29616;&#23384;&#38431;&#21015;&#30340;&#22320;&#22336;&#21518;&#65292; &#35843;&#29992;ip_frag_queue&#23558;&#20998;&#32452;&#25918;&#32622;&#21040;&#38431;&#21015;&#20013;</span><span style="color: #8B8878;">*/</span>
+		ret = ip_frag_queue(qp, skb);
+		spin_unlock(&amp;qp-&gt;q.lock);
+		ipq_put(qp);
+		<span style="color: #FF1493;">return</span> ret;
+	}
+
+	IP_INC_STATS_BH(IPSTATS_MIB_REASMFAILS);
+	kfree_skb(skb);
+	<span style="color: #FF1493;">return</span> -ENOMEM;
+}
+</pre>
+</div>
+
+<p>
+在分组的所有分片都进入缓存后，ip_frag_reasm 将各个分片重新组合起来。然后释放套接字缓冲区。
+</p>
+</div>
+</div>
+<div id="outline-container-org12561d2" class="outline-4">
+<h4 id="org12561d2"><span class="section-number-4">3.3.2</span> 交付到传输层</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<p>
+在分组的分片合并完成后，调用netfilter挂钩 NF_IP_LOCAL_IN ，恢复在 ip_local_deliver_finish 函数中的处理。在其中，根据分组的协议标识符确定一个传输层的函数，将分组传递给该函数。所有基于互联网络层的协议都有一个 net_protocol 结构的实例，该结构定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This is used to register protocols.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">handler &#26159;&#21327;&#35758;&#20363;&#31243;&#65292;&#20998;&#32452;&#23558;&#65288;&#20197;&#22871;&#25509;&#23383;&#32531;&#20914;&#21306;&#30340;&#24418;&#24335;&#65289;&#34987;&#20256;&#36882;&#21040;&#35813;&#20363;&#31243;&#36827;&#34892;&#36827;&#19968;&#27493;&#22788;&#29702;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">handler</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#25509;&#25910;&#21040;ICMP&#38169;&#35823;&#20449;&#24687;&#24182;&#38656;&#35201;&#20256;&#36882;&#21040;&#26356;&#39640;&#23618;&#26102;&#65292;&#20250;&#35843;&#29992; err_handler</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">err_handler</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">info</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+};
+</pre>
+</div>
+
+<p>
+inet_add_protocol 函数用于将 struct net_protocol 的实例（指针）存储到 inet_protos 数组中，通过一种散列方法确定存储具体协议的索引位置。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">inet_add_protocol(&amp;icmp_protocol, IPPROTO_ICMP);
+inet_add_protocol(&amp;udp_protocol, IPPROTO_UDP);
+inet_add_protocol(&amp;tcp_protocol, IPPROTO_TCP);
+inet_add_protocol(&amp;igmp_protocol, IPPROTO_IGMP);
+</pre>
+</div>
+
+<p>
+在套接字缓冲区中通过通常的指针操作“删除”IP首部后，剩下的工作就是调用传输层对应的接收例程，其函数指针存储在 inet_protocol 的 handler 字段中，例如，用于接收TCP分组的 tcp_v4_rcv 例程和用于接收UDP分组的 udp_rcv。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4e143e1" class="outline-3">
+<h3 id="org4e143e1"><span class="section-number-3">3.4</span> 分组转发</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+分组需要转发时，目标地址可分为以下两类：
+</p>
+<ol class="org-ol">
+<li>目标计算机在某个本地网络中，发送计算机与该网络有连接。</li>
+<li>目标计算机在地理上属于远程计算机，不连接到本地网络，只能通过网关访问。</li>
+</ol>
+
+<p>
+在第2中情况中，首先必须找到剩余路由中的第一个站点，将分组转发到该站点，这是向最终目标地址的第一步传输。因此，不仅需要计算机所属本地网络结构的相关信息，还需要相邻网络结构和相关的外出路径的信息。
+</p>
+
+<p>
+该信息由路由表（routing table）提供，路由表由内核通过多种数据结构实现并管理。在接收分组时调用的 ip_route_input 函数充当路由实现的接口，该函数能够识别出分组是交付到本地还是转发出去，同时能够找到通向目标地址的路由。目标地址存储在套接字缓冲区的 dst 字段中。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_forward</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Our header</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rt</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Route we use</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_options</span> * <span style="color: #FF8C00;">opt</span> = &amp;(IPCB(skb)-&gt;opt);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26816;&#26597;&#24403;&#21069;&#20998;&#32452;&#26159;&#21542;&#20801;&#35768;&#20256;&#36755;&#21040;&#19979;&#19968;&#36339;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (ip_hdr(skb)-&gt;ttl &lt;= 1)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">too_many_hops</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	iph = ip_hdr(skb);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">TTL&#20943;1&#65292;&#24182;&#37325;&#26032;&#35745;&#31639;&#26657;&#39564;&#21644;</span><span style="color: #8B8878;"> */</span>
+	ip_decrease_ttl(iph);
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#29992;netfilter&#25346;&#38057; NF_IP_FORWARD&#65292;&#20043;&#21518;&#22312; ip_forward_finish&#20013;&#24674;&#22797;&#22788;&#29702;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">return</span> NF_HOOK(PF_INET, NF_IP_FORWARD, skb, skb-&gt;dev, rt-&gt;u.dst.dev,
+		       ip_forward_finish);
+
+<span style="color: #AF87FF;">too_many_hops</span>:
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Tell the sender its packet died...</span><span style="color: #8B8878;"> */</span>
+	IP_INC_STATS_BH(IPSTATS_MIB_INHDRERRORS);
+	icmp_send(skb, ICMP_TIME_EXCEEDED, ICMP_EXC_TTL, 0);
+<span style="color: #AF87FF;">drop</span>:
+	kfree_skb(skb);
+	<span style="color: #FF1493;">return</span> NET_RX_DROP;
+}
+
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_forward_finish</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_options</span> * <span style="color: #FF8C00;">opt</span> = &amp;(IPCB(skb)-&gt;opt);
+
+	IP_INC_STATS_BH(IPSTATS_MIB_OUTFORWDATAGRAMS);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#20998;&#32452;&#21253;&#21547;&#39069;&#22806;&#30340;&#36873;&#39033;&#65288;&#36890;&#24120;&#24773;&#20917;&#19979;&#27809;&#26377;&#65289;&#65292;&#21017;&#22312; ip_forward_options &#20013;&#22788;&#29702;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (unlikely(opt-&gt;optlen))
+		ip_forward_options(skb);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">dst_output &#23558;&#20998;&#32452;&#20256;&#36882;&#21040; skb-&gt;dst-&gt;output &#65288;&#30001;&#36335;&#30001;&#26399;&#38388;&#36873;&#25321;&#65289;&#21457;&#36865;&#20989;&#25968;&#12290;</span>
+<span style="color: #8B8878;">        &#36890;&#24120;&#20351;&#29992; ip_output &#65292;&#35813;&#20989;&#25968;&#23558;&#20998;&#32452;&#20256;&#36882;&#21040;&#19982;&#30446;&#26631;&#22320;&#22336;&#21305;&#37197;&#30340;&#32593;&#32476;&#36866;&#37197;&#22120;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">return</span> dst_output(skb);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7d63d42" class="outline-3">
+<h3 id="org7d63d42"><span class="section-number-3">3.5</span> 发送分组</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+内核提供了几个通过互联网络层发送数据的函数，可由较高协议层使用。 ip_queue_xmit 是其中一个。
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/net/ip-queue-xmit.png" alt="ip-queue-xmit.png" />
+</p>
+</div>
+
+<p>
+<i><b>第一个任务是查找可用于该分组的路由。内核利用了下述事实：起源于同一套接字的所有分组的目标地址都是相同的，这样不必每次都重新确定路由。下文将讨论指向相应数据结构的一个指针，它与套接字数据结构相关联。在发送第一个分组时，内核需要查找一个新的路由。</b></i>
+</p>
+</div>
+
+<div id="outline-container-orgc5bfb85" class="outline-4">
+<h4 id="orgc5bfb85"><span class="section-number-4">3.5.1</span> 转移到网络层</h4>
+<div class="outline-text-4" id="text-3-5-1">
+<p>
+ip_output 函数的代码流程图，其中根据分组是否需要分片，将代码路径划分为两部分。首先调用netfilter挂钩 NF_IP_POST_ROUTING ，接下来是 ip_finish_output 。首先考察分组长度不大于传输介质MTU、无须分片的情况。在这种情况下，直接调用了 ip_finish_output2 。该函数检查套接字缓冲区是否仍然有足够的空间容纳产生的硬件首部。如有必要，则用 skb_realloc_headroom分配额外的空间。为完成到网络访问层的转移，调用由路由层设置的函数 dst-&gt;neighbour-&gt;output ，该函数指针通常指向 dev_queue_xmit 。
+</p>
+
+
+
+<div class="figure">
+<p><img src="plantuml/net/ip-output.png" alt="ip-output.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1cc2895" class="outline-4">
+<h4 id="org1cc2895"><span class="section-number-4">3.5.2</span> 分组分片</h4>
+<div class="outline-text-4" id="text-3-5-2">
+<p>
+分片的原理： 从分组中都抽取出一个数据分片，其长度与对应的MTU兼容。创建一个新套接字缓冲区来保存抽取的数据分片，旧的IP首部可以稍作修改后重用。所有的分片都会分配一个共同的分片ID，以便在目标系统上重新组装分组。分片的顺序基于分片偏移量建立，此时也需要适当地设置。 MF （more fragments）标志位也需要设置。只有序列中的最后一个分片可以将该标志位置0。每个分片都在使用 ip_send_check 产生校验和之后，用 ip_output 发送。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org88fbda3" class="outline-4">
+<h4 id="org88fbda3"><span class="section-number-4">3.5.3</span> 路由</h4>
+<div class="outline-text-4" id="text-3-5-3">
+<p>
+每个接收的分组都属于下列3个类别之一：
+</p>
+<ul class="org-ul">
+<li>其目标是本地主机。</li>
+<li>其目标是当前主机直接连接的计算机。</li>
+<li>其目标是远程计算机，只能经由中间系统到达。</li>
+</ul>
+
+<p>
+路由的起始点是 ip_route_input 函数，它首先试图在路由缓存中查找路由。
+</p>
+
+<p>
+ip_route_input_slow 用于根据内核的数据结构来建立一个新的路由。该例程依赖于fib_lookup。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_lookup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> *<span style="color: #FF8C00;">res</span>);
+</pre>
+</div>
+<p>
+fib_lookup 的参数res是 fib_result 结构的实例，函数用 res 参数作为返回值，包含结果信息。 fib 代表转发信息库，是一个表，用于管理内核保存的路由选择信息。
+</p>
+
+<p>
+路由结果关联到一个套接字缓冲区，套接字缓冲区的 dst 成员指向一个 dst_entry 结构的实例，该实例的内容是在路由查找期间填充的。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span>        *<span style="color: #FF8C00;">neighbour</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#22788;&#29702;&#36827;&#20837;&#30340;&#20998;&#32452;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">input</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#22788;&#29702;&#22806;&#20986;&#30340;&#20998;&#32452;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+};
+</pre>
+</div>
+<p>
+根据分组的类型，会对 input 和 output 指定不同的函数：
+</p>
+<ul class="org-ul">
+<li>对需要交付到本地的分组， input 设置为 ip_local_deliver ，而 output 设置为 ip_rt_bug （该函数只向内核日志输出一个错误信息，因为在内核代码中对本地分组调用 output 是一种错误，不应该发生）。</li>
+<li>对于需要转发的分组， input 设置为 ip_forward ，而 output 设置为 ip_output 函数。</li>
+</ul>
+
+
+<p>
+neighbour 成员存储了计算机在本地网络中的IP和硬件地址，这可以通过网络访问层直接到达。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20445;&#23384;&#20102;&#32593;&#32476;&#35774;&#22791;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>               *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#30340;&#30828;&#20214;&#22320;&#22336;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">ha</span>[ALIGN(MAX_ADDR_LEN, <span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>))];
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#36866;&#24403;&#30340;&#20869;&#26680;&#20989;&#25968;&#30340;&#25351;&#38024;&#65292;&#22312;&#36890;&#36807;&#32593;&#32476;&#36866;&#37197;&#22120;&#20256;&#36755;&#20998;&#32452;&#26102;&#24517;&#39035;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+};
+</pre>
+</div>
+
+<p>
+neighbour 实例由内核中ARP层创建，ARP协议负责将IP地址转换为硬件地址。因为 dst_entry 结构有一个成员指针指向 neighbour 实例，网络访问层的代码在分组通过网络适配器离开当前系统时可调用 output 函数。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org30abbe7" class="outline-3">
+<h3 id="org30abbe7"><span class="section-number-3">3.6</span> netfilter</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+netfilter是一个Linux内核框架，使得可以动态定义条件，来过滤和操作分组。
+</p>
+</div>
+
+<div id="outline-container-org5fdd1ad" class="outline-4">
+<h4 id="org5fdd1ad"><span class="section-number-4">3.6.1</span> 扩展网络功能</h4>
+<div class="outline-text-4" id="text-3-6-1">
+<p>
+netfilter框架添加的功能：
+</p>
+
+<ul class="org-ul">
+<li>根据状态及其他条件，对不同数据流方向（进入、外出、转发）进行分组过滤（packet filtering）。</li>
+
+<li>NAT（网络地址转换），根据某些规则来转换源地址和目标地址。</li>
+
+<li>分组处理（packet manghing）和操作（manipulation），根据特定的规则拆分和修改分组。</li>
+</ul>
+
+<p>
+netfilter实现划分为如下两个部分：
+</p>
+
+<ul class="org-ul">
+<li>内核代码中的挂钩，位于网络实现的核心，用于调用netfilter代码。</li>
+
+<li>netfilter模块，其代码挂钩由内部调用，但其独立于其余的网络代码。一组标准模块提供了常用的函数，但可以在扩展模块中定义用户相关的函数。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgeca5fca" class="outline-4">
+<h4 id="orgeca5fca"><span class="section-number-4">3.6.2</span> 调用挂钩函数</h4>
+<div class="outline-text-4" id="text-3-6-2">
+<p>
+netfilter挂钩通过 &lt;netfilter.h&gt; 中的 NF_HOOK 宏调用。定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@pf</span><span style="color: #CDC673;"> &#21327;&#35758;&#26063;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@hook</span><span style="color: #CDC673;"> &#25346;&#38057;&#32534;&#21495;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@skb</span><span style="color: #CDC673;"> &#22871;&#25509;&#23383;&#32531;&#20914;&#21306;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@indev</span><span style="color: #CDC673;"> &#20998;&#32452;&#36827;&#20837;&#30340;&#32593;&#32476;&#35774;&#22791;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@outdev</span><span style="color: #CDC673;"> &#20998;&#32452;&#31163;&#24320;&#30340;&#32593;&#32476;&#35774;&#22791;</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@okfn</span><span style="color: #CDC673;"> &#20989;&#25968;&#25351;&#38024;&#65292;&#22312;&#25346;&#38057;&#32467;&#26463;&#26102;&#25191;&#34892;</span>
+<span style="color: #CDC673;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">nf_hook_thresh</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">pf</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hook</span>,
+				 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+				 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">indev</span>,
+				 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">outdev</span>,
+				 <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">okfn</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *), <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">thresh</span>,
+				 <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cond</span>)
+{
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>cond)
+		<span style="color: #FF1493;">return</span> 1;
+	<span style="color: #FF1493;">return</span> nf_hook_slow(pf, hook, skb, indev, outdev, okfn, thresh);
+}
+
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">NF_HOOK_THRESH</span>(<span style="color: #FF8C00;">pf</span>, <span style="color: #FF8C00;">hook</span>, <span style="color: #FF8C00;">skb</span>, <span style="color: #FF8C00;">indev</span>, <span style="color: #FF8C00;">outdev</span>, <span style="color: #FF8C00;">okfn</span>, <span style="color: #FF8C00;">thresh</span>)             \
+({<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__ret</span>;                                                                   \
+<span style="color: #FF1493;">if</span> ((__ret=nf_hook_thresh(pf, hook, (skb), indev, outdev, okfn, thresh, 1)) == 1)\
+	__ret = (okfn)(skb);                                                   \
+__ret;})
+
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">NF_HOOK</span>(<span style="color: #FF8C00;">pf</span>, <span style="color: #FF8C00;">hook</span>, <span style="color: #FF8C00;">skb</span>, <span style="color: #FF8C00;">indev</span>, <span style="color: #FF8C00;">outdev</span>, <span style="color: #FF8C00;">okfn</span>) \
+	NF_HOOK_THRESH(pf, hook, skb, indev, outdev, okfn, INT_MIN)
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org57f1a5b" class="outline-4">
+<h4 id="org57f1a5b"><span class="section-number-4">3.6.3</span> 扫描挂钩表</h4>
+<div class="outline-text-4" id="text-3-6-3">
+<p>
+nf_hook_slow 函数扫描挂钩表。所有挂钩都保存在二维数组 nf_hooks 中。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">NPROTO &#25351;&#23450;&#31995;&#32479;&#25903;&#25345;&#30340;&#21327;&#35758;&#26063;&#30340;&#26368;&#22823;&#25968;&#30446;&#65292;&#24403;&#21069;&#20026;34&#12290;</span>
+<span style="color: #8B8878;">&#27599;&#20010;&#21327;&#35758;&#21487;&#20197;&#23450;&#20041; NF_MAX_HOOKS &#20010;&#25346;&#38057;&#38142;&#34920;&#65292;&#40664;&#35748;8</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">nf_hooks</span>[NPROTO][NF_MAX_HOOKS] __read_mostly;
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">nf_hook_slow</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">pf</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hook</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+		 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">indev</span>,
+		 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">outdev</span>,
+		 <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">okfn</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *),
+		 <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hook_thresh</span>)
+</pre>
+</div>
+
+<p>
+nf_hooks数组元素作为链表头，链表元素为 nf_hook_ops 的实例：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nf_hook_ops</span>
+{
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#34920;&#20803;&#32032;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">list</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#25346;&#38057;&#20989;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">nf_hookfn</span> *<span style="color: #FF8C00;">hook</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">pf</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;&#26063;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hooknum</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25346;&#38057;&#32534;&#21495;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25346;&#38057;&#20989;&#25968;&#20248;&#20808;&#32423;&#65292;&#38142;&#34920;&#20013;&#30340;&#25346;&#38057;&#26159;&#25353;&#29031;&#20248;&#20808;&#32423;&#21319;&#24207;&#25490;&#21015;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">priority</span>;
+};
+</pre>
+</div>
+
+
+<p>
+nf_hook_slow 函数根据协议族和挂钩编号从 nf_hook 数组中选择适当的链表。接下来的工作委托给 nf_iterate ，该函数保留所有链表元素，并调用 hook 函数。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org85e0537" class="outline-4">
+<h4 id="org85e0537"><span class="section-number-4">3.6.4</span> 激活挂钩函数</h4>
+<div class="outline-text-4" id="text-3-6-4">
+<p>
+每个 hook 函数都返回下列值之一。
+</p>
+
+<ul class="org-ul">
+<li>NF_ACCEPT 表示接受分组。代表例程没有修改数据。内核将继续使用未修改的分组，使之穿过网络实现中剩余的协议层（或通过后续的挂钩）。</li>
+
+<li>NF_STOLEN 表示挂钩函数“窃取”了一个分组并处理该分组。此时，该分组已与内核无关，不必再调用其他挂钩。还必须取消其他协议层的处理。</li>
+
+<li>NF_DROP 通知内核丢弃该分组。如同 NF_STOLEN ，其他挂钩或网络层的处理都不再需要了。套接字缓冲区（和分组）占用的内存空间可以释放，因为其中包含的数据可以被丢弃，例如，挂钩可能认定分组是损坏的。</li>
+
+<li>NF_QUEUE 将分组置于一个等待队列上，以便其数据可以由用户空间代码处理。不会执行其他挂钩函数。</li>
+
+<li>NF_REPEAT 表示再次调用该挂钩。</li>
+</ul>
+
+<p>
+<i><b>最终，除非所有挂钩函数都返回 NF_ACCEPT （ NF_REPEAT 不是最终结果），否则分组不会在网络子系统进一步处理。所有其他的分组，不是被丢弃，就是由netfilter子系统处理。</b></i>
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org89ef5fc" class="outline-3">
+<h3 id="org89ef5fc"><span class="section-number-3">3.7</span> IPv6</h3>
+<div class="outline-text-3" id="text-3-7">
+<p>
+IPv6 地址长度为 128位（16字节），IPv6分组的结构如下图：
+<img src="image/net/IPv6-format.png" alt="IPv6-format.png" />
+</p>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" frame="border" border="1" rules="all"><caption><b>表1 </b>IP头字段解释</caption>
+<thead align="left">
+<tr>
+<th class="cellrowborder" valign="top" width="12%" id="mcps1.2.1.3.2.4.1.1">字段</th>
+
+<th class="cellrowborder" valign="top" width="12%" id="mcps1.2.1.3.2.4.1.2">长度</th>
+
+<th class="cellrowborder" valign="top" width="75.99999999999999%" id="mcps1.2.1.3.2.4.1.3">含义</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Version</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">4比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 "><ul><li>4：表示为IPV4；</li><li>6：表示为IPV6。</li></ul>
+</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Traffic class</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">8比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">流量类别。该字段及其功能类似于IPv4的业务类型字段。该字段以区分业务编码点（DSCP）标记一个IPv6数据包，以此指明数据包应当如何处理。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Flow Label</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">20比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">流标签。该字段用来标记IP数据包的一个流，当前的标准中没有定义如何管理和处理流标签的细节。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Payload length</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">该字段表示有效载荷的长度，有效载荷是指紧跟IPv6基本报头的数据包，包含IPv6扩展报头。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Next header</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">8比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">下一报头，该字段指明了跟随在IPv6基本报头后的扩展报头的信息类型。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Hop limit</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">8比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">跳数限制，该字段定义了IPv6数据包所能经过的最大跳数，这个字段和IPv4中的TTL字段非常相似。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Source Address</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">128比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">该字段表示该报文的源地址。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Destination Address</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">128比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">该字段表示该报文的目的地址。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Extension Headers</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">扩展报头。IPv6取消了IPv4报头中的选项字段，并引入了多种扩展报文头，在提高处理效率的同时还增强了IPv6的灵活性，为IP协议提供了良好的扩展能力。当超过一种扩展报头被用在同一个分组里时，报头必须按照下列顺序出现：<ul><li>IPv6基本报头</li><li>逐跳选项扩展报头</li><li>目的选项扩展报头</li><li>路由扩展报头</li><li>分片扩展报头</li><li>授权扩展报头</li><li>封装安全有效载荷扩展报头</li><li>目的选项扩展报头（指那些将被分组报文的最终目的地处理的选项。）</li><li>上层扩展报头</li></ul>
+<p>不是所有的扩展报头都需要被转发路由设备查看和处理的。路由设备转发时根据基本报头中Next Header值来决定是否要处理扩展头。</p>
+<p>除了目的选项扩展报头出现两次（一次在路由扩展报头之前，另一次在上层扩展报头之前），其余扩展报头只出现一次。</p>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+</div>
+</div>
+
+<p>
+<b>IPv6分组穿过丸裸各个协议的路径</b>
+</p>
+
+
+<div class="figure">
+<p><img src="image/net/ipv6-path.png" alt="ipv6-path.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf081b17" class="outline-2">
+<h2 id="orgf081b17"><span class="section-number-2">4</span> 传输层</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org100e97f" class="outline-3">
+<h3 id="org100e97f"><span class="section-number-3">4.1</span> UDP</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+ip_local_deliver 负责分发IP分组传输的数据内容。 net/ipv4/udp.c 中的udp_rcv 用于进一步处理UDP数据报。
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/net/udp-rcv.png" alt="udp-rcv.png" />
+</p>
+</div>
+
+<p>
+<b>UDP分组结构</b>
+<img src="image/net/udp-format.png" alt="udp-format.png" />
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">字段</th>
+<th scope="col" class="org-left">长度</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Source Port</td>
+<td class="org-left">2字节</td>
+<td class="org-left">标识哪个应用程序发送（发送进程）。</td>
+</tr>
+
+<tr>
+<td class="org-left">Destination Port</td>
+<td class="org-left">2字节</td>
+<td class="org-left">标识哪个应用程序接收（接收进程）。</td>
+</tr>
+
+<tr>
+<td class="org-left">Length</td>
+<td class="org-left">2字节</td>
+<td class="org-left">UDP首部加上UDP数据的字节数，最小为8。</td>
+</tr>
+
+<tr>
+<td class="org-left">Checksum</td>
+<td class="org-left">2字节</td>
+<td class="org-left">覆盖UDP首部和UDP数据，是可选的。</td>
+</tr>
+
+<tr>
+<td class="org-left">data octets</td>
+<td class="org-left">变长</td>
+<td class="org-left">UDP负载，可选的。</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<b>UDP分组首部</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">udphdr</span> {
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">source</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">dest</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">len</span>;
+	<span style="color: #5FD7FF;">__sum16</span> <span style="color: #FF8C00;">check</span>;
+};
+</pre>
+</div>
+
+
+<p>
+<b>向应用层交付数据</b>
+</p>
+
+<p>
+内核中有两种数据结构用于表示套接字。 sock 是到网络访问层的接口，而 socket 是到用户空间的接口。
+</p>
+
+
+<p>
+sock 结构中包含了用于向下一个更高层次转发数据的方法，这些方法必须将接收到的数据放置在一个特定于套接字的等待队列上，并通知接收进程有新数据到达。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> {
+	......
+	wait_queue_head_t       *sk_sleep;
+	......
+	<span style="color: #FF1493;">struct</span> sk_buff_head     sk_receive_queue;
+	......
+	<span style="color: #5FD7FF;">void</span>                    (*sk_data_ready)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">bytes</span>);
+	......
+};
+</pre>
+</div>
+
+<p>
+在udp_rcv中，当__udp4_lib_lookup 查找到适当的 sock 实例后，控制转移到 udp_queue_rcv_skb ，而后又立即到 sock_queue_rcv_skb ，其中会执行两个重要的操作，完成到应用层的数据交付。
+</p>
+
+<ul class="org-ul">
+<li>等待通过套接字交付数据的进程，在 sk_sleep 等待队列上睡眠。</li>
+
+<li>调用 skb_queue_tail 将包含分组数据的套接字缓冲区插入到 sk_receive_queue 链表末端，其表头保存在特定于套接字的 sock 结构中。</li>
+
+<li>调用 sk_data_ready 指向的函数（如果用标准函数 sock_init_data 来初始化 sock 实例，通常是 sock_def_readable ），通知套接字有新数据到达。这会唤醒在 sk_sleep 队列上睡眠、等待数据到达的所有进程。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7277d67" class="outline-3">
+<h3 id="org7277d67"><span class="section-number-3">4.2</span> TCP</h3>
+<div class="outline-text-3" id="text-4-2">
+
+<div class="figure">
+<p><img src="image/net/tcp-stat.png" alt="tcp-stat.png" />
+</p>
+<p><span class="figure-number">Figure 12: </span>TCP状态转换图</p>
+</div>
+</div>
+
+<div id="outline-container-org9d12e63" class="outline-4">
+<h4 id="org9d12e63"><span class="section-number-4">4.2.1</span> TCP首部</h4>
+<div class="outline-text-4" id="text-4-2-1">
+
+<div class="figure">
+<p><img src="image/net/tcp-format.png" alt="tcp-format.png" />
+</p>
+</div>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" frame="border" border="1" rules="all">
+<thead align="left">
+<tr>
+<th class="cellrowborder" valign="top" width="15.050167224080266%" id="mcps1.2.1.3.1.4.1.1">字段</th>
+
+<th class="cellrowborder" valign="top" width="18.06020066889632%" id="mcps1.2.1.3.1.4.1.2">长度</th>
+
+<th class="cellrowborder" valign="top" width="66.88963210702342%" id="mcps1.2.1.3.1.4.1.3">含义</th>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Source Port</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">源端口，标识哪个应用程序发送。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Destination Port</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">目的端口，标识哪个应用程序接收。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Sequence Number</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">32比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">序号字段。TCP链接中传输的数据流中每个字节都编上一个序号。序号字段的值指的是本报文段所发送的数据的第一个字节的序号。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Acknowledgment Number</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">32比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">确认号，是期望收到对方的下一个报文段的数据的第1个字节的序号，即上次已成功接收到的数据字节序号加1。只有ACK标识为1，此字段有效。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Data Offset</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">4比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">数据偏移，即首部长度，指出TCP报文段的数据起始处距离TCP报文段的起始处有多远，以32比特（4字节）为计算单位。最多有60字节的首部，若无选项字段，正常为20字节。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Reserved</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">6比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">保留，必须填0。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">URG</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">紧急指针有效标识。它告诉系统此报文段中有紧急数据，应尽快传送（相当于高优先级的数据）。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">ACK</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">确认序号有效标识。只有当ACK=1时确认号字段才有效。当ACK=0时，确认号无效。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">PSH</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">标识接收方应该尽快将这个报文段交给应用层。接收到PSH = 1的TCP报文段，应尽快的交付接收应用进程，而不再等待整个缓存都填满了后再向上交付。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">RST</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">重建连接标识。当RST=1时，表明TCP连接中出现严重错误（如由于主机崩溃或其他原因），必须释放连接，然后再重新建立连接。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">SYN</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">同步序号标识，用来发起一个连接。SYN=1表示这是一个连接请求或连接接受请求。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">FIN</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">发端完成发送任务标识。用来释放一个连接。FIN=1表明此报文段的发送端的数据已经发送完毕，并要求释放连接。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Window</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">窗口：TCP的流量控制，窗口起始于确认序号字段指明的值，这个值是接收端正期望接收的字节数。窗口最大为65535字节。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Checksum</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">校验字段，包括TCP首部和TCP数据，是一个强制性的字段，一定是由发端计算和存储，并由收端进行验证。在计算检验和时，要在TCP报文段的前面加上12字节的伪首部。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Urgent Pointer</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">紧急指针，只有当URG标志置1时紧急指针才有效。TCP的紧急方式是发送端向另一端发送紧急数据的一种方式。紧急指针指出在本报文段中紧急数据共有多少个字节（紧急数据放在本报文段数据的最前面）。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Options</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">选项字段。TCP协议最初只规定了一种选项，即最长报文段长度（数据字段加上TCP首部），又称为MSS。MSS告诉对方TCP“我的缓存所能接收的报文段的数据字段的最大长度是MSS个字节”。<p>新的RFC规定有以下几种选型：选项表结束，无操作，最大报文段长度，窗口扩大因子，时间戳。</p>
+<ul><li>窗口扩大因子：3字节，其中一个字节表示偏移值S。新的窗口值等于TCP首部中的窗口位数增大到（16+S），相当于把窗口值向左移动S位后获得实际的窗口大小。</li><li>时间戳：10字节，其中最主要的字段是时间戳值（4字节）和时间戳回送应答字段（4字节）。</li><li>选项确认选项：</li></ul>
+</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Padding</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">填充字段，用来补位，使整个首部长度是4字节的整数倍。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">data</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">TCP负载。</td>
+
+</tr>
+
+</tbody>
+</table>
+</div>
+
+
+<p>
+<b>TCP分组结构</b>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span> {
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">source</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">dest</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">seq</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">ack_seq</span>;
+<span style="color: #FF1493;">#if</span> <span style="color: #FF1493;">defined</span>(__LITTLE_ENDIAN_BITFIELD)
+	<span style="color: #5FD7FF;">__u16</span>   <span style="color: #FF8C00;">res1</span>:4,
+		<span style="color: #FF8C00;">doff</span>:4,
+		<span style="color: #FF8C00;">fin</span>:1,
+		<span style="color: #FF8C00;">syn</span>:1,
+		<span style="color: #FF8C00;">rst</span>:1,
+		<span style="color: #FF8C00;">psh</span>:1,
+		<span style="color: #FF8C00;">ack</span>:1,
+		<span style="color: #FF8C00;">urg</span>:1,
+		<span style="color: #FF8C00;">ece</span>:1,
+		<span style="color: #FF8C00;">cwr</span>:1;
+<span style="color: #FF1493;">#elif</span> <span style="color: #FF1493;">defined</span>(__BIG_ENDIAN_BITFIELD)
+	<span style="color: #5FD7FF;">__u16</span>   <span style="color: #FF8C00;">doff</span>:4,
+		<span style="color: #FF8C00;">res1</span>:4,
+		<span style="color: #FF8C00;">cwr</span>:1,
+		<span style="color: #FF8C00;">ece</span>:1,
+		<span style="color: #FF8C00;">urg</span>:1,
+		<span style="color: #FF8C00;">ack</span>:1,
+		<span style="color: #FF8C00;">psh</span>:1,
+		<span style="color: #FF8C00;">rst</span>:1,
+		<span style="color: #FF8C00;">syn</span>:1,
+		<span style="color: #FF8C00;">fin</span>:1;
+<span style="color: #FF1493;">#else</span>
+<span style="color: #FF1493;">#error</span>  <span style="color: #CDC673;">"Adjust your &lt;asm/byteorder.h&gt; defines"</span>
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">window</span>;
+	<span style="color: #5FD7FF;">__sum16</span> <span style="color: #FF8C00;">check</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">urg_ptr</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd4871de" class="outline-4">
+<h4 id="orgd4871de"><span class="section-number-4">4.2.2</span> 接收TCP数据</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+tcp_v4_rcv 是TCP层的入口，代码流程如下图：
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/net/tcp-rcv.png" alt="tcp-rcv.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8889b3c" class="outline-4">
+<h4 id="org8889b3c"><span class="section-number-4">4.2.3</span> 三次握手</h4>
+<div class="outline-text-4" id="text-4-2-3">
+<ul class="org-ul">
+<li>客户端通过向服务器 发送SYN来发出连接请求。客户端的套接字状态由CLOSED变为SYN_SENT。</li>
+
+<li>服务器在一个监听套接字上接收到连接请求，并返回SYN和ACK。 服务器套接字的状态由LISTEN变为SYN_RECV。</li>
+<li>客户端套接字接收到SYN/ACK分组后，切换到ESTABLISHED状态，表明连接已经建立。一个ACK分组被发送到服务器。</li>
+
+<li>服务器接收到ACK分组，也切换到ESTABLISHED状态。这就完成了两端的连接建立工作，可以开始数据交换。</li>
+</ul>
+
+<p>
+<i><b>原则上，可以仅使用一个或两个分组建立连接。但这可能带来一种风险，由于与同一地址（IP地址和端口号）之间的旧连接的延期分组的存在，可能导致建立有缺陷的连接。三次握手的目的就是要防止这种情况。</b></i>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org55f6091" class="outline-4">
+<h4 id="org55f6091"><span class="section-number-4">4.2.4</span> 被动连接建立</h4>
+<div class="outline-text-4" id="text-4-2-4">
+<p>
+被动连接的建立是由收到SYN分组后触发的，由tcp_v4_rcv函数处理，tcp_v4_rcv 会将控制权转移到 tcp_v4_do_rcv函数，
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/net/tcp-do-rcv.png" alt="tcp-do-rcv.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbd525af" class="outline-4">
+<h4 id="orgbd525af"><span class="section-number-4">4.2.5</span> 主动连接的建立</h4>
+<div class="outline-text-4" id="text-4-2-5">
+<p>
+tcp_v4_connect函数处理主动连接的建立：
+</p>
+
+<div class="figure">
+<p><img src="plantuml/net/tcp-connect.png" alt="tcp-connect.png" />
+</p>
+</div>
+
+<p>
+在发送SYN分组后，需要等待服务器的SYN-ACK分组，此流程由 tcp_rcv_state_process 函数处理：
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">tcp_rcv_state_process
+	tcp_rcv_synsent_state_process
+		&#23558;&#22871;&#25509;&#23383;&#29366;&#24577;&#35774;&#32622;&#20026;ESTABLISHED
+		tcp_send_ack
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc190ef1" class="outline-4">
+<h4 id="orgc190ef1"><span class="section-number-4">4.2.6</span> 分组传输</h4>
+<div class="outline-text-4" id="text-4-2-6">
+<p>
+TCP基于序列号来确认分组。在建立连接时，内核通过secure_tcp_sequence_number生成一个随机数（drivers/char/random.c ）作为序列号。接下来使用一种系统化的方法来支持对所有进入分组的严格确认。
+</p>
+
+<p>
+在最初发送的序列号基础上，会为TCP传输的每个字节都分配一个唯一的序列号。例如，假定TCP系统的初始随机数是100。因而，发送的前16个字节是序列号是100、101……115。
+</p>
+
+<p>
+TCP使用一种累积式确认（cumulative acknowlegment）方案。这意味着一次确认将涵盖一个连续的字节范围。通过 ack 字段发送的数字将确认数据流在上一个ACK数目和当前ACK数目之间的所有字节。（如果尚未发送确认，没有上一个ACK数目，则将初始序列号作为起点。）ACK数目确认了此前所有的字节，其中最后一个字节的索引号比ACK数目小1，因而ACK数目也表示了下一个字节的索引号。例如，ACK数目166确认了字节索引165之前（含）的所有字节，预期下一个分组中从字节166开始。
+</p>
+
+<p>
+TCP没有提供显式的重传请求机制。换句话说，接收方不能请求发送方重传丢失的分组。如果在一定的超时时间内发送方没有收到确认，则发送丢失的部分数据是发送方的责任。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6437fc8" class="outline-4">
+<h4 id="org6437fc8"><span class="section-number-4">4.2.7</span> 接收分组</h4>
+<div class="outline-text-4" id="text-4-2-7">
+
+<div class="figure">
+<p><img src="plantuml/net/tcp-rcv-estab.png" alt="tcp-rcv-estab.png" />
+</p>
+</div>
+
+<p>
+分组需要符合下列条件之一，才能归类为易于处理的。
+</p>
+<ul class="org-ul">
+<li>分组必须只包含对上一次发送数据的确认。</li>
+<li>分组必须只包含预期将接收的数据。</li>
+</ul>
+
+<p>
+此外，下列标志都不能设置：SYN、URG、RST或FIN。
+</p>
+
+<p>
+快速路径中会进行一些分组的检查，找到更为复杂的分组，并将其返回到低速路径。接下来分析分组长度，确认分组的内容是数据还是确认。
+</p>
+
+<p>
+快速路径的代码并不处理ACK部分，而是由tcp_ack 处理。tcp_ack 函数会分析有关连接的新信息（例如，接收窗口信息），从重传队列中删除确认数据，还有一些其他相关操作。重传队列包含了所有发送的分组，如果在一定的时间限制内没有收到ACK确认，则需要重传。
+</p>
+
+<p>
+快速路径中的分组，分组数据是紧接着前一部分的，数据可以通过一个ACK分组向发送方确认，无须进一步检查。最后，调用保存在套接字中的sk_data_ready 函数指针，通知用户进程有新数据可用。
+</p>
+
+<p>
+在低速路径，则需要处理许多TCP选项，会涉及很多处理。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org557b4d2" class="outline-4">
+<h4 id="org557b4d2"><span class="section-number-4">4.2.8</span> 发送分组</h4>
+<div class="outline-text-4" id="text-4-2-8">
+<p>
+TCP分组的发送由 tcp_sendmsg 函数处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">tcp_sendmsg
+    |
+    --&gt; &#27809;&#26377;&#36830;&#25509;&#65311; --&gt; sk_stream_wait_connect
+    |
+    --&gt; &#23558;&#25968;&#25454;&#22797;&#21046;&#21040;&#22871;&#25509;&#23383;&#32531;&#20914;&#21306;
+    |
+    --&gt; tcp_push_one
+	      |
+	      --&gt; tcp_snd_test
+	      |
+	      --&gt; tcp_transmit_skb --&gt; af_specific-&gt;queue_xmit
+	      |
+	      --&gt; update_send_head
+			|
+			--&gt; &#22914;&#26377;&#24517;&#35201;&#65292;&#35774;&#32622;&#37325;&#20256;&#23450;&#26102;&#22120; &#65288;inet_csk_reset_xmit_timer&#65289;
+</pre>
+</div>
+
+<p>
+首先，套接字的状态必须是 TCP_ESTABLISHED ，否则内核等待连接建立。
+</p>
+
+<p>
+发送TCP分组，需要遵守下列要求：
+</p>
+<ul class="org-ul">
+<li>接收方等待队列上必须有足够的空间可用于该数据。</li>
+<li>必须实现防止连接拥塞的ECN机制。</li>
+<li>必须检测某一方出现失效的情况，以免通信出现停顿。</li>
+<li>TCP慢启动（slow-start）机制要求在通信开始时，逐渐增大分组长度。</li>
+<li>发送但未得到确认的分组，必须在一定的超时时间间隔之后反复重传，直至接收方最终确认。</li>
+</ul>
+
+
+<p>
+tcp_push_one 函数执行下列3个任务：
+</p>
+<ul class="org-ul">
+<li>tcp_snd_test 检查目前是否可以发送数据。接收方过载导致的分组积压，可能使得现在无法发送数据。</li>
+<li>tcp_transmit_skb 使 用 地 址 族 相 关 的 af_specific-&gt;queue_xmit 函 数 （ IPv4 使 用 的 是ip_queue_xmit ），将数据转发到互联网络层。</li>
+<li>update_send_head 处理对统计量的更新。更重要的是，它会初始化所发送TCP信息段（TCP segment）的重传定时器。不必对每个TCP分组都这样做，该机制只用于已经确认的数据区之后的第一个分组。</li>
+</ul>
+
+<p>
+inet_csk_reset_xmit_timer 负责重置重传定时器。该定时器是未确认分组重发的基础。如果接收方在一定的时间内没有确认收到数据，则重传数据。
+</p>
+
+<p>
+与特定套接字关联的 sock 实例中包含了一个重传计时器的链表，用于发送的每个分组。内核使用的超时函数是 tcp_write_timer ，如果没有收到ACK，该函数会调用 tcp_retransmit_timer 函数。在重传数据时，必须注意下列问题：
+</p>
+<ul class="org-ul">
+<li>连接在此期间可能已经关闭。在这种情况下，保存的分组和定时器将从内核内存中删除。</li>
+<li>如果重传尝试的次数超过了 sysctl_tcp_retries2 变量指定的限制，则放弃重传。</li>
+</ul>
+
+<p>
+在收到ACK之后，删除相应分组的重传定时器。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge2cb534" class="outline-4">
+<h4 id="orge2cb534"><span class="section-number-4">4.2.9</span> 连接终止</h4>
+<div class="outline-text-4" id="text-4-2-9">
+<p>
+连接可以采用下列两种方法关闭：
+</p>
+<ol class="org-ol">
+<li>在参与传输的某一方（偶尔也会两个系统同时发出请求的情况）显式请求关闭连接时，连接会以优雅关闭（graceful close）的方式终止。</li>
+<li>高层协议有可能导致连接终止或异常中止（例如，可能因为程序崩溃）。</li>
+</ol>
+
+<p>
+正常的连接关闭步骤如下：
+</p>
+<ol class="org-ol">
+<li>计算机A调用标准库函数 close ，发出一个TCP分组，首部中的FIN标志置位。A的套接字切换到FIN_WAIT_1状态。</li>
+<li>B收到FIN分组并返回一个ACK分组。其套接字状态从ESTABLISHED改变为CLOSE_WAIT。收到FIN后，以“文件结束”的方式通知套接字。</li>
+<li>在收到ACK分组之后，计算机A的套接字状态从FIN_WAIT_1变为FIN_WAIT_2。</li>
+<li>计算机B上与对应套接字相关的应用程序也执行 close ，从B向A发送FIN分组。计算机B的套接字状态变为 LAST_ACK 。</li>
+<li>计算机A用一个ACK分组确认B发送的FIN，然后首先进入TIME_WAIT状态，接下来在一定时间后自动切换到CLOSED状态。</li>
+<li>计算机B收到ACK分组，其套接字也切换到CLOSED状态。</li>
+</ol>
+
+<p>
+状态迁移在 tcp_rcv_state_process 函数中进行，可能的代码路径包括处理现存连接的 tcp_rcv_established 和 tcp_close 函数。
+</p>
+
+<p>
+在调用库函数 close 关闭连接时，会调用 tcp_close 。如果套接字的状态为LISTEN，则可以直接关闭。
+</p>
+
+<p>
+非LISTEN状态，通过 tcp_close_state 调用 tcp_set_state ，将套接字状态设置为FIN_WAIT_1，之后 tcp_send_fin 向对端发送一个FIN分组。
+</p>
+
+<p>
+从FIN_WAIT_1到FIN_WAIT_2状态的迁移由 tcp_rcv_state_process 函数处理。当收到的带有ACK标志的分组时，会触发到FIN_WAIT_2状态的迁移，此时只需要对端发送的FIN分组，即可将TCP连接置为TIME_WAIT状态（然后会自动切换到CLOSED状态）。
+</p>
+
+
+
+<p>
+被动关闭连接的一方，状态迁移的过程类似。收到第一个FIN分组时，套接字状态为ESTABLISHED，处理由 tcp_rcv_established 的低速路径进行，此时会向对端发送一个ACK分组，并将套接字状态改为TCP_CLOSING。
+</p>
+
+<p>
+到LAST_ACK状态的迁移，是通过调用 close 函数，进而调用了内核的 tcp_close_state 函数。此时，只需要对端再发送一个ACK分组，即可终止连接。该分组也是通过 tcp_rcv_state_process 函数处理，该函数将套接字状态改为CLOSED（通过 tcp_done ），释放套接字占用的内存空间，并最终终止连接。
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org192ab9b" class="outline-2">
+<h2 id="org192ab9b"><span class="section-number-2">5</span> 应用层</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org876f9d1" class="outline-3">
+<h3 id="org876f9d1"><span class="section-number-3">5.1</span> socket数据结构</h3>
+<div class="outline-text-3" id="text-5-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">socket_state &#30340;&#26522;&#20030;&#20540;&#65292;&#19982;&#20256;&#36755;&#23618;&#21327;&#35758;&#22312;&#24314;&#31435;&#21644;&#20851;&#38381;&#36830;&#25509;&#26102;&#20351;&#29992;&#30340;&#29366;&#24577;&#20540;&#27627;&#19981;&#30456;&#20851;&#12290;</span>
+<span style="color: #8B8878;">&#20027;&#35201;&#29992;&#26469;&#34920;&#31034;&#19982;&#29992;&#25143;&#31243;&#24207;&#30456;&#20851;&#30340;&#19968;&#33324;&#24615;&#29366;&#24577;&#12290;</span>
+<span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">enum</span> {
+	<span style="color: #FF8C00;">SS_FREE</span> = 0,                    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20026;&#20998;&#37197;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">SS_UNCONNECTED</span>,                 <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26410;&#36830;&#25509;&#21040;&#20219;&#20309;&#22871;&#25509;&#23383;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF8C00;">SS_CONNECTING</span>,                  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22788;&#20110;&#36830;&#25509;&#36807;&#31243;&#20013;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF8C00;">SS_CONNECTED</span>,                   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24050;&#32463;&#36830;&#25509;&#21040;&#19968;&#20010;&#22871;&#25509;&#23383;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">SS_DISCONNECTING</span>                        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22788;&#20110;&#26029;&#24320;&#36807;&#31243;</span><span style="color: #8B8878;"> */</span>
+} <span style="color: #5FD7FF;">socket_state</span>;
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36830;&#25509;&#29366;&#24577;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">socket_state</span>            <span style="color: #FF8C00;">state</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">flags</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21327;&#35758;&#30340;socket&#25805;&#20316;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span>  *<span style="color: #FF8C00;">ops</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24322;&#27493;&#21796;&#37266;&#21015;&#34920;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fasync_struct</span>    *<span style="color: #FF8C00;">fasync_list</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#20266;&#25991;&#20214;&#30340;file&#23454;&#20363;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span>             *<span style="color: #FF8C00;">file</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#32593;&#32476;&#21327;&#35758;&#30340; sock &#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span>             *<span style="color: #FF8C00;">sk</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#31561;&#24453;&#38431;&#21015;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">wait_queue_head_t</span>       <span style="color: #FF8C00;">wait</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21327;&#35758;&#31867;&#22411;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">short</span>                   <span style="color: #FF8C00;">type</span>;
+};
+</pre>
+</div>
+
+<p>
+<b>struct proto_ops</b>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span> {
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">family</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">release</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">bind</span>)      (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">myaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sockaddr_len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">connect</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">vaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sockaddr_len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">socketpair</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock1</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock2</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">accept</span>)    (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">newsock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">getname</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">addr</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">sockaddr_len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">peer</span>);
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">poll</span>)         (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">poll_table_struct</span> *<span style="color: #FF8C00;">wait</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">ioctl</span>)     (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">compat_ioctl</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>,<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">listen</span>)    (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">shutdown</span>)  (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *optlen);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *optlen);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">sendmsg</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">m</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">total_len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">recvmsg</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">m</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">total_len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">mmap</span>)      (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">vm_area_struct</span> * <span style="color: #FF8C00;">vma</span>);
+	<span style="color: #5FD7FF;">ssize_t</span> (*<span style="color: #87D700;">sendpage</span>)  (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+};
+</pre>
+</div>
+
+<p>
+struct proto_ops中的许多函数名和C标准库的函数同名，C库函数会通过socketcall系统调用来调用到上述的函数指针。
+</p>
+
+
+<p>
+<b>struct sock</b>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock_common</span> {
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">skc_family</span>;
+	<span style="color: #FF1493;">volatile</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>  <span style="color: #FF8C00;">skc_state</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">skc_reuse</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">skc_bound_dev_if</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">skc_node</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">skc_bind_node</span>;
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">skc_refcnt</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">skc_hash</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span>            *<span style="color: #FF8C00;">skc_prot</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span>              *<span style="color: #FF8C00;">skc_net</span>;
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock_common</span>      <span style="color: #FF8C00;">__sk_common</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">sk_receive_queue</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">sk_write_queue</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>       <span style="color: #FF8C00;">sk_timer</span>;
+
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">sk_state_change</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">sk_data_ready</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">bytes</span>);
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">sk_write_space</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">sk_error_report</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">sk_backlog_rcv</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #5FD7FF;">void</span>        (*<span style="color: #87D700;">sk_destruct</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+
+};
+</pre>
+</div>
+
+<p>
+系统的各个 sock 实例被组织到一个协议相关的散列表中。 <b>skc_node</b> 用作散列表的表元，而 <b>skc_hash</b> 表示散列值。
+</p>
+
+<p>
+在发送和接收数据时，需要将数据放置在包含套接字缓冲区的等待队列上（ <b>sk_receive_queue</b> 和 <b>sk_write_queue</b> ）。
+</p>
+
+<p>
+sock 结构中关联了一组回调函数函数，内核通过调用这些调函数，引起用户程序对特定事件的关注或进行状态改变。例如，在数据到达并且需要交给用户进程处理时，将调用 sk_data_ready 指向的函数，通常情况下指向 sock_def_readable 函数。
+</p>
+
+<p>
+<b>struct proto</b>
+</p>
+
+<p>
+socket 结构的 ops 成员类型为 struct proto_ops ，而 sock 的 prot （sock_common.skc_prot）成员类型为 struct proto ，注意不要混淆。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> {
+	<span style="color: #5FD7FF;">void</span>        (*<span style="color: #87D700;">close</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeout</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">connect</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">disconnect</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *(*<span style="color: #87D700;">accept</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">err</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">ioctl</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">init</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">destroy</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">shutdown</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *option);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *option);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">sendmsg</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">recvmsg</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">noblock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">addr_len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">sendpage</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">bind</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">backlog_rcv</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Keeping track of sk's, looking them up, and port selection methods.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">hash</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">unhash</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">get_port</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">snum</span>);
+};
+</pre>
+</div>
+
+<p>
+struct proto结构中的操作用于（内核端）套接字层和传输层之间的通信。而 socket 结构的 ops 成员（struct proto_ops）所包含的各个函数指针则用于与系统调用通信，它们构成了用户端和内核端套接字之间的关联。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6046b09" class="outline-3">
+<h3 id="org6046b09"><span class="section-number-3">5.2</span> 套接字和文件</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+在连接建立后，用户空间进程使用普通的文件操作来访问套接字。每个套接字都分配了一个VFS inode 类型的inode，inode又关联到另一个与普通文件相关的结构。用于操作文件的函数保存在一个单独的指针表中：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> {
+	...
+	<span style="color: #FF1493;">struct</span> file_operations *i_fop; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27492;&#21069;&#20026;-&gt;i_op-&gt;default_file_ops</span><span style="color: #8B8878;"> */</span>
+	...
+};
+</pre>
+</div>
+
+<p>
+对套接字文件描述符的文件操作，使用 socket_file_ops 实例（struct file_operations结构）：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">socket_file_ops</span> = {
+	.owner =        THIS_MODULE,
+	.llseek =       no_llseek,
+	.aio_read =     sock_aio_read,
+	.aio_write =    sock_aio_write,
+	.poll =         sock_poll,
+	.unlocked_ioctl = sock_ioctl,
+	.compat_ioctl = compat_sock_ioctl,
+	.mmap =         sock_mmap,
+	.open =         sock_no_open,   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">special open code to disallow open via /proc</span><span style="color: #8B8878;"> */</span>
+	.release =      sock_close,
+	.fasync =       sock_fasync,
+	.sendpage =     sock_sendpage,
+	.splice_write = generic_splice_sendpage,
+};
+</pre>
+</div>
+
+<p>
+前缀为 sock_ 的函数都是简单的包装器例程，它们会调用 socket 中的ops指向的例程，例如 sock_mmap ：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sock_mmap</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">vm_area_struct</span> *<span style="color: #FF8C00;">vma</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span> = file-&gt;private_data;
+	<span style="color: #FF1493;">return</span> sock-&gt;ops-&gt;mmap(file, sock, vma);
+}
+</pre>
+</div>
+
+
+<p>
+inode 和套接字的关联，是通过struct socket_alloc 结构:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket_alloc</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> <span style="color: #FF8C00;">socket</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> <span style="color: #FF8C00;">vfs_inode</span>;
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #87D700;">SOCKET_I</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>)
+{
+	<span style="color: #FF1493;">return</span> &amp;container_of(inode, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket_alloc</span>, vfs_inode)-&gt;socket;
+}
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #87D700;">SOCK_INODE</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">socket</span>)
+{
+	<span style="color: #FF1493;">return</span> &amp;container_of(socket, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket_alloc</span>, socket)-&gt;vfs_inode;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9209146" class="outline-3">
+<h3 id="org9209146"><span class="section-number-3">5.3</span> socketcall系统调用</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+除了文件功能中的读写操作外，套接字还需要执行其他任务，这些任务并不能融入到文件方案中。例如：创建套接字、 bind 、 listen 等。
+</p>
+
+<p>
+Linux提供了 socketcall 系统调用，它实现在 sys_socketcall 中，以实现套接字的特殊任务。
+</p>
+
+<p>
+17个套接字操作只对应到一个系统调用，这比较引人注目。由于所要处理的任务不同，参数列表可能差别很大。该系统调用的第一个参数是一个数值常数，选择所要的系统调用。例如，可能的值包括 SYS_SOCKET 、 SYS_BIND 、 SYS_ACCEPT 和 SYS_RECV 。标准库的例程名称与这些常数基本上是一一对应的，但在内部都重定向为使用 socketcall 和对应的常数。只有一个系统调用，是由历史原因造成的。
+</p>
+
+<p>
+sys_socketcall 只充当一个分派器，该函数会调用其他函数并传递参数：
+</p>
+<div class="org-src-container">
+<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_socketcall</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">call</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">args</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">a</span>[6];
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">a0</span>, <span style="color: #FF8C00;">a1</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	<span style="color: #FF1493;">if</span> (call &lt; 1 || call &gt; SYS_RECVMSG)
+		<span style="color: #FF1493;">return</span> -EINVAL;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">copy_from_user should be SMP safe.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (copy_from_user(a, args, nargs[call]))
+		<span style="color: #FF1493;">return</span> -EFAULT;
+
+	a0 = a[0];
+	a1 = a[1];
+	<span style="color: #FF1493;">switch</span> (call) {
+	<span style="color: #FF1493;">case</span> SYS_SOCKET:
+		err = sys_socket(a0, a1, a[2]);
+	<span style="color: #FF1493;">case</span> SYS_BIND:
+		err = sys_bind(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+	<span style="color: #FF1493;">case</span> SYS_CONNECT:
+		err = sys_connect(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+	<span style="color: #FF1493;">case</span> SYS_LISTEN:
+		err = sys_listen(a0, a1);
+	<span style="color: #FF1493;">case</span> SYS_ACCEPT:
+		err = sys_accept(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1, (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[2]);
+	<span style="color: #FF1493;">case</span> SYS_GETSOCKNAME:
+		err = sys_getsockname(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1, (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[2]);
+	<span style="color: #FF1493;">case</span> SYS_GETPEERNAME:
+		err = sys_getpeername(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1, (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[2]);
+	<span style="color: #FF1493;">case</span> SYS_SOCKETPAIR:
+		err = sys_socketpair(a0, a1, a[2], (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[3]);
+	<span style="color: #FF1493;">case</span> SYS_SEND:
+		err = sys_send(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3]);
+	<span style="color: #FF1493;">case</span> SYS_SENDTO:
+		err = sys_sendto(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3], (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a[4], a[5]);
+	<span style="color: #FF1493;">case</span> SYS_RECV:
+		err = sys_recv(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3]);
+	<span style="color: #FF1493;">case</span> SYS_RECVFROM:
+		err = sys_recvfrom(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3], (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a[4], (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[5]);
+	<span style="color: #FF1493;">case</span> SYS_SHUTDOWN:
+		err = sys_shutdown(a0, a1);
+	<span style="color: #FF1493;">case</span> SYS_SETSOCKOPT:
+		err = sys_setsockopt(a0, a1, a[2], (<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *)a[3], a[4]);
+	<span style="color: #FF1493;">case</span> SYS_GETSOCKOPT:
+		err = sys_getsockopt(a0, a1, a[2], (<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *)a[3], (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[4]);
+	<span style="color: #FF1493;">case</span> SYS_SENDMSG:
+		err = sys_sendmsg(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+	<span style="color: #FF1493;">case</span> SYS_RECVMSG:
+		err = sys_recvmsg(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+	}
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">函数</th>
+<th scope="col" class="org-left">语义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">sys_socket</td>
+<td class="org-left">创建一个新的套接字</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_bind</td>
+<td class="org-left">将一个地址绑定到一个套接字</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_connect</td>
+<td class="org-left">将一个套接字连接到一个服务器</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_listen</td>
+<td class="org-left">打开被动连接，在套接字上监听</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_accept</td>
+<td class="org-left">接受一个进入的连接请求</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_getsockname</td>
+<td class="org-left">返回套接字的地址</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_getpeername</td>
+<td class="org-left">返回参与通信的另一方的地址</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_socketpair</td>
+<td class="org-left">创建一对套接字，可用于双向通信（两个套接字都在同一系统上）</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_send</td>
+<td class="org-left">通过现存连接发送数据</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_sendto</td>
+<td class="org-left">向明确指定的目标地址发送数据（用于UDP连接）</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_recv</td>
+<td class="org-left">接收数据</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_recvfrom</td>
+<td class="org-left">从一个数据报套接字接收数据，同时返回源地址</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_shutdown</td>
+<td class="org-left">关闭连接</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_setsockopt</td>
+<td class="org-left">返回套接字设置的有关信息</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_getsockopt</td>
+<td class="org-left">安置套接字选项</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_sendmsg</td>
+<td class="org-left">以BSD风格发送消息</td>
+</tr>
+
+<tr>
+<td class="org-left">sys_recvmsg</td>
+<td class="org-left">以BSD风格接收信息</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgd8a9d84" class="outline-3">
+<h3 id="orgd8a9d84"><span class="section-number-3">5.4</span> 创建套接字</h3>
+<div class="outline-text-3" id="text-5-4">
+<div class="org-src-container">
+<pre class="src src-fundamental">sys_socket
+    |
+    +--&gt; sock_create
+    |        |
+    |        +-&gt; __sock_create
+    |                |
+    |                +--&gt; sock_alloc
+    |                |
+    |                +--&gt; net_families[family]-&gt;create
+    |
+    +--&gt; sock_map_fd
+</pre>
+</div>
+
+<p>
+sock_alloc 为struct socket实例和inode实例分配空间（这两个对象存储在同一结构 struct socket_alloc）。
+</p>
+
+<p>
+内核的所有传输协议都保存在 net/socket.c 中定义的数组 static struct net_proto_family* net_families[NPROTO] 中（ sock_register 用于向该数据库增加新数据项）。 各个数组项都提供了特定于协议的初始化函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_proto_family</span> {
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">family</span>;
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">create</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span> *<span style="color: #FF8C00;">net</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+};
+</pre>
+</div>
+
+<p>
+分配套接字内存后，调用函数 create 。 inet_create 用于因特网连接（TCP和UDP都使用该函数）。它创建一个内核内部的 sock 实例，尽可能初始化它，并将其插入到内核的数据结构。
+</p>
+
+<p>
+map_sock_fd 为套接字创建一个伪文件（文件操作通过 socket_ops 指定）。还要分配一个文件描述符，将其作为系统调用的结果返回。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgad11219" class="outline-3">
+<h3 id="orgad11219"><span class="section-number-3">5.5</span> 接受数据</h3>
+<div class="outline-text-3" id="text-5-5">
+<div class="org-src-container">
+<pre class="src src-c">sys_recvfrom
+	fget_light
+	sock_from_file
+	<span style="color: #5FD7FF;">sock_recvmsg</span>
+		<span style="color: #FF8C00;">sock</span>-&gt;ops-&gt;recvmsg
+	move_addr_to_user
+</pre>
+</div>
+
+<p>
+fget_ligth 根据 task_struct 的描述符表，查找对应的 file 实例。
+</p>
+
+<p>
+sock_from_file确定关联的inode，并通过 SOCKET_I 找到相关的套接字。
+</p>
+
+<p>
+sock-&gt;ops-&gt;recvmsg 中保存特定于协议的接收例程。例如，TCP使用 tcp_recvmsg 。UDP使用 udp_recvmsg 。
+</p>
+
+<p>
+udp_recvmsg的实现比较简单：
+</p>
+<ul class="org-ul">
+<li>如果接收队列（通过 sock 结构的 receive_queue 成员实现）上至少有一个分组，则移除并返回该分组。</li>
+<li>如果接收队列是空的，进程使用wait_for_packet 使自身睡眠，直至数据到达。</li>
+</ul>
+
+<p>
+<i><b>在新数据到达时总是调用 sock 结构的 data_ready 函数，因而进程可以在此时被唤醒。</b></i>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org70ad926" class="outline-3">
+<h3 id="org70ad926"><span class="section-number-3">5.6</span> 发送数据</h3>
+<div class="outline-text-3" id="text-5-6">
+<div class="org-src-container">
+<pre class="src src-c">sys_sendto
+	fget_ligth
+	sock_from_file
+	<span style="color: #5FD7FF;">move_addr_to_kernel</span>
+	<span style="color: #FF8C00;">sock_sendmsg</span>   --&gt;   sock-&gt;ops-&gt;sendmsg
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org44efa99" class="outline-2">
+<h2 id="org44efa99"><span class="section-number-2">6</span> 内核内部的网络通信</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+netlink机制提供了一套框架，用于各个内核组件之间的通信，以及用户层和内核之间的通信。
+</p>
+</div>
+
+<div id="outline-container-org7c50a8a" class="outline-3">
+<h3 id="org7c50a8a"><span class="section-number-3">6.1</span> 通信函数</h3>
+<div class="outline-text-3" id="text-6-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_sendmsg</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kvec</span> *<span style="color: #FF8C00;">vec</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">num</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_recvmsg</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kvec</span> *<span style="color: #FF8C00;">vec</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">num</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_bind</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">addr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addrlen</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_listen</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">backlog</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_accept</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> **<span style="color: #FF8C00;">newsock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_connect</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">addr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addrlen</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_getsockname</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">addr</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">addrlen</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_getpeername</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">addr</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">addrlen</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_getsockopt</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">optval</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">optlen</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_setsockopt</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">optval</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_sendpage</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_sock_ioctl</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_sock_shutdown</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">sock_shutdown_cmd</span> <span style="color: #FF8C00;">how</span>);
+</pre>
+</div>
+
+<p>
+kernel_sendmsg 和 kernel_recvmsg 并不像用户层那样直接通过 struct msghdr 访问数据区，而是利用了 struct kvec 。内核提供了两种表示之间的转换，如 kernel_sendmsg 所示：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">kernel_sendmsg</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>,
+		   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kvec</span> *<span style="color: #FF8C00;">vec</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">num</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>)
+{
+	<span style="color: #5FD7FF;">mm_segment_t</span> <span style="color: #FF8C00;">oldfs</span> = get_fs();
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">result</span>;
+
+	set_fs(KERNEL_DS);
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * the following is safe, since for compiler definitions of kvec and</span>
+<span style="color: #8B8878;">         * iovec are identical, yielding the same in-core layout and alignment</span>
+<span style="color: #8B8878;">         */</span>
+	msg-&gt;msg_iov = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> *)vec;
+	msg-&gt;msg_iovlen = num;
+	result = sock_sendmsg(sock, msg, size);
+	set_fs(oldfs);
+	<span style="color: #FF1493;">return</span> result;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga458c94" class="outline-3">
+<h3 id="orga458c94"><span class="section-number-3">6.2</span> netlink机制</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+netlink是一种基于网络的机制，允许在内核内部以及内核与用户层之间进行通信。定义可以参考RFC 3549。它的思想是，基于BSD的网络套接字使用网络框架在内核和用户层之间进行通信。但netlink套接字大大扩展了可能的用途。该机制不仅仅用于网络通信。现在，该机制最重要的用户是通用对象模型，它使用netlink套接字将各种关于内核内部事务的状态信息传递到用户层。其中包括新设备的注册和移除、硬件层次上发生的特别的事件，等等。在此前的内核版本中，netlink曾经可以编译为模块，但现在只要内核支持网络，该机制就自动集成到内核中。
+</p>
+
+<p>
+内核中还有其他一些可选的方法能够实现类似的功能，比如procfs或sysfs中的文件。但与这些方法相比，netlink机制有一些很明显的优势：
+</p>
+<ul class="org-ul">
+<li>任何一方都不需要轮询。如果通过文件传递状态信息，那么用户层需要不断检查是否有新消息到达。</li>
+<li>系统调用和ioctl也能够从用户层向内核传递信息，但比简单的netlink连接更难于实现。另外，使用netlink不会与模块有任何冲突，系统调用则不然。</li>
+<li>内核可以直接向用户层发送信息，而无须用户层事先请求。虽然使用文件也可以做到，但系统调用和ioctl是不可能的。</li>
+<li>除了标准的套接字，用户空间应用程序不需要使用其他东西来与内核交互。</li>
+</ul>
+
+<p>
+netlink只支持数据报信息，但提供了双向通信。另外，netlink不仅支持单播消息，也可以进行多播。类似于任何其他基于套接字的机制，netlink的工作方式是异步的。
+</p>
+
+<p>
+netlink机制的文档：
+</p>
+<ul class="org-ul">
+<li>man手册页 netlink(3) 描述了内核中用于操作、访问、创建netlink数据报的宏。</li>
+<li>man手册页 netlink(7) 包含了有关netlink套接字的一般性信息，并给出了这里使用的数据结构的文档。</li>
+</ul>
+
+<p>
+<b>/proc/net/netlink</b> 包含了关于当前活动的netlink连接的一些信息。
+</p>
+
+
+<p>
+在用户空间，有两个库，简化了创建支持netlink套接字的应用程序的工作：
+</p>
+<ul class="org-ul">
+<li>libnetlink 与 iproute2 软件包捆绑在一起。在编写这个库时，就特别考虑到了路由套接字（routing socket）</li>
+<li>libnl 是一个独立的库，并没有对特定的使用情况进行优化。相反，它对各种类型的netlink连接都提供了支持，包括路由套接字。</li>
+</ul>
+</div>
+
+<div id="outline-container-orgdddebfd" class="outline-4">
+<h4 id="orgdddebfd"><span class="section-number-4">6.2.1</span> 数据结构</h4>
+<div class="outline-text-4" id="text-6-2-1">
+</div>
+<div id="outline-container-org78ffb17" class="outline-5">
+<h5 id="org78ffb17"><span class="section-number-5">6.2.1.1</span> 地址结构</h5>
+<div class="outline-text-5" id="text-6-2-1-1">
+<p>
+netlink套接字地址结构：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_nl</span>
+{
+	<span style="color: #5FD7FF;">sa_family_t</span>     <span style="color: #FF8C00;">nl_family</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">AF_NETLINK</span><span style="color: #8B8878;">   */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">nl_pad</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">zero</span><span style="color: #8B8878;">         */</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">nl_pid</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">port ID</span><span style="color: #8B8878;">      */</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">nl_groups</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">multicast groups mask</span><span style="color: #8B8878;"> */</span>
+};
+</pre>
+</div>
+<ul class="org-ul">
+<li>nl_family 用于表示不同的netlink族。
+<ul class="org-ul">
+<li>NETLINK_ROUTE 是netlink套接字最初的目的，即修改路由选择信息。</li>
+<li>NETLINK_INET_DIAG 用来监控IP套接字，更多细节请参见 net/ipv4/inet_diag.c 。</li>
+<li>NETLINK_XFRM 用于发送和接收有关IPSec （更一般地说，也可能是有关任何XFRM变换）的信息。</li>
+<li>NETLINK_KOBJECT_UEVENT 是内核通用对象模型向用户层发送信息所采用的协议（反过来，从用户层到内核是不能采用此类消息的）。该通道构成了热插拔机制的基础。</li>
+</ul></li>
+
+<li>nl_pid 为此类套接字提供了唯一标识符。对内核自身来说，该字段总是0，而用户空间应用程序通常使用其线程组ID。nl_pid并未强制规定使用进程ID。</li>
+<li>nl_groups 是一个位图，表示该套接字所属的多播地址。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org77a7a52" class="outline-5">
+<h5 id="org77a7a52"><span class="section-number-5">6.2.1.2</span> netlink协议族</h5>
+<div class="outline-text-5" id="text-6-2-1-2">
+<p>
+netlink_create用于向内核注册一个net_proto_family实例。该函数分配一个 struct sock 的实例，通过 socket-&gt;sk 关联到套接字，此外还分配了一个更大的结构，定义如下（已简化）：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">netlink_sock</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span>             <span style="color: #FF8C00;">sk</span>;     <span style="color: #8B8878;">//</span><span style="color: #8B8878;">sock&#32467;&#26500;&#30452;&#25509;&#23884;&#20837;&#20854;&#20013;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36830;&#25509;&#20004;&#31471;&#30340;&#31471;&#21475;ID&#20998;&#21035;&#20445;&#23384;&#22312; pid &#21644; dst_pid &#20013;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">pid</span>;    <span style="color: #8B8878;">//</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">dst_pid</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">dst_group</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">flags</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">subscriptions</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">ngroups</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           *<span style="color: #FF8C00;">groups</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">state</span>;
+	<span style="color: #5FD7FF;">wait_queue_head_t</span>       <span style="color: #FF8C00;">wait</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">netlink_callback</span> *<span style="color: #FF8C00;">cb</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">mutex</span>            *<span style="color: #FF8C00;">cb_mutex</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">mutex</span>            <span style="color: #FF8C00;">cb_def_mutex</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#25509;&#25910;&#25968;&#25454;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">netlink_rcv</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>           *<span style="color: #FF8C00;">module</span>;
+};
+</pre>
+</div>
+
+<p>
+给出一个netlink套接字的 struct sock 实例，与之相关联、特定于netlink的 netlink_socket 实例，可以使用辅助函数 <b>nlk_sk</b> 获得。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3fb44fa" class="outline-5">
+<h5 id="org3fb44fa"><span class="section-number-5">6.2.1.3</span> 消息格式</h5>
+<div class="outline-text-5" id="text-6-2-1-3">
+
+<div class="figure">
+<p><img src="image/net/netlink-msg.png" alt="netlink-msg.png" />
+</p>
+</div>
+
+<p>
+每个消息由两部分组成：首部和净荷。首部表示为 struct nlmsghdr ，而净荷可以任意的。 首部所需的内容由下列数据结构定义：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span>
+{
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">nlmsg_len</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25972;&#20010;&#28040;&#24687;&#30340;&#38271;&#24230;&#65292;&#21253;&#25324;&#39318;&#37096;&#21644;&#20219;&#20309;&#25152;&#38656;&#30340;&#22635;&#20805;&#23383;&#33410;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">nlmsg_type</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#28040;&#24687;&#31867;&#22411;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">nlmsg_flags</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38468;&#21152;&#26631;&#24535;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">nlmsg_seq</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#28040;&#24687;&#30340;&#24207;&#21015;&#21495;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">nlmsg_pid</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#21457;&#36865;&#32773;&#30340;&#21807;&#19968;&#31471;&#21475;</span><span style="color: #8B8878;"> */</span>
+};
+</pre>
+</div>
+
+<p>
+一个消息的长度不应该超过一页，这样对内存分配的压力较小。但如果使用的页大于8 KiB，那么消息长度不应该超过8 KiB，因为不应该强制用户层分配过大的缓冲区来接收netlink消息。内核定义了常数 NLMSG_GOODSIZE ，这是消息总长度的推荐值。 NLMSG_DEFAULT_SIZE 指定了净荷部分可用空间的长度。在分配用于netlink消息的套接字缓冲区时， NLMSG_GOODSIZE 是缓冲区长度的一个很好的选择。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org11b7daa" class="outline-5">
+<h5 id="org11b7daa"><span class="section-number-5">6.2.1.4</span> 跟踪netlink连接</h5>
+<div class="outline-text-5" id="text-6-2-1-4">
+<p>
+内核使用几个散列表，跟踪所有netlink连接的sock实例。散列表围绕全局数组 nl_table 实现，该数组包含了指向 struct netlink_table 实例的指针。
+</p>
+<ul class="org-ul">
+<li>nl_table 的每个数组元素都为每个协议族成员提供了一个独立的散列表。每个协议族成员都由 NETLINK_XXX 定义的一个常数来标识。</li>
+<li>散列链编号使用 nl_pid_hashfn 确定，是基于端口ID和一个与该散列链相关的（唯一的）随机数计算得出。</li>
+</ul>
+
+<p>
+netlink_insert 用于向散列表插入新的表项，而 netlink_lookup 用来查找 sock 实例：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">netlink_insert</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span> *<span style="color: #FF8C00;">net</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">pid</span>);
+<span style="color: #FF1493;">static</span> __inline__ <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #87D700;">netlink_lookup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span> *<span style="color: #FF8C00;">net</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">pid</span>);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org94f5455" class="outline-5">
+<h5 id="org94f5455"><span class="section-number-5">6.2.1.5</span> 特定于协议的操作</h5>
+<div class="outline-text-5" id="text-6-2-1-5">
+<p>
+netlink操作通过 netlink_ops 实例定义：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span> <span style="color: #FF8C00;">netlink_ops</span> = {
+	.family =       PF_NETLINK,
+	.owner =        THIS_MODULE,
+	.release =      netlink_release,
+	.bind =         netlink_bind,
+	.connect =      netlink_connect,
+	.socketpair =   sock_no_socketpair,
+	.accept =       sock_no_accept,
+	.getname =      netlink_getname,
+	.poll =         datagram_poll,
+	.ioctl =        sock_no_ioctl,
+	.listen =       sock_no_listen,
+	.shutdown =     sock_no_shutdown,
+	.setsockopt =   netlink_setsockopt,
+	.getsockopt =   netlink_getsockopt,
+	.sendmsg =      netlink_sendmsg,
+	.recvmsg =      netlink_recvmsg,
+	.mmap =         sock_no_mmap,
+	.sendpage =     sock_no_sendpage,
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgab47c4e" class="outline-4">
+<h4 id="orgab47c4e"><span class="section-number-4">6.2.2</span> 编程接口</h4>
+<div class="outline-text-4" id="text-6-2-2">
+<p>
+从内核打开netlink套接字使用 netlink_kernel_create 函数。
+</p>
+
+<p>
+用户态打开netlink套接字通过标准的网络编程接口触发 netlink_ops 的 bind 方法。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *
+<span style="color: #87D700;">netlink_kernel_create</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span> *<span style="color: #FF8C00;">net</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">unit</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">groups</span>,
+		      <span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">input</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>),
+		      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">mutex</span> *<span style="color: #FF8C00;">cb_mutex</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">module</span>)
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>net 表示网络命名空间</li>
+<li>unit 指定所属协议族成员</li>
+<li>input 是一个回调函数，在数据到达该套接字时将调用 input ，如果对 input 指定了 NULL 指针，那么套接字将只能从内核向用户层传输数据，反过来则不行。</li>
+</ul>
+
+<p>
+以下概述了 netlink_kernel_create 执行的任务：
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">netlink_kernel_create
+	sock_create_lite
+	__netlink_create
+	&#20445;&#23384;input&#20989;&#25968;
+	netlink_insert
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>sock_create_lite 分配 struct socket 结构的实例。</li>
+<li>__netlink_create 函数则分配 struct netlink_sock 结构的实例。</li>
+<li>如果指定了 input 函数，则保存在 netlink_sock-&gt;netlink_rcv 中。</li>
+<li>通过 netlink_insert 将新的 sock 实例插入到netlink的散列表中。</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-12-16 Thu 23:31</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

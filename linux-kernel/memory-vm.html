@@ -1,0 +1,1086 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-10-29 Fri 21:22 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>虚拟内存</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">虚拟内存</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgfd618d9">1. 物理寻址和虚拟寻址</a></li>
+<li><a href="#org16b55d2">2. 地址空间</a></li>
+<li><a href="#org006f899">3. 虚拟内存作为缓存的工具</a>
+<ul>
+<li><a href="#org42b11e7">3.1. DRAM缓存的组织结构</a></li>
+<li><a href="#org16c47c7">3.2. 页表</a></li>
+<li><a href="#org712bd3f">3.3. 页命中</a></li>
+<li><a href="#orgdff1346">3.4. 缺页</a></li>
+<li><a href="#orgad93b58">3.5. 分配页面</a></li>
+<li><a href="#org3536f92">3.6. 局部性</a></li>
+</ul>
+</li>
+<li><a href="#org738c43f">4. 虚拟内存作为内存管理的工具</a></li>
+<li><a href="#org1e9e55b">5. 虚拟内存作为内存保护的工具</a></li>
+<li><a href="#org62134d7">6. 地址翻译</a>
+<ul>
+<li><a href="#org4643e1d">6.1. 结合高速缓存和虚拟内存</a></li>
+<li><a href="#org5b04190">6.2. 利用TLB加速地址翻译</a></li>
+<li><a href="#org36bbc90">6.3. 多级页表</a></li>
+<li><a href="#org992767c">6.4. 地址翻译的示例</a></li>
+</ul>
+</li>
+<li><a href="#orgf2c7554">7. Intel Core i7/Linux 内存系统</a>
+<ul>
+<li><a href="#org6559fac">7.1. Core i7地址翻译</a></li>
+<li><a href="#orga42b7d2">7.2. linux虚拟内存系统</a>
+<ul>
+<li><a href="#org435c458">7.2.1. Linux 虚拟内存区域</a></li>
+<li><a href="#orgb676110">7.2.2. Linux缺页异常处理程序</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orga2f36cb">8. 内存映射</a></li>
+<li><a href="#orga53d4cc">9. 动态内存分配</a></li>
+<li><a href="#org3dfeda6">10. C程序中常见内存错误</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfd618d9" class="outline-2">
+<h2 id="orgfd618d9"><span class="section-number-2">1</span> 物理寻址和虚拟寻址</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+cpu使用物理地址的方式访问主存的方式称为物理寻址。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_pa.png" alt="vm_pa.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>物理寻址</p>
+</div>
+
+<p>
+cpu通过生成一个虚拟地址（VA）来访问主存，虚拟地址被送到内存之前先转化成物理地址。虚拟地址转换物理地址的任务称作地址翻译。由CPU芯片中的内存管理单元（MMU）来完成，利用存放在主存中的查询表来动态翻译虚拟地址，表的内容由操作系统管理。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_va.png" alt="vm_va.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>虚拟寻址</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org16b55d2" class="outline-2">
+<h2 id="org16b55d2"><span class="section-number-2">2</span> 地址空间</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+地址空间是一个非负整数地址的有序集合，如果地址空间中的整数是连续的，称之为线性地址空间。一个带有虚拟内存的系统中，cpu从一个 N=2<sup>n</sup> 个地址空间中生成虚拟地址，这个地址空间称为虚拟地址空间， 其大小由地址的位数（n）决定。现代系统通常支持32位或者64位的虚拟地址空间， 即2<sup>32</sup>或2<sup>64</sup>的地址空间。
+</p>
+
+<p>
+地址空间的概念清楚的区分了数据对象（字节）和它们的属性（地址）。 每个数据对象可以由多个独立的地址，每个地址选自不同的地址空间。 这就是虚拟地址空间的基本思想。 主存中的每个字节都有一个选自虚拟地址空间的虚拟地址和选自物理地址空间的物理地址。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org006f899" class="outline-2">
+<h2 id="org006f899"><span class="section-number-2">3</span> 虚拟内存作为缓存的工具</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+概念上来说，虚拟内存被组织为一个由存放在磁盘上的N个连续的字节大小的单元组成的数组。每个字节都以一个唯一的虚拟地址，作为到数组的索引。磁盘上的内存被缓存在主存中。磁盘上的数据被分割成块（block），作为和主存之间的传输单元。VM系统将虚拟内存分割为固定大小块的虚拟页来与之对应。虚拟页大小P=2<sup>p</sup>字节，物理内存也被分割为物理页（页帧），页大小也是P字节。 虚拟页的大小一般为4KB～2MB。
+</p>
+
+<p>
+任意时刻，虚拟页面的集合都分为三个不相交的子集：
+</p>
+<ul class="org-ul">
+<li>未分配：VM系统还没有分配（或创建）的页。不占用磁盘空间。</li>
+<li>缓存的：当前以缓存在物理内存中的已分配页。</li>
+<li>未缓存：未缓存在物理内存的已分配页。</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_v_page.png" alt="vm_v_page.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>VM使用主存作为缓存</p>
+</div>
+</div>
+
+<div id="outline-container-org42b11e7" class="outline-3">
+<h3 id="org42b11e7"><span class="section-number-3">3.1</span> DRAM缓存的组织结构</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+以下使用SRAM标识CPU和主存之间的L1、L2和L3高速缓存， DRAM表示虚拟内存系统的缓存，在主存中缓存虚拟页。
+</p>
+
+<p>
+由于DRAM缓存的不命中需要由磁盘来提供服务，开销很大， 所以DRAM缓存设计为全相连的，即任何虚拟页都可以放置在任何的物理页中， 由于大的不命中处罚，在不命中时的替换策略也很重要，其替换策略相比SRAM缓存来说，更加复杂和精密。由于对磁盘的访问时间很长，DRAM使用写回（write-back）而不是直写。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org16c47c7" class="outline-3">
+<h3 id="org16c47c7"><span class="section-number-3">3.2</span> 页表</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+虚拟内存系统需要通过某种方法判定一个虚拟页是否缓存在DRAM中并确定存放在那个物理页中，或者不命中时确定虚拟页所存放的磁盘位置，并从物理内存选择一个物理页来存放虚拟页。 这个功能由软硬将联合提供， 包括操作系统软件、MMU和存放在物理内存的页表，页表将虚拟页映射到物理页。每次地址翻译硬件将虚拟地址转换为物理地址时，都会读取页表。操作系统负责维护页表的内容以及在磁盘和DRAM之间来回传送页。
+</p>
+
+
+<p>
+页表就是一个页表项（page table entry）的数组。虚拟地址空间中的每个页在页表固定偏移量出都有一个PTE。
+假设每个PTE由一个有效位和一个n位地址字段组成。如果有效，则地址字段标识DRAM中物理页的起始位置，如果无效，则表示该页位分配或者指向虚拟页在磁盘的起始位置。
+下图展示了页表的 <b>基本组织结构</b> ：
+</p>
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_table.png" alt="vm_page_table.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>VP1、VP2、VP4和VP7被缓存在DRAM中。</li>
+<li>VP0、VP5未分配。</li>
+<li>VP3、VP6已分配，未被缓存。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org712bd3f" class="outline-3">
+<h3 id="org712bd3f"><span class="section-number-3">3.3</span> 页命中</h3>
+<div class="outline-text-3" id="text-3-3">
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_hit.png" alt="vm_page_hit.png" />
+</p>
+<p><span class="figure-number">Figure 5: </span>页命中</p>
+</div>
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_hit.png" alt="vm_page_hit.png" />
+</p>
+</div>
+
+<p>
+cpu读取VP2中虚拟内存中的一个字时，在页表通过虚拟地址定位到PTE2。由于该页表项有效，说明VP2已经缓存在主存中，通过PTE中的物理内存地址构造出要读取的字的物理地址。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdff1346" class="outline-3">
+<h3 id="orgdff1346"><span class="section-number-3">3.4</span> 缺页</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+虚拟内存中，DRAM缓存不命中称为却页（page fault）。
+</p>
+
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_fault.png" alt="vm_page_fault.png" />
+</p>
+<p><span class="figure-number">Figure 7: </span>缺页处理</p>
+</div>
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_fault.png" alt="vm_page_fault.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>cpu引用VP3中的一个字;</li>
+<li>地址翻译硬件从内存中读取PTE3，由于未被缓存，引发缺页异常;</li>
+<li>缺页异常调用系统的缺页处理程序，选择一个牺牲页（VP4），如果牺牲页被修改，则写回到磁盘;</li>
+<li>将磁盘的VP3复制到物理内存的PP3，更新PTE3。</li>
+<li>缺页处理程序返回后，重新执行导致缺页的指令，该指令将导致缺页的虚拟地址发送到地址翻译硬件。</li>
+<li>此时页命中，正常处理。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgad93b58" class="outline-3">
+<h3 id="orgad93b58"><span class="section-number-3">3.5</span> 分配页面</h3>
+<div class="outline-text-3" id="text-3-5">
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_alloc.png" alt="vm_page_alloc.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3536f92" class="outline-3">
+<h3 id="org3536f92"><span class="section-number-3">3.6</span> 局部性</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+在程序的整个运行过程中，其引用的页面总数可能超过了物理内存的大小，但由于局部性原则，在任意时刻，程序趋向与在一个较小的页面集合中工作，这个集合叫做工作集或者常驻集合。在开始的时候将工作集页面调度到内存中后，接下来对这个工作集的引用导致页面命中，不会产生额外的磁盘开销。
+</p>
+
+<p>
+如果程序有良好的时间局部性，虚拟内存就可以工作的很好。但是如果工作集超过了物理内存大小，就会产生抖动状态，这时页面不断的换入换出。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org738c43f" class="outline-2">
+<h2 id="org738c43f"><span class="section-number-2">4</span> 虚拟内存作为内存管理的工具</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+目前为止，都假设有一个单独的页表，将虚拟地址空间映射到物理地址空间。实际上，操作系统为进程提供了独立的页表，即独立的虚拟地址空间。其 <b>基本思想</b> 如下：
+</p>
+
+
+<div class="figure">
+<p><img src="./dot/memory/vm_process_vms.png" alt="vm_process_vms.png" />
+</p>
+<p><span class="figure-number">Figure 10: </span>进程独立的进程空间</p>
+</div>
+
+<div class="figure">
+<p><img src="./dot/memory/vm_process_vms.png" alt="vm_process_vms.png" />
+</p>
+</div>
+
+<p>
+<b>按需页面调度</b> 和 <b>独立的虚拟地址空间</b> 的结合，对系统中内存的使用和管理造成了深远的影响。 VM简化了链接和加载、代码和数据共享，以及应用程序的内存分配。
+</p>
+
+<dl class="org-dl">
+<dt>简化链接</dt><dd><p>
+独立的地址空间允许每个进程的内存映像使用相同的基本格式，无需关心代码和数据实际存放到物理内存的什么位置。
+</p>
+
+<p>
+例如在linux系统上的每个进程都使用类似的内存格式，对于64位地址空间，代码段总是从虚拟地址0x400000开始。数据段跟在代码段之后，中间有一段符合要求的对齐空白，栈在用户进程地址空间最高的位置，并向下生长。
+</p></dd>
+<dt>简化加载</dt><dd>虚拟内存使得很容易向内存中加载可执行文件和共享对象文件。要把目标文件中的.text和.data段加载到新创建的进程中，linux加载器位代码段和数据段分配虚拟页，并标记位无效（未缓存），将页表项指向目标文件中适当的位置。 加载器不会立即从磁盘向内存复制数据。每个页的初次引用都是由于当cpu读取指令引用，或者一条正在执行的指令引用一个内存而引用的，虚拟内存系统会按照需要自动的调入数据页。</dd>
+
+<dt>简化共享</dt><dd><p>
+独立地址空间为操作系统提供了一个管理用户进程和操作系统自身之间共享的相同机制。一般而言，进程都有自己的私有的代码、数据、堆栈等区域，进程之间彼此不共享。这种情况下，系统创建页表，并将相应的虚拟页映射到不连续的物理页面。
+</p>
+
+<p>
+进程之间也需要共享某些代码和数据。 例如，每个进程必须调用相同的操作系统内核代码，c程序的标准库。系统通过将不同进程中的时当的虚拟页面映射到相同的物理页面，从而使得进程共享这部分代码的副本，而无需在每个进程中都包含单独的内核和c标准库的副本。
+</p></dd>
+
+<dt>简化内存分配</dt><dd>虚拟内存为用户进程提供了一个简单的分配额外内存的机制。例如用户进程要分配堆空间（malloc调用），系统分配适合的连续虚拟内存页，并将其映射至任意位置的物理内存页，而无需连续的物理内存页，这要归功于页表的工作方式。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org1e9e55b" class="outline-2">
+<h2 id="org1e9e55b"><span class="section-number-2">5</span> 虚拟内存作为内存保护的工具</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+操作系统中，不应当允许用户进程修改它的只读代码段，也不允许其读取或者修改任何内核中的代码和数据，也不允许读取或者修改其他进程的私有内存， 而且也不允许修改和其他进程共享的虚拟页，除非所有的共享者都明确允许修改。
+</p>
+
+<p>
+独立的地址空间使得区分不同进程的私有内存变得容易。地址翻译机制通过扩展虚拟地址提供了更好的访问控制机制。当CPU生成一个地址时，地址翻译硬件都会读取一个PTE，通过在在PTE中添加额外的许可位来控制对虚拟页的访问。以下展示了 <b>大致逻辑</b> ：
+</p>
+
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_protect.png" alt="vm_page_protect.png" />
+</p>
+<p><span class="figure-number">Figure 12: </span>利用虚拟内存提供页面的内存保护</p>
+</div>
+
+<div class="figure">
+<p><img src="./dot/memory/vm_page_protect.png" alt="vm_page_protect.png" />
+</p>
+</div>
+
+<p>
+这个示例中，每个PTE中添加了三个许可标志位。SUP标识是否只有超级用户可以访问该页。内核中的进程可以访问任何页面，用户进程只能访问SUP为0的页面。 READ和WRITE分别读和写。上图中，如果进程i运行在用户态，对VP0只读，VP1可以读写，VP2不能访问。
+</p>
+
+<p>
+如果一条指令违反了许可条件，CPU触发一个一般保护故障，将控制权传递给内核的一场处理程序。linux shell中称为“段错误（segmentation fault）”
+</p>
+</div>
+</div>
+
+<div id="outline-container-org62134d7" class="outline-2">
+<h2 id="org62134d7"><span class="section-number-2">6</span> 地址翻译</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+本节讨论地址翻译的基础知识，目的是了解硬件在支持虚拟内存中的角色，其中省略了大量的细节。
+</p>
+
+<p>
+以下概括了后续讨论中的所有符号：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> 基本参数</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">符号</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">N=2<sup>n</sup></td>
+<td class="org-left">虚拟地址空间中的地址数量</td>
+</tr>
+
+<tr>
+<td class="org-left">M=2<sup>m</sup></td>
+<td class="org-left">物理地址空间的地址数量</td>
+</tr>
+
+<tr>
+<td class="org-left">P=2<sup>p</sup></td>
+<td class="org-left">页的大小（字节）</td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> 虚拟地址（VA）的组成部分</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">符号</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">VPO</td>
+<td class="org-left">虚拟页面偏移量（字节）</td>
+</tr>
+
+<tr>
+<td class="org-left">VPN</td>
+<td class="org-left">虚拟页号</td>
+</tr>
+
+<tr>
+<td class="org-left">TLBI</td>
+<td class="org-left">TLB索引</td>
+</tr>
+
+<tr>
+<td class="org-left">TLBT</td>
+<td class="org-left">TLB标记</td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> 物理地址（PA）的组成部分</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">符号</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">PPO</td>
+<td class="org-left">物理页面偏移量（字节）</td>
+</tr>
+
+<tr>
+<td class="org-left">PPN</td>
+<td class="org-left">物理页号</td>
+</tr>
+
+<tr>
+<td class="org-left">CO</td>
+<td class="org-left">缓冲区内的字节偏移量</td>
+</tr>
+
+<tr>
+<td class="org-left">CI</td>
+<td class="org-left">高速缓存索引</td>
+</tr>
+
+<tr>
+<td class="org-left">CT</td>
+<td class="org-left">高速缓存标记</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+下图展示了MMU如何利用页表实现虚拟地址到物理地址的映射：
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_pt_addr_trans.png" alt="vm_pt_addr_trans.png" />
+</p>
+<p><span class="figure-number">Figure 14: </span>使用页表进行地址翻译</p>
+</div>
+
+<p>
+cpu中的一个控制寄存器，页表基址寄存器（PTBR）指向当前页表。n位的虚拟地址包含两部分：p位的虚拟页面偏移（VPO）和n-p位的虚拟页号（VPN）。MMU利用VPN选择PTE，然后将页表中的物理页号（PPN）和虚拟页面偏移（VPO）组合得到相应的物理地址。
+</p>
+
+
+<p>
+下图分别展示了页面命中和缺页时的步骤：
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_page_hit_fault.png" alt="vm_page_hit_fault.png" />
+</p>
+<p><span class="figure-number">Figure 15: </span>页面命中和缺页的操作图（VA：虚拟地址 PA：物理地址 PTEA：页表项地址 PTE：页表项）</p>
+</div>
+
+<p>
+<b>页面命中：</b>
+</p>
+<ol class="org-ol">
+<li>cpu生成虚拟地址，送给MMU。</li>
+<li>MMU生成PTE地址，读取高速缓存/主存。</li>
+<li>高速缓存/主存向MMU返回PTE。</li>
+<li>MMU构造物理地址并传送给高速缓存/主存。</li>
+<li>高速缓存/主存返回所请求的数据给CPU。</li>
+</ol>
+
+<p>
+<b>缺页：</b>
+</p>
+<ol class="org-ol">
+<li>cpu生成虚拟地址，送给MMU。</li>
+<li>MMU生成PTE地址，读取高速缓存/主存。</li>
+<li>高速缓存/主存向MMU返回PTE。</li>
+<li>PTE中有效位为0，MMU触发一次异常，并将cpu控制权交给操作系统内核的缺页处理程序。</li>
+<li>缺页处理程序确定物理内存中的牺牲页，如果牺牲页被修改，则写回到磁盘。</li>
+<li>缺页处理程序调入新的页面，并更新内存中的PTE。</li>
+<li>缺页处理程序返回到原先的进程，再次执行导致缺页的指令。cpu重新将缺页的地址发送给MMU。由于此时已经缓存，会继续上述的页面命中的逻辑。</li>
+</ol>
+</div>
+
+
+<div id="outline-container-org4643e1d" class="outline-3">
+<h3 id="org4643e1d"><span class="section-number-3">6.1</span> 结合高速缓存和虚拟内存</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+大部分系统的高速缓存采用物理寻址的方式，这样多个进程同时在高速缓存中存放存储块或者共享来自相同虚拟页面的块就变得很容易，并且高速缓存无需处理保护问题，地址翻译过程中会进行权限检查。
+</p>
+
+<p>
+以下是物理寻址的高速缓存和虚拟地址结合的场景。地址翻译发生在高速缓存查找之前。
+注意：页表项也是可以缓存的。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_vm_cache.png" alt="vm_vm_cache.png" />
+</p>
+<p><span class="figure-number">Figure 16: </span>VM和物理寻址的高速缓存结合（VA：虚拟地址 PA：物理地址 PTEA：页表项地址 PTE：页表项）</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5b04190" class="outline-3">
+<h3 id="org5b04190"><span class="section-number-3">6.2</span> 利用TLB加速地址翻译</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+每次cpu产生一个虚拟地址，MMU就需要查阅一个PTE，以便将虚拟地址翻译为物理地址，为了消除这个开销，很多系统在其MMU中包含一个存放PTE的缓存，称为 <b>翻译后备缓冲器</b> (Translation Lookaside Buffer, TLB)。
+</p>
+
+<p>
+TLB是一个小的、虚拟寻址的缓存，其每行保存这一个由单个PTE组成的块。 TLB通常由较高的相连度。
+</p>
+
+<p>
+如下图所示，用于组选择和行匹配的索引和标记字段是从虚拟地址的虚拟页号（VPN）中提取的， 如果TLB有 T=2<sup>t</sup>个组，那么TLB索引（TLBI）就是VPN的t个最低位组成，TLB标记位由VPN的剩余位组成。
+</p>
+
+
+<div class="figure">
+<p><img src="dot/memory/vm_tlb_trans.png" alt="vm_tlb_trans.png" />
+</p>
+</div>
+
+<p>
+下图展示了TLB命中和不命中的步骤。注意：所有的地址翻译工作都在MMU中进行，速度很快。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_tlb_hit_mis.png" alt="vm_tlb_hit_mis.png" />
+</p>
+<p><span class="figure-number">Figure 18: </span>TLB命中和不命中的操作图</p>
+</div>
+
+<p>
+<b>TLB命中</b> :
+</p>
+<ol class="org-ol">
+<li>CPU产生一个虚拟地址。</li>
+<li>MMU从TLB中取出对应的PTE。</li>
+<li>同上。</li>
+<li>MMU将虚拟地址翻译为物理地址，并发送至高速缓存/主存。</li>
+<li>高速缓存/主存将所请求的数据返回给CPU。</li>
+</ol>
+
+<p>
+当TLB不命中时，需要从L1高速缓存中取出相应的PTE，并存储到TLB中。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org36bbc90" class="outline-3">
+<h3 id="org36bbc90"><span class="section-number-3">6.3</span> 多级页表</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+上述讨论都假设系统使用一个单独的页表， 考虑以下32位的地址空间、4KB的页面和4字节的PTE，即使只引用虚拟地址空间的一小部分，也总是需要4MB的页表驻留在内存中，64位地址空间更加复杂。
+</p>
+
+<p>
+为解决上述的问题，系统中一般使用多级页表。
+</p>
+
+<p>
+假设32位的地址空间被分为4K的页，每个页表项为4字节，还假设此刻虚拟地址空间中，前2K个页面分配给了代码和数据，接下来的6K页面未分配，紧接着的1023个页也未分配，紧接着的1个页面分配给了用户栈。下图展示了这种情况下的结构：
+</p>
+
+
+<div class="figure">
+<p><img src="./dot/memory/vm_2level_page.png" alt="vm_2level_page.png" />
+</p>
+</div>
+
+<p>
+一级页表中的每个PTE负责映射虚拟地址空间中的一个4MB的片（chunk）,这里的每个片都是由1024个连续的页面组成。比如PTE0映射第一片，PTE1映射接下来的一片，32位的地址可以寻址4GB地址空间, 1024个PTE足够覆盖整个空间了. 如果片i中的每个页面都未分配,那么一级页表中的PTEi就为空, 如果片i中至少一个页被分配,那么PTEi就指向一个二级页表的基址。二级页表中的每个PTE都负责映射一个4KB的虚拟内存页。
+</p>
+
+<p>
+这种方法从两个方面减少了内存要求：
+</p>
+<ol class="org-ol">
+<li>如果一级页表的PTE是空的，那么相应的二级页表就不会存在。</li>
+<li>只有一级页表需要在主存中，二级页表可以在需要的时候再创建、页面调入和调出，只要常用的二级页表会在主存中。</li>
+</ol>
+
+<p>
+对于k级页表的地址翻译：
+  虚拟地址被划分为k个VPN和一个VPO
+  每个VPN i都对应第i级页表的索引， 1 &lt;= i &lt;= k。
+  第j级页表的PTE都指向j+1级页表的基址， 1 &lt;= j &lt;= k-1。
+  第k集页表的每个PTE包含某个物理页面的PPN或者磁盘块的地址。
+  为了构造物理地址，在确定PPN之前，需要访问k个PTE。
+</p>
+
+<p>
+访问k个PTE看上去很昂贵，但是由于TLB缓存了PTE，实际上多级页表不会比单级页表慢很多。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org992767c" class="outline-3">
+<h3 id="org992767c"><span class="section-number-3">6.4</span> 地址翻译的示例</h3>
+<div class="outline-text-3" id="text-6-4">
+<p>
+假设：
+</p>
+<ul class="org-ul">
+<li>内存按字节寻址</li>
+<li>内存访问是针对1字节（非4字节）</li>
+<li>虚拟地址14位长 （n=14）</li>
+<li>物理地址12位长 （m=12）</li>
+<li>页面大小64字节 （P=64）</li>
+<li>TLB四路组相连，16个条目</li>
+<li>L1 d-cache物理寻址，直接映射，行大小4字节，共有16个组</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="./dot/memory/vm_exam_va_pa.png" alt="vm_exam_va_pa.png" />
+</p>
+</div>
+
+<p>
+如上图所示， 由于页面大小为64=2<sup>6</sup>, 则物理地址和虚拟地址的低六位分别用作PPO和VPO。虚拟地址高8位为VPN，物理地址高6位为PPN。
+</p>
+
+
+<p>
+下图展示了一个小内存系统的快照，TLB、部分页表、L1高速缓存。
+</p>
+
+
+<div class="figure">
+<p><img src="./dot/memory/vm_exam_mm_snap.png" alt="vm_exam_mm_snap.png" />
+</p>
+</div>
+
+<p>
+在这种假定情况下，当cpu执行一条读取地址0x03d4处的指令会执行以下过程：
+</p>
+
+<p>
+注意：我们假设cpu读取1字节的字，而非4字节。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_exam_va.png" alt="vm_exam_va.png" />
+</p>
+</div>
+
+<p>
+首先MMU从地址中抽取出VPN（0x0f），并检查TLB看是否有PTE 0x0f的副本。 TLB从VPN中分别抽取出TLB索引（0x03）和TLB标记（0x3）， 组3中的第二个条目匹配且有效，所以TLB命中，将缓存的PPN（0x0D）返回给MMU。 如果TLB不命中，则MMU需要从主存中读取PTE。
+</p>
+
+<p>
+现在，我们得到了PTE的PPN（0x0D）以及虚拟地址的VPO（0x14），这就组成了物理地址0x354。
+</p>
+
+<p>
+接着MMU将物理地址发送给高速缓存， 高速缓存从地址中抽取出缓存偏移CO（0x0）和缓存索引CI（0x5）以及缓存标记CT（0x0D）。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_exam_pa.png" alt="vm_exam_pa.png" />
+</p>
+</div>
+
+<p>
+因为组0x5中的标记和CT（0x0D）相匹配，缓存命中，从偏移量CO（0x0 即块0）处读取数据字节（0x36），并将其返回给MMU，MMU在将其返回给CPU。
+</p>
+
+<p>
+翻译过程中也可能是其他情况，例如TLB不命中，MMU从页表的PTE中读取PPN，如果PTE无效，将产生缺页，内核需要调入页面，而后重新执行该指令。另一种情况是PTE是有效的，但是高速缓存不命中。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf2c7554" class="outline-2">
+<h2 id="orgf2c7554"><span class="section-number-2">7</span> Intel Core i7/Linux 内存系统</h2>
+<div class="outline-text-2" id="text-7">
+
+<div class="figure">
+<p><img src="./image/memory/vm_corei7_ms.png" alt="vm_corei7_ms.png" />
+</p>
+</div>
+
+<p>
+上图是Core i7内存系统的重要部分。处理器封装包括四个核、一个大的被所有核共享的L3高速缓存，以及一个DDR3内存控制器。每个核包含各异层次结构的TLB、一个层次结构的数据和指令高速缓存，以及彝族快速的点到点链路，这种链路基于QuickPath技术，是为了让一个核与其他核和外部I/O桥直接通信。TLB是虚拟寻址的，四路组相连。L1、L2和L3高速缓存是物理寻址的，块大小为64字节。L1和L2是8路组相连，L3是16路组相连。页大小可以在启动时被配置为4KB或4Mb。Linux使用4KB的页。
+</p>
+</div>
+
+<div id="outline-container-org6559fac" class="outline-3">
+<h3 id="org6559fac"><span class="section-number-3">7.1</span> Core i7地址翻译</h3>
+<div class="outline-text-3" id="text-7-1">
+
+<div class="figure">
+<p><img src="./image/memory/vm_corei7_trans.png" alt="vm_corei7_trans.png" />
+</p>
+</div>
+
+<p>
+上图总结了完整的Core i7地址翻译过程（从CPU产生虚拟地址开始一直到来自内存的数据字到达CPU）。Core i7采用四级页表层次结构。每个进程有自己私有的页表层次结构。当Linux进程在运行时，虽然Core i7体系结构允许页表换入换出，但是已分配页相关联的页表都是驻留在内存中的。CR3控制寄存器指向第一级页表的起始位置。CR3的值是每个进程上下文的一部分，每次上下文切换时，CR3的值都会被恢复。
+</p>
+
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_pt123_format.png" alt="vm_pt123_format.png" />
+</p>
+</div>
+
+<p>
+上图给出了第一级、第二级和第三级页表条目的格式。当P=1时（linux中总是如此），地址字段包含一个40位物理页号（PPN），它指向适当的页表起始处。注意，这要求物理页表4KB对齐。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_pt4_format.png" alt="vm_pt4_format.png" />
+</p>
+</div>
+
+<p>
+上图给出了第四级页表条目的格式。当P=1时，地址字段包括了一个40位的物理页号（PPN），它指向物理内存中的某一页的基地址。这要求物理页4KB对齐。
+</p>
+
+
+<p>
+PTE有三个权限位，控制对页的访问。R/W位确定页的读写权限。U/S位确定是否能在用户模式中访问该页，从而保护操作系统内核中的代码和数据不被用户程序访问。XD（禁止执行）位是在64位系统中引入，可以用来禁止从某些内存页读取指令，通过限制只能执行只读代码段，使得操作系统内核降低缓冲区溢出攻击的风险。
+</p>
+
+<p>
+当MMU对虚拟地址翻译时，还会更新两个内核缺页处理程序会使用的位，每次访问一个页时，MMU会设置A位（引用位），内核使用这个位实现页面置换算法。每次对一个页写后，MMU会设置D位，称为修改位或者脏位， 这个位高速内核在复制替换页之前是否必须写回牺牲页。内核可以通过调用特殊指令来清除引用位和修改位。
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_corei7_pt4_trans.png" alt="vm_corei7_pt4_trans.png" />
+</p>
+</div>
+
+<p>
+上图给出了Core i7的MMU使用四级页表将虚拟地址翻译为物理地址的过程，36位的VPN被划分为4个9位的片，每个片被用作到一个页表的偏移量。CR3保存了一级页表的物理地址，VPN1提供了一级页表中的PTE的偏移量，这个PTE包含了二级页表的基地址。VPN2提供了二级页表中的PTE的偏移量，以此类推。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga42b7d2" class="outline-3">
+<h3 id="orga42b7d2"><span class="section-number-3">7.2</span> linux虚拟内存系统</h3>
+<div class="outline-text-3" id="text-7-2">
+<p>
+linux为每个进程维护了一个单独的虚拟地址空间，如下图所示
+</p>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_linux_vm.png" alt="vm_linux_vm.png" />
+</p>
+</div>
+
+<p>
+内核虚拟内存包含内核中的代码和数据结构。内核虚拟内存的某些内存区域映射到所有进程共享的物理页面。例如，每个进程共享内核的代码和全局数据结构。Linux也将一组连续的虚拟页面（大小等于系统中的DRAM的总量）映射到相应的一组连续的物理页面。这为内核提供了一种便利的方法来访问物理内存中任何特定的位置，例如当内核需要访问页表或在某些设备上执行内存映射的I/O操作，而这些设备被映射到特定的物理内存位置。
+</p>
+</div>
+
+<div id="outline-container-org435c458" class="outline-4">
+<h4 id="org435c458"><span class="section-number-4">7.2.1</span> Linux 虚拟内存区域</h4>
+<div class="outline-text-4" id="text-7-2-1">
+<p>
+Linux将虚拟内存组织为一些区域（段）的集合。一个区域就是已经存在的（被分配的）虚拟内存的连续片，这些页以某种方式相关联。 例如，代码段、数据段、堆、共享库段以及用户栈都是不同的区域。每个存在的虚拟页面都必定保存在某个区域中，不属于区域内部的虚拟页不存在，且不能被进程引用。 区域的概念允许虚拟地址空间有间隙。内核无需记录不存在的虚拟页。
+</p>
+
+<p>
+以下是一个进程中虚拟内存区域的内核数据结构。内核为系统中的每个进程维护了一个单独的任务结构。任务结构中的一个条目指向mm_struct，他描述了虚拟内存的当前状态。其中pgd指向一级页表（页全局目录）的基址，而mmap指向一个vm_area_structs结构的链表，其中每个vm_area_structs都描述了当前虚拟地址空间的一个区域。内核切换到该进程时就将pgd存放在CR3控制寄存器中。
+</p>
+
+<p>
+vm_area_struct 成员描述：
+</p>
+<ul class="org-ul">
+<li>vm_start: 区域的起始位置</li>
+<li>vm_end: 区域的结束位置</li>
+<li>vm_prot: 区域内的页的读写权限</li>
+<li>vm_flags: 区域内页面的属性（共享，私有&#x2026;）</li>
+<li>vm_next: 链表中的下一个区域结构</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_linux_vm_organize.png" alt="vm_linux_vm_organize.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb676110" class="outline-4">
+<h4 id="orgb676110"><span class="section-number-4">7.2.2</span> Linux缺页异常处理程序</h4>
+<div class="outline-text-4" id="text-7-2-2">
+<p>
+假设当MMU翻译某个虚拟地址A时，触发缺页，导致控制权转移到内核的缺页处理程序，然后执行以下步骤：
+</p>
+<ol class="org-ol">
+<li>虚拟地址A是否合法？也就是说A是否属于某个区域结构（vm_area_struct）定义的区域内？ 首先程序搜索区域结构的链表，将A和区域结构的vm_start和vm_end作比较（实际上内核通过在链表中构建树，在树中搜索）。如果没找到，则触发段错误，终止进程。</li>
+
+<li>进程是否有读、写或者执行这个区域页面的权限。</li>
+<li>如果是合法地址，则选择一个牺牲页，如果这个牺牲页被修改过，则将此页面交换出去，换入新的页面，并更新页表，当缺页程序返回时，CPU重新启动引起缺页的指令。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="./image/memory/vm_linux_pagefault.png" alt="vm_linux_pagefault.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga2f36cb" class="outline-2">
+<h2 id="orga2f36cb"><span class="section-number-2">8</span> 内存映射</h2>
+</div>
+<div id="outline-container-orga53d4cc" class="outline-2">
+<h2 id="orga53d4cc"><span class="section-number-2">9</span> 动态内存分配</h2>
+</div>
+<div id="outline-container-org3dfeda6" class="outline-2">
+<h2 id="org3dfeda6"><span class="section-number-2">10</span> C程序中常见内存错误</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-10-29 Fri 21:22</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-09-05 Sun 16:29 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>性能分析</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.add("code-highlighted");
+	 target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+	 elem.classList.remove("code-highlighted");
+	 target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">性能分析</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgcb152cc">1. Linux 60S分析</a>
+<ul>
+<li><a href="#org0784f7b">1.1. uptime</a></li>
+<li><a href="#org099bc03">1.2. dmesg | tail</a></li>
+<li><a href="#org2f34e9c">1.3. vmstat 1</a></li>
+<li><a href="#org580d288">1.4. mpstat -P ALL 1</a></li>
+<li><a href="#org77ad9f0">1.5. pidstat 1</a></li>
+<li><a href="#orgb38b22e">1.6. iostat -xz 1</a></li>
+<li><a href="#org0d149b6">1.7. free -m</a></li>
+<li><a href="#org06eb557">1.8. sar -n DEV 1</a></li>
+<li><a href="#org6a7787f">1.9. sar -n TCP,ETCP 1</a></li>
+<li><a href="#org8ce5b48">1.10. top</a></li>
+</ul>
+</li>
+<li><a href="#org15f1606">2. BCC工具检查清单</a>
+<ul>
+<li><a href="#org24057d4">2.1. execsnoop</a></li>
+<li><a href="#org2988680">2.2. opensnoop</a></li>
+<li><a href="#orgb988153">2.3. ext4slower</a></li>
+<li><a href="#org2fd5196">2.4. biolatency</a></li>
+<li><a href="#org93476fa">2.5. biosnoop</a></li>
+<li><a href="#orgb4d8f14">2.6. cachestat</a></li>
+<li><a href="#orgd85ebff">2.7. tcpconnect</a></li>
+<li><a href="#orgc17c51c">2.8. tcpaccept</a></li>
+<li><a href="#org0b5bf0c">2.9. tcpretrans</a></li>
+<li><a href="#org69f173d">2.10. runqlat</a></li>
+<li><a href="#orgb96d422">2.11. profile</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgcb152cc" class="outline-2">
+<h2 id="orgcb152cc"><span class="section-number-2">1.</span> Linux 60S分析</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+在遇到性能问题进行排查时，可以首先尝试使用一下步骤进行排查。
+</p>
+
+<ul class="org-ul">
+<li>uptime</li>
+<li>dmesg | tail</li>
+<li>vmstat 1</li>
+<li>mpstat -P ALL 1</li>
+<li>pidstat 1</li>
+<li>ipstat -xz 1</li>
+<li>free -m</li>
+<li>sar -n DEV 1</li>
+<li>sar -n TCP,ETCP 1</li>
+<li>top</li>
+</ul>
+</div>
+
+<div id="outline-container-org0784f7b" class="outline-3">
+<h3 id="org0784f7b"><span class="section-number-3">1.1.</span> uptime</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-shell">$ uptime
+ 12:35:53 up  2:33, 15 users,  load average: 0.05, 0.10, 0.06
+</pre>
+</div>
+
+<p>
+uptime 可以快速检查系统的平均负载， load average之后的3列数值分别代表系统过去1,5,15分钟的平均负载情况。
+</p>
+
+
+<p>
+系统平均负载值是处于可运行或不可中断状态的进程的平均数。处于可运行状态的进程要么正在使用 CPU，要么正在等待使用 CPU。处于不可中断状态的进程正在等待一些 I/O 访问，例如等待磁盘。平均值取自三个时间间隔。负载平均值没有针对系统中的 CPU 数量进行标准化，因此负载平均值为 1 意味着单个 CPU 系统一直在加载，而在 4 个 CPU 系统上则意味着它有 75% 的时间处于空闲状态。
+</p>
+
+<p>
+通过这三个值的变化可以大致了解负载随时间的变化。
+</p>
+
+<p>
+在排查过程中，首先需要检查负载平均值，来确认性能问题是否仍然存在，因为可能已经错过问题发生的现场。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org099bc03" class="outline-3">
+<h3 id="org099bc03"><span class="section-number-3">1.2.</span> dmesg | tail</h3>
+</div>
+
+<div id="outline-container-org2f34e9c" class="outline-3">
+<h3 id="org2f34e9c"><span class="section-number-3">1.3.</span> vmstat 1</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+<pre class="src src-shell">$ vmstat 1
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+r  b   swpd   free   buff  cache   si   so    bi    bo  <span style="color: #FF1493;"> in</span>   cs us sy id wa st
+0  0      0 6619528  66924 875476    0    0   555   172   80  158  1  1 98  0  0
+0  0      0 6619608  66924 875436    0    0     0     8  150  338  0  0 100  0  0
+0  0      0 6619356  66924 875564    0    0   128    12  406  986  2  4 94  0  0
+2  0      0 6619324  66924 875680    0    0     0     0  270  641  2  3 95  0  0
+0  0      0 6619324  66924 875680    0    0     0     0  199  458  1  1 98  0  0
+0  0      0 6619324  66924 875636    0    0     0     0  126  226  0  0 100  0  0
+0  0      0 6619324  66924 875600    0    0     0     8  132  260  0  0 100  0  0
+0  0      0 6619324  66924 875600    0    0     0     0  135  278  0  0 100  0  0
+</pre>
+</div>
+
+<p>
+vmstat是虚拟内存统计工具， 参数1代表每隔1秒钟打印一次摘要信息。
+</p>
+
+<p>
+列信息：
+</p>
+<ul class="org-ul">
+<li>r： CPU上正在执行的和等待执行的进程数量。 相对于平均负载（uptime）来说，这个能更好的排查cpu饱和度的指标，因为其不包含I/O。 一个比CPU数量多的r值代表CPU资源处于饱和状态。</li>
+
+<li>free： 空闲内存，单位KB。（也可以使用 <code>free -m</code> 查看空闲内存）。</li>
+
+<li>si和so：页换入和页换出。 如果值不为零，代表系统内存紧张。此值只会在配置开启了交换分区后才起作用。</li>
+
+<li>us、sy、id、wa和st： 用户态时间、内核态时间、空闲、等待I/O、以及被窃取时间。（所有CPU取平均值的结果）</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org580d288" class="outline-3">
+<h3 id="org580d288"><span class="section-number-3">1.4.</span> mpstat -P ALL 1</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+<pre class="src src-shell">$ mpstat -P ALL 1
+Linux 5.10.0-8-amd64 (nanddebian-work)        08/22/2021      _x86_64_  (4 CPU)
+
+08:15:17 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+08:15:18 PM  all    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.50
+08:15:18 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:18 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:18 PM    2    0.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+08:15:18 PM    3    0.00    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   99.01
+
+08:15:18 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+08:15:19 PM  all    0.25    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.75
+08:15:19 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:19 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:19 PM    2    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+08:15:19 PM    3    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+^C
+Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+Average:     all    0.12    0.00    0.25    0.00    0.00    0.00    0.00    0.00    0.00   99.62
+Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:       2    0.50    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+Average:       3    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.50
+</pre>
+</div>
+
+<p>
+此命令会打印CPU分解到各个状态的时间。
+</p>
+
+<p>
+对于较高的%iowait时间需要注意，可以使用磁盘I/O工具进一步分析。
+</p>
+
+<p>
+如果是较高的%sys值，可以使用系统调用（syscall）跟踪和内核跟踪，以及CPU剖析等手段进一步分析。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org77ad9f0" class="outline-3">
+<h3 id="org77ad9f0"><span class="section-number-3">1.5.</span> pidstat 1</h3>
+<div class="outline-text-3" id="text-1-5">
+<div class="org-src-container">
+<pre class="src src-shell">$ pidstat 1
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+
+08:27:34 PM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+08:27:35 PM     0       757    0.99    0.00    0.00    0.00    0.99     2  Xorg
+08:27:35 PM  1000      1573    0.99    0.00    0.00    0.00    0.99     3  i3bar
+08:27:35 PM     0      1798    0.00    0.99    0.00    0.00    0.99     3  kworker/u8:0-phy0
+08:27:35 PM  1000      1987    0.99    0.00    0.00    0.00    0.99     1  pidstat
+
+08:27:35 PM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+08:27:36 PM     0       757    1.00    0.00    0.00    0.00    1.00     2  Xorg
+
+08:27:36 PM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+08:27:37 PM     0       757    1.00    0.00    0.00    0.00    1.00     2  Xorg
+08:27:37 PM     0      1971    0.00    1.00    0.00    0.00    1.00     0  kworker/u8:1-phy0
+08:27:37 PM  1000      1987    1.00    1.00    0.00    0.00    2.00     1  pidstat
+^C
+
+Average:      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+Average:        0       757    1.00    0.00    0.00    0.00    1.00     -  Xorg
+Average:     1000      1573    0.33    0.00    0.00    0.00    0.33     -  i3bar
+Average:        0      1798    0.00    0.33    0.00    0.00    0.33     -  kworker/u8:0-phy0
+Average:        0      1971    0.00    0.33    0.00    0.00    0.33     -  kworker/u8:1-phy0
+Average:     1000      1987    0.66    0.33    0.00    0.00    1.00     -  pidstat
+
+</pre>
+</div>
+
+<p>
+pidstat 命令展示每个进程的CPU使用情况，支持滚动输出，能够采集到不同时间段的数据变化。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgb38b22e" class="outline-3">
+<h3 id="orgb38b22e"><span class="section-number-3">1.6.</span> iostat -xz 1</h3>
+<div class="outline-text-3" id="text-1-6">
+<div class="org-src-container">
+<pre class="src src-shell">$ iostat -xz 1
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.81    0.00    0.35    0.08    0.00   98.76
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+sda              7.67    436.10     6.82  47.07    0.48    56.86    1.81    134.56     0.67  27.09    5.21    74.37    0.00      0.00     0.00   0.00    0.00     0.00    0.19    2.58    0.01   0.68
+sdb              0.35      9.60     0.13  26.87    3.48    27.16    0.01      0.03     0.01  25.64   15.52     2.10    0.00      0.00     0.00   0.00    0.00     0.00    0.01   15.00    0.00   0.11
+
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.25    0.00    0.25    0.00    0.00   99.50
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.25    0.00    0.25    0.00    0.00   99.50
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.25    0.00    0.00    0.00    0.00   99.75
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+
+^C
+</pre>
+</div>
+
+
+<p>
+此工具展示存储设备的I/O指标。 要检查的列包括如下：
+</p>
+
+<ul class="org-ul">
+<li>r/s、w/s、rkB/s和wkB/s： 分别为每秒向设备发送的读、写次数，以及读、写字节数。</li>
+<li>await： I/O的平均响应时间，以毫秒为单位。包含了I/O队列时间和服务时间。</li>
+<li>avgqu-sz： 设备请求队列的平均长度。</li>
+<li>%util： 设备使用率。代表设备繁忙的百分比，显示了每秒设备开展实际工作的时间占比。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0d149b6" class="outline-3">
+<h3 id="org0d149b6"><span class="section-number-3">1.7.</span> free -m</h3>
+<div class="outline-text-3" id="text-1-7">
+<div class="org-src-container">
+<pre class="src src-shell">$ free -m
+total        used        free      shared  buff/cache   available
+Mem:            7847         871        5666         154        1309        6559
+Swap:           7628           0        7628
+</pre>
+</div>
+
+<p>
+系统可用内存（MB），available列展示了系统实际剩余的可用内存，包括缓冲区和页缓存区。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org06eb557" class="outline-3">
+<h3 id="org06eb557"><span class="section-number-3">1.8.</span> sar -n DEV 1</h3>
+<div class="outline-text-3" id="text-1-8">
+<div class="org-src-container">
+<pre class="src src-shell">$ sar -n DEV 1
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+
+08:56:42 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+08:56:43 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    virbr0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    virbr2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    virbr1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM wlx488ad25147fe      0.00      1.00      0.00      0.08      0.00      0.00      0.00      0.00
+
+08:56:43 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+08:56:44 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    virbr0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    virbr2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    virbr1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM wlx488ad25147fe      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+^C
+
+Average:        IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+Average:           lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       virbr0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       virbr2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       virbr1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    wlx488ad25147fe      0.00      0.50      0.00      0.04      0.00      0.00      0.00      0.00
+</pre>
+</div>
+
+<p>
+sar工具具有不同的运行模式，上述命令使用sar来查看网络设备指标。 通过接口吞吐量信息rxkB/s和txkB/s来检查是否有指标达到了上限。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6a7787f" class="outline-3">
+<h3 id="org6a7787f"><span class="section-number-3">1.9.</span> sar -n TCP,ETCP 1</h3>
+<div class="outline-text-3" id="text-1-9">
+<div class="org-src-container">
+<pre class="src src-shell">$ sar -n TCP,ETCP 1
+Linux 5.10.0-8-amd64 (nanddebian-work)        08/22/2021      _x86_64_  (4 CPU)
+
+08:58:56 PM  active/s passive/s    iseg/s    oseg/s
+08:58:57 PM      0.00      0.00      0.00      0.00
+
+08:58:56 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+08:58:57 PM      0.00      0.00      0.00      0.00      0.00
+
+08:58:57 PM  active/s passive/s    iseg/s    oseg/s
+08:58:58 PM      0.00      0.00      0.00      0.00
+
+08:58:57 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+08:58:58 PM      0.00      0.00      0.00      0.00      0.00
+
+08:58:58 PM  active/s passive/s    iseg/s    oseg/s
+08:58:59 PM      0.00      0.00      0.00      0.00
+
+08:58:58 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+08:58:59 PM      0.00      0.00      0.00      0.00      0.00
+^C
+
+Average:     active/s passive/s    iseg/s    oseg/s
+Average:         0.00      0.00      0.00      0.00
+
+Average:     atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+Average:         0.00      0.00      0.00      0.00      0.00
+</pre>
+</div>
+
+<p>
+上述命令使用sar来查看TCP指标和TCP错误信息。
+</p>
+
+<ul class="org-ul">
+<li>active/s： 每秒钟本地发起TCP连接的数量。（connect）</li>
+<li>passive/s： 每秒远端发起TCP连接的数量。（accept）</li>
+<li>retrans/s： 每秒TCP重传的数量。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8ce5b48" class="outline-3">
+<h3 id="org8ce5b48"><span class="section-number-3">1.10.</span> top</h3>
+</div>
+</div>
+
+
+<div id="outline-container-org15f1606" class="outline-2">
+<h2 id="org15f1606"><span class="section-number-2">2.</span> BCC工具检查清单</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>execsnoop</li>
+<li>opensnoop</li>
+<li>ext4slower</li>
+<li>biolatency</li>
+<li>biosnoop</li>
+<li>cachestat</li>
+<li>tcpconnect</li>
+<li>tcpaccept</li>
+<li>tcpretrans</li>
+<li>runqlat</li>
+<li><p>
+profile
+</p>
+
+<p>
+这些工具对于创建新进程、打开文件、文件系统延迟、磁盘I/O延迟、文件系统缓存性能、TCP新建连接与重传、调度延迟，以及CPU使用情况，提供了更多信息。
+</p></li>
+</ul>
+</div>
+
+<div id="outline-container-org24057d4" class="outline-3">
+<h3 id="org24057d4"><span class="section-number-3">2.1.</span> execsnoop</h3>
+</div>
+
+<div id="outline-container-org2988680" class="outline-3">
+<h3 id="org2988680"><span class="section-number-3">2.2.</span> opensnoop</h3>
+</div>
+
+<div id="outline-container-orgb988153" class="outline-3">
+<h3 id="orgb988153"><span class="section-number-3">2.3.</span> ext4slower</h3>
+</div>
+
+<div id="outline-container-org2fd5196" class="outline-3">
+<h3 id="org2fd5196"><span class="section-number-3">2.4.</span> biolatency</h3>
+</div>
+
+<div id="outline-container-org93476fa" class="outline-3">
+<h3 id="org93476fa"><span class="section-number-3">2.5.</span> biosnoop</h3>
+</div>
+
+<div id="outline-container-orgb4d8f14" class="outline-3">
+<h3 id="orgb4d8f14"><span class="section-number-3">2.6.</span> cachestat</h3>
+</div>
+
+<div id="outline-container-orgd85ebff" class="outline-3">
+<h3 id="orgd85ebff"><span class="section-number-3">2.7.</span> tcpconnect</h3>
+</div>
+
+<div id="outline-container-orgc17c51c" class="outline-3">
+<h3 id="orgc17c51c"><span class="section-number-3">2.8.</span> tcpaccept</h3>
+</div>
+
+<div id="outline-container-org0b5bf0c" class="outline-3">
+<h3 id="org0b5bf0c"><span class="section-number-3">2.9.</span> tcpretrans</h3>
+</div>
+
+<div id="outline-container-org69f173d" class="outline-3">
+<h3 id="org69f173d"><span class="section-number-3">2.10.</span> runqlat</h3>
+</div>
+
+<div id="outline-container-orgb96d422" class="outline-3">
+<h3 id="orgb96d422"><span class="section-number-3">2.11.</span> profile</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-09-05 Sun 16:29</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

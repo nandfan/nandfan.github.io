@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-11-28 Sun 12:55 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux性能分析工具汇总</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Linux性能分析工具汇总</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org4f3f663">1. vmstat</a></li>
+<li><a href="#orgb7eaa16">2. iostat</a></li>
+<li><a href="#org117710d">3. dstat</a></li>
+<li><a href="#org4983203">4. iotop</a></li>
+<li><a href="#orgfd1a90c">5. pidstat</a></li>
+<li><a href="#orgbd9e588">6. top</a></li>
+<li><a href="#org9b0b18d">7. htop</a></li>
+<li><a href="#orgdf2fc95">8. mpstat</a></li>
+<li><a href="#orgbbd509e">9. netstat</a></li>
+<li><a href="#org99c4c7d">10. ps</a></li>
+<li><a href="#orga7b42dc">11. strace</a></li>
+<li><a href="#orgc06393b">12. uptime</a></li>
+<li><a href="#org67279e5">13. lsof</a></li>
+<li><a href="#orgbf4586c">14. perf</a></li>
+<li><a href="#orge4c5c7a">15. sar、netstat、pidstat、strace、tcpdump、blktrace、iotop、slabtop、sysctl、/proc。</a></li>
+<li><a href="#org1e4f3a3">16. mpstat</a></li>
+<li><a href="#org151107e">17. nload</a></li>
+</ul>
+</div>
+</div>
+<p>
+<a href="https://www.brendangregg.com/linuxperf.html">https://www.brendangregg.com/linuxperf.html</a>
+</p>
+
+<div id="outline-container-org4f3f663" class="outline-2">
+<h2 id="org4f3f663"><span class="section-number-2">1</span> vmstat</h2>
+</div>
+<div id="outline-container-orgb7eaa16" class="outline-2">
+<h2 id="orgb7eaa16"><span class="section-number-2">2</span> iostat</h2>
+</div>
+<div id="outline-container-org117710d" class="outline-2">
+<h2 id="org117710d"><span class="section-number-2">3</span> dstat</h2>
+</div>
+<div id="outline-container-org4983203" class="outline-2">
+<h2 id="org4983203"><span class="section-number-2">4</span> iotop</h2>
+</div>
+<div id="outline-container-orgfd1a90c" class="outline-2">
+<h2 id="orgfd1a90c"><span class="section-number-2">5</span> pidstat</h2>
+</div>
+<div id="outline-container-orgbd9e588" class="outline-2">
+<h2 id="orgbd9e588"><span class="section-number-2">6</span> top</h2>
+</div>
+<div id="outline-container-org9b0b18d" class="outline-2">
+<h2 id="org9b0b18d"><span class="section-number-2">7</span> htop</h2>
+</div>
+<div id="outline-container-orgdf2fc95" class="outline-2">
+<h2 id="orgdf2fc95"><span class="section-number-2">8</span> mpstat</h2>
+</div>
+<div id="outline-container-orgbbd509e" class="outline-2">
+<h2 id="orgbbd509e"><span class="section-number-2">9</span> netstat</h2>
+</div>
+<div id="outline-container-org99c4c7d" class="outline-2">
+<h2 id="org99c4c7d"><span class="section-number-2">10</span> ps</h2>
+</div>
+<div id="outline-container-orga7b42dc" class="outline-2">
+<h2 id="orga7b42dc"><span class="section-number-2">11</span> strace</h2>
+</div>
+<div id="outline-container-orgc06393b" class="outline-2">
+<h2 id="orgc06393b"><span class="section-number-2">12</span> uptime</h2>
+</div>
+<div id="outline-container-org67279e5" class="outline-2">
+<h2 id="org67279e5"><span class="section-number-2">13</span> lsof</h2>
+</div>
+<div id="outline-container-orgbf4586c" class="outline-2">
+<h2 id="orgbf4586c"><span class="section-number-2">14</span> perf</h2>
+</div>
+<div id="outline-container-orge4c5c7a" class="outline-2">
+<h2 id="orge4c5c7a"><span class="section-number-2">15</span> sar、netstat、pidstat、strace、tcpdump、blktrace、iotop、slabtop、sysctl、/proc。</h2>
+<div class="outline-text-2" id="text-15">
+<p>
+Linux 系统性能分析工具图解读
+</p>
+
+<p>
+首先学习的是大神提出的 Basic Tool 有如下几个：
+</p>
+
+<p>
+uptime
+</p>
+
+<p>
+top （htop）
+</p>
+
+<p>
+mpstat
+</p>
+
+<p>
+iostat
+</p>
+
+<p>
+vmstat
+</p>
+
+<p>
+free
+</p>
+
+<p>
+ping
+</p>
+
+<p>
+nicstat
+</p>
+
+<p>
+dstat
+</p>
+
+<p>
+uptime
+uptime 比较重要的能显示当前系统的负载状态，但是这个负载究竟是什么意思呢？查了一些资料负载指的是当前可运行的程序加上正在运行的程序再加上等待 IO 的程序，比如现在运行着一个，一个等待运行，还有一个等待 IO 那么负载就是3. uptime 后面三个数分别是 1min， 5min 和 15min 的负载平均值，由于内核用了一个指数平滑的平均算法，这个值不能直接反应当前等待的进程数。此外这个值没对多核进行 normalization 所以单核情况下当负载是 1 的时候说明 cpu 满载了，但是对于 4 核 cpu 刚到满负载的 25%。 一般情况下这个值越大就说明等待 CPU 的进程越多，如果大于核数就说明有进程在等待 CPU，需要看一下程序的问题或者考虑加机器了。另外即使负载过载了也不一定说明 CPU 的利用率高，因为很可能是大量的请求 IO 的进程在等待，像一些数据库服务，所以看完负载后还要针对应用场景综合考量。
+</p>
+
+<p>
+top &amp; htop
+top 其实是一个相当全面的分析了还是事实的，其他很多命令能拿到的数据，top 一个命令就可以拿到。但是他的一个问题就是本身的 overhead 比较大，如果系统负载本身就很大那么可能就会卡住了。此外 top 可能会忽视掉那些生命周期很短的程序。top 的 manual 里详细介绍了每个指标的意义，翻看一下还是很有收获的。其中比较要关注的有 wa（io wait）,查看是不是你的 IO 是瓶颈，还有 st (time stolen from this vm by the hypervisor) 这个指标会出现在虚拟机里的系统中，表示的是你的虚拟机在等待真实物理机的 CPU 资源的时间。如果这个值很高的话说明你的服务提供商的 CPU 资源有限你没抢过别人，很有可能使服务商超卖了。碰到这种情况要么打客服投诉，或者多掏点银子找个靠谱的运营商吧。
+</p>
+
+<p>
+htop 是 top 的改进版，带着各种颜色表示和百分比进度条，以及更丰富的功能，小伙伴们可以尝试一下。
+</p>
+
+<p>
+mpstat
+mpstat 可以显示出每个 CPU 核心的工作情况，其实也可以在 top 里输入 1 看到。通过这个命令我们可以观察是不是存在负载不均的现象，某个核心跑满了，另一个还在闲着，造成整体性能的下降。
+</p>
+
+<p>
+iostat
+加上 -x 参数后可以看到几乎全部的 io 指标，包括 tps， 请求 queue 的平均长度，平均处理时间， 磁盘带宽利用率等等。每个指标 manual 中都有详细的解释。
+</p>
+
+<p>
+vmstat &amp; free
+vmstat 是一个展示内存整体使用情况的命令，其中要关注一下 swpd 和 swap 的 in/out 。如果这一部分的数值过大，会频繁的 IO 造成性能下降，要么看看是不是程序内存泄露了，要么就加内存吧。 memory 里的 buffer 指的是写磁盘缓冲区， 而 cache 可以当成是读文件的缓冲区。free也是类似的功能，不过只展示内存部分的内容。
+</p>
+
+<p>
+ping
+这个相对来说简单一些，主要反映了主机间的延迟和连通性，很多时候也只能告诉我们这些了。可以尝试一下 hping 有着指定端口，高级 tracerout 的功能。
+</p>
+
+<p>
+nicstat
+一个和 iostat 类似，不过是针对网卡的命令。
+</p>
+
+<p>
+dstat
+一个综合了cpu、 memory、 IO、 network 的工具，可以事实展示当前的系统资源利用情况。
+</p>
+
+<p>
+以上就是最基础的命令了，高级一些的命令有：
+</p>
+
+<p>
+sar
+</p>
+
+<p>
+netstat
+</p>
+
+<p>
+pidstat
+</p>
+
+<p>
+strace
+</p>
+
+<p>
+tcpdump
+</p>
+
+<p>
+blktrace
+</p>
+
+<p>
+iotop
+</p>
+
+<p>
+slabtop
+</p>
+
+<p>
+sysctl
+</p>
+
+<p>
+/proc
+</p>
+
+<p>
+Linux 系统性能分析工具图解读
+</p>
+
+<p>
+第一篇在这里
+</p>
+
+<p>
+第一篇讲了一些最基础的命令了，接下来在研究研究高级的命令：
+</p>
+
+<p>
+sar
+</p>
+
+<p>
+netstat
+</p>
+
+<p>
+pidstat
+</p>
+
+<p>
+strace
+</p>
+
+<p>
+tcpdump
+</p>
+
+<p>
+blktrace
+</p>
+
+<p>
+iotop
+</p>
+
+<p>
+slabtop
+</p>
+
+<p>
+sysctl
+</p>
+
+<p>
+/proc
+</p>
+
+<p>
+sar
+sar 是 System Activity Reporter 的意思，这是一个强大到发指的工具，在第一篇中提到的那些工具的功能（cpu、 mem、 disk、 net），基本上 sar 都可以覆盖到，不信的话可以试一下 sar -A 1 1 看一下它都统计了哪些东西。此外 sar 可以周期性的执行统计，很多系统级别的监控都是通过 sar 来做的。淘宝还专门自己开发了一个 tsar 在原有的系统级别的监控上增加了对应用的监控。
+</p>
+
+<p>
+netstat
+这 个命令也是和网络相关的，可以查看 socket 的连接信息，比如建立了哪些 TCP 连接，他们的状态是怎样的，一个进程有多少链接。通常这个命令后面都会跟着 grep 或者 awk 的命令进行进一步处理。以至于有的 awk 的教程都会以 netstat 的输出处理作为样例，比如耗子叔叔的 awk 简明教程。此外这个命令还有一个 -s 的参数可以统计不同的协议的数据包信息。
+</p>
+
+<p>
+pidstat
+其 实要不是看到大神说有这个命令，我还以为这个命令是 ps 的全称。其实展示的东西也和 ps 类似，主要的区别在于 ps 只是一次提供系统进程状态的一个快照，pidstat# 可以指定进程提供定时多次的统计信息，相当于你可以更细粒度的 ps 了。这也是做监控的一个很好的工具，可以针对特殊进程特殊关照。
+</p>
+
+<p>
+strace
+其 实感觉 strace 是一个更偏针对应用的性能工具，他可以统计出进程进行了哪些系统调用，处理了哪些信号。也因此 strace 是一个分析程序实现的一个很好的工具，比如说你想知道 pidstat 中的信息都是从哪里获得的就 strace pidstat |&amp; grep open 就可以知道它是打开了哪些文件获取到信息的。由于 strace 会将输出打到标准错误中所以管道处理要记得加上 &amp; 。这个命令是很强大，但问题是也及其消耗性能，一般情况下慢一个数量级还是会有的，所以只是分析的时候用一下，正常执行就不要了。
+</p>
+
+<p>
+tcpdump
+大 名鼎鼎的 tcpdump 可以将经过网卡的数据包保存下来一份以供 wireshark 这类软件进一步进行分析。如果愿意的话开启网卡混杂模式也可以捕获同一网络上其他机器的数据包，也是黑客很喜欢的工具。和 strace 类似， tcpdump 的功能很强大，即使开了 filter 功能也很消耗性能，一般的生产机如果流量大的话开启 tcpdump还是吃不消的。当然有一些神秘的组织是需要获取网络包的完整备份的，他们大概是用专门的硬件完成的吧。
+</p>
+
+<p>
+blktrace
+其实这个命令用 btrace 展示会更好一些，看名字就知道是 strace 的 io 版，可以实时的展示每次磁盘 IO 请求的内容，耗时，发生位置等等很多东西，不过带 trace 的命令一般都比较耗性能。
+</p>
+
+<p>
+iotop
+和上个命令类似，一看就是 top 的 io 版，简洁明了，包括展示都和 top 很类似，试一下就知道是怎么回事了。
+</p>
+
+<p>
+slabtop
+其实只要知道 slab 是个什么东西，这个命令就很好理解了。slab 是对象缓冲池，将一些常用的小的对象结构再释放后缓存起来，而不是直接交给系统回收，这样可以避免频繁的小对象找系统申请内存造成性能下降，知道这个再看 这条命令就很轻松了。
+</p>
+
+<p>
+sysctl
+这里面是一些很有讲究的系统参数的设置，很多参数的设置都会对服务器的性能产生很大的影响。这也是个水很深的配置文件，比如 tcpreuse、tcprecycle 这些服务器的重要配置都在这里面。这里面的配置估计也能讲上个几天几夜。还是先 sysctl -a 看一下感受感受吧。
+</p>
+
+<p>
+/proc
+其实上述诸多的工具都是从这个文件加下面读取文件做展示的，不过真要自己解析这里面的文件还是蛮耗功夫的，所以还是好好用一下上面的那些命令吧。不过如果你对那些命令是如何实现的可以配合着 strace 来探索这里面的奥秘。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1e4f3a3" class="outline-2">
+<h2 id="org1e4f3a3"><span class="section-number-2">16</span> mpstat</h2>
+</div>
+
+<div id="outline-container-org151107e" class="outline-2">
+<h2 id="org151107e"><span class="section-number-2">17</span> nload</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-11-28 Sun 12:55</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

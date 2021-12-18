@@ -1,0 +1,2812 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-12-08 Wed 22:29 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>设备子系统</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">设备子系统</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org86a94cb">1. 概览</a>
+<ul>
+<li><a href="#orge6cb4c4">1.1. 总线与外设的交互</a></li>
+</ul>
+</li>
+<li><a href="#orgbb1cd63">2. 访问设备</a>
+<ul>
+<li><a href="#orge891e3e">2.1. 字符设备、块设备和其他设备</a></li>
+<li><a href="#org2cbe162">2.2. 使用ioctl进行设备寻址</a></li>
+</ul>
+</li>
+<li><a href="#org19b083d">3. 设备注册</a>
+<ul>
+<li><a href="#org40a0cb3">3.1. 数据结构</a></li>
+<li><a href="#org7707448">3.2. 注册</a>
+<ul>
+<li><a href="#orgbc583bc">3.2.1. 字符设备</a></li>
+<li><a href="#org2b99adc">3.2.2. 块设备</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgb13c353">4. 与文件系统的关联</a>
+<ul>
+<li><a href="#orgc29fcad">4.1. inode中的设备文件成员</a></li>
+<li><a href="#org2966f89">4.2. 标准文件操作</a></li>
+<li><a href="#org3f9e003">4.3. 字符设备的标准操作</a></li>
+<li><a href="#org456f4e6">4.4. 块设备的标准操作</a></li>
+</ul>
+</li>
+<li><a href="#orga2b68c2">5. 字符设备操作</a>
+<ul>
+<li><a href="#orgf729105">5.1. 结构</a></li>
+<li><a href="#orgc2062f7">5.2. 打开设备文件</a></li>
+<li><a href="#orgfa9c54f">5.3. 读写操作</a></li>
+</ul>
+</li>
+<li><a href="#org508ec49">6. 块设备操作</a>
+<ul>
+<li><a href="#orgcdc69fa">6.1. 块设备的表示</a></li>
+<li><a href="#org8fc3509">6.2. 数据结构</a>
+<ul>
+<li><a href="#orgc7d9358">6.2.1. 块设备</a></li>
+<li><a href="#org2b41b2c">6.2.2. 通用硬盘和分区</a></li>
+<li><a href="#orge4057f3">6.2.3. 块设备操作</a></li>
+<li><a href="#orgb9948fa">6.2.4. 请求队列</a></li>
+</ul>
+</li>
+<li><a href="#org5217a5d">6.3. 向系统添加磁盘和分区</a>
+<ul>
+<li><a href="#org3ccdaa1">6.3.1. 添加分区</a></li>
+<li><a href="#org94c8f13">6.3.2. 添加磁盘</a></li>
+<li><a href="#org379341d">6.3.3. 打开块设备文件</a></li>
+<li><a href="#orgc2ed6de">6.3.4. 请求结构</a></li>
+<li><a href="#org18211c4">6.3.5. BIO</a></li>
+<li><a href="#org617c2c1">6.3.6. 提交请求</a>
+<ul>
+<li><a href="#org8a457e0">6.3.6.1. 创建请求</a></li>
+<li><a href="#orgf45f60c">6.3.6.2. 队列插入</a></li>
+<li><a href="#orgc82b69d">6.3.6.3. 执行请求</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org234bf3d">6.4. I/O调度</a></li>
+<li><a href="#org8910e10">6.5. ioctl的实现</a></li>
+</ul>
+</li>
+<li><a href="#orgf680655">7. 资源分配</a>
+<ul>
+<li><a href="#org378035c">7.1. 资源管理</a></li>
+<li><a href="#org0d2e2e8">7.2. I/O内存</a></li>
+<li><a href="#org7daef5e">7.3. I/O端口</a></li>
+</ul>
+</li>
+<li><a href="#orgf50b535">8. 总线系统</a>
+<ul>
+<li><a href="#orga28f145">8.1. 通用驱动程序模型</a>
+<ul>
+<li><a href="#org51aa854">8.1.1. 设备表示</a></li>
+<li><a href="#org61fb9e1">8.1.2. 总线表示</a></li>
+<li><a href="#org50614b1">8.1.3. 注册过程</a></li>
+</ul>
+</li>
+<li><a href="#org1807de4">8.2. PCI总线</a>
+<ul>
+<li><a href="#org856a687">8.2.1. PCI系统的布局</a></li>
+<li><a href="#org3d02a5b">8.2.2. 内核中的实现</a></li>
+</ul>
+</li>
+<li><a href="#org0acb727">8.3. USB</a>
+<ul>
+<li><a href="#orgef1841b">8.3.1. 运作模式</a></li>
+<li><a href="#org7beb3e1">8.3.2. 驱动程序的管理</a></li>
+<li><a href="#org6934a7f">8.3.3. 设备树的表示</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org86a94cb" class="outline-2">
+<h2 id="org86a94cb"><span class="section-number-2">1</span> 概览</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+总线负责设备与CPU之间以及各个设备之间的通信。有很多方法可以实现总线， 大多数方法Linux都能够支持。一些代表性的总线: PCI、ISA、SBus、IEEE1394、USB、SCSI以及并口与串口等。
+</p>
+
+<p>
+不同总线的连接方式：
+<img src="image/dev/bus-conn.png" alt="bus-conn.png" />
+</p>
+</div>
+
+<div id="outline-container-orge6cb4c4" class="outline-3">
+<h3 id="orge6cb4c4"><span class="section-number-3">1.1</span> 总线与外设的交互</h3>
+<div class="outline-text-3" id="text-1-1">
+<ul class="org-ul">
+<li>I/O端口： 内核发送数据给 I/O控制器。通过唯一的端口号标识目标设备，数据被传输到设备进行处理。处理器管理一个独立的虚拟地址空间，用于管理所有I/O地址。   注意：I/O地址空间通常不关联到普通的系统内存，但是端口也可以映射到内存中。</li>
+
+<li>I/O内存映射：现代处理器都提供了对I/O端口进行内存映射的选项，将特定外设的端口地址映射到普通内存中，可以像处理普通内存那样操作外设。图形卡通常会使用这类操作，PCI之类的系统总线通常也通过I/O地址映射进行寻址。内存映射主要通过 ioremap 和 iounmap 命令，分别用于映射I/O内存区和解除映射。</li>
+
+<li><p>
+轮询和中断：轮询就是重复的访问设备数据是否可用。 中断：每个CPU都提供了中断线（interrupt line），可由各个系统设备共享（几个设备也可能共享一个中断）。每个中断通过一个唯一的号码标识，每个中断提供一个服务例程。
+</p>
+
+<p>
+中断将暂停正常的系统工作。在外设的数据已经就绪时，外设会引发一个中断。使用这种方法，系统就不再需要频繁检查是否有新的数据可用。因为外设在有新数据的情况下可以自动通知系统。
+</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbb1cd63" class="outline-2">
+<h2 id="orgbb1cd63"><span class="section-number-2">2</span> 访问设备</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+设备类别
+</p>
+</div>
+
+<div id="outline-container-orge891e3e" class="outline-3">
+<h3 id="orge891e3e"><span class="section-number-3">2.1</span> 字符设备、块设备和其他设备</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+<pre class="src src-shell">$ ls -l /dev/sd* /dev/ttyS*
+brw-rw---- 1 root disk    8,  0 Oct 11 11:53 /dev/sda
+brw-rw---- 1 root disk    8,  1 Oct 11 11:53 /dev/sda1
+brw-rw---- 1 root disk    8,  7 Oct 11 11:53 /dev/sda7
+crw-rw---- 1 root dialout 4, 64 Oct 11 11:53 /dev/ttyS0
+crw-rw---- 1 root dialout 4, 65 Oct 11 11:53 /dev/ttyS1
+crw-rw---- 1 root dialout 4, 66 Oct 11 11:53 /dev/ttyS2
+crw-rw---- 1 root dialout 4, 67 Oct 11 11:53 /dev/ttyS3
+</pre>
+</div>
+
+<p>
+标识设备（访问权限之前的字母）：
+</p>
+<ul class="org-ul">
+<li>b 表示块设备</li>
+<li>c 标识字符设备</li>
+<li>设备文件没有文件的长度，取而代之的是 主设备号和从设备号。</li>
+</ul>
+
+<p>
+/dev内容的管理工作交给udevd，udevd是一个守护进程，允许从用户层动态创建设备文件。
+</p>
+
+<p>
+由于引入udev机制，/dev文件系统使用tmpfs。
+</p>
+
+<p>
+<b>网卡设备：</b> 网卡设备比较特殊，并没有设备文件，用户程序需要通过套接字与网卡通信。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2cbe162" class="outline-3">
+<h3 id="org2cbe162"><span class="section-number-3">2.2</span> 使用ioctl进行设备寻址</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+设备属性的配置可以通过IOCTL（输入输出控制接口），ioctl是用于配置和修改特定设备属性的通用接口。此外也可以通过Sysfs文件系统进行配置，sysfs文件系统层次化的表示了系统中的所有设备，并提供了设置设备参数的方法。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org19b083d" class="outline-2">
+<h2 id="org19b083d"><span class="section-number-2">3</span> 设备注册</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org40a0cb3" class="outline-3">
+<h3 id="org40a0cb3"><span class="section-number-3">3.1</span> 数据结构</h3>
+<div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li>字符设备使用 struct cdev 的实例来表示</li>
+<li>块设备的分区使用 struct genhd 的实例来表示，如果块设备没有分区，也可以将其视为具有单一分区的块设备。</li>
+</ul>
+
+
+<p>
+<b>bdev_map</b> 和 <b>cdev_map</b> 两个全局数组分别表示块设备的散列表和字符设备的散列表，其结构类型为 struct kobj_map，主设备号作为散列键。散列方法：major%255 。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobj_map</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">probe</span> {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#25955;&#21015;&#20803;&#32032;&#36830;&#25509;&#20026;&#21333;&#38142;&#34920;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">probe</span> *<span style="color: #FF8C00;">next</span>;
+		<span style="color: #5FD7FF;">dev_t</span> <span style="color: #FF8C00;">dev</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#21495;</span>
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">range</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#35774;&#22791;&#21495;&#30340;&#36830;&#32493;&#35775;&#38382;&#23384;&#20648;&#22312;range&#20013;&#12290;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#39537;&#21160;&#31243;&#24207;&#27169;&#22359;</span>
+		<span style="color: #5FD7FF;">kobj_probe_t</span> *<span style="color: #FF8C00;">get</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36820;&#22238;&#19982;&#35774;&#22791;&#20851;&#32852;&#30340;kobject&#23454;&#20363;</span>
+		<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">lock</span>)(<span style="color: #5FD7FF;">dev_t</span>, <span style="color: #5FD7FF;">void</span> *);
+		<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#23383;&#31526;&#35774;&#22791;&#65292;&#25351;&#21521;struct cdev&#65292;&#22359;&#35774;&#22791;&#25351;&#21521; struct genhd&#12290;</span>
+	} *<span style="color: #FF8C00;">probes</span>[255];
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">mutex</span> *<span style="color: #FF8C00;">lock</span>;
+};
+</pre>
+</div>
+
+
+<p>
+struct char_device_struct 结构用来管理为驱动程序分配的设备号范围。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">char_device_struct</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">char_device_struct</span> *<span style="color: #FF8C00;">next</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">major</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">baseminor</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">minorct</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">name</span>[64];
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> *<span style="color: #FF8C00;">fops</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cdev</span> *<span style="color: #FF8C00;">cdev</span>;              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">will die</span><span style="color: #8B8878;"> */</span>
+} *<span style="color: #FF8C00;">chrdevs</span>[CHRDEV_MAJOR_HASH_SIZE];
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7707448" class="outline-3">
+<h3 id="org7707448"><span class="section-number-3">3.2</span> 注册</h3>
+<div class="outline-text-3" id="text-3-2">
+</div>
+<div id="outline-container-orgbc583bc" class="outline-4">
+<h4 id="orgbc583bc"><span class="section-number-4">3.2.1</span> 字符设备</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<ul class="org-ul">
+<li>注册或分配一个设备号范围。</li>
+</ul>
+
+<p>
+如果驱动程序需要使用特定范围内的设备号，则必须调用 register_chrdev_region 。 alloc_chrdev_region 则由内核来选择适当的范围。
+</p>
+
+
+<ul class="org-ul">
+<li>在获取了设备号范围之后，需要将设备添加到字符设备数据库，以激活设备。这需要用cdev_init初始化一个 struct cdev 的实例，然后通过调用 cdev_add 添加。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2b99adc" class="outline-4">
+<h4 id="org2b99adc"><span class="section-number-4">3.2.2</span> 块设备</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<p>
+add_disk 用来注册块设备。为描述设备的属性，需要将一个 struct genhd 实例作为参数。
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb13c353" class="outline-2">
+<h2 id="orgb13c353"><span class="section-number-2">4</span> 与文件系统的关联</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orgc29fcad" class="outline-3">
+<h3 id="orgc29fcad"><span class="section-number-3">4.1</span> inode中的设备文件成员</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#30340;&#20027;&#20174;&#35774;&#22791;&#21495;</span>
+	<span style="color: #5FD7FF;">dev_t</span>                   <span style="color: #FF8C00;">i_rdev</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#31867;&#22411;&#65288;&#23545;&#20110;&#35774;&#22791;&#65292;&#22359;&#35774;&#22791;&#25110;&#32773;&#23383;&#31526;&#35774;&#22791;&#65289;</span>
+	<span style="color: #5FD7FF;">umode_t</span>                 <span style="color: #FF8C00;">i_mode</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#34920;&#31034;&#22359;&#35774;&#22791;&#65292;&#21017;&#25351;&#21521;&#22359;&#35774;&#22791;&#30340;&#22788;&#29702;&#20989;&#25968;&#65292;&#30001;&#34394;&#25311;&#25991;&#20214;&#31995;&#32479;&#20351;&#29992;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span>    *<span style="color: #FF8C00;">i_fop</span>;
+
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pipe_inode_info</span>  *<span style="color: #FF8C00;">i_pipe</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span>     *<span style="color: #FF8C00;">i_bdev</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cdev</span>             *<span style="color: #FF8C00;">i_cdev</span>;
+	};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2966f89" class="outline-3">
+<h3 id="org2966f89"><span class="section-number-3">4.2</span> 标准文件操作</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+在打开一个设备文件时，各种文件系统的实现会调用 init_special_inode 函数，为块设备或字符设备文件创建一个inode。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">init_special_inode</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>, <span style="color: #5FD7FF;">umode_t</span> <span style="color: #FF8C00;">mode</span>, <span style="color: #5FD7FF;">dev_t</span> <span style="color: #FF8C00;">rdev</span>)
+{
+	inode-&gt;i_mode = mode;
+	<span style="color: #FF1493;">if</span> (S_ISCHR(mode)) {
+		inode-&gt;i_fop = &amp;def_chr_fops;
+		inode-&gt;i_rdev = rdev;
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (S_ISBLK(mode)) {
+		inode-&gt;i_fop = &amp;def_blk_fops;
+		inode-&gt;i_rdev = rdev;
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (S_ISFIFO(mode))
+		inode-&gt;i_fop = &amp;def_fifo_fops;
+	<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (S_ISSOCK(mode))
+		inode-&gt;i_fop = &amp;bad_sock_fops;
+	<span style="color: #FF1493;">else</span>
+		printk(KERN_DEBUG <span style="color: #CDC673;">"init_special_inode: bogus i_mode (%o)\n"</span>,
+		       mode);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3f9e003" class="outline-3">
+<h3 id="org3f9e003"><span class="section-number-3">4.3</span> 字符设备的标准操作</h3>
+<div class="outline-text-3" id="text-4-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">def_chr_fops</span> = {
+	.open = chrdev_open,
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org456f4e6" class="outline-3">
+<h3 id="org456f4e6"><span class="section-number-3">4.4</span> 块设备的标准操作</h3>
+<div class="outline-text-3" id="text-4-4">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">def_blk_fops</span> = {
+	.open           = blkdev_open,
+	.release            = blkdev_close,
+	.llseek         = block_llseek,
+	.read           = do_sync_read,
+	.write          = do_sync_write,
+	.aio_read           = generic_file_aio_read,
+	.aio_write          = generic_file_aio_write_nolock,
+	.mmap           = generic_file_mmap,
+	.fsync          = block_fsync,
+	.unlocked_ioctl = block_ioctl,
+	.splice_read    = generic_file_splice_read,
+	.splice_write   = generic_file_splice_write,
+};
+</pre>
+</div>
+<p>
+读写操作由通用的内核例程进行。内核中的缓存自动用于块设备。
+</p>
+
+<p>
+注意： file_operations 与 block_device_operations 的结构类似，比较容易混淆。
+      <i>file_operations 由VFS层用来与用户空间通信，其中的例程会调用 block_device_operations 中的函数，以实现与块设备的通信。 block_device_operations 必须针对各种块设备分别实现。 file_operations 使用同样的操作即可处理所有的块设备。</i>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga2b68c2" class="outline-2">
+<h2 id="orga2b68c2"><span class="section-number-2">5</span> 字符设备操作</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-orgf729105" class="outline-3">
+<h3 id="orgf729105"><span class="section-number-3">5.1</span> 结构</h3>
+<div class="outline-text-3" id="text-5-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cdev</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23884;&#20837;&#30340;&#20869;&#26680;&#23545;&#35937;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobject</span> <span style="color: #FF8C00;">kobj</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#25552;&#20379;&#39537;&#21160;&#31243;&#24207;&#30340;&#27169;&#22359;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23454;&#29616;&#20102;&#19982;&#30828;&#20214;&#36890;&#20449;&#30340;&#20855;&#20307;&#25805;&#20316;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> *<span style="color: #FF8C00;">ops</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#36830;&#25509;&#34920;&#31034;&#35813;&#35774;&#22791;&#30340;&#35774;&#22791;&#25991;&#20214;&#30340;inode</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">list</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#21495;</span>
+	<span style="color: #5FD7FF;">dev_t</span> <span style="color: #FF8C00;">dev</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19982;&#35813;&#35774;&#22791;&#20851;&#32852;&#30340;&#20174;&#35774;&#22791;&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">count</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc2062f7" class="outline-3">
+<h3 id="orgc2062f7"><span class="section-number-3">5.2</span> 打开设备文件</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+chrdev_open 用于打开字符设备的通用函数。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">chrdev_open</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> * <span style="color: #FF8C00;">inode</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> * <span style="color: #FF8C00;">filp</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cdev</span> *<span style="color: #FF8C00;">p</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cdev</span> *<span style="color: #FF8C00;">new</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ret</span> = 0;
+
+	spin_lock(&amp;cdev_lock);
+	p = inode-&gt;i_cdev;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>p) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27492;&#21069;&#36824;&#27809;&#26377;&#25171;&#24320;&#36807;&#35774;&#22791;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobject</span> *<span style="color: #FF8C00;">kobj</span>;
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">idx</span>;
+		spin_unlock(&amp;cdev_lock);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#35810;&#23383;&#31526;&#35774;&#22791;&#25968;&#25454;&#24211;&#65292;&#36820;&#22238;&#20851;&#32852;&#30340;kobject&#23454;&#20363;&#12290;</span>
+		kobj = kobj_lookup(cdev_map, inode-&gt;i_rdev, &amp;idx);
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>kobj)
+			<span style="color: #FF1493;">return</span> -ENXIO;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36716;&#25442;&#20026;cdev</span>
+		new = container_of(kobj, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cdev</span>, kobj);
+		spin_lock(&amp;cdev_lock);
+		p = inode-&gt;i_cdev;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>p) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#36890;&#36807;&#20854;&#20182;&#36335;&#24452;&#25171;&#24320;</span>
+			inode-&gt;i_cdev = p = new;
+			inode-&gt;i_cindex = idx;
+			list_add(&amp;inode-&gt;i_devices, &amp;p-&gt;list);
+			new = <span style="color: #AF87FF;">NULL</span>;
+		} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>cdev_get(p))
+			ret = -ENXIO;
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>cdev_get(p))
+		ret = -ENXIO;
+	spin_unlock(&amp;cdev_lock);
+	cdev_put(new);
+	<span style="color: #FF1493;">if</span> (ret)
+		<span style="color: #FF1493;">return</span> ret;
+	filp-&gt;f_op = fops_get(p-&gt;ops); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#29305;&#23450;&#20110;&#23383;&#31526;&#35774;&#22791;&#30340;file_operations</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>filp-&gt;f_op) {
+		cdev_put(p);
+		<span style="color: #FF1493;">return</span> -ENXIO;
+	}
+	<span style="color: #FF1493;">if</span> (filp-&gt;f_op-&gt;open) {
+		lock_kernel();
+		ret = filp-&gt;f_op-&gt;open(inode,filp);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25191;&#34892;&#29305;&#23450;&#20110;&#23383;&#31526;&#35774;&#22791;&#30340;&#25171;&#24320;&#25805;&#20316;</span>
+		unlock_kernel();
+	}
+	<span style="color: #FF1493;">if</span> (ret)
+		cdev_put(p);
+	<span style="color: #FF1493;">return</span> ret;
+}
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="dot/dev/cdev-inode.png" alt="cdev-inode.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>inode-&gt;i_cdev 指向所选择的 cdev 实例。在下一次打开该inode时，就不必再查询字符设备的数据库，因为我们可以使用缓存的值。</li>
+<li>使用inode的i_devices作为链表元素将其添加到 cdev-&gt;list 。</li>
+<li>file-&gt;f_ops 是用于 struct file 的 file_operations ，指向 struct cdev 给出的file_operations 实例。</li>
+</ul>
+
+<p>
+接下来调用 struct file 新的 file_operations 中的 open 方法（现在是特定于设备的），在设备上执行所需的初始化任务（有些外设在第一次使用之前，需要通过握手来协商操作的细节）。该函数也可以对数据结构作一点修改，以适应特定的从设备号。
+</p>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> 主设备号为1 （内存访问）的各个从设备号</caption>
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">从设备号</th>
+<th scope="col" class="org-left">文件</th>
+<th scope="col" class="org-left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">/dev/mem</td>
+<td class="org-left">物理内存</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">/dev/kmem</td>
+<td class="org-left">内核虚拟地址空间</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">/dev/null</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">/dev/port</td>
+<td class="org-left">I/O端口</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">/dev/zero</td>
+<td class="org-left">NULL字符源</td>
+</tr>
+
+<tr>
+<td class="org-right">8</td>
+<td class="org-left">/dev/random</td>
+<td class="org-left">随机数发生器</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">memory_fops</span> = {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">memory_open&#20989;&#25968;&#26159;&#19968;&#20010;&#20998;&#37197;&#22120;&#65292;&#26681;&#25454;&#19981;&#21516;&#30340;&#20174;&#35774;&#22791;&#21495;&#36873;&#25321;&#36866;&#24403;&#30340;file_operations&#25805;&#20316;</span>
+	.open           = memory_open,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> {
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">minor</span>;
+	<span style="color: #5FD7FF;">char</span>                    *<span style="color: #FF8C00;">name</span>;
+	<span style="color: #5FD7FF;">umode_t</span>                 <span style="color: #FF8C00;">mode</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span>    *<span style="color: #FF8C00;">fops</span>;
+} <span style="color: #FF8C00;">devlist</span>[] = { <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">list of minor devices</span><span style="color: #8B8878;"> */</span>
+	{1, <span style="color: #CDC673;">"mem"</span>,     S_IRUSR | S_IWUSR | S_IRGRP, &amp;mem_fops},
+	{2, <span style="color: #CDC673;">"kmem"</span>,    S_IRUSR | S_IWUSR | S_IRGRP, &amp;kmem_fops},
+	{3, <span style="color: #CDC673;">"null"</span>,    S_IRUGO | S_IWUGO,           &amp;null_fops},
+<span style="color: #FF1493;">#ifdef</span> CONFIG_DEVPORT
+	{4, <span style="color: #CDC673;">"port"</span>,    S_IRUSR | S_IWUSR | S_IRGRP, &amp;port_fops},
+<span style="color: #FF1493;">#endif</span>
+	{5, <span style="color: #CDC673;">"zero"</span>,    S_IRUGO | S_IWUGO,           &amp;zero_fops},
+	{7, <span style="color: #CDC673;">"full"</span>,    S_IRUGO | S_IWUGO,           &amp;full_fops},
+	{8, <span style="color: #CDC673;">"random"</span>,  S_IRUGO | S_IWUSR,           &amp;random_fops},
+	{9, <span style="color: #CDC673;">"urandom"</span>, S_IRUGO | S_IWUSR,           &amp;urandom_fops},
+	{11,<span style="color: #CDC673;">"kmsg"</span>,    S_IRUGO | S_IWUSR,           &amp;kmsg_fops},
+<span style="color: #FF1493;">#ifdef</span> CONFIG_CRASH_DUMP
+	{12,<span style="color: #CDC673;">"oldmem"</span>,    S_IRUSR | S_IWUSR | S_IRGRP, &amp;oldmem_fops},
+<span style="color: #FF1493;">#Endif</span>
+};
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="dot/dev/memory_open.png" alt="memory_open.png" />
+</p>
+</div>
+
+<p>
+一些从设备号的操作函数定义：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">mem_fops</span> = {
+	.llseek         = memory_lseek,
+	.read           = read_mem,
+	.write          = write_mem,
+	.mmap           = mmap_mem,
+	.open           = open_mem,
+	.get_unmapped_area = get_unmapped_area_mem,
+};
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">null_fops</span> = {
+	.llseek         = null_lseek,
+	.read           = read_null,
+	.write          = write_null,
+	.splice_write   = splice_write_null,
+};
+<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">random_fops</span> = {
+	.read  = random_read,
+	.write = random_write,
+	.poll  = random_poll,
+	.ioctl = random_ioctl,
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfa9c54f" class="outline-3">
+<h3 id="orgfa9c54f"><span class="section-number-3">5.3</span> 读写操作</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+虚拟文件和设备驱动程序代码之间已经建立了关联。调用标准库的读写操作后，会向内核发出一些系统调用，最终调用 file_operations 结构中相关的操作（主要是 read 和 write ）。这些方法的具体实现依设备而不同。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org508ec49" class="outline-2">
+<h2 id="org508ec49"><span class="section-number-2">6</span> 块设备操作</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+块设备和字符设备的主要区别：
+</p>
+<ul class="org-ul">
+<li>块设备可以在数据中的任何位置进行访问。对字符设备来说，这是可能的，但不是必然。</li>
+<li>块设备的数据总是以固定长度的块进行传输。即使只请求一个字节的数据，设备驱动程序也会从设备取出一个完全块的数据。相比之下，字符设备能够返回单个字节。</li>
+<li>对块设备的访问有大规模的缓存，即已经读取的数据保存在内存中。如果再次需要，则直接从内存获得。写入操作也使用了缓存，以便延迟处理。   但对于字符设备没有意义（如键盘）。因为，字符设备的每次读请求都必须真正与设备交互才能完成。</li>
+</ul>
+
+
+<p>
+当前几乎所有的块设备的扇区长度都是512字节，块长度则有512、1024、2048、4096字节等。
+</p>
+</div>
+
+
+<div id="outline-container-orgcdc69fa" class="outline-3">
+<h3 id="orgcdc69fa"><span class="section-number-3">6.1</span> 块设备的表示</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+块设备层的各个成员如下图：
+<img src="image/dev/block-layer.png" alt="block-layer.png" />
+</p>
+
+
+<p>
+裸块设备由 struct block_device 表示，内核将与块设备关联的block_device实例，存储在其inode之前，数据结构如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bdev_inode</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span> <span style="color: #FF8C00;">bdev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> <span style="color: #FF8C00;">vfs_inode</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8fc3509" class="outline-3">
+<h3 id="org8fc3509"><span class="section-number-3">6.2</span> 数据结构</h3>
+<div class="outline-text-3" id="text-6-2">
+</div>
+<div id="outline-container-orgc7d9358" class="outline-4">
+<h4 id="orgc7d9358"><span class="section-number-4">6.2.1</span> 块设备</h4>
+<div class="outline-text-4" id="text-6-2-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span> {
+	<span style="color: #5FD7FF;">dev_t</span>                   <span style="color: #FF8C00;">bd_dev</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22359;&#35774;&#22791;&#30340;&#35774;&#22791;&#21495;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">bd_openers</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32479;&#35745;&#20351;&#29992;do_open&#25171;&#24320;&#22359;&#35774;&#22791;&#30340;&#27425;&#25968;</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">bd_inodes</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38142;&#34920;&#34920;&#22836;&#65292;&#29992;&#20110;&#34920;&#31034;&#35813;&#22359;&#35774;&#22791;&#30340;&#35774;&#22791;&#29305;&#27530;&#25991;&#20214;&#30340;&#25152;&#26377;inode</span>
+	<span style="color: #5FD7FF;">void</span> *                  <span style="color: #FF8C00;">bd_holder</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">bd_holders</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span> *   <span style="color: #FF8C00;">bd_contains</span>;
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">bd_block_size</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hd_struct</span> *      <span style="color: #FF8C00;">bd_part</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#35813;&#35774;&#22791;&#19978;&#30340;&#20998;&#21306;&#32467;&#26500;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">number of times partitions within this device have been opened.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">bd_part_count</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20869;&#26680;&#24341;&#29992;&#35813;&#35774;&#22791;&#20869;&#20998;&#21306;&#30340;&#27425;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">bd_invalidated</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#30913;&#30424;&#19978;&#30340;&#20998;&#21306;&#26159;&#21542;&#24050;&#32463;&#25913;&#21464;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *        <span style="color: #FF8C00;">bd_disk</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#21010;&#20998;&#30828;&#30424;&#30340;&#21478;&#19968;&#31181;&#25277;&#35937;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#34920;&#20803;&#32032;&#65292;&#29992;&#20110;&#36319;&#36394;&#35760;&#24405;&#31995;&#32479;&#20013;&#25152;&#26377;&#21487;&#29992;&#30340; block_device &#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">           &#35813;&#38142;&#34920;&#30340;&#34920;&#22836;&#20026;&#20840;&#23616;&#21464;&#37327; all_bdevs &#12290;</span>
+<span style="color: #8B8878;">           &#20351;&#29992;&#35813;&#38142;&#34920;&#65292;&#26080;&#38656;&#26597;&#35810;&#22359;&#35774;&#22791;&#25968;&#25454;&#24211;&#65292;&#21363;&#21487;&#36941;&#21382;&#25152;&#26377;&#22359;&#35774;&#22791;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">bd_list</span>;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">           &#29992;&#20110;&#22312; block_device &#23454;&#20363;&#20013;&#23384;&#20648;&#29305;&#23450;&#20110;&#25345;&#26377;&#32773;&#30340;&#25968;&#25454;</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">bd_private</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2b41b2c" class="outline-4">
+<h4 id="org2b41b2c"><span class="section-number-4">6.2.2</span> 通用硬盘和分区</h4>
+<div class="outline-text-4" id="text-6-2-2">
+<p>
+内核将一个磁盘添加到系统中时，会读取并分析底层块设备上的分区信息，但并不会对各个分区创建block_device 实例，而是使用 struct gendisk 数据结构。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39537;&#21160;&#31243;&#24207;&#30340;&#20027;&#35774;&#22791;&#21495;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">major</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">first_minor</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#35774;&#22791;&#21495;&#30340;&#26368;&#22823;&#25968;&#30446;&#65292;&#20026;1&#26102;&#34920;&#31034;&#30913;&#30424;&#26080;&#27861;&#20998;&#21306;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">minors</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30913;&#30424;&#30340;&#21517;&#31216;&#65292;&#29992;&#20110;&#22312;sysfs&#21644; /proc/partitions &#20013;&#34920;&#31034;&#35813;&#30913;&#30424;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">disk_name</span>[32];
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35774;&#22791;&#20998;&#21306;&#30340;&#25968;&#32452;&#65292;&#20174;&#35774;&#22791;&#21495;&#20316;&#20026;&#32034;&#24341;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hd_struct</span> **<span style="color: #FF8C00;">part</span>;
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">          &#22914;&#26524;&#35774;&#32622;&#20026;&#27491;&#20540;&#65292;&#22312;&#26816;&#27979;&#21040;&#35774;&#22791;&#30340;&#20998;&#21306;&#20449;&#24687;&#25913;&#21464;&#26102;&#65292;&#23601;&#19981;&#20250;&#21521;&#29992;&#25143;&#31354;&#38388;&#21457;&#36865;&#28909;&#25554;&#25300;&#20107;&#20214;&#12290;</span>
+<span style="color: #8B8878;">          &#21482;&#26377;&#22312;&#30913;&#30424;&#23578;&#26410;&#23436;&#20840;&#38598;&#25104;&#21040;&#31995;&#32479;&#20043;&#21069;&#65292;&#21021;&#22987;&#20998;&#21306;&#25195;&#25551;&#26102;&#65292;&#25165;&#20250;&#36825;&#26679;&#20570;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">part_uevent_suppress</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#29305;&#23450;&#20110;&#35774;&#22791;&#12289;&#25191;&#34892;&#21508;&#31181;&#24213;&#23618;&#20219;&#21153;&#30340;&#21508;&#20010;&#20989;&#25968;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device_operations</span> *<span style="color: #FF8C00;">fops</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#31649;&#29702;&#35831;&#27714;&#38431;&#21015;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_queue</span> *<span style="color: #FF8C00;">queue</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#31169;&#26377;&#30340;&#39537;&#21160;&#31243;&#24207;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">private_data</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#30913;&#30424;&#23481;&#37327;&#65292;&#21333;&#20301;&#26159;&#25159;&#21306;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">sector_t</span> <span style="color: #FF8C00;">capacity</span>;
+
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#35813;&#30913;&#30424;&#25152;&#23646;&#30340;&#30828;&#20214;&#35774;&#22791;&#65292;&#25351;&#38024;&#25351;&#21521;&#39537;&#21160;&#31243;&#24207;&#27169;&#22411;&#30340;&#19968;&#20010;&#23545;&#35937;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> *<span style="color: #FF8C00;">driverfs_dev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobject</span> <span style="color: #FF8C00;">kobj</span>;
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hd_struct</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20998;&#21306;&#22312;&#22359;&#35774;&#22791;&#19978;&#30340;&#36215;&#22987;&#25159;&#21306;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">sector_t</span> <span style="color: #FF8C00;">start_sect</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20998;&#21306;&#22312;&#22359;&#35774;&#22791;&#19978;&#30340;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">sector_t</span> <span style="color: #FF8C00;">nr_sects</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobject</span> <span style="color: #FF8C00;">kobj</span>;
+};
+</pre>
+</div>
+
+<p>
+<i>虽然 gendisk 表示已分区的磁盘，同时也可以表示没有任何分区的设备。</i>
+</p>
+
+
+<p>
+alloc_disk 函数用来分配 struct gendisk 结构的实例：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32473;&#20986;&#35774;&#22791;&#30340;&#20174;&#35774;&#22791;&#21495;&#25968;&#30446;&#65292;&#35843;&#29992;&#35813;&#20989;&#25968;&#21487;&#20197;&#33258;&#21160;&#20998;&#37197; genhd &#23454;&#20363;&#65292;&#20854;&#20013;&#21253;&#25324;&#20102;&#25351;&#21521;&#21508;&#20010;&#20998;&#21306;&#30340;hd_struct&#30340;&#25351;&#38024;&#25152;&#38656;&#30340;&#31354;&#38388;&#65292;&#21482;&#21253;&#25324;&#25351;&#38024;&#31354;&#38388;&#65292;&#21482;&#26377;&#22312;&#26816;&#27979;&#21040;&#23454;&#38469;&#20998;&#21306;&#24182;&#29992;add_partirion&#28155;&#21152;&#26102;&#25165;&#20250;&#20998;&#37197;&#23454;&#38469;&#20869;&#23384;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *<span style="color: #87D700;">alloc_disk</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">minors</span>);
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38144;&#27585;gendisk&#30340;&#20989;&#25968;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">del_gendisk</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *<span style="color: #FF8C00;">disk</span>);
+</pre>
+</div>
+
+
+
+<div class="figure">
+<p><img src="dot/dev/bd-gd-hd.png" alt="bd-gd-hd.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>块设备上已经打开的每个分区，都对应于一个 struct block_device 实例，分区的 block_device 实例通过bd_contains 指向整个块设备的block_device实例。</li>
+
+<li>所有的block_device 实例都通过 bd_disk ，指向其对应的通用磁盘数据结构 gendisk 。要注意，尽管一个已分区的磁盘有多个 block_device 实例，但只对应于一个 gendisk 实例。</li>
+
+<li>gendisk 实例中的 part 成员指向 hd_struct 指针的数组。每个数组项都表示一个分区。如果一个 block_device 表示分区，其bd_disk成员指向对应分区的hd_struct实例， hd_struct 实例在 gendisk 和 block_device 之间是共享的。</li>
+</ul>
+
+
+
+
+
+
+
+
+
+<p>
+通用硬盘 gendisk 还集成到 kobject 框架中，块设备子系统由 kset 实例 block_subsystem 表示。 kset 中有一个链表，每个 gendisk 实例所包含的 kobject 实例都放置在该链表上。
+</p>
+
+<p>
+由 struct hd_struct 表示的分区对象也包含了一个嵌入的 kobject 。概念上，分区是硬盘的子元素，这一点也被内核对象的数据结构所捕获。 hd_struct 中嵌入的 kobject 的 parent 指针，将指向通用硬盘 gendisk 中嵌入的 kobject。
+</p>
+
+
+
+<div class="figure">
+<p><img src="dot/dev/gedisk-kobj.png" alt="gedisk-kobj.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge4057f3" class="outline-4">
+<h4 id="orge4057f3"><span class="section-number-4">6.2.3</span> 块设备操作</h4>
+<div class="outline-text-4" id="text-6-2-3">
+<p>
+特定于块设备的操作使用 struct block_device_operations 数据结构来表示：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">open release ioctl unlocked_ioctl &#20989;&#25968;&#19981;&#20250;&#34987;VFS&#20195;&#30721;&#30452;&#25509;&#35843;&#29992;&#65292;&#32780;&#26159;&#36890;&#36807;&#22359;&#35774;&#22791;&#30340;&#26631;&#20934;&#25991;&#20214;&#25805;&#20316; def_blk_fops &#20013;&#21253;&#21547;&#30340;&#25805;&#20316;&#38388;&#25509;&#35843;&#29992;</span>
+<span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device_operations</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25171;&#24320;&#22359;&#35774;&#22791;&#25991;&#20214;</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">open</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#22359;&#35774;&#22791;&#25991;&#20214;</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">release</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21521;&#22359;&#35774;&#22791;&#21457;&#36865;&#29305;&#27530;&#21629;&#20196;</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">ioctl</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *, <span style="color: #5FD7FF;">unsigned</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>);
+	<span style="color: #5FD7FF;">long</span> (*<span style="color: #87D700;">unlocked_ioctl</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *, <span style="color: #5FD7FF;">unsigned</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>);
+	<span style="color: #5FD7FF;">long</span> (*<span style="color: #87D700;">compat_ioctl</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *, <span style="color: #5FD7FF;">unsigned</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">direct_access</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span> *, <span style="color: #5FD7FF;">sector_t</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#26597;&#23384;&#20648;&#35299;&#37322;&#26159;&#21542;&#24050;&#32463;&#25913;&#21464;</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">media_changed</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">revalidate_disk</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">getgeo</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hd_geometry</span> *);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb9948fa" class="outline-4">
+<h4 id="orgb9948fa"><span class="section-number-4">6.2.4</span> 请求队列</h4>
+<div class="outline-text-4" id="text-6-2-4">
+<p>
+块设备的读写请求放置在一个队列上，称之为请求队列。 gendisk 结构包括了一个指针，指向这个特定于设备的队列，由以下数据类型表示。
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_queue</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19982;queue_head&#19968;&#21516;&#29992;&#20110;&#32531;&#23384;&#34892;&#20849;&#20139;</span>
+
+<span style="color: #8B8878;">          queue_head &#26159;&#19968;&#20010;&#34920;&#22836;&#65292;&#29992;&#20110;&#26500;&#24314;&#19968;&#20010;I/O&#35831;&#27714;&#30340;&#21452;&#38142;&#34920;&#65292;&#27599;&#20010;&#20803;&#32032;&#26159;&#31867;&#22411;&#26159;request&#65292;</span>
+<span style="color: #8B8878;">          &#20195;&#34920;&#21521;&#22359;&#35774;&#22791;&#30340;&#19968;&#20010;&#35831;&#27714;&#12290;&#20869;&#26680;&#20250;&#37325;&#26032;&#25490;&#21015;&#35813;&#38142;&#34920;&#30340;&#35831;&#27714;&#12290;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">queue_head</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request</span>          *<span style="color: #FF8C00;">last_merge</span>;
+	<span style="color: #5FD7FF;">elevator_t</span>              *<span style="color: #FF8C00;">elevator</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38431;&#21015;&#20013;&#30340;&#31354;&#38386;&#35831;&#27714;&#30340;&#21015;&#34920;&#65292;&#19968;&#20010;&#29992;&#20110;&#35835;&#35831;&#27714; &#19968;&#20010;&#29992;&#20110;&#20889;&#35831;&#27714;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_list</span>     <span style="color: #FF8C00;">rq</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#21521;&#38431;&#21015;&#28155;&#21152;&#26032;&#35831;&#27714;&#30340;&#25509;&#21475;&#12290;&#22312;&#20869;&#26680;&#26399;&#26395;&#39537;&#21160;&#31243;&#24207;&#25191;&#34892;&#26576;&#20123;&#24037;&#20316;&#26102;</span>
+<span style="color: #8B8878;">          &#65288;&#22914;&#20174;&#24213;&#23618;&#35774;&#22791;&#35835;&#21462;&#25968;&#25454;&#65292;&#25110;&#21521;&#35774;&#22791;&#20889;&#20837;&#25968;&#25454;&#65289;&#65292;&#20869;&#26680;&#20250;&#33258;&#21160;&#35843;&#29992;&#35813;&#20989;&#25968;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">request_fn_proc</span>         *<span style="color: #FF8C00;">request_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21019;&#24314;&#26032;&#35831;&#27714;&#12290; &#20869;&#26680;&#20801;&#35768;&#35774;&#22791;&#39537;&#21160;&#31243;&#24207;&#23450;&#20041;&#33258;&#36523;&#30340; make_request_fn &#20989;&#25968;&#65292;</span>
+<span style="color: #8B8878;">           &#22240;&#20026;&#26576;&#20123;&#35774;&#22791;&#65288;&#20363;&#22914;RAM&#30913;&#30424;&#65289;&#19981;&#20351;&#29992;&#38431;&#21015;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">make_request_fn</span>         *<span style="color: #FF8C00;">make_request_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35831;&#27714;&#39044;&#22791;&#20989;&#25968;&#65292;&#22823;&#22810;&#25968;&#39537;&#21160;&#31243;&#24207;&#19981;&#20351;&#29992;&#35813;&#20989;&#25968;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">prep_rq_fn</span>              *<span style="color: #FF8C00;">prep_rq_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#25300;&#20986;&#19968;&#20010;&#22359;&#35774;&#22791;&#26102;&#35843;&#29992;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unplug_fn</span>               *<span style="color: #FF8C00;">unplug_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30830;&#23450;&#26159;&#21542;&#20801;&#35768;&#21521;&#19968;&#20010;&#29616;&#23384;&#30340;&#35831;&#27714;&#22686;&#21152;&#26356;&#22810;&#25968;&#25454;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">merge_bvec_fn</span>           *<span style="color: #FF8C00;">merge_bvec_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#39044;&#22791;&#21047;&#20986;&#38431;&#21015;&#26102;&#65292;&#21363;&#19968;&#27425;&#24615;&#25191;&#34892;&#25152;&#26377;&#24453;&#20915;&#35831;&#27714;&#20043;&#21069;&#65292;&#20250;&#35843;&#29992; prepare_flush_fn &#12290;</span>
+<span style="color: #8B8878;">           &#22312;&#35813;&#26041;&#27861;&#20013;&#65292;&#35774;&#22791;&#21487;&#20197;&#36827;&#34892;&#24517;&#35201;&#30340;&#28165;&#29702;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">prepare_flush_fn</span>        *<span style="color: #FF8C00;">prepare_flush_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#36890;&#36807;&#35843;&#29992; blk_complete_request &#35201;&#27714;&#24322;&#27493;&#23436;&#25104;&#35831;&#27714;&#26102;&#65292;</span>
+<span style="color: #8B8878;">           softirq_done_fn &#20250;&#20316;&#20026;&#22238;&#35843;&#20989;&#25968;&#65292;&#36890;&#30693;&#39537;&#21160;&#31243;&#24207;&#35831;&#27714;&#24050;&#32463;&#23436;&#25104;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">softirq_done_fn</span>         *<span style="color: #FF8C00;">softirq_done_fn</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#33258;&#21160;&#25300;&#20986;&#29305;&#24615;&#28041;&#21450;&#30340;&#29366;&#24577;&#20540;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>       <span style="color: #FF8C00;">unplug_timer</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">unplug_thresh</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32047;&#31215;&#35831;&#27714;&#25968;&#30446;&#30340;&#38408;&#20540;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">unplug_delay</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32047;&#31215;&#26102;&#38388;&#30340;&#38408;&#20540;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">work_struct</span>      <span style="color: #FF8C00;">unplug_work</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">backing_dev_info</span> <span style="color: #FF8C00;">backing_dev_info</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#39029;&#24103;&#21495;&#22823;&#20110;&#35813;&#20540;&#65292;&#21017;&#20351;&#29992;&#24377;&#24615;&#32531;&#20914;&#21306;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">bounce_pfn</span>;
+	<span style="color: #5FD7FF;">gfp_t</span>                   <span style="color: #FF8C00;">bounce_gfp</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38431;&#21015;&#26631;&#24535;, &#21442;&#32771; QUEUE_* &#24418;&#24335;&#30340;&#23450;&#20041;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">queue_flags</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38431;&#21015;&#35774;&#32622;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">nr_requests</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35831;&#27714;&#30340;&#26368;&#22823;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">nr_congestion_on</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">nr_congestion_off</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">nr_batching</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">max_sectors</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">max_hw_sectors</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">max_phys_segments</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">max_hw_segments</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">hardsect_size</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">max_segment_size</span>;
+};
+</pre>
+</div>
+
+<p>
+内核提供了标准函数 blk_init_queue_node ，用于产生一个标准的请求队列。这种情况下，驱动程序自身唯一必须提供的管理函数就是 request_fn 。任何其他的管理问题都通过标准函数处理。用这种方法实现请求管理的驱动程序，在调用add_disk激活磁盘之前，需要调用 blk_init_queue_node 创建请求队列，并将结果 request_queue 实例附加到设备的 gendisk 实例。
+</p>
+
+<p>
+请求队列可以在系统超负荷时插入。接下来新的请求都会处于未处理状态，直至队列“拔出”，该特性称之为队列插入（queue plugging）。以 unplug_ 为前缀的各个成员用于实现一种定时器机制，在一定时间间隔后自动“拔出”队列。 unplug_fn 负责实际的拔出操作。
+</p>
+
+<p>
+queue_flags 借助标志来控制队列的内部状态。
+</p>
+
+<p>
+nr_requests 表明了可以管理到队列的请求的最大数目。
+</p>
+
+<p>
+request_list 结构的最后一部分包含了一些信息，更详细地描述了所管理的块设备，并反映了与硬件相关的设备设置，各成员的语义如下：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">成员</th>
+<th scope="col" class="org-left">语义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">max_sectors</td>
+<td class="org-left">指定设备在单个请求中可以处理的扇区的最大数目。长度单位是具体设备的扇区长度（ hardsect_size ）</td>
+</tr>
+
+<tr>
+<td class="org-left">max_segment_size</td>
+<td class="org-left">单个请求的最大段长度（按字节计算）</td>
+</tr>
+
+<tr>
+<td class="org-left">max_phys_segments</td>
+<td class="org-left">指定用于运输不连续数据的分散—聚集请求中，不连续的段的最大数目</td>
+</tr>
+
+<tr>
+<td class="org-left">max_hw_segments</td>
+<td class="org-left">与 max_phys_segments 相同，但考虑了（可能的）I/O MMU所进行的重新映射。该成员指定了驱动程序可以传递到设备的地址/长度对的最大数目</td>
+</tr>
+
+<tr>
+<td class="org-left">hardsect_size</td>
+<td class="org-left">指定了设备的物理扇区长度，该值通常是512。只有少数非常新的设备使用不同的设置</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5217a5d" class="outline-3">
+<h3 id="org5217a5d"><span class="section-number-3">6.3</span> 向系统添加磁盘和分区</h3>
+<div class="outline-text-3" id="text-6-3">
+</div>
+<div id="outline-container-org3ccdaa1" class="outline-4">
+<h4 id="org3ccdaa1"><span class="section-number-4">6.3.1</span> 添加分区</h4>
+<div class="outline-text-4" id="text-6-3-1">
+<p>
+add_partition 负责向通用硬盘数据结构添加一个新的分区。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">add_partition</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *<span style="color: #FF8C00;">disk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">part</span>, <span style="color: #5FD7FF;">sector_t</span> <span style="color: #FF8C00;">start</span>, <span style="color: #5FD7FF;">sector_t</span> <span style="color: #FF8C00;">len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hd_struct</span> *<span style="color: #FF8C00;">p</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;hd_struct&#32467;&#26500;&#30340;&#23454;&#20363;&#12290;</span>
+	p = kzalloc(<span style="color: #FF1493;">sizeof</span>(*p), GFP_KERNEL);
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20197;&#19979;&#22635;&#20805;&#20998;&#21306;&#30340;&#22522;&#26412;&#20449;&#24687;</span>
+	p-&gt;start_sect = start;
+	p-&gt;nr_sects = len;
+	p-&gt;partno = part;
+	p-&gt;policy = disk-&gt;policy;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#19968;&#20010;&#29992;&#20110;&#26174;&#31034;&#30340;&#21517;&#23383;&#65288;&#20363;&#22312;sysfs&#20013;&#26174;&#31034;&#30340;&#21517;&#23383;&#65289;</span>
+	<span style="color: #FF1493;">if</span> (isdigit(disk-&gt;kobj.k_name[strlen(disk-&gt;kobj.k_name)-1]))
+		kobject_set_name(&amp;p-&gt;kobj, <span style="color: #CDC673;">"%sp%d"</span>,
+				 kobject_name(&amp;disk-&gt;kobj), part);
+	<span style="color: #FF1493;">else</span>
+		kobject_set_name(&amp;p-&gt;kobj, <span style="color: #CDC673;">"%s%d"</span>,
+				 kobject_name(&amp;disk-&gt;kobj),part);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#20998;&#21306;&#30340;&#20869;&#26680;&#23545;&#35937;&#30340;&#29238;&#23545;&#35937;&#25351;&#38024;&#25351;&#21521;&#36890;&#29992;&#30828;&#30424;&#23545;&#35937;</span>
+	p-&gt;kobj.parent = &amp;disk-&gt;kobj;
+	p-&gt;kobj.ktype = &amp;ktype_part; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#21306;&#30340;ktype&#20026; ktype_part</span>
+	kobject_init(&amp;p-&gt;kobj);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20351;&#29992; kobject_add &#28155;&#21152;&#26032;&#23545;&#35937;&#65292;&#20351;&#20043;&#25104;&#20026;&#22359;&#35774;&#22791;&#23376;&#31995;&#32479;&#30340;&#19968;&#20010;&#25104;&#21592;&#65292;</span>
+<span style="color: #8B8878;">           &#22240;&#27492;&#25552;&#20379;&#26377;&#20851;&#35813;&#20998;&#21306;&#20449;&#24687;&#30340;sysfs&#39033;&#20250;&#20986;&#29616;&#22312; /sys/block &#20013;&#12290;</span><span style="color: #8B8878;">*/</span>
+	kobject_add(&amp;p-&gt;kobj);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>disk-&gt;part_uevent_suppress)
+		kobject_uevent(&amp;p-&gt;kobj, KOBJ_ADD);
+	sysfs_create_link(&amp;p-&gt;kobj, &amp;block_subsys.kobj, <span style="color: #CDC673;">"subsystem"</span>);
+	<span style="color: #FF1493;">if</span> (flags &amp; ADDPART_FLAG_WHOLEDISK) {
+		<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">attribute</span> <span style="color: #FF8C00;">addpartattr</span> = {
+			.name = <span style="color: #CDC673;">"whole_disk"</span>,
+			.mode = S_IRUSR | S_IRGRP | S_IROTH,
+		};
+
+		sysfs_create_file(&amp;p-&gt;kobj, &amp;addpartattr);
+	}
+	partition_sysfs_add_subdir(p);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20462;&#25913;&#36890;&#29992;&#30828;&#30424;&#23545;&#35937;&#65292;&#20351;&#23545;&#24212;&#30340; part &#25968;&#32452;&#39033;&#25351;&#21521;&#26032;&#30340;&#20998;&#21306;</span><span style="color: #8B8878;"> */</span>
+	disk-&gt;part[part-1] = p;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org94c8f13" class="outline-4">
+<h4 id="org94c8f13"><span class="section-number-4">6.3.2</span> 添加磁盘</h4>
+<div class="outline-text-4" id="text-6-3-2">
+<p>
+add_disk 用于添加通用硬盘。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">add_disk</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *<span style="color: #FF8C00;">disk</span>)
+{
+	disk-&gt;flags |= GENHD_FL_UP;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27880;&#20876;&#25351;&#23450;&#30340;&#35774;&#22791;&#21495;&#33539;&#22260;</span>
+	blk_register_region(MKDEV(disk-&gt;major, disk-&gt;first_minor),
+			    disk-&gt;minors, <span style="color: #AF87FF;">NULL</span>, exact_match, exact_lock, disk);
+
+	register_disk(disk);
+	blk_register_queue(disk);
+}
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">register_disk</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *<span style="color: #FF8C00;">disk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span> *<span style="color: #FF8C00;">bdev</span>;
+	<span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">s</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hd_struct</span> *<span style="color: #FF8C00;">p</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#20869;&#26680;&#23545;&#35937;&#35774;&#32622;&#21517;&#31216;</span>
+	kobject_set_name(&amp;disk-&gt;kobj, <span style="color: #CDC673;">"%s"</span>, disk-&gt;disk_name);
+	kobject_add(&amp;disk-&gt;kobj);
+	err = disk_sysfs_symlinks(disk);
+	disk_sysfs_add_subdirs(disk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#35813;&#35774;&#22791;&#30340;&#19968;&#20010; block_device &#23454;&#20363;</span>
+	bdev = bdget_disk(disk, 0);
+
+	bdev-&gt;bd_invalidated = 1;
+	disk-&gt;part_uevent_suppress = 1;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">blkdev_get&#20013;&#20250;&#36890;&#36807;&#35797;&#38169;&#21457;&#35782;&#21035;&#22359;&#35774;&#22791;&#19978;&#30340;&#20998;&#21306;&#12290;</span>
+<span style="color: #8B8878;">           &#22914;&#26524;&#26816;&#27979;&#21040;&#20998;&#21306;&#65292;&#21017;&#35843;&#29992; add_partition &#28155;&#21152;&#20998;&#21306;&#12290;</span><span style="color: #8B8878;"> */</span>
+	err = blkdev_get(bdev, FMODE_READ, 0);
+	disk-&gt;part_uevent_suppress = 0;
+	blkdev_put(bdev);
+
+<span style="color: #AF87FF;">exit</span>:
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#22312;&#24050;&#32463;&#22312;&#30913;&#30424;&#19978;&#21019;&#24314;&#20998;&#21306;&#65292;&#21017;&#36890;&#30693;&#29992;&#25143;&#31354;&#38388;</span><span style="color: #8B8878;"> */</span>
+	kobject_uevent(&amp;disk-&gt;kobj, KOBJ_ADD);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#27599;&#20010;&#25214;&#21040;&#30340;&#20998;&#21306;&#36890;&#30693;&#21040;&#29992;&#25143;&#31354;&#38388;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">for</span> (i = 1; i &lt; disk-&gt;minors; i++) {
+		p = disk-&gt;part[i-1];
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>p || <span style="color: #CDC673; font-weight: bold;">!</span>p-&gt;nr_sects)
+			<span style="color: #FF1493;">continue</span>;
+		kobject_uevent(&amp;p-&gt;kobj, KOBJ_ADD);
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org379341d" class="outline-4">
+<h4 id="org379341d"><span class="section-number-4">6.3.3</span> 打开块设备文件</h4>
+<div class="outline-text-4" id="text-6-3-3">
+<p>
+在用户应用程序打开一个块设备的设备文件时，虚拟文件系统将调用 file_operations 结构的 open 函数，最终会调用到 blkdev_open 。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">blkdev_open</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> * <span style="color: #FF8C00;">inode</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> * <span style="color: #FF8C00;">filp</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span> *<span style="color: #FF8C00;">bdev</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">res</span>;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">          bd_acquire &#39318;&#20808;&#25214;&#21040;&#19982;&#35813;&#35774;&#22791;&#21305;&#37197;&#30340; block_device &#23454;&#20363;&#12290;</span>
+
+<span style="color: #8B8878;">          &#22914;&#26524;&#35774;&#22791;&#24050;&#32463;&#20351;&#29992;&#36807;&#65292;&#25351;&#21521;&#35813;&#23454;&#20363;&#30340;&#25351;&#38024;&#21487;&#20197;&#30452;&#25509;&#20174; inode-&gt;i_bdev &#24471;&#21040;&#12290;</span>
+<span style="color: #8B8878;">          &#21542;&#21017;&#38656;&#35201;&#20351;&#29992; dev_t &#20449;&#24687;&#21019;&#24314;&#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">         */</span>
+	filp-&gt;f_flags |= O_LARGEFILE;
+
+	bdev = bd_acquire(inode);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25191;&#34892;&#25171;&#24320;&#22359;&#35774;&#22791;&#25991;&#20214;&#30340;&#25805;&#20316;</span>
+	res = do_open(bdev, filp, 0);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#36827;&#34892;&#29420;&#21344;&#35775;&#38382;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(filp-&gt;f_flags &amp; O_EXCL) )
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;bd_claim&#25345;&#26377;&#35813;&#22359;&#35774;&#22791;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(res = bd_claim(bdev, filp)))
+		<span style="color: #FF1493;">return</span> 0;
+
+	blkdev_put(bdev);
+	<span style="color: #FF1493;">return</span> res;
+}
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="plantuml/dev/do_open.png" alt="do_open.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc2ed6de" class="outline-4">
+<h4 id="orgc2ed6de"><span class="section-number-4">6.3.4</span> 请求结构</h4>
+<div class="outline-text-4" id="text-6-3-4">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">queuelist</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">donelist</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_queue</span> *<span style="color: #FF8C00;">q</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd_flags</span>;
+	<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">rq_cmd_type_bits</span> <span style="color: #FF8C00;">cmd_type</span>;
+
+
+	<span style="color: #5FD7FF;">sector_t</span> <span style="color: #FF8C00;">sector</span>;                <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#20102;&#25968;&#25454;&#20256;&#36755;&#30340;&#36215;&#22987;&#25159;&#21306;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">sector_t</span> <span style="color: #FF8C00;">hard_sector</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#20102;&#25968;&#25454;&#20256;&#36755;&#30340;&#36215;&#22987;&#25159;&#21306;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">nr_sectors</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#35831;&#27714;&#38656;&#35201;&#25552;&#20132;&#30340;&#25159;&#21306;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">hard_nr_sectors</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#35831;&#27714;&#38656;&#35201;&#25552;&#20132;&#30340;&#25159;&#21306;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#35831;&#27714;&#22312;&#24403;&#21069;&#27573;&#20013;&#65292;&#36824;&#38656;&#35201;&#20256;&#36755;&#30340;&#25159;&#21306;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">current_nr_sectors</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#35831;&#27714;&#22312;&#24403;&#21069;&#27573;&#20013;&#65292;&#36824;&#38656;&#35201;&#20256;&#36755;&#30340;&#25159;&#21306;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hard_cur_sectors</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#34920;&#31034;&#20256;&#36755;&#23578;&#26410;&#23436;&#25104;&#30340;&#24403;&#21069;BIO&#23454;&#20363;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bio</span> *<span style="color: #FF8C00;">bio</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#26368;&#21518;&#19968;&#20010;BIO&#23454;&#20363;&#65292;&#19968;&#20010;&#35831;&#27714;&#20013;&#21487;&#33021;&#20351;&#29992;&#22810;&#20010;BIO</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bio</span> *<span style="color: #FF8C00;">biotail</span>;
+
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">elevator_private</span>;
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">elevator_private2</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gendisk</span> *<span style="color: #FF8C00;">rq_disk</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">start_time</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#35831;&#27714;&#20013;&#27573;&#30340;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">nr_phys_segments</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32463;&#36807;I/O MMU&#21487;&#33021;&#30340;&#37325;&#25490;&#24207;&#20043;&#21518;&#27573;&#30340;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">nr_hw_segments</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd_len</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">cmd</span>[BLK_MAX_CDB];
+};
+</pre>
+</div>
+
+<p>
+与请求关联的标志分为两个部分。 cmd_flags 包含了用于请求的一组通用标志，而 cmd_type 表示请求的类型。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">rq_cmd_type_bits</span> {
+	<span style="color: #FF8C00;">REQ_TYPE_FS</span> = 1,        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#31995;&#32479;&#35831;&#27714;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_BLOCK_PC</span>,      <span style="color: #8B8878;">//</span><span style="color: #8B8878;">scsi&#21629;&#20196;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_SENSE</span>,         <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35831;&#27714;&#26816;&#27979;&#65292;&#29992;&#20110;scsi/atapi&#35774;&#22791;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_PM_SUSPEND</span>,    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26242;&#20572;&#35774;&#22791;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_PM_RESUME</span>,     <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21796;&#37266;&#35774;&#22791;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_PM_SHUTDOWN</span>,   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#35774;&#22791;&#20572;&#26426;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_FLUSH</span>,         <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21047;&#20986;&#35831;&#27714;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_SPECIAL</span>,       <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39537;&#21160;&#31243;&#24207;&#23450;&#20041;&#30340;&#35831;&#27714;&#31867;&#22411;</span>
+	<span style="color: #FF8C00;">REQ_TYPE_LINUX_BLOCK</span>,   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19968;&#33324;&#24615;&#30340;&#22359;&#35774;&#22791;&#23618;&#28040;&#24687;</span>
+	...
+};
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">rq_flag_bits</span> {
+	<span style="color: #FF8C00;">__REQ_RW</span>,                 <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26410;&#32622;&#20301;&#65292;&#35835;&#35831;&#27714;&#65307;&#32622;&#20301;&#65292;&#20889;&#35831;&#27714;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_FAILFAST</span>,         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24213;&#23618;&#39537;&#21160;&#31243;&#24207;&#19981;&#36827;&#34892;&#37325;&#35797;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_SORTED</span>,           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#35831;&#27714;&#30001;I/O&#35843;&#24230;&#22120;&#20351;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_SOFTBARRIER</span>,      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19981;&#33021;&#30001;I/O&#35843;&#24230;&#22120;&#20256;&#36882;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_HARDBARRIER</span>,      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19981;&#33021;&#30001;&#39537;&#21160;&#31243;&#24207;&#20256;&#36882;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_FUA</span>,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21551;&#29992;FUA( forced unit access&#65289;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_NOMERGE</span>,          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#35831;&#27714;&#19981;&#33021;&#36827;&#34892;&#21512;&#24182;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_STARTED</span>,          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39537;&#21160;&#31243;&#24207;&#24050;&#32463;&#24320;&#22987;&#22788;&#29702;&#35813;&#35831;&#27714;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_DONTPREP</span>,         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23545;&#35813;&#35831;&#27714;&#65292;&#19981;&#35201;&#35843;&#29992;&#35831;&#27714;&#38431;&#21015;&#30340;prep_rq_fn&#26041;&#27861;&#26469;&#39044;&#20808;&#20934;&#22791;&#21457;&#36865;&#21040;&#35774;&#22791;&#30340;&#21629;&#20196;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_QUEUED</span>,           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#34920;&#26126;&#28508;&#22312;&#35774;&#22791;&#20855;&#26377;&#25490;&#38431;&#22788;&#29702;&#22810;&#20010;&#21629;&#20196;&#30340;&#33021;&#21147;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_ELVPRIV</span>,          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38468;&#21152;&#20102;I/O&#35843;&#24230;&#22120;&#30340;&#31169;&#26377;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_FAILED</span>,           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#35831;&#27714;&#22833;&#36133;&#65292;&#21017;&#32622;&#20301;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_QUIET</span>,            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19981;&#25253;&#21578;&#22833;&#36133;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_PREEMPT</span>,          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23545;ide_preempt&#35831;&#27714;&#32622;&#20301;&#65292;&#27492;&#31867;&#35831;&#27714;&#29992;&#20110;IDE&#30913;&#30424;&#65292;&#23558;&#24378;&#21344;&#38431;&#21015;&#20013;&#30340;&#24403;&#21069;&#35831;&#27714;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_ORDERED_COLOR</span>,    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#23631;&#38556;&#20043;&#21069;&#25110;&#20043;&#21518;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_RW_SYNC</span>,          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35831;&#27714;&#26159;&#21516;&#27493;&#30340;&#65288;O_DIRECT&#65289;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_ALLOCED</span>,          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35831;&#27714;&#26469;&#33258;&#20998;&#37197;&#27744;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_RW_META</span>,          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20803;&#25968;&#25454;I/O&#35831;&#27714;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">__REQ_NR_BITS</span>,
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org18211c4" class="outline-4">
+<h4 id="org18211c4"><span class="section-number-4">6.3.5</span> BIO</h4>
+<div class="outline-text-4" id="text-6-3-5">
+
+<div class="figure">
+<p><img src="dot/dev/bio.png" alt="bio.png" />
+</p>
+</div>
+
+<p>
+BIO的主要管理结构（ bio ）关联到一个向量（即数组），各个数组项都指向一个内存页（切记：不是页在内存中的地址，而是对应于该页帧的 page 实例）。这些页用于从设备接收数据、向设备发送数据。
+</p>
+
+
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bio</span> {
+	<span style="color: #5FD7FF;">sector_t</span>                  <span style="color: #FF8C00;">bi_sector</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20256;&#36755;&#24320;&#22987;&#30340;&#25159;&#21306;&#21495;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bio</span>              *<span style="color: #FF8C00;">bi_next</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#19982;&#35831;&#27714;&#20851;&#32852;&#30340;&#20960;&#20010;BIO&#32452;&#32455;&#21040;&#19968;&#20010;&#21333;&#38142;&#34920;&#20013;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">block_device</span>     *<span style="color: #FF8C00;">bi_bdev</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35831;&#27714;&#25152;&#23646;&#35774;&#22791;&#30340;block_device&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">bi_vcnt</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">bio_vec&#30340;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">bi_idx</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">bi_io_vec&#25968;&#32452;&#20013;&#65292;&#24403;&#21069;&#22788;&#29702;&#25968;&#32452;&#39033;&#30340;&#32034;&#24341;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30001;I/O MMU&#37325;&#26032;&#26144;&#23556;&#20043;&#21069;&#65292;&#20256;&#36755;&#20013;&#27573;&#30340;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">bi_phys_segments</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30001;I/O MMU&#37325;&#26032;&#26144;&#23556;&#20043;&#21518;&#65292;&#20256;&#36755;&#20013;&#27573;&#30340;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">bi_hw_segments</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">bi_size</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35831;&#27714;&#25152;&#28041;&#21450;&#25968;&#25454;&#30340;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">bi_io_vec&#26159;&#19968;&#20010;&#25351;&#21521;I/O&#21521;&#37327;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bio_vec</span>          *<span style="color: #FF8C00;">bi_io_vec</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30828;&#20214;&#20256;&#36755;&#23436;&#25104;&#26102;&#65292;&#35774;&#22791;&#39537;&#21160;&#31243;&#24207;&#24517;&#39035;&#35843;&#29992;bi_end_io&#12290;</span>
+<span style="color: #8B8878;">           &#36825;&#20351;&#24471;&#22359;&#35774;&#22791;&#23618;&#26377;&#26426;&#20250;&#36827;&#34892;&#28165;&#29702;&#65292;&#25110;&#21796;&#37266;&#31561;&#24453;&#35813;&#35831;&#27714;&#32467;&#26463;&#30340;&#30561;&#30496;&#36827;&#31243;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">bio_end_io_t</span>            *<span style="color: #FF8C00;">bi_end_io</span>;
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">bi_cnt</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">pin count</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">bi_private</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#26512;&#26500;&#20989;&#25968;&#65292;&#22312;&#20174;&#20869;&#23384;&#21024;&#38500;&#19968;&#20010;bio&#23454;&#20363;&#20043;&#21069;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">bio_destructor_t</span>        *<span style="color: #FF8C00;">bi_destructor</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">destructor</span><span style="color: #8B8878;"> */</span>
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bio_vec</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span>     *<span style="color: #FF8C00;">bv_page</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#29992;&#20110;&#25968;&#25454;&#20256;&#36755;&#39029;&#23545;&#24212;&#30340;page&#23454;&#20363;&#12290;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">bv_len</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#29992;&#20110;&#25968;&#25454;&#30340;&#23383;&#33410;&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">bv_offset</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#35813;&#39029;&#20869;&#30340;&#20559;&#31227;&#37327;&#65292;&#36890;&#24120;&#20026;0</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org617c2c1" class="outline-4">
+<h4 id="org617c2c1"><span class="section-number-4">6.3.6</span> 提交请求</h4>
+<div class="outline-text-4" id="text-6-3-6">
+<p>
+内核分为两个步骤提交请求：
+</p>
+<ul class="org-ul">
+<li>它首先创建一个 bio 实例以描述请求，然后将该实例嵌入到请求中，并置于请求队列上。</li>
+<li>接下来内核将处理请求队列并执行 bio 中的操作。</li>
+</ul>
+
+<p>
+在BIO创建后，调用 make_request_fn 产生一个新请求以插入到请求队列。请求通过 request_fn 提交。
+</p>
+</div>
+
+
+<div id="outline-container-org8a457e0" class="outline-5">
+<h5 id="org8a457e0"><span class="section-number-5">6.3.6.1</span> 创建请求</h5>
+<div class="outline-text-5" id="text-6-3-6-1">
+<p>
+submit_bio 负责根据传递的bio实例创建一个新请求，并通过make_request_fn 将请求置于驱动程序的请求队列上。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">submit_bio
+	&#36827;&#34892;&#32479;&#35745;&#37327;&#35745;&#31639;
+	generic_make_request
+		__generic_make_request(bio);
+			bdev_get_queue &#25214;&#21040;&#35813;&#35831;&#27714;&#25152;&#28041;&#21450;&#22359;&#35774;&#22791;&#30340;&#35831;&#27714;&#38431;&#21015;
+			blk_partition_remap &#22914;&#26524;&#35774;&#22791;&#26159;&#20998;&#21306;&#65292;&#35813;&#20989;&#25968;&#37325;&#26032;&#26144;&#23556;&#35813;&#35831;&#27714;&#65292;&#19968;&#30830;&#20445;&#35835;&#20889;&#27491;&#30830;&#30340;&#21306;&#22495;
+			queue-&gt;make_request_fn &#26681;&#25454;bio&#20135;&#29983;&#35831;&#27714;&#24182;&#21457;&#36865;&#32473;&#35774;&#22791;&#39537;&#21160;&#31243;&#24207;&#65292;&#22823;&#22810;&#25968;&#35774;&#22791;&#65292;&#20351;&#29992;&#20869;&#26680;&#26631;&#20934;&#20989;&#25968; __make_request &#23436;&#25104;&#12290;
+</pre>
+</div>
+
+<p>
+__make_request 函数实现：
+</p>
+
+<p>
+:调用I/O调度器，给出对I/O请求如何排列的指导;
+:栈出队列（如有必要）并退出函数;
+</p>
+
+<div class="figure">
+<p><img src="plantuml/dev/make-request.png" alt="make-request.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf45f60c" class="outline-5">
+<h5 id="orgf45f60c"><span class="section-number-5">6.3.6.2</span> 队列插入</h5>
+<div class="outline-text-5" id="text-6-3-6-2">
+<p>
+为提升性能，内核会重排各个请求，以合并为更大的请求，以提升数据传输的性能。但前提是队列包含了多个可以合并的请求。  因此，内核首先需要在队列中汇集一些请求，然后一次性处理所有请求，这样就有机会进行请求的合并。
+</p>
+
+<p>
+内核使用队列插入（queue plugging）机制，来有意阻止请求的处理。请求队列可能处于空闲状态或者插入状态。如果队列处于空闲状态，队列中等待的请求将会被处理。否则，新的请求只是添加到队列，但并不处理。如果队列处于插入状态，则request_queue的queue_flags成员中QUEUE_FLAG_PLUGGED 标志置位。内核提供了 blk_queue_plugged 辅助函数检查该标志。
+</p>
+
+<p>
+在 __make_request 中，会调用 blk_plug_device 插入一个队列，只要不是同步请求，则不会显式拔出队列。
+</p>
+
+<p>
+<b>blk_plug_device</b>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">blk_plug_device</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_queue</span> *<span style="color: #FF8C00;">q</span>)
+{
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#38431;&#21015;&#22788;&#20110;&#20572;&#27490;&#29366;&#24577;&#65292;&#19981;&#36827;&#34892;&#25554;&#20837;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (blk_queue_stopped(q))
+		<span style="color: #FF1493;">return</span>;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>test_and_set_bit(QUEUE_FLAG_PLUGGED, &amp;q-&gt;queue_flags)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38431;&#21015;&#30340;&#25300;&#20986;&#23450;&#26102;&#22120;&#65292;&#22312;q-&gt;unplug_timer&#20043;&#21518;&#20250;&#25300;&#20986;</span>
+<span style="color: #8B8878;">                   &#23450;&#26102;&#22120;&#36890;&#36807;&#35843;&#29992; blk_unlug_timeout &#25300;&#20986;&#38431;&#21015;</span><span style="color: #8B8878;"> */</span>
+		mod_timer(&amp;q-&gt;unplug_timer, jiffies + q-&gt;unplug_delay);
+		blk_add_trace_generic(q, <span style="color: #AF87FF;">NULL</span>, 0, BLK_TA_PLUG);
+	}
+}
+</pre>
+</div>
+
+<p>
+除了上述的超时队列拔出机制外，还有一个拔出机制：如果当前读写请求数目达到 unplug_thresh 指定的阈值，elv_insert 中会调用 __generic_unplug_device 出发拔出操作：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__generic_unplug_device</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_queue</span> *<span style="color: #FF8C00;">q</span>)
+{
+	<span style="color: #FF1493;">if</span> (unlikely(blk_queue_stopped(q)))
+		<span style="color: #FF1493;">return</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#28165;&#38500;&#38431;&#21015;&#30340;&#25554;&#20837;&#29366;&#24577;&#21644;&#29992;&#20110;&#33258;&#21160;&#25300;&#20986;&#30340;&#23450;&#26102;&#22120;&#65288; unplug_timer &#65289;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>blk_remove_plug(q))
+		<span style="color: #FF1493;">return</span>;
+	<span style="color: #8B8878;">/*  </span><span style="color: #8B8878;">&#35843;&#29992; request_fn &#26469;&#22788;&#29702;&#31561;&#24453;&#30340;&#35831;&#27714;&#12290;</span><span style="color: #8B8878;">*/</span>
+	q-&gt;request_fn(q);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc82b69d" class="outline-5">
+<h5 id="orgc82b69d"><span class="section-number-5">6.3.6.3</span> 执行请求</h5>
+<div class="outline-text-5" id="text-6-3-6-3">
+<p>
+在请求队列中的请求即将处理时，会调用特定于设备的 request_fn 函数，内核总是使用 blk_dev_init 注册队列时传递的方法。
+</p>
+
+<p>
+sample_request 是一个与硬件无关的示例例程（大多数驱动程序都是类似），用于说明所有驱动程序在 request_fn 中所执行：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sample_request</span> (<span style="color: #5FD7FF;">request_queue_t</span> *<span style="color: #FF8C00;">q</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">status</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request</span> *<span style="color: #FF8C00;">req</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">elv_next_request &#29992;&#20110;&#20174;&#38431;&#21015;&#39034;&#24207;&#35835;&#21462;&#35831;&#27714;</span>
+	<span style="color: #FF1493;">while</span> ((req = elv_next_request(q)) != <span style="color: #AF87FF;">NULL</span>) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#26597;&#26159;&#21542;&#20256;&#36755;&#30340;&#25968;&#25454;&#65288;BIO&#21487;&#20197;&#20256;&#36755;&#25968;&#25454;&#65292;&#20063;&#33021;&#20256;&#36755;&#35786;&#26029;&#20449;&#24687;&#65289;</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>blk_fs_request(req)) {
+			end_request(req, 0);
+			<span style="color: #FF1493;">continue</span>;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25191;&#34892;&#20256;&#36755;&#36807;&#31243;</span>
+		status = perform_sample_transfer(req);
+		<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#20174;&#35831;&#27714;&#38431;&#21015;&#28165;&#38500;&#35831;&#27714;</span>
+
+<span style="color: #8B8878;">                  &#20854;&#20013;&#36824;&#20250;&#25191;&#34892;&#65306;</span>
+<span style="color: #8B8878;">                      1. &#25191;&#34892;&#20219;&#20309;&#22312;request-&gt;completion &#31561;&#24453;&#30340;&#23436;&#25104;&#37327;&#12290;</span>
+<span style="color: #8B8878;">                      2. &#35843;&#29992;&#20102;&#29305;&#23450;&#20110;BIO&#30340; bi_end_io &#20989;&#25968;&#65292;</span>
+<span style="color: #8B8878;">                         &#20869;&#26680;&#21487;&#20197;&#26681;&#25454;BIO&#23558;&#19968;&#20010;&#28165;&#29702;&#20989;&#25968;&#25351;&#23450;&#21040; bi_end_io</span>
+<span style="color: #8B8878;">                */</span>
+		end_request(req, status);
+	}
+}
+</pre>
+</div>
+
+<p>
+在真正的驱动程序中，特定于硬件的操作通常会分离到独立的函数中，以保持代码的简洁。示例实现如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">perform_transfer</span>(<span style="color: #5FD7FF;">request</span> *<span style="color: #FF8C00;">req</span>) {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;cmd&#23383;&#27573;&#65292;&#21028;&#26029;&#26159;&#35835;&#25805;&#20316;&#36824;&#26159;&#20889;&#25805;&#20316;</span>
+	<span style="color: #FF1493;">switch</span>(req-&gt;cmd) {
+	<span style="color: #FF1493;">case</span> READ:
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25191;&#34892;&#29305;&#23450;&#20110;&#30828;&#20214;&#30340;&#25968;&#25454;&#35835;&#21462;&#21151;&#33021;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> WRITE:
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25191;&#34892;&#29305;&#23450;&#20110;&#30828;&#20214;&#30340;&#25968;&#25454;&#20889;&#20837;&#21151;&#33021;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">default</span>:
+		<span style="color: #FF1493;">return</span> -EFAULT;
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org234bf3d" class="outline-3">
+<h3 id="org234bf3d"><span class="section-number-3">6.4</span> I/O调度</h3>
+<div class="outline-text-3" id="text-6-4">
+<p>
+I/O调度器用来调度和重排I/O操作。
+</p>
+
+<p>
+I/O调度器数据结构：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elevator_ops</span>
+{
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26816;&#26597;&#19968;&#20010;&#26032;&#30340;&#35831;&#27714;&#26159;&#21542;&#21487;&#20197;&#19982;&#29616;&#23384;&#35831;&#27714;&#21512;&#24182;&#65292;</span>
+<span style="color: #8B8878;">           &#36824;&#25351;&#23450;&#20102;&#35831;&#27714;&#25554;&#20837;&#21040;&#35831;&#27714;&#38431;&#21015;&#20013;&#30340;&#20301;&#32622;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">elevator_merge_fn</span> *<span style="color: #FF8C00;">elevator_merge_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">elevator_merged_fn &#22312;&#20004;&#20010;&#35831;&#27714;&#24050;&#32463;&#21512;&#24182;&#21518;&#35843;&#29992;&#65288;&#23427;&#25191;&#34892;&#28165;&#29702;&#24037;&#20316;&#65292;</span>
+<span style="color: #8B8878;">           &#24182;&#36820;&#22238;I/O&#35843;&#24230;&#22120;&#20013;&#22240;&#20026;&#21512;&#24182;&#32780;&#19981;&#20877;&#38656;&#35201;&#30340;&#37027;&#37096;&#20998;&#31649;&#29702;&#25968;&#25454;&#65289;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">elevator_merged_fn</span> *<span style="color: #FF8C00;">elevator_merged_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#20004;&#20010;&#35831;&#27714;&#21512;&#24182;&#20026;&#19968;&#20010;&#35831;&#27714;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">elevator_merge_req_fn</span> *<span style="color: #FF8C00;">elevator_merge_req_fn</span>;
+	<span style="color: #5FD7FF;">elevator_allow_merge_fn</span> *<span style="color: #FF8C00;">elevator_allow_merge_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#32473;&#23450;&#30340;&#35831;&#27714;&#38431;&#21015;&#20013;&#36873;&#25321;&#19979;&#19968;&#27493;&#24212;&#35813;&#35843;&#24230;&#25191;&#34892;&#30340;&#35831;&#27714;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">elevator_dispatch_fn</span> *<span style="color: #FF8C00;">elevator_dispatch_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21521;&#35831;&#27714;&#38431;&#21015;&#28155;&#21152;&#35831;&#27714;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">elevator_add_req_fn</span> *<span style="color: #FF8C00;">elevator_add_req_fn</span>;
+	<span style="color: #5FD7FF;">elevator_activate_req_fn</span> *<span style="color: #FF8C00;">elevator_activate_req_fn</span>;
+	<span style="color: #5FD7FF;">elevator_deactivate_req_fn</span> *<span style="color: #FF8C00;">elevator_deactivate_req_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26816;&#26597;&#38431;&#21015;&#26159;&#21542;&#20026;&#31354;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">elevator_queue_empty_fn</span> *<span style="color: #FF8C00;">elevator_queue_empty_fn</span>;
+	<span style="color: #5FD7FF;">elevator_completed_req_fn</span> *<span style="color: #FF8C00;">elevator_completed_req_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26597;&#25214;&#32473;&#23450;&#35831;&#27714;&#30340;&#21069;&#19968;&#20010;&#35831;&#27714;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">elevator_request_list_fn</span> *<span style="color: #FF8C00;">elevator_former_req_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26597;&#25214;&#32473;&#23450;&#35831;&#27714;&#30340;&#21518;&#19968;&#20010;&#35831;&#27714;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">elevator_request_list_fn</span> *<span style="color: #FF8C00;">elevator_latter_req_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#21019;&#24314;&#26032;&#35831;&#27714;&#26102;&#35843;&#29992;&#65292;&#36825;&#20351;&#24471;I/O&#35843;&#24230;&#22120;&#21487;&#20197;&#20998;&#37197;&#12289;&#21021;&#22987;&#21270;&#29992;&#20110;&#31649;&#29702;&#30340;&#25968;&#25454;&#32467;&#26500;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">elevator_set_req_fn</span> *<span style="color: #FF8C00;">elevator_set_req_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#23558;&#35831;&#27714;&#37322;&#25918;&#22238;&#20869;&#23384;&#31649;&#29702;&#23376;&#31995;&#32479;&#26102;&#35843;&#29992;&#65288;&#27492;&#26102;&#35831;&#27714;&#23578;&#26411;&#25110;&#19981;&#20877;&#19982;&#20219;&#20309;&#38431;&#21015;&#20851;&#32852;&#65292;&#25110;&#24050;&#32463;&#23436;&#25104;&#65289;&#12290;</span>
+<span style="color: #8B8878;">           &#20351;&#24471;I/O&#35843;&#24230;&#22120;&#21487;&#20197;&#37322;&#25918;&#29992;&#20110;&#31649;&#29702;&#30340;&#25968;&#25454;&#32467;&#26500;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">elevator_put_req_fn</span> *<span style="color: #FF8C00;">elevator_put_req_fn</span>;
+
+	<span style="color: #5FD7FF;">elevator_may_queue_fn</span> *<span style="color: #FF8C00;">elevator_may_queue_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38431;&#21015;&#21021;&#22987;&#21270;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">elevator_init_fn</span> *<span style="color: #FF8C00;">elevator_init_fn</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38431;&#21015;&#37322;&#25918;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">elevator_exit_fn</span> *<span style="color: #FF8C00;">elevator_exit_fn</span>;
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">trim</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">io_context</span> *);
+};
+</pre>
+</div>
+
+<p>
+每个I/O调度器都封装在下列数据结构中，其中还包含了供内核使用的其他管理信息：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elevator_type</span>
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25152;&#26377;I/O&#35843;&#24230;&#22120;&#22312;&#19968;&#20010;&#21452;&#38142;&#34920;&#65288;elv_list&#65289;&#20013;&#65292;list&#20316;&#20026;&#38142;&#34920;&#20803;&#32032;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">list</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elevator_ops</span> <span style="color: #FF8C00;">ops</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">sysfs&#30340;&#23646;&#24615;&#20250;&#20445;&#23384;&#22312;&#27492;&#25104;&#21592;&#20013;&#65292;&#21487;&#29992;&#20110;&#20197;&#30913;&#30424;&#20026;&#21333;&#20301;&#26469;&#24494;&#35843;I/O&#35843;&#24230;&#22120;&#30340;&#34892;&#20026;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elv_fs_entry</span> *<span style="color: #FF8C00;">elevator_attrs</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">elevator_name</span>[ELV_NAME_MAX]; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#24230;&#22120;&#21517;&#31216;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">elevator_owner</span>;
+};
+</pre>
+</div>
+
+<p>
+一些I/O调度器：
+</p>
+<ul class="org-ul">
+<li>elevator_noop</li>
+<li>iosched_deadline</li>
+<li>iosched_as</li>
+<li>iosched_cfq</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8910e10" class="outline-3">
+<h3 id="org8910e10"><span class="section-number-3">6.5</span> ioctl的实现</h3>
+<div class="outline-text-3" id="text-6-5">
+<p>
+ioctl使得我们能够使用特殊的、特定于设备的功能，这些功能无法通过普通的读写操作访问。这种支持通过 ioctl 系统调用实现，该系统调用可以用于普通的文件。
+</p>
+
+<p>
+ioctl系统调用由 sys_ioctl 实现，主要工作由 vfs_ioctl 完成。
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/dev/vfs-ioctl.png" alt="vfs-ioctl.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf680655" class="outline-2">
+<h2 id="orgf680655"><span class="section-number-2">7</span> 资源分配</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+I/O端口和I/O内存是两种概念上的方法，用以支持设备驱动程序和设备之间的通信。为使得各种不同的驱动程序彼此互不干扰，有必要事先为驱动程序分配端口和I/O内存范围。这确保几种设备驱动不会试图访问同样的资源。
+</p>
+</div>
+<div id="outline-container-org378035c" class="outline-3">
+<h3 id="org378035c"><span class="section-number-3">7.1</span> 资源管理</h3>
+<div class="outline-text-3" id="text-7-1">
+<p>
+<b>resource 数据结构</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">resource</span> {
+	<span style="color: #5FD7FF;">resource_size_t</span> <span style="color: #FF8C00;">start</span>;
+	<span style="color: #5FD7FF;">resource_size_t</span> <span style="color: #FF8C00;">end</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">flags</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">resource</span> *<span style="color: #FF8C00;">parent</span>, *<span style="color: #FF8C00;">sibling</span>, *<span style="color: #FF8C00;">child</span>;
+};
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="dot/dev/resource.png" alt="resource.png" />
+</p>
+</div>
+
+<p>
+用于连接 parent 、 child 和 sibling 成员的规则:
+</p>
+<ul class="org-ul">
+<li>每个子结点只有一个父结点。</li>
+<li>一个父结点可以有任意数目的子结点。</li>
+<li>同一个父结点的所有子结点，会连接到兄弟结点链表上。</li>
+</ul>
+
+<p>
+在内存中表示数据结构时，必须要注意以下问题。
+</p>
+<ul class="org-ul">
+<li>尽管每个子结点都有一个指针指向父结点，但父结点只有一个指针指向第一个子结点。所有其他子结点都通过兄弟结点链表访问。</li>
+<li>指向父结点的指针同样可以为 NULL ，在这种情况下，说明已经没有更高层次的结点了。</li>
+</ul>
+
+<p>
+<b>请求和释放资源</b>
+</p>
+<ul class="org-ul">
+<li>__request_resource函数用于请求一个资源区域。</li>
+<li>release_resource函数用于释放资源。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0d2e2e8" class="outline-3">
+<h3 id="org0d2e2e8"><span class="section-number-3">7.2</span> I/O内存</h3>
+<div class="outline-text-3" id="text-7-2">
+<p>
+I/O内存在所有平台上都作为和外设通信的主要方法。
+</p>
+
+<p>
+I/O内存不仅包括与扩展设备通信直接使用的内存区域，还包括系统中可用的物理内存和ROM存储器，以及包含在资源列表中的内存（可以使用 proc 文件系统中的 iomem 文件，显示所有的I/O内存）。
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo cat /proc/iomem
+00000000-00000fff : Reserved
+00001000-00057fff : System RAM
+00058000-00058fff : Reserved
+00059000-0009efff : System RAM
+0009f000-000fffff : Reserved
+  000a0000-000bffff : PCI Bus 0000:00
+  000c0000-000cffff : Video ROM
+  000f0000-000fffff : System ROM
+00100000-81860fff : System RAM
+81861000-81861fff : ACPI Non-volatile Storage
+81862000-81862fff : Reserved
+81863000-850c3fff : System RAM
+850c4000-85304fff : Reserved
+85305000-88ad8fff : System RAM
+88ad9000-88ad9fff : Reserved
+88ada000-8a32efff : System RAM
+8a32f000-8a631fff : Reserved
+8a632000-8a799fff : System RAM
+8a79a000-8ae3ffff : ACPI Non-volatile Storage
+8ae40000-8b399fff : Reserved
+8b39a000-8b3fefff : Unknown E820 type
+8b3ff000-8b3fffff : System RAM
+8b400000-8fffffff : Reserved
+  8c000000-8fffffff : Graphics Stolen Memory
+90000000-dfffffff : PCI Bus 0000:00
+  c0000000-cfffffff : 0000:00:02.0
+  de000000-deffffff : 0000:00:02.0
+  df000000-df0fffff : PCI Bus 0000:01
+    df000000-df003fff : 0000:01:00.0
+    df004000-df004fff : 0000:01:00.0
+      df004000-df004fff : r8169
+  df100000-df10ffff : 0000:00:1f.3
+    df100000-df10ffff : ICH HD audio
+  df110000-df11ffff : 0000:00:14.0
+    df110000-df11ffff : xhci-hcd
+  df120000-df123fff : 0000:00:1f.3
+    df120000-df123fff : ICH HD audio
+  df124000-df127fff : 0000:00:1f.2
+  df128000-df129fff : 0000:00:17.0
+    df128000-df129fff : ahci
+  df12a000-df12a0ff : 0000:00:1f.4
+  df12b000-df12b7ff : 0000:00:17.0
+    df12b000-df12b7ff : ahci
+  df12c000-df12c0ff : 0000:00:17.0
+    df12c000-df12c0ff : ahci
+  df12d000-df12dfff : 0000:00:16.0
+    df12d000-df12dfff : mei_me
+  df12e000-df12efff : 0000:00:14.2
+    df12e000-df12efff : Intel PCH thermal driver
+  df12f000-df12ffff : 0000:00:08.0
+  dffc0000-dffdffff : pnp 00:06
+e0000000-efffffff : PCI MMCONFIG 0000 [bus 00-ff]
+  e0000000-efffffff : Reserved
+    e0000000-efffffff : pnp 00:06
+fd000000-fe7fffff : PCI Bus 0000:00
+  fd000000-fdabffff : pnp 00:07
+  fdac0000-fdacffff : pnp 00:09
+  fdad0000-fdadffff : pnp 00:07
+  fdae0000-fdaeffff : pnp 00:09
+  fdaf0000-fdafffff : pnp 00:09
+  fdb00000-fdffffff : pnp 00:07
+    fdc6000c-fdc6000f : iTCO_wdt
+      fdc6000c-fdc6000f : iTCO_wdt iTCO_wdt
+  fe000000-fe010fff : Reserved
+  fe036000-fe03bfff : pnp 00:07
+  fe03d000-fe3fffff : pnp 00:07
+fec00000-fec00fff : Reserved
+  fec00000-fec003ff : IOAPIC 0
+fed00000-fed00fff : Reserved
+  fed00000-fed003ff : HPET 0
+    fed00000-fed003ff : PNP0103:00
+fed10000-fed17fff : pnp 00:06
+fed18000-fed18fff : pnp 00:06
+fed19000-fed19fff : pnp 00:06
+fed20000-fed3ffff : pnp 00:06
+fed45000-fed8ffff : pnp 00:06
+fed90000-fed93fff : pnp 00:06
+fee00000-fee00fff : Local APIC
+  fee00000-fee00fff : Reserved
+ff000000-ffffffff : Reserved
+  ff000000-ffffffff : INT0800:00
+    ff000000-ffffffff : pnp 00:06
+100000000-26effffff : System RAM
+  163800000-164401e76 : Kernel code
+  164600000-164d61fff : Kernel rodata
+  164e00000-16507c33f : Kernel data
+  165663000-1659fffff : Kernel bss
+26f000000-26fffffff : RAM buffer
+</pre>
+</div>
+
+<p>
+所有分配的I/O内存地址，都通过一棵资源树管理，树的根结点是全局内核变量 iomem_resource。上述输出中，每个缩进表示一个子结点层次。具有相同的缩进层次的所有项是兄弟结点，会通过链表联系起来。proc 文件系统中的信息即由此获取。
+</p>
+
+<p>
+在使用I/O内存时，可能需要将扩展设备的地址空间映射到内核地址空间中之后，才能访问该设备（ <i>称之为软件I/O映射</i> ）。 ioremap 内核函数通过设置系统页表来进行地址映射， iounmap函数可以用来解除映射。
+</p>
+
+<p>
+<i>将一个物理地址映射到处理器的虚拟地址空间中，使得内核可以使用该地址。就设备驱动程序而言，这意味着扩展总线的地址空间映射到CPU的地址空间中，使得能够用普通内存访问函数操作总线。</i>
+</p>
+
+<p>
+即使在I/O区域经过映射之后，还是应当使用专门的方法来访问各个I/O内存区域，而不是直接对指针进行反引用。所使用的函数如下：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">函数</th>
+<th scope="col" class="org-left">语义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">readb(x)</td>
+<td class="org-left">从指定的I/O地址 addr ，读取一个字节</td>
+</tr>
+
+<tr>
+<td class="org-left">readw(x)</td>
+<td class="org-left">字</td>
+</tr>
+
+<tr>
+<td class="org-left">readl(x)</td>
+<td class="org-left">长整数</td>
+</tr>
+
+<tr>
+<td class="org-left">writeb(val,addr)</td>
+<td class="org-left">向I/O地址 addr 写入一个字节，值由 val 指定</td>
+</tr>
+
+<tr>
+<td class="org-left">writew(val,addr)</td>
+<td class="org-left">字</td>
+</tr>
+
+<tr>
+<td class="org-left">writel(val,addr)</td>
+<td class="org-left">长整数</td>
+</tr>
+
+<tr>
+<td class="org-left">memcpy_fromio(dst, src, num)</td>
+<td class="org-left">从I/O地址src将num个字节移到普通地址空间中的dst</td>
+</tr>
+
+<tr>
+<td class="org-left">memcpy_toio(dst, src, num)</td>
+<td class="org-left">从普通地址空间中的dst将num个字节复制到I/O区域中的src</td>
+</tr>
+
+<tr>
+<td class="org-left">memset_io(addr, value, count)</td>
+<td class="org-left">用 value 填充起始于地址 addr 的 count 个字节</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org7daef5e" class="outline-3">
+<h3 id="org7daef5e"><span class="section-number-3">7.3</span> I/O端口</h3>
+<div class="outline-text-3" id="text-7-3">
+<p>
+struct resource <b>ioport_resource</b> 全局变量是I/O端口资源树的根结点，proc文件系统中的ioports文件可以现实已经分配的端口地址。
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo cat /proc/ioports
+0000-0cf7 : PCI Bus 0000:00
+  0000-001f : dma1
+  0020-0021 : pic1
+  0040-0043 : timer0
+  0050-0053 : timer1
+  0060-0060 : keyboard
+  0064-0064 : keyboard
+  0070-0077 : rtc0
+  0080-008f : dma page reg
+  00a0-00a1 : pic2
+  00c0-00df : dma2
+  00f0-00ff : fpu
+    00f0-00f0 : PNP0C04:00
+  02f8-02ff : serial
+  03f8-03ff : serial
+  0400-041f : iTCO_wdt
+    0400-041f : iTCO_wdt
+  0680-069f : pnp 00:02
+  0800-087f : pnp 00:03
+  0a00-0a0f : pnp 00:00
+  0a10-0a1f : pnp 00:00
+  0a20-0a2f : pnp 00:00
+  0a30-0a3f : pnp 00:00
+0cf8-0cff : PCI conf1
+0d00-ffff : PCI Bus 0000:00
+  164e-164f : pnp 00:02
+  1800-18fe : pnp 00:02
+    1800-1803 : ACPI PM1a_EVT_BLK
+    1804-1805 : ACPI PM1a_CNT_BLK
+    1808-180b : ACPI PM_TMR
+    1850-1850 : ACPI PM2_CNT_BLK
+    1854-1857 : pnp 00:05
+    1880-189f : ACPI GPE0_BLK
+  e000-efff : PCI Bus 0000:01
+    e000-e0ff : 0000:01:00.0
+  f000-f03f : 0000:00:02.0
+  f040-f05f : 0000:00:1f.4
+    f040-f05f : i801_smbus
+  f060-f07f : 0000:00:17.0
+    f060-f07f : ahci
+  f080-f083 : 0000:00:17.0
+    f080-f083 : ahci
+  f090-f097 : 0000:00:17.0
+    f090-f097 : ahci
+  ff00-fffe : pnp 00:08
+  ffff-ffff : pnp 00:02
+    ffff-ffff : pnp 00:02
+      ffff-ffff : pnp 00:02
+</pre>
+</div>
+
+<p>
+在汇编程序层次上，端口通常必须通过特殊的处理器命令访问。内核提供了对应的宏，以便向驱动程序开发者提供一个系统无关的接口。
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> 用于访问I/O端口的函数</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">函数</th>
+<th scope="col" class="org-left">语义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">insb(port, addr, num)</td>
+<td class="org-left">从端口port读取num个字节，复制到普通地址空间中的地址addr</td>
+</tr>
+
+<tr>
+<td class="org-left">insl(port, addr, num)</td>
+<td class="org-left">长整数</td>
+</tr>
+
+<tr>
+<td class="org-left">insw(port, addr, num)</td>
+<td class="org-left">字</td>
+</tr>
+
+<tr>
+<td class="org-left">outsb(port, addr, num)</td>
+<td class="org-left">从虚拟地址 addr ，向端口 port 写入 num 个字节</td>
+</tr>
+
+<tr>
+<td class="org-left">outsl(port, addr, num)</td>
+<td class="org-left">长整数</td>
+</tr>
+
+<tr>
+<td class="org-left">outsw(port, addr, num)</td>
+<td class="org-left">字</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf50b535" class="outline-2">
+<h2 id="orgf50b535"><span class="section-number-2">8</span> 总线系统</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-orga28f145" class="outline-3">
+<h3 id="orga28f145"><span class="section-number-3">8.1</span> 通用驱动程序模型</h3>
+<div class="outline-text-3" id="text-8-1">
+</div>
+<div id="outline-container-org51aa854" class="outline-4">
+<h4 id="org51aa854"><span class="section-number-4">8.1.1</span> 设备表示</h4>
+<div class="outline-text-4" id="text-8-1-1">
+<p>
+驱动程序模型采用一种特殊数据结构来表示几乎所有总线类型通用的设备属性。该结构直接嵌入到特定于总线的数据结构中，其定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23376;&#35774;&#22791;&#38142;&#34920;&#30340;&#34920;&#22836;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist</span>            <span style="color: #FF8C00;">klist_children</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20316;&#20026;&#38142;&#34920;&#20803;&#32032;&#65292;&#36830;&#25509;&#22312;&#29238;&#35774;&#22791;&#30340; klist_children &#38142;&#34920;&#20013;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist_node</span>       <span style="color: #FF8C00;">knode_parent</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19968;&#20010;&#35774;&#22791;&#39537;&#21160;&#31243;&#24207;&#33021;&#22815;&#26381;&#21153;&#22810;&#20010;&#35774;&#22791;&#65288;&#20363;&#22914;&#65292;&#31995;&#32479;&#20013;&#23433;&#35013;&#20102;&#20004;&#20010;&#30456;&#21516;&#30340;&#25193;&#23637;&#21345;&#65289;&#65292;</span>
+<span style="color: #8B8878;">           knode_driver &#29992;&#20316;&#38142;&#34920;&#20803;&#32032;&#65292;&#36830;&#25509;&#22312;&#34987;&#21516;&#19968;&#39537;&#21160;&#31243;&#24207;&#31649;&#29702;&#30340;&#35774;&#22791;&#38142;&#34920;&#20013;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist_node</span>       <span style="color: #FF8C00;">knode_driver</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist_node</span>       <span style="color: #FF8C00;">knode_bus</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span>           *<span style="color: #FF8C00;">parent</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobject</span> <span style="color: #FF8C00;">kobj</span>;
+	<span style="color: #5FD7FF;">char</span>    <span style="color: #FF8C00;">bus_id</span>[BUS_ID_SIZE];    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21807;&#19968;&#25351;&#23450;&#20102;&#35813;&#35774;&#22791;&#22312;&#23487;&#20027;&#24635;&#32447;&#19978;&#30340;&#20301;&#32622;</span><span style="color: #8B8878;"> */</span>
+
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bus_type</span> * <span style="color: #FF8C00;">bus</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35813;&#35774;&#22791;&#25152;&#22312;&#24635;&#32447;&#30340;&#25968;&#25454;&#32467;&#26500;&#30340;&#23454;&#20363;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_driver</span> *<span style="color: #FF8C00;">driver</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#25511;&#21046;&#35813;&#35774;&#22791;&#30340;&#35774;&#22791;&#39537;&#21160;&#31243;&#24207;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>            *<span style="color: #FF8C00;">driver_data</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39537;&#21160;&#31243;&#24207;&#30340;&#31169;&#26377;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>            *<span style="color: #FF8C00;">platform_data</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29305;&#23450;&#20110;&#24179;&#21488;&#30340;&#25968;&#25454;&#65292;&#35774;&#22791;&#27169;&#22411;&#20195;&#30721;&#19981;&#20250;&#35775;&#38382;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dev_pm_info</span>      <span style="color: #FF8C00;">power</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26512;&#26500;&#20989;&#25968;&#65292;&#29992;&#20110;&#22312;&#35774;&#22791;&#65288;&#25110; device &#23454;&#20363;&#65289;&#19981;&#20877;&#20351;&#29992;&#26102;&#65292;&#23558;&#20998;&#37197;&#30340;&#36164;&#28304;&#37322;&#25918;&#22238;&#20869;&#26680;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">release</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+};
+</pre>
+</div>
+
+<p>
+<i>内核提供了标准函数 device_register，用于将一个新设备添加到内核的数据结构。device_get 和 device_put 一对函数用于引用计数。</i>
+</p>
+
+<p>
+通用驱动程序模型也为设备驱动程序单独设计了一种数据结构：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_driver</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#21807;&#19968;&#26631;&#35782;&#35813;&#39537;&#21160;&#31243;&#24207;&#30340;&#21517;&#31216;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span>              * <span style="color: #FF8C00;">name</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#34920;&#31034;&#24635;&#32447;&#30340;&#23545;&#35937;&#65292;&#24182;&#25552;&#20379;&#29305;&#23450;&#20110;&#24635;&#32447;&#30340;&#25805;&#20316;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bus_type</span>         * <span style="color: #FF8C00;">bus</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobject</span>          <span style="color: #FF8C00;">kobj</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#34920;&#34920;&#22836;&#65292;&#21253;&#25324;&#20102;&#35813;&#39537;&#21160;&#31243;&#24207;&#25511;&#21046;&#30340;&#25152;&#26377;&#35774;&#22791;&#30340; device &#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">            &#38142;&#34920;&#20013;&#30340;&#21508;&#20010;&#35774;&#22791;&#36890;&#36807; device-&gt;knode_driver &#24444;&#27492;&#36830;&#25509;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist</span>            <span style="color: #FF8C00;">klist_devices</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#36830;&#25509;&#19968;&#26465;&#20844;&#20849;&#24635;&#32447;&#19978;&#30340;&#25152;&#26377;&#35774;&#22791;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist_node</span>         <span style="color: #FF8C00;">knode_bus</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>           * <span style="color: #FF8C00;">owner</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span>                * <span style="color: #FF8C00;">mod_name</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">used for built-in modules</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module_kobject</span>   * <span style="color: #FF8C00;">mkobj</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#26816;&#27979;&#31995;&#32479;&#20013;&#26159;&#21542;&#23384;&#22312;&#33021;&#22815;&#29992;&#35813;&#35774;&#22791;&#39537;&#21160;&#31243;&#24207;&#22788;&#29702;&#30340;&#35774;&#22791;</span>
+	<span style="color: #5FD7FF;">int</span>     (*<span style="color: #87D700;">probe</span>)        (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#31995;&#32479;&#20013;&#30340;&#35774;&#22791;&#26102;&#20250;&#35843;&#29992; remove</span>
+	<span style="color: #5FD7FF;">int</span>     (*<span style="color: #87D700;">remove</span>)       (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">shutdown</span>)     (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+	<span style="color: #5FD7FF;">int</span>     (*<span style="color: #87D700;">suspend</span>)      (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">pm_message_t</span> <span style="color: #FF8C00;">state</span>);
+	<span style="color: #5FD7FF;">int</span>     (*<span style="color: #87D700;">resume</span>)       (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+};
+</pre>
+</div>
+<p>
+<i>驱动程序使用内核的标准函数 driver_register 注册到系统中。</i>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org61fb9e1" class="outline-4">
+<h4 id="org61fb9e1"><span class="section-number-4">8.1.2</span> 总线表示</h4>
+<div class="outline-text-4" id="text-8-1-2">
+<p>
+通用驱动程序模型也为总线定义了通用结构：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bus_type</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24635;&#32447;&#30340;&#25991;&#26412;&#21517;&#31216;&#12290;&#23427;&#29992;&#20110;&#22312; sysfs &#25991;&#20214;&#31995;&#32479;&#20013;&#26631;&#35782;&#35813;&#24635;&#32447;&#12290;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span>              * <span style="color: #FF8C00;">name</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25552;&#20379;&#19982;&#24635;&#32447;&#23376;&#31995;&#32479;&#30340;&#20851;&#32852;&#65292;&#23545;&#24212;&#30340;&#24635;&#32447;&#20986;&#29616;&#22312;/sys/bus/busname</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kset</span>             <span style="color: #FF8C00;">subsys</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21644;&#24635;&#32447;&#20851;&#32852;&#30340;&#39537;&#21160;&#31243;&#24207;&#65292;&#29992;&#20110;sysfs&#25991;&#20214;&#31995;&#32479;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kset</span>             <span style="color: #FF8C00;">drivers</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21644;&#24635;&#32447;&#20851;&#32852;&#30340;&#35774;&#22791;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kset</span>             <span style="color: #FF8C00;">devices</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38142;&#34920;&#34920;&#22836;&#65292;&#36830;&#25509;&#21644;&#24635;&#32447;&#20851;&#32852;&#30340;&#35774;&#22791;&#65292;&#29992;&#20197;&#24555;&#36895;&#25195;&#25551;&#35774;&#22791;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist</span>            <span style="color: #FF8C00;">klist_devices</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38142;&#34920;&#34920;&#22836;&#65292;&#36830;&#25509;&#21644;&#24635;&#32447;&#20851;&#32852;&#30340;&#39537;&#21160;&#31243;&#24207;&#65292;&#29992;&#20110;&#24555;&#36895;&#25195;&#25551;&#39537;&#21160;&#31243;&#24207;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">klist</span>            <span style="color: #FF8C00;">klist_drivers</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">blocking_notifier_head</span> <span style="color: #FF8C00;">bus_notifier</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bus_attribute</span>    * <span style="color: #FF8C00;">bus_attrs</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_attribute</span> * <span style="color: #FF8C00;">dev_attrs</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">driver_attribute</span> * <span style="color: #FF8C00;">drv_attrs</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#20989;&#25968;&#65292;&#35797;&#22270;&#26597;&#25214;&#19982;&#32473;&#23450;&#35774;&#22791;&#21305;&#37197;&#30340;&#39537;&#21160;&#31243;&#24207;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">match</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_driver</span> * <span style="color: #FF8C00;">drv</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">uevent</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kobj_uevent_env</span> *<span style="color: #FF8C00;">env</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#23558;&#39537;&#21160;&#31243;&#24207;&#20851;&#32852;&#21040;&#35774;&#22791;&#26102;&#65292;&#35843;&#29992;probe&#65292;&#35265;&#36710;&#35774;&#22791;&#26159;&#21542;&#30495;&#27491;&#23384;&#22312;&#12290;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">probe</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#39537;&#21160;&#31243;&#24207;&#21644;&#35774;&#22791;&#20043;&#38388;&#30340;&#20851;&#32852;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">remove</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">shutdown</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">suspend</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">pm_message_t</span> <span style="color: #FF8C00;">state</span>);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">suspend_late</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">pm_message_t</span> <span style="color: #FF8C00;">state</span>);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">resume_early</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">resume</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> * <span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">drivers_autoprobe</span>:1;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org50614b1" class="outline-4">
+<h4 id="org50614b1"><span class="section-number-4">8.1.3</span> 注册过程</h4>
+<div class="outline-text-4" id="text-8-1-3">
+<p>
+<b>注册总线</b>
+bus_register函数向系统添加一个新总线。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">bus_register</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bus_type</span> * <span style="color: #FF8C00;">bus</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">retval</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39318;&#20808;&#65292;&#36890;&#36807;&#23884;&#20837;&#30340; kset &#31867;&#22411;&#25104;&#21592; subsys &#65292;&#23558;&#26032;&#24635;&#32447;&#28155;&#21152;&#21040;&#24635;&#32447;&#23376;&#31995;&#32479;&#12290;</span><span style="color: #8B8878;"> */</span>
+	retval = kobject_set_name(&amp;bus-&gt;subsys.kobj, <span style="color: #CDC673;">"%s"</span>, bus-&gt;name);
+	bus-&gt;subsys.kobj.kset = &amp;bus_subsys;
+	retval = subsystem_register(&amp;bus-&gt;subsys);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;sysfs&#20013;&#21019;&#24314;&#23646;&#24615;&#25991;&#20214;</span><span style="color: #8B8878;">*/</span>
+	retval = bus_create_file(bus, &amp;bus_attr_uevent);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20197;&#24635;&#32447;&#20316;&#20026;&#29238;&#32467;&#28857;&#65292;&#27880;&#20876;&#35774;&#22791;&#30340;kset</span><span style="color: #8B8878;"> */</span>
+	kobject_set_name(&amp;bus-&gt;devices.kobj, <span style="color: #CDC673;">"devices"</span>);
+	bus-&gt;devices.kobj.parent = &amp;bus-&gt;subsys.kobj;
+	retval = kset_register(&amp;bus-&gt;devices);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20197;&#24635;&#32447;&#20316;&#20026;&#29238;&#32467;&#28857;&#65292;&#27880;&#20876;&#39537;&#21160;&#31243;&#24207;&#30340;kset</span><span style="color: #8B8878;"> */</span>
+	kobject_set_name(&amp;bus-&gt;drivers.kobj, <span style="color: #CDC673;">"drivers"</span>);
+	bus-&gt;drivers.kobj.parent = &amp;bus-&gt;subsys.kobj;
+	bus-&gt;drivers.ktype = &amp;driver_ktype;
+	retval = kset_register(&amp;bus-&gt;drivers);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+}
+</pre>
+</div>
+
+<p>
+<b>注册设备</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">device_register</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#35774;&#22791;&#25968;&#25454;&#32467;&#26500;&#65292;&#24182;&#28155;&#21152;&#33267;&#35774;&#22791;&#23376;&#31995;&#32479;&#12290;</span>
+<span style="color: #8B8878;">        &#20027;&#35201;&#36890;&#36807; kobj_set_kset_s(dev, devices_subsys)&#23558;&#26032;&#35774;&#22791;&#28155;&#21152;&#21040;&#35774;&#22791;&#23376;&#31995;&#32479;&#12290;</span><span style="color: #8B8878;">*/</span>
+	device_initialize(dev);
+	<span style="color: #FF1493;">return</span> device_add(dev);
+}
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">device_add</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> *<span style="color: #FF8C00;">parent</span> = <span style="color: #AF87FF;">NULL</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39318;&#20808;&#65292;&#23558;&#36890;&#36807; device-&gt;parent &#25351;&#23450;&#30340;&#29238;&#23376;&#20851;&#31995;&#36716;&#21464;&#20026;&#19968;&#33324;&#30340;&#20869;&#26680;&#23545;&#35937;&#23618;&#27425;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	dev = get_device(dev);
+	parent = get_device(dev-&gt;parent);
+	error = setup_parent(dev, parent);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27880;&#20876;&#35774;&#22791;&#21040;&#35774;&#22791;&#23376;&#31995;&#32479;</span><span style="color: #8B8878;"> */</span>
+	kobject_set_name(&amp;dev-&gt;kobj, <span style="color: #CDC673;">"%s"</span>, dev-&gt;bus_id);
+	error = kobject_add(&amp;dev-&gt;kobj);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">.........</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">bus_add_device &#22312;sysfs&#20013;&#28155;&#21152;&#20004;&#20010;&#38142;&#25509;&#65306;</span>
+<span style="color: #8B8878;">                1. &#19968;&#20010;&#22312;&#24635;&#32447;&#30446;&#24405;&#19979;&#25351;&#21521;&#35774;&#22791;</span>
+<span style="color: #8B8878;">                2. &#21478;&#19968;&#20010;&#22312;&#35774;&#22791;&#30340;&#30446;&#24405;&#19979;&#25351;&#21521;&#24635;&#32447;&#23376;&#31995;&#32479;&#12290;</span>
+
+<span style="color: #8B8878;">           bus_attach_device &#35797;&#22270;&#33258;&#21160;&#25506;&#27979;&#35774;&#22791;&#12290;&#22914;&#26524;&#33021;&#22815;&#25214;&#21040;&#36866;&#24403;&#30340;&#39537;&#21160;&#31243;&#24207;&#65292;</span>
+<span style="color: #8B8878;">           &#21017;&#23558;&#35774;&#22791;&#28155;&#21152;&#21040; bus-&gt;klist_devices &#12290;</span>
+
+<span style="color: #8B8878;">           &#35774;&#22791;&#36824;&#38656;&#35201;&#28155;&#21152;&#21040;&#29238;&#32467;&#28857;&#30340;&#23376;&#32467;&#28857;&#38142;&#34920;&#20013;&#65288;&#27492;&#21069;&#65292;&#35774;&#22791;&#30693;&#36947;&#20854;&#29238;&#32467;&#28857;&#65292;</span>
+<span style="color: #8B8878;">           &#20294;&#29238;&#32467;&#28857;&#19981;&#30693;&#36947;&#35813;&#23376;&#32467;&#28857;&#30340;&#23384;&#22312;</span><span style="color: #8B8878;">  */</span>
+	error = bus_add_device(dev);
+	kobject_uevent(&amp;dev-&gt;kobj, KOBJ_ADD);
+	bus_attach_device(dev);
+	<span style="color: #FF1493;">if</span> (parent)
+		klist_add_tail(&amp;dev-&gt;knode_parent, &amp;parent-&gt;klist_children);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+}
+</pre>
+</div>
+
+<p>
+<b>注册设备驱动程序</b>
+driver_register 函数用于注册设备驱动程序，在进行一系列的检查和初始化后，调用bus_add_driver将新驱动程序添加到总线。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">bus_add_driver</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_driver</span> *<span style="color: #FF8C00;">drv</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bus_type</span> * <span style="color: #FF8C00;">bus</span> = bus_get(drv-&gt;bus);
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">error</span> = 0;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#39537;&#21160;&#27880;&#20876;&#21040;&#36890;&#29992;&#25968;&#25454;&#32467;&#26500;&#26694;&#26550;</span><span style="color: #8B8878;"> */</span>
+	error = kobject_set_name(&amp;drv-&gt;kobj, <span style="color: #CDC673;">"%s"</span>, drv-&gt;name);
+	drv-&gt;kobj.kset = &amp;bus-&gt;drivers;
+	error = kobject_register(&amp;drv-&gt;kobj);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#24635;&#32447;&#25903;&#25345;&#33258;&#21160;&#25506;&#27979;&#65292;&#21017;&#35843;&#29992; driver_attach &#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (drv-&gt;bus-&gt;drivers_autoprobe) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#20989;&#25968;&#36845;&#20195;&#24635;&#32447;&#19978;&#30340;&#25152;&#26377;&#35774;&#22791;&#65292;&#20351;&#29992;&#39537;&#21160;&#31243;&#24207;&#30340; match &#20989;&#25968;&#36827;&#34892;&#26816;&#27979;&#65292;</span>
+<span style="color: #8B8878;">                   &#30830;&#23450;&#26159;&#21542;&#26377;&#26576;&#20123;&#35774;&#22791;&#21487;&#20351;&#29992;&#35813;&#39537;&#21160;&#31243;&#24207;&#31649;&#29702;&#12290;</span>
+<span style="color: #8B8878;">                   &#26368;&#21518;&#65292;&#23558;&#35813;&#39537;&#21160;&#31243;&#24207;&#28155;&#21152;&#21040;&#24635;&#32447;&#19978;&#27880;&#20876;&#30340;&#25152;&#26377;&#39537;&#21160;&#31243;&#24207;&#30340;&#38142;&#34920;&#20013;</span><span style="color: #8B8878;">*/</span>
+		error = driver_attach(drv);
+	}
+	klist_add_tail(&amp;drv-&gt;knode_bus, &amp;bus-&gt;klist_drivers);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1807de4" class="outline-3">
+<h3 id="org1807de4"><span class="section-number-3">8.2</span> PCI总线</h3>
+<div class="outline-text-3" id="text-8-2">
+</div>
+<div id="outline-container-org856a687" class="outline-4">
+<h4 id="org856a687"><span class="section-number-4">8.2.1</span> PCI系统的布局</h4>
+<div class="outline-text-4" id="text-8-2-1">
+<p>
+<b>设备标识</b>
+PCI总线上的每个设备，都由一组3个编号标识：
+</p>
+<ul class="org-ul">
+<li>总线编号（bus number）是该设备所在总线的编号，编号照例从0开始。PCI规范准许每个系统最多255个总线。</li>
+<li>插槽编号（slot number）是总线内部的一个唯一标识编号。一个总线最多能够附接32个设备。不同总线上的设备插槽编号可能相同。</li>
+<li>功能编号（function number）用于在一个扩展卡上，实现包括多个（经典意义上）扩展设备的设备。例如，为节省空间，可以将两个网卡放置在一块扩展卡上，在这种情况下通过不同的功能编号来指定不同的接口。</li>
+</ul>
+
+<p>
+<b>地址空间</b>
+有3个地址空间支持与PCI设备的通信：
+</p>
+<ul class="org-ul">
+<li>I/O空间通过32个比特位描述，因而，对用于与设备通信的端口地址，提供了最大4 GB的空间。</li>
+<li>取决于处理器类型，数据空间由32或64个比特位描述。当然，只有CPU字长为64位时，才支持后者。系统中的设备分配到上述两个地址空间中，因而有唯一的地址。</li>
+<li>配置空间包含了各个设备的类型和特征的详细信息，以省去危险的自动探测工作。</li>
+</ul>
+
+<p>
+这些地址空间会根据处理器类型映射到系统虚拟内存中的不同位置，使得内核和设备驱动程序能够访问对应的资源。
+</p>
+
+<p>
+<b>配置空间</b>
+</p>
+
+<p>
+每个PCI设备都有一个256字节长的配置空间，其中包括该设备的特点和要求的有关信息。
+</p>
+
+
+<div class="figure">
+<p><img src="image/dev/pci-conf.png" alt="pci-conf.png" />
+</p>
+<p><span class="figure-number">Figure 10: </span>PCI配置空间的布局</p>
+</div>
+
+<ul class="org-ul">
+<li>Vendor ID和Device ID唯一地标识了厂商和设备类型。</li>
+<li>Subsystem Vendor ID和Subsystem Device ID，更精确地描述设备的通用接口。</li>
+<li>Rev ID用于区分不同的设备修订级别。这有助于用户选择设备驱动程序的版本，新版本的设备可能消除了已知的硬件故障或添加了新特性。</li>
+<li>Class Code字段用于将设备分配到各种不同的功能组。该字段分为两部分：前8个比特位表示基类（base class），剩余的16个比特位表示基类的一个子类。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org3d02a5b" class="outline-4">
+<h4 id="org3d02a5b"><span class="section-number-4">8.2.2</span> 内核中的实现</h4>
+<div class="outline-text-4" id="text-8-2-2">
+<p>
+内核为PCI驱动程序提供了一个广泛的框架，可以粗略地划分为两个类别：
+</p>
+<ul class="org-ul">
+<li>PCI系统的初始化（和资源的分配，这取决于系统），以及预备对应的数据结构以反映各个总线和设备的容量和能力，使得能够较为容易地操作总线/设备。</li>
+<li>支持访问所有PCI选项的标准化函数接口。</li>
+</ul>
+
+
+<p>
+<b>数据结构</b>
+</p>
+
+<ul class="org-ul">
+<li>系统中的各个总线由 pci_bus 的实例表示。</li>
+<li>pci_dev 结构表示各个设备、扩展卡和功能部件。</li>
+<li>每个驱动程序都通过 pci_driver 的一个实例描述。</li>
+</ul>
+
+<p>
+内核定义了两个全局的 list_head 变量（都定义在 &lt;pci.h&gt; 中），用作PCI数据结构形成的网络的入口：
+</p>
+<ul class="org-ul">
+<li>pci_root_buses 列出了系统中所有的PCI总线。在“向下”扫描数据结构以查找附接到各个总线的所有设备时，该链表是一个起点。</li>
+<li>pci_devices 将系统中的所有PCI设备都连接起来，不考虑总线结构的影响。</li>
+</ul>
+
+<p>
+<b>总线的表示</b>
+</p>
+
+<p>
+在内存中，每个PCI总线都通过 pci_bus 数据结构的实例表示：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_bus</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">node &#26159;&#19968;&#20010;&#38142;&#34920;&#20803;&#32032;&#65292;&#29992;&#20110;&#23558;&#25152;&#26377;&#24635;&#32447;&#36830;&#25509;&#21040;&#19978;&#25991;&#25552;&#21040;&#30340;&#20840;&#23616;&#38142;&#34920;&#20013;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">node</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">parent &#26159;&#19968;&#20010;&#25351;&#38024;&#65292;&#25351;&#21521;&#26356;&#39640;&#23618;&#27425;&#24635;&#32447;&#30340;&#25968;&#25454;&#32467;&#26500;&#12290;&#27599;&#20010;&#24635;&#32447;&#21482;&#21487;&#33021;&#26377;&#19968;&#20010;&#29238;&#24635;&#32447;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_bus</span>  *<span style="color: #FF8C00;">parent</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24635;&#32447;&#30340;&#19979;&#32423;&#24635;&#32447;&#25110;&#23376;&#24635;&#32447;&#37117;&#24517;&#39035;&#36890;&#36807;&#20197; children &#20316;&#20026;&#34920;&#22836;&#30340;&#38142;&#34920;&#31649;&#29702;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">children</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24635;&#32447;&#19978;&#25152;&#26377;&#38468;&#25509;&#30340;&#35774;&#22791;&#37117;&#36890;&#36807;&#20197; devices &#20026;&#34920;&#22836;&#30340;&#38142;&#34920;&#31649;&#29702;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">devices</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#25551;&#36848;&#26725;&#25509;&#22120;&#30340; pci_dev &#23454;&#20363;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span>  *<span style="color: #FF8C00;">self</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">resource &#25968;&#32452;&#21482;&#26159;&#29992;&#20110;&#20445;&#23384;&#35813;&#24635;&#32447;&#22312;&#34394;&#25311;&#20869;&#23384;&#20013;&#21344;&#29992;&#30340;&#22320;&#22336;&#21306;&#22495;&#12290;</span>
+<span style="color: #8B8878;">           &#27599;&#20010;&#25968;&#32452;&#20803;&#32032;&#21253;&#21547;&#19968;&#20010;resource &#32467;&#26500;&#30340;&#23454;&#20363;&#12290;</span>
+<span style="color: #8B8878;">           &#31532;&#19968;&#20010;&#25968;&#32452;&#39033;&#21253;&#21547;&#29992;&#20110;I/O&#31471;&#21475;&#30340;&#22320;&#22336;&#21306;&#22495;&#12290;&#31532;&#20108;&#39033;&#24635;&#26159;&#20445;&#23384;I/O&#20869;&#23384;&#21306;&#22495;&#30340;&#22320;&#22336;&#33539;&#22260;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">resource</span> *<span style="color: #FF8C00;">resource</span>[PCI_BUS_NUM_RESOURCES];
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36825;&#20123;&#26159;&#19968;&#32452;&#29992;&#20110;&#35775;&#38382;&#37197;&#32622;&#31354;&#38388;&#30340;&#20989;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_ops</span>  *<span style="color: #FF8C00;">ops</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24635;&#32447;&#32467;&#26500;&#21487;&#20197;&#36890;&#36807;sysdata&#20851;&#32852;&#21040;&#29305;&#23450;&#20110;&#30828;&#20214;&#30340;&#20989;&#25968;u</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span>            *<span style="color: #FF8C00;">sysdata</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25552;&#20379;&#20102;&#21040; proc &#25991;&#20214;&#31995;&#32479;&#30340;&#25509;&#21475;&#65292;&#20197;&#20415;&#20351;&#29992; /proc/bus/pci &#21521;&#29992;&#25143;&#31354;&#38388;&#23548;&#20986;&#26377;&#20851;&#21508;&#20010;&#24635;&#32447;&#30340;&#20449;&#24687;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">procdir</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">number</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">bus number</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">primary</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">number of primary bridge</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">secondary</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">number of secondary bridge</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">subordinate</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#24635;&#32447;&#21487;&#20197;&#25317;&#26377;&#30340;&#19979;&#32423;&#24635;&#32447;&#30340;&#26368;&#22823;&#20540;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">char</span>            <span style="color: #FF8C00;">name</span>[48]; <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#24635;&#32447;&#30340;&#25991;&#26412;&#21517;&#31216;</span><span style="color: #8B8878;">*/</span>
+
+};
+</pre>
+</div>
+
+<p>
+在PCI子系统初始化时，会建立所有系统总线的列表。这些总线以两种不同的方式彼此连接。第一种方法使用一个线性链表，表头是 pci_root_buses 全局变量，包括系统中所有的总线。node 成员充当链表元素。
+</p>
+
+<p>
+parent 和 children 结构成员，方便了以树的形式表示PCI总线的二维拓扑结构。
+</p>
+
+<p>
+<b>设备管理</b>
+</p>
+
+<p>
+struct pci_dev 用于表示系统中的各个PIC设备。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#34920;&#20803;&#32032;&#65292;&#29992;&#20110;&#36830;&#25509;&#21040;&#20840;&#23616;PCI&#35774;&#22791;&#38142;&#34920;&#65292;&#34920;&#22836;&#20026;pci_devices</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">global_list</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#34920;&#20803;&#32032;&#65292;&#29992;&#20110;&#36830;&#25509;&#21040;&#29305;&#23450;&#20110;&#24635;&#32447;&#30340;&#35774;&#22791;&#38142;&#34920;&#65292;&#34920;&#22836;&#20026;pci_bus-&gt;devices</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">bus_list</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35774;&#22791;&#25152;&#22312;&#24635;&#32447;&#30340;pci_bus&#23454;&#20363;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_bus</span>  *<span style="color: #FF8C00;">bus</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21482;&#26377;&#22312;&#35813;&#35774;&#22791;&#20026;&#36830;&#25509;&#20004;&#20010;PCI&#24635;&#32447;&#30340;PCI&#26725;&#25509;&#22120;&#26102;&#26377;&#25928;&#65292;&#25351;&#21521;&#19979;&#32423;PCI&#24635;&#32447;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_bus</span>  *<span style="color: #FF8C00;">subordinate</span>;
+
+	<span style="color: #5FD7FF;">void</span>            *<span style="color: #FF8C00;">sysdata</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23384;&#20648;&#29305;&#23450;&#20110;&#39537;&#21160;&#31243;&#24207;&#30340;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">procent</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">proc&#25991;&#20214;&#31995;&#32479; /proc/bus/pci</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">devfn</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">vendor</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">device</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">subsystem_vendor</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">subsystem_device</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">class</span>;
+	<span style="color: #5FD7FF;">u8</span>              <span style="color: #FF8C00;">revision</span>;
+	<span style="color: #5FD7FF;">u8</span>              <span style="color: #FF8C00;">hdr_type</span>;
+	<span style="color: #5FD7FF;">u8</span>              <span style="color: #FF8C00;">pcie_type</span>;
+	<span style="color: #5FD7FF;">u8</span>              <span style="color: #FF8C00;">rom_base_reg</span>;
+	<span style="color: #5FD7FF;">u8</span>              <span style="color: #FF8C00;">pin</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#20351;&#29992;&#30340;&#20013;&#26029;</span><span style="color: #8B8878;">*/</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_driver</span> *<span style="color: #FF8C00;">driver</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#29992;&#20110;&#25511;&#21046;&#35813;&#35774;&#22791;&#30340;&#35774;&#22791;&#39537;&#21160;&#31243;&#24207;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span>  <span style="color: #5FD7FF;">device</span>  <span style="color: #FF8C00;">dev</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20851;&#32852;&#21040;&#36890;&#29992;&#35774;&#22791;&#27169;&#22411;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">device is compatible with these IDs</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">vendor_compatible</span>[DEVICE_COUNT_COMPATIBLE];
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">device_compatible</span>[DEVICE_COUNT_COMPATIBLE];
+
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">cfg_size</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Size of configuration space</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#35774;&#22791;&#20351;&#29992;&#30340;&#20013;&#26029;&#25968;&#30446;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">irq</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20445;&#23384;&#39537;&#21160;&#31243;&#24207;&#20026;I/O&#20869;&#23384;&#20998;&#37197;&#30340;&#36164;&#28304;&#23454;&#20363;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">resource</span> <span style="color: #FF8C00;">resource</span>[DEVICE_COUNT_RESOURCE];
+};
+</pre>
+</div>
+
+<p>
+<b>驱动程序函数</b>
+</p>
+
+<p>
+struct pci_driver 用于实现PCI驱动程序，表示了通用内核代码和设备的底层硬件驱动程序之间的接口。每个PCI驱动程序都必须将其函数填到该接口中，使得内核能够一致地控制可用的驱动程序。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_driver</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">node</span>;
+	<span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_device_id</span> *<span style="color: #FF8C00;">id_table</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">must be non-NULL for probe to be called</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26816;&#27979;&#35813;&#39537;&#21160;&#31243;&#24207;&#26159;&#21542;&#25903;&#25345;&#26576;&#20010;PCI&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>  (*<span style="color: #87D700;">probe</span>)  (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_device_id</span> *<span style="color: #FF8C00;">id</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#31227;&#38500;&#35774;&#22791;&#65292;&#21482;&#26377;&#31995;&#32479;&#25903;&#25345;&#28909;&#25554;&#25300;&#65288;&#36890;&#24120;&#19981;&#25903;&#25345;&#65289;&#26102;&#65292;&#31227;&#38500;PCI&#35774;&#22791;&#25165;&#26377;&#24847;&#20041;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">remove</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#24314;&#31435;&#19982;&#36890;&#29992;&#35774;&#22791;&#27169;&#22411;&#30340;&#20851;&#32852;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_driver</span>    <span style="color: #FF8C00;">driver</span>;
+};
+</pre>
+</div>
+
+<p>
+<b>注册驱动程序</b>
+</p>
+
+<p>
+PCI驱动程序通过pci_register_driver注册。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__pci_register_driver</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_driver</span> *<span style="color: #FF8C00;">drv</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>,
+			  <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">mod_name</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">error</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#39537;&#21160;&#31243;&#24207;&#30340;&#23383;&#27573;</span><span style="color: #8B8878;"> */</span>
+	drv-&gt;driver.name = drv-&gt;name;
+	drv-&gt;driver.bus = &amp;pci_bus_type;
+	drv-&gt;driver.owner = owner;
+	drv-&gt;driver.mod_name = mod_name;
+	drv-&gt;driver.kobj.ktype = &amp;pci_driver_kobj_type;
+
+	spin_lock_init(&amp;drv-&gt;dynids.lock);
+	INIT_LIST_HEAD(&amp;drv-&gt;dynids.list);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27880;&#20876;&#21040;&#36890;&#29992;&#35774;&#22791;&#23618;</span><span style="color: #8B8878;"> */</span>
+	error = driver_register(&amp;drv-&gt;driver);
+
+	error = pci_create_newid_file(drv);
+
+	<span style="color: #FF1493;">return</span> error;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0acb727" class="outline-3">
+<h3 id="org0acb727"><span class="section-number-3">8.3</span> USB</h3>
+<div class="outline-text-3" id="text-8-3">
+<p>
+USB设计的核心是热插拔以及驱动程序的透明安装，USB是将内核的热插拔能力提供给大量用户的第一种总线。
+</p>
+</div>
+
+<div id="outline-container-orgef1841b" class="outline-4">
+<h4 id="orgef1841b"><span class="section-number-4">8.3.1</span> 运作模式</h4>
+<div class="outline-text-4" id="text-8-3-1">
+<p>
+USB总线的拓扑结构，从单一的根控制器开始，设备通过集线器连接到树形结构中，用这样的方式，一个系统最多可附接127个终端设备。
+</p>
+
+
+<div class="figure">
+<p><img src="image/dev/usb-topo.png" alt="usb-topo.png" />
+</p>
+<p><span class="figure-number">Figure 11: </span>USB系统的拓扑结构</p>
+</div>
+
+
+<p>
+设备从来不会直接连接到宿主机控制器，总是通过集线器。为确保驱动程序的视图一致，内核用一个小的仿真层替换了根控制器，使得系统的其余部分将该控制器视为一个虚拟集线器。这简化了驱动程序的开发。
+</p>
+
+<p>
+在内核源代码中，各个驱动程序的源代码按照所属类别，归入不同的目录。 drivers/usb/ 包含若干子目录，其内容如下：
+</p>
+<ul class="org-ul">
+<li>image 目录下是图形和视频设备的驱动程序，如数字照相机、扫描仪，等等。</li>
+<li>input 目录下是输入输出装置的驱动程序，用于与计算机用户的交互。此类别中典型的设备不仅包括键盘和鼠标，还有触摸屏、数据手套，等等。</li>
+<li>media 目录下是很多多媒体设备的驱动程序，近几年涌现了很多此类设备。</li>
+<li>net 目录下是通过USB附接到计算机的网卡的驱动，因而此类设备通常称之为适配器，负责桥接以太网和USB。</li>
+<li>storage 目录下是大容量储存设备的驱动程序，如硬盘等。</li>
+<li>在 class 目录下，包括了支持USB定义的某个标准类别设备的所有驱动程序。</li>
+<li>core 包含了宿主机适配器的驱动程序，这种设备上通常会附接一个USB链。</li>
+</ul>
+
+<p>
+USB标准定义了4种不同的传输模式，内核必须考虑到所有这4种模式：
+</p>
+<ul class="org-ul">
+<li>控制传输（control transfer）涉及传输所需的控制信息，（主要）用于设备的初始配置。此类通信必须安全可靠，但只需要较窄的带宽。</li>
+<li>块传输（bulk transfer）按数据包发送数据，可以占据总线的全部带宽。在这种模式下，数据传输的安全性由总线保证。</li>
+<li>中断传输（interrupt transfer）类似于块传输，但按一定的周期重复。 驱动程序可以自由地定义周期长度（在一定的限度内）。网卡和类似设备会优先选择使用这种传输模式。</li>
+<li>同步传输（isochronous transfer）具有特殊作用，它是能够使用固定的预定义带宽的唯一方法（尽管不可靠）。在需要确保连续数据流，而能够容忍偶尔数据丢失的情况下，该传输模式是最适用的（网络摄像头）。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7beb3e1" class="outline-4">
+<h4 id="org7beb3e1"><span class="section-number-4">8.3.2</span> 驱动程序的管理</h4>
+<div class="outline-text-4" id="text-8-3-2">
+<p>
+内核中按两个层次实现USB总线系统：
+</p>
+<ul class="org-ul">
+<li>宿主机适配器的驱动程序必须是可用的。该适配器必须为USB链提供连接选项，并承担与终端设备的电子通信。适配器自身必须连接到另一个系统总线（当前的宿主机适配器类型为OHCI、EHCI和UHCI）。</li>
+
+<li>设备驱动程序与各个USB设备通信，并将设备的功能导出到内核的其他部分，进而到用户空间。这些驱动程序与宿主机控制器通过一种标准化接口交互，因而控制器类型与USB驱动程序是不相关的。</li>
+</ul>
+
+<p>
+USB子系统有4项主要的任务。
+</p>
+<ul class="org-ul">
+<li>注册和管理现存的设备驱动程序。</li>
+<li>为USB设备查找适当的驱动程序，以及初始化和配置。</li>
+<li>在内核内存中表示设备树。</li>
+<li>与设备通信（交换数据）。</li>
+</ul>
+
+<p>
+usb_driver 是USB设备驱动程序和内核其余部分（特别是USB层）之间协作的起始点。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_driver</span> {
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39537;&#21160;&#31243;&#24207;&#21517;&#31216;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">probe</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_interface</span> *<span style="color: #FF8C00;">intf</span>,
+		      <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_device_id</span> *<span style="color: #FF8C00;">id</span>);
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">disconnect</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_interface</span> *<span style="color: #FF8C00;">intf</span>);
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">ioctl</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_interface</span> *<span style="color: #FF8C00;">intf</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">code</span>,
+			<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">buf</span>);
+
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_device_id</span> *<span style="color: #FF8C00;">id_table</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usbdrv_wrap</span> <span style="color: #FF8C00;">drvwrap</span>;
+};
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usbdrv_wrap</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_driver</span> <span style="color: #FF8C00;">driver</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">for_devices</span>;
+};
+
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>在宿主机适配器检测到新设备插入时，即发起一个探测过程，以查找适当的设备驱动程序。</li>
+<li>内核接下来遍历设备树的所有结点，确定是否有驱动程序与该设备相关。当然，这里预先假定了该设备尚未分配驱动程序。如果已经分配了驱动程序，则跳过该设备。</li>
+<li>内核首先扫描驱动程序支持的所有设备列表，即 id_table 中包含的设备列表。USB设备（类似PCI设备）可以通过一个编号唯一地标识。</li>
+<li>在找到设备和表项的匹配之后，则调用特定于驱动程序的 probe 函数，执行进一步的检查和初始化工作。</li>
+<li>如果设备ID和驱动程序提供的列表之间无法匹配，则内核不会调用 probe ，而是跳到下一个驱动程序。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org6934a7f" class="outline-4">
+<h4 id="org6934a7f"><span class="section-number-4">8.3.3</span> 设备树的表示</h4>
+<div class="outline-text-4" id="text-8-3-3">
+<p>
+struct usb_device结构：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_device</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">devnum &#20445;&#23384;&#20102;&#35813;&#35774;&#22791;&#30340;&#21807;&#19968;&#32534;&#21495;&#65288;&#22312;&#25972;&#20010;USB&#26641;&#20013;&#20840;&#23616;&#21807;&#19968;&#65289;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">devnum</span>;
+	<span style="color: #5FD7FF;">char</span>            <span style="color: #FF8C00;">devpath</span> [16];   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#35774;&#22791;&#22312;USB&#26641;&#30340;&#25299;&#25169;&#32467;&#26500;&#20013;&#30340;&#20301;&#32622;&#12290; /port/port/...</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">usb_device_state</span>   <span style="color: #FF8C00;">state</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#29366;&#24577;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">usb_device_speed</span>   <span style="color: #FF8C00;">speed</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#36895;&#24230;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">toggle</span>[2];         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">one bit for each endpoint</span>
+<span style="color: #8B8878;">                                         * ([0] = IN, [1] = OUT)</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_device</span> *<span style="color: #FF8C00;">parent</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35813;&#35774;&#22791;&#38468;&#25509;&#30340;&#38598;&#32447;&#22120;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_bus</span> *<span style="color: #FF8C00;">bus</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#24635;&#32447;&#23545;&#24212;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_host_endpoint</span> <span style="color: #FF8C00;">ep0</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> <span style="color: #FF8C00;">dev</span>;              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21644;&#36890;&#29992;&#35774;&#22791;&#27169;&#22411;&#30340;&#20851;&#32852;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_device_descriptor</span> <span style="color: #FF8C00;">descriptor</span>;<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">USB&#35774;&#22791;&#30340;&#29305;&#24449;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_host_config</span> *<span style="color: #FF8C00;">config</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#25152;&#26377;&#21487;&#33021;&#30340;&#37197;&#32622;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_host_config</span> *<span style="color: #FF8C00;">actconfig</span>;<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35774;&#22791;&#30340;&#24403;&#21069;&#37197;&#32622;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry</span> *<span style="color: #FF8C00;">usbfs_dentry</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#36830;&#25509;&#21040;usb&#25991;&#20214;&#31995;&#32479;&#65292;&#35013;&#36733;&#21040;/proc/bus/usb&#20013;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">maxchild</span>;                   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#38598;&#32447;&#22120;&#65292;&#20195;&#34920;&#38598;&#32447;&#22120;&#30340;&#31471;&#21475;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_device</span> *<span style="color: #FF8C00;">children</span>[USB_MAXCHILDREN]; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#38598;&#32447;&#22120;&#65292;&#21017;&#21253;&#21547;&#25351;&#21521;&#23545;&#24212; usb_device &#23454;&#20363;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
+};
+</pre>
+</div>
+
+<p>
+USB总线：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_bus</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521; device&#23454;&#20363;&#30340;&#25351;&#38024;&#65292;&#23545;&#24212;&#20110;&#23454;&#29616;&#20102;&#35813;&#24635;&#32447;&#30340;&#30828;&#20214;&#35774;&#22791;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device</span> *<span style="color: #FF8C00;">controller</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">busnum</span>;                     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24635;&#32447;&#21495;&#65292;&#22312;&#24635;&#32447;&#27880;&#20876;&#26102;&#25353;&#39034;&#24207;&#20998;&#37197;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">bus_name</span>;                 <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24635;&#32447;&#30340;&#21807;&#19968;&#21517;&#31216;</span><span style="color: #8B8878;"> */</span>
+
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_devmap</span> <span style="color: #FF8C00;">devmap</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23427;&#29992;&#20110;&#36319;&#36394;&#21738;&#20123;USB&#32534;&#21495;&#24050;&#32463;&#20998;&#37197;&#65292;&#21738;&#20123;&#31354;&#38386;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">usb_device</span> *<span style="color: #FF8C00;">root_hub</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#26681;&#38598;&#32447;&#22120;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">bus_list</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#34920;&#20803;&#32032;&#65292;&#29992;&#20110;&#23558;&#25152;&#26377; usb_bus &#23454;&#20363;&#36830;&#25509;&#21040;&#19968;&#20010;&#38142;&#34920;&#20013;&#31649;&#29702;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry</span> *<span style="color: #FF8C00;">usbfs_dentry</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">usbfs dentry entry for the bus</span><span style="color: #8B8878;"> */</span>
+};
+</pre>
+</div>
+
+<p>
+在与底层的控制器硬件通信时，使用USB请求块（USB request block， URB）。
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-12-08 Wed 22:29</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-24 Wed 09:28 -->
+<!-- 2021-12-16 Thu 23:31 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>学习记录</title>
@@ -41,7 +41,7 @@
   }
   pre.src {
     position: relative;
-    overflow: auto;
+    overflow: visible;
     padding-top: 1.2em;
   }
   pre.src:before {
@@ -53,7 +53,7 @@
     padding: 3px;
     border: 1px solid black;
   }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
+  pre.src:hover:before { display: inline;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
@@ -196,26 +196,50 @@
 </style>
 <link rel="stylesheet" type="text/css" href="styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
 </script>
 </head>
 <body>
@@ -225,38 +249,59 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgad6a5a6">1. 网络</a>
+<li><a href="#orga8aba8e">1. 网络</a>
 <ul>
 <li><a href="#orgbf05a64">1.1. fdio</a></li>
 <li><a href="#orge2ac225">1.2. dpdk</a></li>
 <li><a href="#org62e8dab">1.3. http</a></li>
 <li><a href="#orgabbaf35">1.4. 网络安全产品</a></li>
-<li><a href="#org8d7cc3c">1.5. 其他</a></li>
+<li><a href="#org4c37830">1.5. 其他</a></li>
 </ul>
 </li>
-<li><a href="#org7faacfd">2. linux子系统</a></li>
-<li><a href="#org10c1dbb">3. linux网络</a></li>
-<li><a href="#org0bbdab7">4. linux驱动</a></li>
-<li><a href="#org735effb">5. 编译链接</a></li>
-<li><a href="#orgcc8bf25">6. 开发调试</a>
+<li><a href="#org969cce0">2. bpf</a></li>
+<li><a href="#org1bbbf7c">3. linux子系统（2.6.24）</a>
 <ul>
-<li><a href="#org8896a51">6.1. 开发</a></li>
-<li><a href="#org6e60667">6.2. 调试</a></li>
-<li><a href="#org13c5fe2">6.3. 性能测试</a></li>
+<li><a href="#orgdba1b89">3.1. 内存</a></li>
+<li><a href="#org60a1a2f">3.2. 进程</a></li>
+<li><a href="#org31e6034">3.3. 设备</a></li>
+<li><a href="#org379113d">3.4. 网络</a></li>
+<li><a href="#orgfc6394d">3.5. 文件系统</a></li>
+<li><a href="#org4e518f3">3.6. 其他</a></li>
 </ul>
 </li>
-<li><a href="#orgb7702a4">7. 操作系统</a></li>
-<li><a href="#org227a936">8. emacs</a></li>
-<li><a href="#orgcd6227f">9. tools</a></li>
-<li><a href="#org76c57c5">10. 数据库</a></li>
-<li><a href="#org875cca8">11. 技术</a></li>
-<li><a href="#org81858e6">12. bug修复</a></li>
+<li><a href="#org10c1dbb">4. linux网络</a>
+<ul>
+<li><a href="#orge0a6745">4.1. 网络子系统</a></li>
+<li><a href="#orgdd3b61f">4.2. 其他</a></li>
+</ul>
+</li>
+<li><a href="#org0bbdab7">5. linux驱动</a></li>
+<li><a href="#org3729f14">6. linux技术分析</a>
+<ul>
+<li><a href="#org7b41005">6.1. 网络相关</a></li>
+<li><a href="#org3967328">6.2. 开发相关</a></li>
+</ul>
+</li>
+<li><a href="#org735effb">7. 编译链接</a></li>
+<li><a href="#orgcc8bf25">8. 开发调试</a>
+<ul>
+<li><a href="#org8896a51">8.1. 开发</a></li>
+<li><a href="#org6e60667">8.2. 调试</a></li>
+<li><a href="#org13c5fe2">8.3. 性能测试</a></li>
+</ul>
+</li>
+<li><a href="#orgb7702a4">9. 操作系统</a></li>
+<li><a href="#org227a936">10. emacs</a></li>
+<li><a href="#orgcd6227f">11. tools</a></li>
+<li><a href="#org76c57c5">12. 数据库</a></li>
+<li><a href="#org875cca8">13. 技术</a></li>
+<li><a href="#org81858e6">14. bug修复</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgad6a5a6" class="outline-2">
-<h2 id="orgad6a5a6"><span class="section-number-2">1</span> 网络</h2>
+<div id="outline-container-orga8aba8e" class="outline-2">
+<h2 id="orga8aba8e"><span class="section-number-2">1</span> 网络</h2>
 <div class="outline-text-2" id="text-1">
 </div>
 <div id="outline-container-orgbf05a64" class="outline-3">
@@ -285,6 +330,7 @@
 <div class="outline-text-3" id="text-1-3">
 <ul class="org-ul">
 <li><a href="network/nginx.html">nginx</a></li>
+<li><a href="network/envoy.html">envoy</a></li>
 </ul>
 </div>
 </div>
@@ -292,17 +338,18 @@
 <h3 id="orgabbaf35"><span class="section-number-3">1.4</span> 网络安全产品</h3>
 <div class="outline-text-3" id="text-1-4">
 <ul class="org-ul">
-<li><a href="network/ddos.html">ddos</a></li>
+<li><a href="network/ddos.html">DDos</a></li>
 <li>应用交付</li>
 <li>WEB应用防火墙</li>
 <li>下一代防火墙</li>
 <li><a href="network/mtd.html">移动目标防御系统MTD</a></li>
 <li><a href="network/honey-pot.html">蜜罐平台搭建</a></li>
+<li><a href="network/leak-scan.html">漏洞扫描工具</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org8d7cc3c" class="outline-3">
-<h3 id="org8d7cc3c"><span class="section-number-3">1.5</span> 其他</h3>
+<div id="outline-container-org4c37830" class="outline-3">
+<h3 id="org4c37830"><span class="section-number-3">1.5</span> 其他</h3>
 <div class="outline-text-3" id="text-1-5">
 <ul class="org-ul">
 <li><a href="network/nDPI.html">nDPI学习</a></li>
@@ -311,37 +358,138 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org7faacfd" class="outline-2">
-<h2 id="org7faacfd"><span class="section-number-2">2</span> linux子系统</h2>
+<div id="outline-container-org969cce0" class="outline-2">
+<h2 id="org969cce0"><span class="section-number-2">2</span> bpf</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
+<li><a href="bpf/bpf.html">bpf</a></li>
+<li><a href="bpf/performance-analysis.html">性能分析</a></li>
+<li><a href="bpf/cpu-perf-analysis.html">CPU性能分析策略</a></li>
+<li><a href="bpf/network-bpf.html">网络分析策略</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1bbbf7c" class="outline-2">
+<h2 id="org1bbbf7c"><span class="section-number-2">3</span> linux子系统（2.6.24）</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgdba1b89" class="outline-3">
+<h3 id="orgdba1b89"><span class="section-number-3">3.1</span> 内存</h3>
+<div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li><a href="linux-kernel/memory-cache.html">高速缓存</a></li>
+<li><a href="linux-kernel/memory-vm.html">虚拟内存</a></li>
 <li><a href="linux-kernel/memory.html">linux内存管理</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org60a1a2f" class="outline-3">
+<h3 id="org60a1a2f"><span class="section-number-3">3.2</span> 进程</h3>
+<div class="outline-text-3" id="text-3-2">
+<ul class="org-ul">
 <li><a href="linux-kernel/process.html">linux进程管理</a></li>
-<li><a href="linux-kernel/namespace.html">linux命名空间</a></li>
+<li><a href="linux-kernel/process-schedule.html">进程调度</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org31e6034" class="outline-3">
+<h3 id="org31e6034"><span class="section-number-3">3.3</span> 设备</h3>
+<div class="outline-text-3" id="text-3-3">
+<ul class="org-ul">
+<li><a href=" linux-kernel/dev.html">设备子系统</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org379113d" class="outline-3">
+<h3 id="org379113d"><span class="section-number-3">3.4</span> 网络</h3>
+<div class="outline-text-3" id="text-3-4">
+<ul class="org-ul">
+<li><a href="linux-kernel/net.html">网络子系统概览</a></li>
+<li><a href="linux-kernel/net-struct.html">网络子系统结构关系</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgfc6394d" class="outline-3">
+<h3 id="orgfc6394d"><span class="section-number-3">3.5</span> 文件系统</h3>
+<div class="outline-text-3" id="text-3-5">
+<ul class="org-ul">
+<li><a href="linux-kernel/vfs.html">VFS虚拟文件系统</a></li>
+<li><a href="linux-kernel/ext-fs.html">Ext文件系统</a></li>
+<li><a href="linux-kernel/nondev-fs.html">无持久存储的文件系统</a></li>
 <li><a href="linux-kernel/filesystem.html">linux文件系统</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4e518f3" class="outline-3">
+<h3 id="org4e518f3"><span class="section-number-3">3.6</span> 其他</h3>
+<div class="outline-text-3" id="text-3-6">
+<ul class="org-ul">
+<li><a href="linux-kernel/namespace.html">linux命名空间</a></li>
 <li><a href="linux-kernel/cgroup.html">cgroup</a></li>
+
+<li><a href="linux-kernel/debug.html">linux内核调试</a></li>
 <li><a href="linux-kernel/syscall.html">系统调用整理</a></li>
 <li><a href="linux-kernel/issue-resolve.html">问题排查汇总记录</a></li>
 </ul>
 </div>
 </div>
+</div>
 <div id="outline-container-org10c1dbb" class="outline-2">
-<h2 id="org10c1dbb"><span class="section-number-2">3</span> linux网络</h2>
-<div class="outline-text-2" id="text-3">
+<h2 id="org10c1dbb"><span class="section-number-2">4</span> linux网络</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orge0a6745" class="outline-3">
+<h3 id="orge0a6745"><span class="section-number-3">4.1</span> 网络子系统</h3>
+</div>
+
+
+<div id="outline-container-orgdd3b61f" class="outline-3">
+<h3 id="orgdd3b61f"><span class="section-number-3">4.2</span> 其他</h3>
+<div class="outline-text-3" id="text-4-2">
 <ul class="org-ul">
+<li><a href=" ./linux-net/linux-net.html">Linux协议栈</a></li>
 <li><a href="linux-net/user-kernel-api.html">用户空间和内核的接口</a></li>
 <li><a href="linux-net/protocol.html">协议</a></li>
 <li><a href="linux-net/socket.html">socket网络编程</a></li>
 <li><a href="linux-net/net-program.html">网络编程(<b>io_uring、epoll、pool、select</b>)</a></li>
+<li><a href="linux-net/net-tools.html">网络诊断工具</a></li>
 </ul>
 </div>
 </div>
+</div>
+
 <div id="outline-container-org0bbdab7" class="outline-2">
-<h2 id="org0bbdab7"><span class="section-number-2">4</span> linux驱动</h2>
+<h2 id="org0bbdab7"><span class="section-number-2">5</span> linux驱动</h2>
+</div>
+<div id="outline-container-org3729f14" class="outline-2">
+<h2 id="org3729f14"><span class="section-number-2">6</span> linux技术分析</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org7b41005" class="outline-3">
+<h3 id="org7b41005"><span class="section-number-3">6.1</span> 网络相关</h3>
+<div class="outline-text-3" id="text-6-1">
+<ul class="org-ul">
+<li><a href="linux-src/reuseport.html">reuseport分析</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3967328" class="outline-3">
+<h3 id="org3967328"><span class="section-number-3">6.2</span> 开发相关</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+内核hook技术
+模块开发
+</p>
+</div>
+</div>
 </div>
 <div id="outline-container-org735effb" class="outline-2">
-<h2 id="org735effb"><span class="section-number-2">5</span> 编译链接</h2>
-<div class="outline-text-2" id="text-5">
+<h2 id="org735effb"><span class="section-number-2">7</span> 编译链接</h2>
+<div class="outline-text-2" id="text-7">
 <ul class="org-ul">
 <li><a href="compile/ld-script.html">ld连接脚本</a></li>
 <li><a href="compile/gcc.html">gcc相关</a></li>
@@ -352,12 +500,12 @@
 </div>
 
 <div id="outline-container-orgcc8bf25" class="outline-2">
-<h2 id="orgcc8bf25"><span class="section-number-2">6</span> 开发调试</h2>
-<div class="outline-text-2" id="text-6">
+<h2 id="orgcc8bf25"><span class="section-number-2">8</span> 开发调试</h2>
+<div class="outline-text-2" id="text-8">
 </div>
 <div id="outline-container-org8896a51" class="outline-3">
-<h3 id="org8896a51"><span class="section-number-3">6.1</span> 开发</h3>
-<div class="outline-text-3" id="text-6-1">
+<h3 id="org8896a51"><span class="section-number-3">8.1</span> 开发</h3>
+<div class="outline-text-3" id="text-8-1">
 <ul class="org-ul">
 <li><a href="develop/git.html">git</a></li>
 <li><a href="develop/review_manual.html">代码review规范</a></li>
@@ -368,8 +516,8 @@
 </div>
 
 <div id="outline-container-org6e60667" class="outline-3">
-<h3 id="org6e60667"><span class="section-number-3">6.2</span> 调试</h3>
-<div class="outline-text-3" id="text-6-2">
+<h3 id="org6e60667"><span class="section-number-3">8.2</span> 调试</h3>
+<div class="outline-text-3" id="text-8-2">
 <ul class="org-ul">
 <li><a href="develop/gdb.html">gdb</a></li>
 </ul>
@@ -377,8 +525,8 @@
 </div>
 
 <div id="outline-container-org13c5fe2" class="outline-3">
-<h3 id="org13c5fe2"><span class="section-number-3">6.3</span> 性能测试</h3>
-<div class="outline-text-3" id="text-6-3">
+<h3 id="org13c5fe2"><span class="section-number-3">8.3</span> 性能测试</h3>
+<div class="outline-text-3" id="text-8-3">
 <ul class="org-ul">
 <li><a href="develop/perf.html">perf perf火焰图</a></li>
 <li><a href="develop/http-test.html">http测试工具</a></li>
@@ -388,19 +536,19 @@
 </div>
 
 <div id="outline-container-orgb7702a4" class="outline-2">
-<h2 id="orgb7702a4"><span class="section-number-2">7</span> 操作系统</h2>
-<div class="outline-text-2" id="text-7">
+<h2 id="orgb7702a4"><span class="section-number-2">9</span> 操作系统</h2>
+<div class="outline-text-2" id="text-9">
 <ul class="org-ul">
 <li><a href="os/os-platform.html">操作系统平台差异</a></li>
 <li><a href="os/debian.html">debian安装使用</a></li>
 <li><a href="os/arch.html">Arch安装配置笔记</a></li>
+<li><a href=" os/boot_grub.html">启动项配置（GRUB、efibootmgr&#x2026;）</a></li>
 </ul>
 </div>
 </div>
-
 <div id="outline-container-org227a936" class="outline-2">
-<h2 id="org227a936"><span class="section-number-2">8</span> emacs</h2>
-<div class="outline-text-2" id="text-8">
+<h2 id="org227a936"><span class="section-number-2">10</span> emacs</h2>
+<div class="outline-text-2" id="text-10">
 <ul class="org-ul">
 <li><a href="emacs/emacs-configure.html">emacs配置笔记</a></li>
 <li><a href="emacs/org-mode-learn.html">org学习笔记</a></li>
@@ -410,21 +558,21 @@
 </div>
 
 <div id="outline-container-orgcd6227f" class="outline-2">
-<h2 id="orgcd6227f"><span class="section-number-2">9</span> tools</h2>
-<div class="outline-text-2" id="text-9">
+<h2 id="orgcd6227f"><span class="section-number-2">11</span> tools</h2>
+<div class="outline-text-2" id="text-11">
 <ul class="org-ul">
 <li><a href="tools/arch-app.html">Arch application介绍</a></li>
 <li><a href="tools/tmux.html">tmux配置及使用</a></li>
 <li><a href="tools/wine.html">wine安装使用</a></li>
 <li><a href="tools/kvm-qemu.html">kvm安装配置</a></li>
 <li><a href="tools/geoip.html">ip查询库GeoIP</a></li>
+<li><a href="tools/privoxy.html">privoxy安装配置</a></li>
 </ul>
 </div>
 </div>
-
 <div id="outline-container-org76c57c5" class="outline-2">
-<h2 id="org76c57c5"><span class="section-number-2">10</span> 数据库</h2>
-<div class="outline-text-2" id="text-10">
+<h2 id="org76c57c5"><span class="section-number-2">12</span> 数据库</h2>
+<div class="outline-text-2" id="text-12">
 <ul class="org-ul">
 <li><a href="database/oracle.html">Oracle</a></li>
 <li><a href="database/mysql.html">MySQL</a></li>
@@ -432,19 +580,19 @@
 </div>
 </div>
 <div id="outline-container-org875cca8" class="outline-2">
-<h2 id="org875cca8"><span class="section-number-2">11</span> 技术</h2>
+<h2 id="org875cca8"><span class="section-number-2">13</span> 技术</h2>
 </div>
 
 <div id="outline-container-org81858e6" class="outline-2">
-<h2 id="org81858e6"><span class="section-number-2">12</span> bug修复</h2>
+<h2 id="org81858e6"><span class="section-number-2">14</span> bug修复</h2>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-24 Wed 09:28</p>
-<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.1 (<a href="https://orgmode.org">Org</a> mode )</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2021-12-16 Thu 23:31</p>
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.1 (<a href="https://orgmode.org">Org</a> mode 9.3)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

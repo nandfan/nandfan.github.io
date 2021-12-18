@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-10-29 Fri 21:15 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BPF</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">BPF</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org8a59f5b">1. 引言</a>
+<ul>
+<li><a href="#org652b7b9">1.1. BPF和eBPF</a></li>
+<li><a href="#org67daa26">1.2. 跟踪、嗅探、采样、剖析和可观测性</a></li>
+<li><a href="#org8c48b79">1.3. BCC、bpftrace和IO Visor</a></li>
+<li><a href="#org631dc11">1.4. BPF跟踪的能见度</a></li>
+<li><a href="#org34b7bc0">1.5. 动态插桩：kprobes和uprobes</a></li>
+<li><a href="#orgb487c6b">1.6. 静态插桩：tracepoint和UDST</a></li>
+<li><a href="#orgec4f1b0">1.7. bpftrace跟踪open()</a></li>
+<li><a href="#org00322d4">1.8. BCC：跟踪open()</a></li>
+</ul>
+</li>
+<li><a href="#org9f582fc">2. BPF</a>
+<ul>
+<li><a href="#org47ca131">2.1. 调用栈回溯</a></li>
+<li><a href="#org0ac3ae3">2.2. 火焰图</a></li>
+<li><a href="#org6bf0300">2.3. 事件源</a></li>
+<li><a href="#orga43690e">2.4. kprobes</a></li>
+<li><a href="#org761858b">2.5. uprobes</a></li>
+<li><a href="#orgde79de4">2.6. 跟踪点</a></li>
+<li><a href="#org6f96f8f">2.7. USDT</a></li>
+<li><a href="#org8b61b6a">2.8. 性能监控计数器（PMC）</a></li>
+<li><a href="#org63e9f77">2.9. perf_events</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8a59f5b" class="outline-2">
+<h2 id="org8a59f5b"><span class="section-number-2">1</span> 引言</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org652b7b9" class="outline-3">
+<h3 id="org652b7b9"><span class="section-number-3">1.1</span> BPF和eBPF</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+BPF是伯克利数据包过滤器的缩写，最初作用是提升网络包过滤工具的性能，后来BPF进化为一个更通用的执行引擎，能够完成多种任务，例如创建先进的性能分析工具。
+</p>
+
+<p>
+简单来说，BPF能够提供一种机制：在各种内核事件和应用程序事件发生时运行一小段程序。
+</p>
+
+<p>
+BPF由指令集、存储对象和辅助函数等及部分组成。由于BPF采用了虚拟指令集规范，也可以将其视作一种虚拟机实现。这些指令由Linux内核的BPF运行时模块执行，模块提供两种执行机制：一个解释器和一个将BPF指令动态转化为本地化指令的即时（JIT）编译器。在实际执行之前，BPF指令必须先通过验证器（verifer）的安全性检查，以确保BPF程序不会崩溃或者损坏内核。扩展后的BPF缩写为eBPF，但通常仍然成为BPF。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org67daa26" class="outline-3">
+<h3 id="org67daa26"><span class="section-number-3">1.2</span> 跟踪、嗅探、采样、剖析和可观测性</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+跟踪、嗅探、事件记录通常指的是同一回事，是基于事件的记录方式。
+</p>
+
+<p>
+采样工具通过获取全部观测量的子集来描绘目标的大致图像;这也被称为性能剖析样本或profiling。
+</p>
+
+<p>
+可观测性（observability）是指通过全面观测来理解一个系统，可以实现这一目标的工具就可以归类为可观测性工具，包括跟踪工具、采样工具和基于固定计数器的工具。但是不包含基准测量（benchmark）工具，此类工具会在系统上模拟业务负载，会更改系统的状态。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8c48b79" class="outline-3">
+<h3 id="org8c48b79"><span class="section-number-3">1.3</span> BCC、bpftrace和IO Visor</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+直接通过BPF指令编写BPF程序相当繁琐，所以诞生了提供高级语言编程支持的BPF前端；在跟踪用途方面，主要的前端是BCC和bpftrace。
+</p>
+
+<p>
+BCC（BPF编译器集合）提供了编写内核BPF程序的C语言环境，也提供了其他语言（Python、Lua和C++）环境来实现用户端接口。也是libbcc和libbpf库的前身，这两个库提供了使用BPF程序对事件进行观测的库函数。
+</p>
+
+<p>
+bpftrace是一个新出现的前端，提供了专门用于创建BPF工具的高级语言支持。
+</p>
+
+<p>
+bpftrace在编写功能强大的单行程序、短小的脚本方面比较理想；BCC则更适合开发复杂的脚本和作为后台进程使用。
+</p>
+
+<p>
+ply也是BPF的前端，其设计目标是尽可能轻量化并且将依赖最小化，比较适合在嵌入式linux环境下使用。
+</p>
+
+<p>
+BCC和bpftrace不在内核代码仓库中，而是属于Github上的一个名为IO Visor的Linux基金会项目。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org631dc11" class="outline-3">
+<h3 id="org631dc11"><span class="section-number-3">1.4</span> BPF跟踪的能见度</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+BPF可以在整个软件栈范围内提供能见度，允许我们随时根据需要开发新的工具和监测功能。在生产环境中可以立即部署BPF跟踪程序，不需要重启系统，也不需要以特殊方式重启应用。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org34b7bc0" class="outline-3">
+<h3 id="org34b7bc0"><span class="section-number-3">1.5</span> 动态插桩：kprobes和uprobes</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+动态插桩也叫动态跟踪技术&#x2013;在生产环境中对正在运行的软件插入观测点的能力。
+</p>
+
+<p>
+Linux以uprobes形式增加了对用户态函数的动态插桩支持。BPF跟踪工具同时支持kprobes和uprobes。
+</p>
+
+<p>
+一下列举了bpftrace使用的uprobes和kprobes探针定义的例子：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">探针</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">kprobe:vfs_read</td>
+<td class="org-left">在内核函数vfs_read()的开始位置进行插桩</td>
+</tr>
+
+<tr>
+<td class="org-left">kretprobe:vfs_read</td>
+<td class="org-left">在内核函数的vfs_read()的返回位置进行插桩</td>
+</tr>
+
+<tr>
+<td class="org-left">uprobe:/binbash:readline</td>
+<td class="org-left">在/bin/bash程序中的readline()函数的开始位置进行插桩</td>
+</tr>
+
+<tr>
+<td class="org-left">uretprobe:/bin/bash:readline</td>
+<td class="org-left">在/bin/bash程序中的readline()函数的返回位置进行插桩</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+动态插桩缺点： 随着软件版本的升级，被插桩的函数有可能被重新命名或者被移除，因此可能会导致工具不可用。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb487c6b" class="outline-3">
+<h3 id="orgb487c6b"><span class="section-number-3">1.6</span> 静态插桩：tracepoint和UDST</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+静态插桩技术会将稳定的时间名称编码到软件代码中，由开发者进行维护。BPF跟踪工具支持内核的静态插桩技术，也支持用户态的静态定义跟踪插桩技术USDT。
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> bpftrace使用跟踪点和USDT的探针定义的例子</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">探针</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">tracepoint:syscalls:sys_enter_open</td>
+<td class="org-left">对open系统调用进行插桩</td>
+</tr>
+
+<tr>
+<td class="org-left">usdt:/usr/sbin/mysqld:query_start</td>
+<td class="org-left">对/usr/sbin/mysqld程序中的query_start探针进行插桩</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+注意：
+    当需要开发自己的BPF工具时，应该首先尝试使用静态跟踪技术（跟踪点或者USDT），如果不能满足要求时，再使用动态跟踪技术（kprobes和uprobes）。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgec4f1b0" class="outline-3">
+<h3 id="orgec4f1b0"><span class="section-number-3">1.7</span> bpftrace跟踪open()</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+可以使用现有的静态插桩点（syscall:sys_enter_open）。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">  $ sudo  bpftrace -e <span style="color: #CDC673;">'tracepoint:syscalls:sys_enter_open { printf("%s %s\n", comm, str(args-&gt;filename)); }'</span>$ sudo bpftrace -e <span style="color: #CDC673;">'tracepoint:syscalls:sys_enter_open { printf("%s %s\n", comm, str(args-&gt;filename)); }'</span>
+Attaching 1 probe...
+^C
+
+
+</pre>
+</div>
+
+<p>
+观察以上命令没有任何输出，实际上是由于我们遗漏了一些open系统调用跟踪点，使用以下命令列出所有open跟踪点。
+</p>
+
+
+<p>
+列出跟踪点命令：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo  bpftrace -l <span style="color: #CDC673;">'tracepoint:syscalls:sys_enter_open*'</span>$ sudo  bpftrace -l <span style="color: #CDC673;">'tracepoint:syscalls:sys_enter_open*'</span>
+tracepoint:syscalls:sys_enter_open_by_handle_at
+tracepoint:syscalls:sys_enter_open_tree
+tracepoint:syscalls:sys_enter_open
+tracepoint:syscalls:sys_enter_openat
+tracepoint:syscalls:sys_enter_openat2
+</pre>
+</div>
+
+<p>
+统计open调用的信息：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo bpftrace -e <span style="color: #CDC673;">'tracepoint:syscalls:sys_enter_open* { @[probe] = count(); }'</span>$ sudo bpftrace -e <span style="color: #CDC673;">'tracepoint:syscalls:sys_enter_open* { @[probe] = count(); }'</span>
+Attaching 5 probes...
+^C
+
+@[tracepoint:syscalls:sys_enter_openat]: 13
+</pre>
+</div>
+
+
+<p>
+open跟踪点的详细信息可以参考 <b>opensnoop.bt</b> 的实现，bpftrace自带了opensnoop.bt工具。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org00322d4" class="outline-3">
+<h3 id="org00322d4"><span class="section-number-3">1.8</span> BCC：跟踪open()</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+BCC也提供了跟踪open系统调用的工具 <b>opensnoop</b> 。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo opensnoop-bpfcc -h
+usage: opensnoop-bpfcc [-h] [-T] [-U] [-x] [-p PID] [-t TID] [--cgroupmap CGROUPMAP]
+[--mntnsmap MNTNSMAP] [-u UID] [-d DURATION] [-n NAME] [-e] [-f FLAG_FILTER]
+
+Trace open() syscalls
+
+optional arguments:
+-h, --help            show this help message and exit
+-T, --timestamp       include timestamp on output
+-U, --print-uid       print UID column
+-x, --failed          only show failed opens
+-p PID, --pid PID     trace this PID only
+-t TID, --tid TID     trace this TID only
+--cgroupmap CGROUPMAP
+trace cgroups<span style="color: #FF1493;"> in</span> this BPF map only
+--mntnsmap MNTNSMAP   trace mount namespaces<span style="color: #FF1493;"> in</span> this BPF map only
+-u UID, --uid UID     trace this UID only
+-d DURATION, --duration DURATION
+total duration of trace<span style="color: #FF1493;"> in</span> seconds
+-n NAME, --name NAME  only print process names containing this name
+-e, --extended_fields
+show extended fields
+-f FLAG_FILTER, --flag_filter FLAG_FILTER
+filter on flags argument (e.g., O_WRONLY)
+
+examples:
+./opensnoop           <span style="color: #8B8878;"># </span><span style="color: #8B8878;">trace all open() syscalls</span>
+./opensnoop -T        <span style="color: #8B8878;"># </span><span style="color: #8B8878;">include timestamps</span>
+./opensnoop -U        <span style="color: #8B8878;"># </span><span style="color: #8B8878;">include UID</span>
+./opensnoop -x        <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only show failed opens</span>
+./opensnoop -p 181    <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only trace PID 181</span>
+./opensnoop -t 123    <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only trace TID 123</span>
+./opensnoop -u 1000   <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only trace UID 1000</span>
+./opensnoop -d 10     <span style="color: #8B8878;"># </span><span style="color: #8B8878;">trace for 10 seconds only</span>
+./opensnoop -n main   <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only print process names containing "main"</span>
+./opensnoop -e        <span style="color: #8B8878;"># </span><span style="color: #8B8878;">show extended fields</span>
+./opensnoop -f O_WRONLY -f O_RDWR  <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only print calls for writing</span>
+./opensnoop --cgroupmap mappath  <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only trace cgroups in this BPF map</span>
+./opensnoop --mntnsmap mappath   <span style="color: #8B8878;"># </span><span style="color: #8B8878;">only trace mount namespaces in the map</span>
+
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li>bpftrace工具通常比较简单，功能单一，只做一件事。</li>
+<li>BCC工具则一般比较复杂，支持的运行模式也比较多。</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9f582fc" class="outline-2">
+<h2 id="org9f582fc"><span class="section-number-2">2</span> BPF</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+BPF工作方式： 最终用户使用BPF虚拟机的指令集（BPF字节码）定义过滤表达式，然后传递给内核，由解释器执行。这使得包过滤可以在内核中直接进行，避免了向用户态进程复制每个数据包，从而提升数据包过滤的性能。BPF还提供了安全性保障，用户定义的过滤器在执行前必须首先通过安全性验证。早期的包过滤必须在内核空间执行，安全是一个硬性要求。
+</p>
+
+<p>
+最初的BPF现在被称为“经典BPF”，是一个功能有限的虚拟机，有两个寄存器，一个由16个内存槽位组成的临时存储区和一个程序计数器。以上部件均按32位寄存器大小运行。
+</p>
+
+<p>
+扩展版的BPF中增加了更多寄存器，并将字长从32位增加至64位，创建了灵活的BPF映射型存储（map），并允许调用一些受限制的内核功能。同时eBPF被设计为可以使用即时编译（JIT），机器指令与寄存器可以一对一映射。这就使得先前的处理器本地指令优化技术，可以重用于BPF之上。BPF验证器也进行了更新以便支持这些扩展，而且能够拒绝任何不安全的代码。
+</p>
+
+<p>
+现在eBPF也称为BPF。
+</p>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> 经典BPF和扩展版BPF的对比</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">对比项</th>
+<th scope="col" class="org-left">经典BPF</th>
+<th scope="col" class="org-left">扩展版BPF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">寄存器数量</td>
+<td class="org-left">2个：寄存器A和X</td>
+<td class="org-left">10个：R0～R9，此外R10是只读的帧指针寄存器</td>
+</tr>
+
+<tr>
+<td class="org-left">寄存器宽度</td>
+<td class="org-left">32位</td>
+<td class="org-left">64位</td>
+</tr>
+
+<tr>
+<td class="org-left">存储</td>
+<td class="org-left">16个内存槽位：M[0-15]</td>
+<td class="org-left">512字节大小的栈空间，外加无限制的映射型存储</td>
+</tr>
+
+<tr>
+<td class="org-left">受限的内核调用</td>
+<td class="org-left">非常受限，JIT专用</td>
+<td class="org-left">可用，通过bpf_call指令</td>
+</tr>
+
+<tr>
+<td class="org-left">支持的时间类型</td>
+<td class="org-left">网络数据包、seccomp-BPF</td>
+<td class="org-left">网络数据包、内核函数、用户态函数、跟踪点、用户态标记、PMC</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="outline-container-org47ca131" class="outline-3">
+<h3 id="org47ca131"><span class="section-number-3">2.1</span> 调用栈回溯</h3>
+</div>
+
+<div id="outline-container-org0ac3ae3" class="outline-3">
+<h3 id="org0ac3ae3"><span class="section-number-3">2.2</span> 火焰图</h3>
+</div>
+
+<div id="outline-container-org6bf0300" class="outline-3">
+<h3 id="org6bf0300"><span class="section-number-3">2.3</span> 事件源</h3>
+</div>
+
+<div id="outline-container-orga43690e" class="outline-3">
+<h3 id="orga43690e"><span class="section-number-3">2.4</span> kprobes</h3>
+</div>
+
+<div id="outline-container-org761858b" class="outline-3">
+<h3 id="org761858b"><span class="section-number-3">2.5</span> uprobes</h3>
+</div>
+
+<div id="outline-container-orgde79de4" class="outline-3">
+<h3 id="orgde79de4"><span class="section-number-3">2.6</span> 跟踪点</h3>
+</div>
+
+<div id="outline-container-org6f96f8f" class="outline-3">
+<h3 id="org6f96f8f"><span class="section-number-3">2.7</span> USDT</h3>
+</div>
+
+<div id="outline-container-org8b61b6a" class="outline-3">
+<h3 id="org8b61b6a"><span class="section-number-3">2.8</span> 性能监控计数器（PMC）</h3>
+<div class="outline-text-3" id="text-2-8">
+<p>
+性能监控计数器（performance monitoring counter, PEC）
+</p>
+</div>
+</div>
+
+<div id="outline-container-org63e9f77" class="outline-3">
+<h3 id="org63e9f77"><span class="section-number-3">2.9</span> perf_events</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-10-29 Fri 21:15</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
