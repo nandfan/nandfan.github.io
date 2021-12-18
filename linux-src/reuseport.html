@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-11-28 Sun 12:55 -->
+<!-- 2021-12-18 Sat 22:34 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux reuseport</title>
@@ -250,35 +250,33 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#orgf968211">1. UDP reuseport</a>
 <ul>
-<li><a href="#org31a9e0b">1.1. udp_prot结构</a>
+<li><a href="#orgb7d5562">1.1. 相关结构</a></li>
+<li><a href="#org7ffa177">1.2. udp_table</a></li>
+<li><a href="#org436e1df">1.3. inet_bind</a>
 <ul>
-<li><a href="#org7ffa177">1.1.1. udp_table</a></li>
-<li><a href="#orgcb5ec02">1.1.2. udp_lib_hash</a>
-<ul>
-<li><a href="#org85817a2">1.1.2.1. udp_lib_get_port</a></li>
+<li><a href="#org85817a2">1.3.1. udp_lib_get_port</a></li>
+<li><a href="#org2aa8898">1.3.2. udp_reuseport_add_sock</a></li>
 </ul>
 </li>
-<li><a href="#org03e0e5b">1.1.3. udp_lib_unhash</a></li>
-<li><a href="#org4bc3ff8">1.1.4. udp_v4_rehash</a></li>
-<li><a href="#orgc82bc95">1.1.5. udp_v4_get_port</a></li>
+<li><a href="#org137ebb0">1.4. udp_rcv</a>
+<ul>
+<li><a href="#orgfe289be">1.4.1. reuseport_select_sock</a></li>
+<li><a href="#org9a8d09b">1.4.2. bpf注册</a></li>
 </ul>
 </li>
+<li><a href="#org061db03">1.5. udp connect (指定SO_REUSEPORT属性的)</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<p>
-*
-</p>
-
 
 <div id="outline-container-orgf968211" class="outline-2">
 <h2 id="orgf968211"><span class="section-number-2">1</span> UDP reuseport</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org31a9e0b" class="outline-3">
-<h3 id="org31a9e0b"><span class="section-number-3">1.1</span> udp_prot结构</h3>
+<div id="outline-container-orgb7d5562" class="outline-3">
+<h3 id="orgb7d5562"><span class="section-number-3">1.1</span> 相关结构</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> <span style="color: #FF8C00;">udp_prot</span> = {
@@ -312,13 +310,47 @@ for the JavaScript code in this tag.
 <span style="color: #FF1493;">#endif</span>
 	.diag_destroy      = udp_abort,
 }
+
+
+<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span> <span style="color: #FF8C00;">inet_dgram_ops</span> = {
+	.family            = PF_INET,
+	.owner             = THIS_MODULE,
+	.release           = inet_release,
+	.bind              = inet_bind,
+	.connect           = inet_dgram_connect,
+	.socketpair        = sock_no_socketpair,
+	.accept            = sock_no_accept,
+	.getname           = inet_getname,
+	.poll              = udp_poll,
+	.ioctl             = inet_ioctl,
+	.listen            = sock_no_listen,
+	.shutdown          = inet_shutdown,
+	.setsockopt        = sock_common_setsockopt,
+	.getsockopt        = sock_common_getsockopt,
+	.sendmsg           = inet_sendmsg,
+	.recvmsg           = inet_recvmsg,
+	.mmap              = sock_no_mmap,
+	.sendpage          = inet_sendpage,
+	.set_peek_off      = sk_set_peek_off,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> <span style="color: #FF8C00;">udp_protocol</span> = {
+	.early_demux =  udp_v4_early_demux,
+	.handler =      udp_rcv,
+	.err_handler =  udp_err,
+	.no_policy =    1,
+	.netns_ok =     1,
+};
+
 </pre>
 </div>
 </div>
+</div>
 
-<div id="outline-container-org7ffa177" class="outline-4">
-<h4 id="org7ffa177"><span class="section-number-4">1.1.1</span> udp_table</h4>
-<div class="outline-text-4" id="text-1-1-1">
+
+<div id="outline-container-org7ffa177" class="outline-3">
+<h3 id="org7ffa177"><span class="section-number-3">1.2</span> udp_table</h3>
+<div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #CDC673;">/**</span>
 <span style="color: #CDC673;"> *      struct udp_table - UDP table</span>
@@ -340,50 +372,44 @@ for the JavaScript code in this tag.
 
 
 <div class="figure">
-<p><img src="dot/reuseport/udp_table.png" alt="udp_table.png" />
+<p><img src="dot/reuseport/udp-table.png" alt="udp-table.png" />
 </p>
 </div>
+</div>
+</div>
 
-
+<div id="outline-container-org436e1df" class="outline-3">
+<h3 id="org436e1df"><span class="section-number-3">1.3</span> inet_bind</h3>
+<div class="outline-text-3" id="text-1-3">
 
 <div class="figure">
-<p><img src="plantuml/reuseport/inet-bing.png" alt="inet-bing.png" />
+<p><img src="plantuml/reuseport/inet-bind.png" alt="inet-bind.png" />
 </p>
 </div>
 </div>
-</div>
 
-<div id="outline-container-orgcb5ec02" class="outline-4">
-<h4 id="orgcb5ec02"><span class="section-number-4">1.1.2</span> udp_lib_hash</h4>
-<div class="outline-text-4" id="text-1-1-2">
-<ol class="org-ol">
-<li>计算port hash：  hash2_nulladdr</li>
-<li>计算addr hash：  hash2_partial
-<ul class="org-ul">
-<li></li>
-</ul></li>
-</ol>
+<div id="outline-container-org85817a2" class="outline-4">
+<h4 id="org85817a2"><span class="section-number-4">1.3.1</span> udp_lib_get_port</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+udp_prot 的get_port成员是udp_v4_get_port函数， 该函数会调用 udp_lib_get_port。
+</p>
+
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">//      </span><span style="color: #8B8878;">@skc_u16hashes: two u16 hash values used by UDP lookup tables</span>
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">udp_v4_get_port</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">snum</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hash2_nulladdr</span> =
+		udp4_portaddr_hash(sock_net(sk), htonl(INADDR_ANY), snum);
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hash2_partial</span> =
+		udp4_portaddr_hash(sock_net(sk), inet_sk(sk)-&gt;inet_rcv_saddr, 0);
 
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">udp_port_hash</span>   inet.sk.__sk_common.skc_u16hashes[0]
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">udp_portaddr_hash</span>       inet.sk.__sk_common.skc_u16hashes[1]
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">udp_portaddr_node</span>       inet.sk.__sk_common.skc_portaddr_node
-
-<span style="color: #87D700;">udp_sk</span>(sk)-&gt;udp_portaddr_hash = hash2_partial;
-
-
-
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">precompute partial secondary hash</span><span style="color: #8B8878;"> */</span>
+	udp_sk(sk)-&gt;udp_portaddr_hash = hash2_partial;
+	<span style="color: #FF1493;">return</span> udp_lib_get_port(sk, snum, ipv4_rcv_saddr_equal, hash2_nulladdr);
+}
 </pre>
 </div>
-<ul class="org-ul">
-<li>udp_lib_get_port</li>
-</ul>
-</div>
 
-<div id="outline-container-org85817a2" class="outline-5">
-<h5 id="org85817a2"><span class="section-number-5">1.1.2.1</span> udp_lib_get_port</h5>
-<div class="outline-text-5" id="text-1-1-2-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #CDC673;">/**</span>
 <span style="color: #CDC673;"> *  udp_lib_get_port  -  UDP/-Lite port lookup for IPv4 and IPv6</span>
@@ -409,77 +435,167 @@ for the JavaScript code in this tag.
 </div>
 </div>
 </div>
+
+<div id="outline-container-org2aa8898" class="outline-4">
+<h4 id="org2aa8898"><span class="section-number-4">1.3.2</span> udp_reuseport_add_sock</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+udp_reuseport_add_sock首先进行一系列检查：
+</p>
+<ul class="org-ul">
+<li>如果未是首次添加，则调用reuseport_alloc分配资源。</li>
+<li>如果已经添加过，则调用reuseport_add_sock加入reuse端口组。</li>
+</ul>
+
+<div class="figure">
+<p><img src="plantuml/reuseport/reuseport-add-sock.png" alt="reuseport-add-sock.png" />
+</p>
+</div>
+</div>
+</div>
 </div>
 
-<div id="outline-container-org03e0e5b" class="outline-4">
-<h4 id="org03e0e5b"><span class="section-number-4">1.1.3</span> udp_lib_unhash</h4>
+
+<div id="outline-container-org137ebb0" class="outline-3">
+<h3 id="org137ebb0"><span class="section-number-3">1.4</span> udp_rcv</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<div class="figure">
+<p><img src="plantuml/reuseport/udp-rcv.png" alt="udp-rcv.png" />
+</p>
 </div>
-<div id="outline-container-org4bc3ff8" class="outline-4">
-<h4 id="org4bc3ff8"><span class="section-number-4">1.1.4</span> udp_v4_rehash</h4>
 </div>
-<div id="outline-container-orgc82bc95" class="outline-4">
-<h4 id="orgc82bc95"><span class="section-number-4">1.1.5</span> udp_v4_get_port</h4>
-<div class="outline-text-4" id="text-1-1-5">
-<pre class="example">
 
-</pre>
+<div id="outline-container-orgfe289be" class="outline-4">
+<h4 id="orgfe289be"><span class="section-number-4">1.4.1</span> reuseport_select_sock</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<p>
+从reuseport组中选择一个sock。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #87D700;">reuseport_select_sock</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+				   <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">hash</span>,
+				   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+				   <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hdr_len</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock_reuseport</span> *<span style="color: #FF8C00;">reuse</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bpf_prog</span> *<span style="color: #FF8C00;">prog</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk2</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #5FD7FF;">u16</span> <span style="color: #FF8C00;">socks</span>;
 
-<pre class="example">
+	rcu_read_lock();
+	reuse = rcu_dereference(sk-&gt;sk_reuseport_cb);
 
-</pre>
+	prog = rcu_dereference(reuse-&gt;prog);
+	socks = READ_ONCE(reuse-&gt;num_socks);
+	<span style="color: #FF1493;">if</span> (likely(socks)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">paired with smp_wmb() in reuseport_add_sock()</span><span style="color: #8B8878;"> */</span>
+		smp_rmb();
 
-<pre class="example">
+		<span style="color: #FF1493;">if</span> (prog &amp;&amp; skb) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36816;&#34892;bpf&#36807;&#28388;&#22120;&#26469;&#36873;&#25321;sock  &#65288;sk_reuseport_attach_bpf&#65289;</span>
+			sk2 = run_bpf(reuse, socks, prog, skb, hdr_len);
+		<span style="color: #FF1493;">else</span><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;hash&#20540;&#20174;reuse&#20013;&#36873;&#25321;&#19968;&#20010;sock</span>
+			sk2 = reuse-&gt;socks[reciprocal_scale(hash, socks)];
+	}
 
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
-</pre>
-
-<pre class="example">
-
+<span style="color: #AF87FF;">out</span>:
+	rcu_read_unlock();
+	<span style="color: #FF1493;">return</span> sk2;
+}
 </pre>
 </div>
+</div>
+</div>
+
+<div id="outline-container-org9a8d09b" class="outline-4">
+<h4 id="org9a8d09b"><span class="section-number-4">1.4.2</span> bpf注册</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<p>
+通过 setsockopt 函数可以注册reuseport 的bpf过滤器。
+</p>
+
+<p>
+设置的套接字属性： SO_ATTACH_REUSEPORT_EBPF
+</p>
+
+<p>
+注册相关的函数：
+</p>
+<ul class="org-ul">
+<li>sk_reuseport_attach_bpf</li>
+<li>__reuseport_attach_prog</li>
+<li>reuseport_attach_prog</li>
+</ul>
+
+
+<p>
+注册示例：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">attach_ebpf</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">uint16_t</span> <span style="color: #FF8C00;">mod</span>)
+{
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">bpf_log_buf</span>[65536];
+	<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">bpf_license</span>[] = <span style="color: #CDC673;">"GPL"</span>;
+
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">bpf_fd</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">bpf_insn</span> <span style="color: #FF8C00;">prog</span>[] = {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">BPF_MOV64_REG(BPF_REG_6, BPF_REG_1)</span><span style="color: #8B8878;"> */</span>
+		{ BPF_ALU64 | BPF_MOV | BPF_X, BPF_REG_6, BPF_REG_1, 0, 0 },
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">BPF_LD_ABS(BPF_W, 0) R0 = (uint32_t)skb[0]</span><span style="color: #8B8878;"> */</span>
+		{ BPF_LD | BPF_ABS | BPF_W, 0, 0, 0, 0 },
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">BPF_ALU64_IMM(BPF_MOD, BPF_REG_0, mod)</span><span style="color: #8B8878;"> */</span>
+		{ BPF_ALU64 | BPF_MOD | BPF_K, BPF_REG_0, 0, 0, mod },
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">BPF_EXIT_INSN()</span><span style="color: #8B8878;"> */</span>
+		{ BPF_JMP | BPF_EXIT, 0, 0, 0, 0 }
+	};
+	<span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">bpf_attr</span> <span style="color: #FF8C00;">attr</span>;
+
+	memset(&amp;attr, 0, <span style="color: #FF1493;">sizeof</span>(attr));
+	attr.prog_type = BPF_PROG_TYPE_SOCKET_FILTER;
+	attr.insn_cnt = ARRAY_SIZE(prog);
+	attr.insns = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>) &amp;prog;
+	attr.license = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>) &amp;bpf_license;
+	attr.log_buf = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>) &amp;bpf_log_buf;
+	attr.log_size = <span style="color: #FF1493;">sizeof</span>(bpf_log_buf);
+	attr.log_level = 1;
+	attr.kern_version = 0;
+
+	bpf_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &amp;attr, <span style="color: #FF1493;">sizeof</span>(attr));
+	<span style="color: #FF1493;">if</span> (bpf_fd &lt; 0)
+		error(1, errno, <span style="color: #CDC673;">"ebpf error. log:\n%s\n"</span>, bpf_log_buf);
+
+	<span style="color: #FF1493;">if</span> (setsockopt(fd, SOL_SOCKET, SO_ATTACH_REUSEPORT_EBPF, &amp;bpf_fd,
+			<span style="color: #FF1493;">sizeof</span>(bpf_fd)))
+		error(1, errno, <span style="color: #CDC673;">"failed to set SO_ATTACH_REUSEPORT_EBPF"</span>);
+
+	close(bpf_fd);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org061db03" class="outline-3">
+<h3 id="org061db03"><span class="section-number-3">1.5</span> udp connect (指定SO_REUSEPORT属性的)</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+调用connect之后，会经由一下路径：
+</p>
+
+<div class="figure">
+<p><img src="plantuml/reuseport/udp-connect.png" alt="udp-connect.png" />
+</p>
+</div>
+
+<p>
+最终会调用到 udp_v4_rehash 函数。
+</p>
+
+<p>
+由于之前指定了 SO_REUSEPORT 属性，加入了reuse端口组，需要从中移除。
+</p>
 </div>
 </div>
 </div>
@@ -487,7 +603,7 @@ for the JavaScript code in this tag.
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-11-28 Sun 12:55</p>
+<p class="date">Created: 2021-12-18 Sat 22:34</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

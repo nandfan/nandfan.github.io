@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-18 Sat 10:22 -->
+<!-- 2021-12-18 Sat 12:34 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux网络子系统结构关系</title>
@@ -244,10 +244,26 @@ for the JavaScript code in this tag.
 <body>
 <div id="content">
 <h1 class="title">Linux网络子系统结构关系</h1>
-<ul class="org-ul">
-<li>socket函数调用</li>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgb517daa">1. socket函数调用</a></li>
+<li><a href="#org3793641">2. socket层，传输层，网络层</a>
+<ul>
+<li><a href="#orgca418f4">2.1. 创建socket</a></li>
+<li><a href="#org89f6c85">2.2. 各结构关联关系</a></li>
+<li><a href="#org90ac86e">2.3. inet_create</a></li>
 </ul>
+</li>
+<li><a href="#org67b528a">3. 协议处理函数</a></li>
+</ul>
+</div>
+</div>
 
+<div id="outline-container-orgb517daa" class="outline-2">
+<h2 id="orgb517daa"><span class="section-number-2">1</span> socket函数调用</h2>
+<div class="outline-text-2" id="text-1">
 
 <div class="figure">
 <p><img src="dot/net/sys-socketcall.png" alt="sys-socketcall.png" />
@@ -275,256 +291,115 @@ for the JavaScript code in this tag.
 <p><img src="dot/net/net-proto-family.png" alt="net-proto-family.png" />
 </p>
 </div>
+</div>
+</div>
 
-
+<div id="outline-container-org3793641" class="outline-2">
+<h2 id="org3793641"><span class="section-number-2">2</span> socket层，传输层，网络层</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+socket 层到传输层的接口通过 struct proto 结构定义。
+</p>
 <ul class="org-ul">
-<li>socket 层到传输层的接口 （struct proto）</li>
+<li>tcp_prot</li>
+<li>udp_prot</li>
 </ul>
 
 
-<div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> {
-	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">close</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeout</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">connect</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">disconnect</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
-
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *   (*<span style="color: #87D700;">accept</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">err</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">ioctl</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">init</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">destroy</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
-	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">shutdown</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *option);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *option);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">sendmsg</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">recvmsg</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">noblock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">addr_len</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">sendpage</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">bind</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">backlog_rcv</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
-
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Keeping track of sk's, looking them up, and port selection methods.</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">hash</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
-	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">unhash</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">get_port</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">snum</span>);
-};
-</pre>
+<p>
+传输层到网络层的接口通过 struct proto_ops 结构定义。
+</p>
+<ul class="org-ul">
+<li>inet_stream_ops</li>
+<li>inet_dgram_ops</li>
+<li>inet_sockraw_ops</li>
+</ul>
 </div>
 
-<div class="org-src-container">
-<pre class="src src-c">
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span> <span style="color: #FF8C00;">inetsw_array</span>[] =
-{
-	{
-		.type =       SOCK_STREAM,
-		.protocol =   IPPROTO_TCP,
-		.prot =       &amp;tcp_prot,
-		.ops =        &amp;inet_stream_ops,
-		.capability = -1,
-		.no_check =   0,
-		.flags =      INET_PROTOSW_PERMANENT |
-			      INET_PROTOSW_ICSK,
-	},
+<div id="outline-container-orgca418f4" class="outline-3">
+<h3 id="orgca418f4"><span class="section-number-3">2.1</span> 创建socket</h3>
+<div class="outline-text-3" id="text-2-1">
 
-	{
-		.type =       SOCK_DGRAM,
-		.protocol =   IPPROTO_UDP,
-		.prot =       &amp;udp_prot,
-		.ops =        &amp;inet_dgram_ops,
-		.capability = -1,
-		.no_check =   UDP_CSUM_DEFAULT,
-		.flags =      INET_PROTOSW_PERMANENT,
-       },
-
-
-       {
-	       .type =       SOCK_RAW,
-	       .protocol =   IPPROTO_IP,        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">wild card</span><span style="color: #8B8878;"> */</span>
-	       .prot =       &amp;raw_prot,
-	       .ops =        &amp;inet_sockraw_ops,
-	       .capability = CAP_NET_RAW,
-	       .no_check =   UDP_CSUM_DEFAULT,
-	       .flags =      INET_PROTOSW_REUSE,
-       }
-};
-
-</pre>
+<div class="figure">
+<p><img src="plantuml/net/socket-create.png" alt="socket-create.png" />
+</p>
+</div>
+</div>
 </div>
 
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This is used to register socket interfaces for IP protocols.</span><span style="color: #8B8878;">  */</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span> {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">list</span>;
-
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">These two fields form the lookup key.</span><span style="color: #8B8878;">  */</span>
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>   <span style="color: #FF8C00;">type</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This is the 2nd argument to socket(2).</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>   <span style="color: #FF8C00;">protocol</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This is the L4 protocol number.</span><span style="color: #8B8878;">  */</span>
-
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span>     *<span style="color: #FF8C00;">prot</span>;
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span> *<span style="color: #FF8C00;">ops</span>;
-
-	<span style="color: #5FD7FF;">int</span>              <span style="color: #FF8C00;">capability</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Which (if any) capability do</span>
-<span style="color: #8B8878;">                                      * we need to use this socket</span>
-<span style="color: #8B8878;">                                      * interface?</span>
-<span style="color: #8B8878;">                                      */</span>
-	<span style="color: #5FD7FF;">char</span>             <span style="color: #FF8C00;">no_check</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">checksum on rcv/xmit/none?</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>    <span style="color: #FF8C00;">flags</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">See INET_PROTOSW_* below.</span><span style="color: #8B8878;">  */</span>
-};
-
-<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">inet_register_protosw</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span> *<span style="color: #FF8C00;">p</span>);
-</pre>
-</div>
-
+<div id="outline-container-org89f6c85" class="outline-3">
+<h3 id="org89f6c85"><span class="section-number-3">2.2</span> 各结构关联关系</h3>
+<div class="outline-text-3" id="text-2-2">
 
 <div class="figure">
 <p><img src="dot/net/inet-protosw.png" alt="inet-protosw.png" />
 </p>
 </div>
+</div>
+</div>
 
 
+<div id="outline-container-org90ac86e" class="outline-3">
+<h3 id="org90ac86e"><span class="section-number-3">2.3</span> inet_create</h3>
+<div class="outline-text-3" id="text-2-3">
+
+<div class="figure">
+<p><img src="plantuml/net/inet-create.png" alt="inet-create.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org67b528a" class="outline-2">
+<h2 id="org67b528a"><span class="section-number-2">3</span> 协议处理函数</h2>
+<div class="outline-text-2" id="text-3">
 <ul class="org-ul">
-<li>传输层 到 网络层 的接口通过 struct inet_proto 定义</li>
+<li>inet_add_protocol</li>
+<li>inet6_add_protocol</li>
 </ul>
 
 <p>
-const struct proto_ops inet_stream_ops = {;
+上述两个函数分别用于添加 ipv4 和 ipv6 的协议处理函数。
 </p>
 
-<p>
-static int inet_create(struct net *net, struct socket *sock, int protocol)
-</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> <span style="color: #FF8C00;">tcp_protocol</span> = {
+	.handler =      tcp_v4_rcv,
+	.err_handler =  tcp_v4_err,
+	.gso_send_check = tcp_v4_gso_send_check,
+	.gso_segment =  tcp_tso_segment,
+	.no_policy =    1,
+};
 
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> <span style="color: #FF8C00;">udp_protocol</span> = {
+	.handler =      udp_rcv,
+	.err_handler =  udp_err,
+	.no_policy =    1,
+};
 
-
-<div class="figure">
-<p><img src="dot/net/socket-alloc.png" alt="socket-alloc.png" />
-</p>
-</div>
-
-
-
-
-<div class="figure">
-<p><img src="dot/net/sys-socketcall.png" alt="sys-socketcall.png" />
-</p>
-</div>
-
-
-<div class="figure">
-<p><img src="dot/net/sys-socketcall.png" alt="sys-socketcall.png" />
-</p>
-</div>
-
-
-<div class="figure">
-<p><img src="dot/net/sys-socketcall.png" alt="sys-socketcall.png" />
-</p>
+inet_add_protocol(&amp;icmp_protocol, IPPROTO_ICMP);
+inet_add_protocol(&amp;igmp_protocol, IPPROTO_IGMP)
+inet_add_protocol(&amp;udp_protocol, IPPROTO_UDP);
+inet_add_protocol(&amp;tcp_protocol, IPPROTO_TCP);
+inet_add_protocol(&amp;udplite_protocol, IPPROTO_UDPLITE);
+inet_add_protocol(&amp;sctp_protocol, IPPROTO_SCTP);
+</pre>
 </div>
 
 
 <div class="figure">
-<p><img src="dot/net/sys-socketcall.png" alt="sys-socketcall.png" />
+<p><img src="plantuml/net/ip-local-deliver-finish.png" alt="ip-local-deliver-finish.png" />
 </p>
 </div>
-
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
 </div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-18 Sat 10:22</p>
+<p class="date">Created: 2021-12-18 Sat 12:34</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
