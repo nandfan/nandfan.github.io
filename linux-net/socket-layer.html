@@ -1,0 +1,2063 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-01-22 Sat 22:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>套接口层</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+	displayAlign: "center",
+	displayIndent: "0em",
+
+	"HTML-CSS": { scale: 100,
+			linebreaks: { automatic: "false" },
+			webFont: "TeX"
+		       },
+	SVG: {scale: 100,
+	      linebreaks: { automatic: "false" },
+	      font: "TeX"},
+	NativeMML: {scale: 100},
+	TeX: { equationNumbers: {autoNumber: "AMS"},
+	       MultLineWidth: "85%",
+	       TagSide: "right",
+	       TagIndent: ".8em"
+	     }
+});
+</script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">套接口层</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org1b7e25f">1. socket结构</a></li>
+<li><a href="#orgd4d1a78">2. proto_ops结构</a></li>
+<li><a href="#org70044e0">3. 套接口文件系统</a>
+<ul>
+<li><a href="#org17a0903">3.1. 套接口文件系统类型</a></li>
+<li><a href="#org819494d">3.2. 套接口文件系统超级块操作接口</a></li>
+<li><a href="#org5fbd375">3.3. 套接口文件的inode</a></li>
+<li><a href="#org5385682">3.4. sock_alloc_inode()</a></li>
+<li><a href="#orgb261813">3.5. sock_destroy_inode()</a></li>
+</ul>
+</li>
+<li><a href="#org96d9c18">4. 套接口文件</a>
+<ul>
+<li><a href="#orge02ef35">4.1. 套接口文件与套接口的绑定</a>
+<ul>
+<li><a href="#orgb21ab44">4.1.1. sock_map_fd()</a></li>
+<li><a href="#org2dc2e17">4.1.2. sock_attach_fd()</a></li>
+</ul>
+</li>
+<li><a href="#org05c124d">4.2. 根据文件描述符获取套接口</a>
+<ul>
+<li><a href="#org6b3499f">4.2.1. sockfd_lookup_light()</a></li>
+<li><a href="#orga9e4bee">4.2.2. sock_from_file()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgf3c67fa">5. 进程、文件描述符和套接口</a></li>
+<li><a href="#org151b315">6. 套接口层的系统初始化</a></li>
+<li><a href="#org8984c59">7. 套接口系统调用</a>
+<ul>
+<li><a href="#orga7d9d4e">7.1. 套接口系统调用入口</a></li>
+<li><a href="#org16a7e37">7.2. socket系统调用</a>
+<ul>
+<li><a href="#org0c3f0f1">7.2.1. sys_socket()</a></li>
+<li><a href="#org782904c">7.2.2. sock_create()</a></li>
+<li><a href="#orgfaa7356">7.2.3. inet_create()</a></li>
+</ul>
+</li>
+<li><a href="#org251263c">7.3. bind系统调用</a>
+<ul>
+<li><a href="#org70b8638">7.3.1. sys_bind()</a></li>
+<li><a href="#org7f57cc8">7.3.2. 套接口层的实现 inet_bind()</a></li>
+</ul>
+</li>
+<li><a href="#org5825849">7.4. listen系统调用</a></li>
+<li><a href="#org3a471ef">7.5. accept系统调用</a></li>
+<li><a href="#orgde6ffb7">7.6. connect系统调用</a></li>
+<li><a href="#org9ff2fbc">7.7. shutdown系统调用</a>
+<ul>
+<li><a href="#org24d2009">7.7.1. sys_shutdown()</a></li>
+<li><a href="#org3537d62">7.7.2. 套接口层的实现</a></li>
+</ul>
+</li>
+<li><a href="#org9b64593">7.8. close系统调用</a>
+<ul>
+<li><a href="#org171261a">7.8.1. 关闭套接口</a></li>
+<li><a href="#orgfd4180b">7.8.2. 套接口层的实现</a></li>
+</ul>
+</li>
+<li><a href="#orgd3115d4">7.9. select系统调用实现</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+套接口层位于应用程序和协议栈之间，对应用程序屏蔽了协议相关的实现细节，将应用程序发送的与协议无关的请求映射到与协议相关的实现，由此为应用程序提供了一个网络和进程间的通信接口。
+</p>
+
+<p>
+通常应用程序中调用库函数，库函数通过系统调用进入套接口层。Linux的套接口层实现提供了一组专门的套接口系统调用，分别在对应的库函数名之前增加“sys_”前缀。 Linux也允许标准I/O系统调用来读写套接字文件。 在创建套接口时，分别与文件和文件描述符进行绑定，此后的操作都通过文件描述符进行。
+</p>
+
+<p>
+每个传输层协议都对应一个 proto_ops 结构，套接口中包含一个指向该结构的指针，由此实现套接口层和传输层的函数映射。
+</p>
+
+
+
+<div class="figure">
+<p><img src="image/socket-layer/sock-proto.png" alt="sock-proto.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>套接口层将一般的请求转换为指定的协议操作</p>
+</div>
+
+
+<div id="outline-container-org1b7e25f" class="outline-2">
+<h2 id="org1b7e25f"><span class="section-number-2">1</span> socket结构</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+套接口代表一条通信链路的一端，存储了该端点所有与通信相关的信息，包括：使用的协议、套接口状态、源和目的地址、到达的连接队列、数据缓存和可选标志等。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> {
+	<span style="color: #5FD7FF;">socket_state</span>            <span style="color: #FF8C00;">state</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#22871;&#25509;&#21475;&#25152;&#22788;&#30340;&#29366;&#24577;&#65292;&#26576;&#20123;&#29366;&#24577;&#21482;&#23545;TCP&#22871;&#25509;&#21475;&#26377;&#24847;&#20041;&#12290;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">flags</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#24535;&#65292;&#35265;&#19979;&#34920;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span> *<span style="color: #FF8C00;">ops</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#22871;&#25509;&#21475;&#31995;&#32479;&#31995;&#32479;&#35843;&#29992;&#20013;&#36873;&#25321;&#23545;&#24212;&#31867;&#22411;&#30340;&#22871;&#25509;&#21475;&#23618;&#25509;&#21475;&#65292;&#29992;&#26469;&#23558;&#22871;&#25509;&#21475;&#26144;&#23556;&#21040;&#30456;&#24212;&#30340;&#20256;&#36755;&#23618;&#21327;&#35758;&#23454;&#29616;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fasync_struct</span>    *<span style="color: #FF8C00;">fasync_list</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#24322;&#27493;&#36890;&#30693;&#38431;&#21015;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span>             *<span style="color: #FF8C00;">file</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#19982;&#35813;&#22871;&#25509;&#21475;&#30456;&#20851;&#32852;&#30340;file&#32467;&#26500;&#25351;&#38024;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span>             *<span style="color: #FF8C00;">sk</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#19982;&#35813;&#22871;&#25509;&#21475;&#20851;&#32852;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	<span style="color: #5FD7FF;">wait_queue_head_t</span>       <span style="color: #FF8C00;">wait</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31561;&#24453;&#35813;&#22871;&#25509;&#21475;&#30340;&#36827;&#31243;&#38431;&#21015;</span>
+	<span style="color: #5FD7FF;">short</span>                   <span style="color: #FF8C00;">type</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#30340;&#31867;&#22411;</span>
+};
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> socket_state的类型</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">socket_state</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SS_FREE</td>
+<td class="org-left">该套接口尚未分配，未使用</td>
+</tr>
+
+<tr>
+<td class="org-left">SS_UNCONNECTED</td>
+<td class="org-left">该套接口尚未连接</td>
+</tr>
+
+<tr>
+<td class="org-left">SS_CONNECTING</td>
+<td class="org-left">正在连接过程中</td>
+</tr>
+
+<tr>
+<td class="org-left">SS_CONNECTED</td>
+<td class="org-left">已经连接一个套接口</td>
+</tr>
+
+<tr>
+<td class="org-left">SS_DISCONNECTING</td>
+<td class="org-left">正在断开连接过程中</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> flags的取值</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">flags</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SOCK_ASYNC_NOSPACE</td>
+<td class="org-left">标识该套接口的发送队列已满</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_ASYNC_WAITDATA</td>
+<td class="org-left">标识应用通过recv接收数据时，是否在等待数据的接收</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_NOSPACE</td>
+<td class="org-left">标识非异步的情况下，该套接口的发送队列是否已满</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_PASSCRED</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_PASSSEC</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> 三种proto_ops结构的实例</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">套接口类型</th>
+<th scope="col" class="org-left">对应的 proto_ops 结构实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">TCP</td>
+<td class="org-left">inet_stream_ops</td>
+</tr>
+
+<tr>
+<td class="org-left">UDP</td>
+<td class="org-left">inet_dgram_ops</td>
+</tr>
+
+<tr>
+<td class="org-left">RAW</td>
+<td class="org-left">inet_sockraw_ops</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 4:</span> 套接口的类型</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">type</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SOCK_STREAM</td>
+<td class="org-left">基于连接的套接口</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_DGRAM</td>
+<td class="org-left">基于数据报的套接口</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_RAW</td>
+<td class="org-left">原始套接口</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_RDM</td>
+<td class="org-left">可靠传送报文套接口</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_SEQPACKET</td>
+<td class="org-left">顺序分组套接口</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_DCCP</td>
+<td class="org-left">数据包拥塞控制协议套接口</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_PACKET</td>
+<td class="org-left">混杂模式套接口</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgd4d1a78" class="outline-2">
+<h2 id="orgd4d1a78"><span class="section-number-2">2</span> proto_ops结构</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+proto_ops结构包含了一组与套接口系统调用相对应的传输层函数指针，可以把proto_ops结构看作是一张套接口系统调用到传输层函数的跳转表，其中有部分操作会继续通过 proto 结构跳转表，进入具体的传输层或网络层的处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span> {
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">family</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">release</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">bind</span>)      (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">myaddr</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sockaddr_len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">connect</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">vaddr</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sockaddr_len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">socketpair</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock1</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock2</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">accept</span>)    (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">newsock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">getname</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">addr</span>,
+				      <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">sockaddr_len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">peer</span>);
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    (*<span style="color: #87D700;">poll</span>)      (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">poll_table_struct</span> *<span style="color: #FF8C00;">wait</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">ioctl</span>)     (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>,
+				      <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_ioctl</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>,
+				      <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">listen</span>)    (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">shutdown</span>)  (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *optlen);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">compat_getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *optlen);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">sendmsg</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">m</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">total_len</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">recvmsg</span>)   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">m</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">total_len</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">mmap</span>)      (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">vm_area_struct</span> * <span style="color: #FF8C00;">vma</span>);
+	<span style="color: #5FD7FF;">ssize_t</span>         (*<span style="color: #87D700;">sendpage</span>)  (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>,
+				      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+};
+</pre>
+</div>
+
+<p>
+proto_ops 结构的作用是，完成从与协议无关的套接口层到协议相关的传输层转接，proto 结构将传输层映射到网络层，因此，每个传输层协议都需要定义一个特定的 proto_ops 结构 和 proto 结构的实例。
+</p>
+
+<p>
+IPv4协议族中，每个传输层协议对应一个 inet_protosw 结构，inet_protosw结构中包含了 proto_ops 结构和 proto 结构。  协议族中所有的 inet_protosw 结构的实例都定义在 <code>inetsw_array[]</code> 静态数组中。 网络子系统初始化时，根据每个结构的type成员（socket类型）将其注册到全局的 <code>inetsw[]</code> 数组。
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-layer/inetsw-inetswarr.png" alt="inetsw-inetswarr.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>inetsw[]和inetsw_array[]</p>
+</div>
+
+<p>
+当需要创建套接口时，搜索 inetsw[] 数组，查找匹配的 inet_protosw 结构，并将inet_protosw结构的 proto_ops 成员存储在socket的ops中，proto成员则存储在sock结构的sk_prot中。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org70044e0" class="outline-2">
+<h2 id="org70044e0"><span class="section-number-2">3</span> 套接口文件系统</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+每种文件都有各自的文件类型，套接口关联的文件类型为套接口文件。
+</p>
+</div>
+
+<div id="outline-container-org17a0903" class="outline-3">
+<h3 id="org17a0903"><span class="section-number-3">3.1</span> 套接口文件系统类型</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+为了使套接口与文件描述符关联，并且支持特殊套接口层的i结点的分配和释放，为此定义了 sockfs文件系统类型 sock_fs_type，通过sockfs文件系统的get_sb接口和超级块操作集合中的 alloc_inode和 destroy_inode，可以分配和释放与套接口文件相关的i结点。
+</p>
+
+<p>
+<i>通过/proc/filesystems 文件，可以查看系统支持的文件系统。</i>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> <span style="color: #FF8C00;">sock_fs_type</span> = {
+	.name =         <span style="color: #CDC673;">"sockfs"</span>,
+	.get_sb =       sockfs_get_sb,
+	.kill_sb =      kill_anon_super,
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org819494d" class="outline-3">
+<h3 id="org819494d"><span class="section-number-3">3.2</span> 套接口文件系统超级块操作接口</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#25991;&#20214;&#31995;&#32479;&#30340;&#25805;&#20316;&#25509;&#21475;&#23450;&#20041;</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_operations</span> <span style="color: #FF8C00;">sockfs_ops</span> = {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#25991;&#20214;&#31995;&#32479;&#30340;i&#32467;&#28857;&#20998;&#37197;&#20989;&#25968;</span>
+	.alloc_inode     = sock_alloc_inode,
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#25991;&#20214;&#31995;&#32479;&#30340;i&#32467;&#28857;&#37322;&#25918;&#20989;&#25968;</span>
+	.destroy_inode   = sock_destroy_inode,
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#22871;&#25509;&#21475;&#25991;&#20214;&#31995;&#32479;&#30340;&#29366;&#24577;&#20449;&#24687;</span>
+	.statfs          = simple_statfs,
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5fbd375" class="outline-3">
+<h3 id="org5fbd375"><span class="section-number-3">3.3</span> 套接口文件的inode</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+套接口文件系统的i结点和套接口是一一对应的。系统定义了 socket_alloc 结构，其中将 i结点和socket结构体组合，因此在分配i结点的同时，也分配了socket结构。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket_alloc</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> <span style="color: #FF8C00;">socket</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> <span style="color: #FF8C00;">vfs_inode</span>;
+};
+</pre>
+</div>
+
+<p>
+通过上述结构，我们可以通过套接口定位到i结点，也可以通过i结点定位套接口。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5385682" class="outline-3">
+<h3 id="org5385682"><span class="section-number-3">3.4</span> sock_alloc_inode()</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+套接口文件系统有自身的i结点分配和释放函数。在通过文件系统模块分配或释放时，会根据文件系统调用对应的i结点分配和释放函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #87D700;">sock_alloc_inode</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_block</span> *<span style="color: #FF8C00;">sb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket_alloc</span> *<span style="color: #FF8C00;">ei</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#32531;&#23384;&#20013;&#20998;&#37197; socket_alloc &#32467;&#26500;</span>
+	ei = kmem_cache_alloc(sock_inode_cachep, GFP_KERNEL);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ei)
+		<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#22871;&#25509;&#21475;&#30340;&#31561;&#24453;&#38431;&#21015;</span>
+	init_waitqueue_head(&amp;ei-&gt;socket.wait);
+
+	ei-&gt;socket.fasync_list = <span style="color: #AF87FF;">NULL</span>;
+	ei-&gt;socket.state = SS_UNCONNECTED;
+	ei-&gt;socket.flags = 0;
+	ei-&gt;socket.ops = <span style="color: #AF87FF;">NULL</span>;
+	ei-&gt;socket.sk = <span style="color: #AF87FF;">NULL</span>;
+	ei-&gt;socket.file = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">return</span> &amp;ei-&gt;vfs_inode;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb261813" class="outline-3">
+<h3 id="orgb261813"><span class="section-number-3">3.5</span> sock_destroy_inode()</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+该函数是套接口文件系统的i结点释放接口。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_destroy_inode</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>)
+{
+	kmem_cache_free(sock_inode_cachep,
+			container_of(inode, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket_alloc</span>, vfs_inode));
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org96d9c18" class="outline-2">
+<h2 id="org96d9c18"><span class="section-number-2">4</span> 套接口文件</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+套接口有一套独立的系统调用，包括建立套接口、连接和IO操作等，由于在建立套接口后返回的是文件描述符，因此也可以通过标准的文件I/O操作来读写。 在创建套接口文件时，将其file结构的 f_op 成员指向 socket_file_ops。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      Socket files have a set of 'special' operations as well as the generic file ones. These don't appear</span>
+<span style="color: #8B8878;"> *      in the operation structures but are done directly via the socketcall() multiplexor.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">socket_file_ops</span> = {
+	.owner =        THIS_MODULE,
+	.llseek =       no_llseek,
+	.aio_read =     sock_aio_read,
+	.aio_write =    sock_aio_write,
+	.poll =         sock_poll,
+	.unlocked_ioctl = sock_ioctl,
+	.compat_ioctl = compat_sock_ioctl,
+	.mmap =         sock_mmap,
+	.open =         sock_no_open,   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">special open code to disallow open via /proc</span><span style="color: #8B8878;"> */</span>
+	.release =      sock_close,
+	.fasync =       sock_fasync,
+	.sendpage =     sock_sendpage,
+	.splice_write = generic_splice_sendpage,
+};
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orge02ef35" class="outline-3">
+<h3 id="orge02ef35"><span class="section-number-3">4.1</span> 套接口文件与套接口的绑定</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+应用层通过文件描述符来访问套接口，因此在通过socket系统调用创建套接口时，会通过调用 sock_map_fd() 函数将套接口和文件描述符绑定。
+</p>
+</div>
+
+<div id="outline-container-orgb21ab44" class="outline-4">
+<h4 id="orgb21ab44"><span class="section-number-4">4.1.1</span> sock_map_fd()</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sock_map_fd</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">newfile</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#19968;&#20010;&#25991;&#20214;&#25551;&#36848;&#31526;&#21644; file&#32467;&#26500;&#30340;&#23454;&#20363;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span> = sock_alloc_fd(&amp;newfile);
+
+	<span style="color: #FF1493;">if</span> (likely(fd &gt;= 0)) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#32852;socket&#21644;file&#23454;&#20363;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = sock_attach_fd(sock, newfile);
+		<span style="color: #FF1493;">if</span> (unlikely(err &lt; 0)) {
+			put_filp(newfile);
+			put_unused_fd(fd);
+			<span style="color: #FF1493;">return</span> err;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#21040;&#24403;&#21069;&#36827;&#31243;&#30340;&#24050;&#25171;&#24320;&#25991;&#20214;&#21015;&#34920;</span>
+		fd_install(fd, newfile);
+	}
+	<span style="color: #FF1493;">return</span> fd;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2dc2e17" class="outline-4">
+<h4 id="org2dc2e17"><span class="section-number-4">4.1.2</span> sock_attach_fd()</h4>
+<div class="outline-text-4" id="text-4-1-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sock_attach_fd</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">qstr</span> <span style="color: #FF8C00;">this</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">name</span>[32];
+
+	this.len = sprintf(name, <span style="color: #CDC673;">"[%lu]"</span>, SOCK_INODE(sock)-&gt;i_ino);
+	this.name = name;
+	this.hash = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#22871;&#25509;&#21475;&#25991;&#20214;&#20998;&#37197;&#30446;&#24405;&#39033;</span>
+	file-&gt;f_path.dentry = d_alloc(sock_mnt-&gt;mnt_sb-&gt;s_root, &amp;this);
+	<span style="color: #FF1493;">if</span> (unlikely(<span style="color: #CDC673; font-weight: bold;">!</span>file-&gt;f_path.dentry))
+		<span style="color: #FF1493;">return</span> -ENOMEM;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#30446;&#24405;&#25805;&#20316;</span>
+	file-&gt;f_path.dentry-&gt;d_op = &amp;sockfs_dentry_operations;
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * We dont want to push this dentry into global dentry hash table.</span>
+<span style="color: #8B8878;">         * We pretend dentry is already hashed, by unsetting DCACHE_UNHASHED</span>
+<span style="color: #8B8878;">         * This permits a working /proc/$pid/fd/XXX on sockets</span>
+<span style="color: #8B8878;">         */</span>
+	file-&gt;f_path.dentry-&gt;d_flags &amp;= ~DCACHE_UNHASHED;
+	d_instantiate(file-&gt;f_path.dentry, SOCK_INODE(sock));
+	file-&gt;f_path.mnt = mntget(sock_mnt);
+	file-&gt;f_mapping = file-&gt;f_path.dentry-&gt;d_inode-&gt;i_mapping;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#22871;&#25509;&#21475;&#21644;&#25991;&#20214;&#32465;&#23450;&#12290;</span>
+	sock-&gt;file = file;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#22871;&#25509;&#21475;&#30340;&#25991;&#20214;&#25805;&#20316;&#38598;&#21512;&#34920;</span>
+	file-&gt;f_op = SOCK_INODE(sock)-&gt;i_fop = &amp;socket_file_ops;
+	file-&gt;f_mode = FMODE_READ | FMODE_WRITE;
+	file-&gt;f_flags = O_RDWR;
+	file-&gt;f_pos = 0;
+	file-&gt;private_data = sock; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#36890;&#36807;private_data&#35775;&#38382;&#22871;&#25509;&#21475;</span>
+
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org05c124d" class="outline-3">
+<h3 id="org05c124d"><span class="section-number-3">4.2</span> 根据文件描述符获取套接口</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+套接口被创建后，通过其文件描述符来进行操作，sockfd_lookup_light()函数用来通过文件描述符的套接口。
+</p>
+</div>
+
+<div id="outline-container-org6b3499f" class="outline-4">
+<h4 id="org6b3499f"><span class="section-number-4">4.2.1</span> sockfd_lookup_light()</h4>
+<div class="outline-text-4" id="text-4-2-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #87D700;">sockfd_lookup_light</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">err</span>,
+<span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">fput_needed</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25805;&#20316;&#25104;&#21151;&#26102;&#65292;&#36820;&#22238;&#26159;&#21542;&#23545;&#35813;&#25991;&#20214;&#36827;&#34892;&#20943;&#23569;&#24341;&#29992;&#35745;&#25968;&#30340;&#25805;&#20316;</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+
+	*err = -EBADF;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#23545;&#24212;&#30340;file&#23454;&#20363;&#65292;&#24182;&#19988;&#33719;&#21462;&#26159;&#21542;&#38656;&#35201;&#20943;&#23569;&#23545;&#25991;&#20214;&#24341;&#29992;&#35745;&#25968;&#30340;&#26631;&#24535;</span>
+	file = fget_light(fd, fput_needed);
+	<span style="color: #FF1493;">if</span> (file) {
+		sock = sock_from_file(file, err);
+		<span style="color: #FF1493;">if</span> (sock)
+			<span style="color: #FF1493;">return</span> sock;
+		fput_light(file, *fput_needed);
+	}
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga9e4bee" class="outline-4">
+<h4 id="orga9e4bee"><span class="section-number-4">4.2.2</span> sock_from_file()</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+根据文件描述符获取套接口。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #87D700;">sock_from_file</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">err</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21028;&#26029;&#26159;&#21542;&#20026;&#22871;&#25509;&#21475;&#25991;&#20214;</span>
+	<span style="color: #FF1493;">if</span> (file-&gt;f_op == &amp;socket_file_ops)
+		<span style="color: #FF1493;">return</span> file-&gt;private_data;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">set in sock_map_fd</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;i&#32467;&#28857;</span>
+	inode = file-&gt;f_path.dentry-&gt;d_inode;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>S_ISSOCK(inode-&gt;i_mode)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#26159;&#22871;&#25509;&#21475;&#31867;&#22411;</span>
+		*err = -ENOTSOCK;
+		<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;i&#32467;&#28857;&#33719;&#21462;&#22871;&#25509;&#21475;&#25351;&#38024;</span>
+	sock = SOCKET_I(inode);
+	<span style="color: #FF1493;">if</span> (sock-&gt;file != file) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">file&#23454;&#20363;&#19981;&#21516;&#65292;&#21017;&#20570;&#26657;&#27491;</span>
+		printk(KERN_ERR <span style="color: #CDC673;">"socki_lookup: socket file changed!\n"</span>);
+		sock-&gt;file = file;
+	}
+	<span style="color: #FF1493;">return</span> sock;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf3c67fa" class="outline-2">
+<h2 id="orgf3c67fa"><span class="section-number-2">5</span> 进程、文件描述符和套接口</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+在 task_struct 结构中，files成员指向 file_struct 结构，该结构主要功能是管理 fd_array 指针数组指向的描述符，每个file实例表示一个打开的文件。
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-layer/p-f-s.png" alt="p-f-s.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>进程、文件和套接口的关系</p>
+</div>
+
+<p>
+上图中仅显示了一个file结构。 通过 <code>current-&gt;files-&gt;fd_array[fd]</code> 就可以访问当前进程的某个文件描述符。 file结构中，f_op指向 file_operations结构（套接口文件指向的是 socket_file_ops）。
+</p>
+
+<p>
+private_data指向相关I/O对象专用数据，对于套接口而言，指向的是相关的socket结构。 socket结构中的ops指向创建套接口时选中的协议的 proto_ops 结构。 传输控制块 tcp_sock 结构中的 skc_prot 则指向创建套接口时选中的对应协议的 proto 结构。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org151b315" class="outline-2">
+<h2 id="org151b315"><span class="section-number-2">6</span> 套接口层的系统初始化</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+sock_init() 在系统启动时，在初始化列表中被调用，通过 core_initcall 宏加入到内核的初始化列表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__init</span> sock_init(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Initialize sock SLAB cache.</span>
+<span style="color: #8B8878;">         */</span>
+
+	sk_init();
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Initialize skbuff SLAB cache</span>
+<span style="color: #8B8878;">         */</span>
+	skb_init();
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Initialize the protocols module.</span>
+<span style="color: #8B8878;">         */</span>
+
+	init_inodecache();
+	register_filesystem(&amp;sock_fs_type);
+	sock_mnt = kern_mount(&amp;sock_fs_type);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">The real protocol initialization is performed in later initcalls.</span>
+<span style="color: #8B8878;">         */</span>
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NETFILTER
+	netfilter_init();
+<span style="color: #FF1493;">#endif</span>
+
+	<span style="color: #FF1493;">return</span> 0;
+}
+
+<span style="color: #87D700;">core_initcall</span>(sock_init);       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">early initcall</span><span style="color: #8B8878;"> */</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8984c59" class="outline-2">
+<h2 id="org8984c59"><span class="section-number-2">7</span> 套接口系统调用</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+下图展示了套接口层、传输层、网络层之间的调用关系以及之间的接口，一sendmsg调用为例：
+<img src="image/socket-layer/sk-trans-inet.png" alt="sk-trans-inet.png" />
+</p>
+</div>
+
+<div id="outline-container-orga7d9d4e" class="outline-3">
+<h3 id="orga7d9d4e"><span class="section-number-3">7.1</span> 套接口系统调用入口</h3>
+<div class="outline-text-3" id="text-7-1">
+<p>
+Linux内核中，每个系统调用都被编号，当进程进行一个系统调用时，通过中断指令 “INT 0X80” (X86)，从用户空间进入系统空间，并将系统调用号作为参数传递。Linux系统中，所有系统调用都会进入系统的同一个地址system_call，在通过系统调用号，调用对应的函数。
+</p>
+
+<ul class="org-ul">
+<li>socket系统调用的总入口为 sys_socketcall()</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">call &#26159;&#20855;&#20307;&#30340;&#25805;&#20316;&#30721;</span>
+<span style="color: #8B8878;">args&#26159;&#25351;&#21521;&#25968;&#32452;&#30340;&#25351;&#38024;</span>
+<span style="color: #8B8878;">*/</span>
+asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_socketcall</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">call</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">args</span>);
+
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25805;&#20316;&#30721;&#23450;&#20041;</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_SOCKET</span>      1               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_socket(2)</span><span style="color: #8B8878;">                */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_BIND</span>        2               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_bind(2)</span><span style="color: #8B8878;">                  */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_CONNECT</span>     3               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_connect(2)</span><span style="color: #8B8878;">               */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_LISTEN</span>      4               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_listen(2)</span><span style="color: #8B8878;">                */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_ACCEPT</span>      5               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_accept(2)</span><span style="color: #8B8878;">                */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_GETSOCKNAME</span> 6               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_getsockname(2)</span><span style="color: #8B8878;">           */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_GETPEERNAME</span> 7               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_getpeername(2)</span><span style="color: #8B8878;">           */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_SOCKETPAIR</span>  8               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_socketpair(2)</span><span style="color: #8B8878;">            */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_SEND</span>        9               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_send(2)</span><span style="color: #8B8878;">                  */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_RECV</span>        10              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_recv(2)</span><span style="color: #8B8878;">                  */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_SENDTO</span>      11              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_sendto(2)</span><span style="color: #8B8878;">                */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_RECVFROM</span>    12              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_recvfrom(2)</span><span style="color: #8B8878;">              */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_SHUTDOWN</span>    13              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_shutdown(2)</span><span style="color: #8B8878;">              */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_SETSOCKOPT</span>  14              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_setsockopt(2)</span><span style="color: #8B8878;">            */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_GETSOCKOPT</span>  15              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_getsockopt(2)</span><span style="color: #8B8878;">            */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_SENDMSG</span>     16              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_sendmsg(2)</span><span style="color: #8B8878;">               */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">SYS_RECVMSG</span>     17              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys_recvmsg(2)</span><span style="color: #8B8878;">               */</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>sys_socketcall()</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      System call vectors.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      Argument checking cleaned up. Saved 20% in size.</span>
+<span style="color: #8B8878;"> *  This function doesn't need to set the kernel lock because</span>
+<span style="color: #8B8878;"> *  it is set by the callees.</span>
+<span style="color: #8B8878;"> */</span>
+
+asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_socketcall</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">call</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">args</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">a</span>[6];
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">a0</span>, <span style="color: #FF8C00;">a1</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	<span style="color: #FF1493;">if</span> (call &lt; 1 || call &gt; SYS_RECVMSG)
+		<span style="color: #FF1493;">return</span> -EINVAL;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">copy_from_user should be SMP safe.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (copy_from_user(a, args, nargs[call]))
+		<span style="color: #FF1493;">return</span> -EFAULT;
+
+	err = audit_socketcall(nargs[call] / <span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>), a);
+	<span style="color: #FF1493;">if</span> (err)
+		<span style="color: #FF1493;">return</span> err;
+
+	a0 = a[0];
+	a1 = a[1];
+
+	<span style="color: #FF1493;">switch</span> (call) {
+	<span style="color: #FF1493;">case</span> SYS_SOCKET: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#22871;&#25509;&#21475;</span>
+		err = sys_socket(a0, a1, a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_BIND:
+		err = sys_bind(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_CONNECT:
+		err = sys_connect(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_LISTEN:
+		err = sys_listen(a0, a1);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_ACCEPT:
+		err =
+		    sys_accept(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1,
+			       (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_GETSOCKNAME:
+		err =
+		    sys_getsockname(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1,
+				    (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_GETPEERNAME:
+		err =
+		    sys_getpeername(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a1,
+				    (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_SOCKETPAIR:
+		err = sys_socketpair(a0, a1, a[2], (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[3]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_SEND:
+		err = sys_send(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_SENDTO:
+		err = sys_sendto(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3],
+				 (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a[4], a[5]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_RECV:
+		err = sys_recv(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_RECVFROM:
+		err = sys_recvfrom(a0, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)a1, a[2], a[3],
+				   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *)a[4],
+				   (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[5]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_SHUTDOWN:
+		err = sys_shutdown(a0, a1);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_SETSOCKOPT:
+		err = sys_setsockopt(a0, a1, a[2], (<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *)a[3], a[4]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_GETSOCKOPT:
+		err =
+		    sys_getsockopt(a0, a1, a[2], (<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *)a[3],
+				   (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)a[4]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_SENDMSG:
+		err = sys_sendmsg(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> SYS_RECVMSG:
+		err = sys_recvmsg(a0, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #5FD7FF;">__user</span> *)a1, a[2]);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">default</span>:
+		err = -EINVAL;
+		<span style="color: #FF1493;">break</span>;
+	}
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+
+<p>
+<img src="image/socket-layer/net-sockcall.png" alt="net-sockcall.png" />
+\[\]\[\]\[\]\[\]\[\]\[\]\[\]\[\]\[\]$$$
+</p>
+</div>
+</div>
+
+<div id="outline-container-org16a7e37" class="outline-3">
+<h3 id="org16a7e37"><span class="section-number-3">7.2</span> socket系统调用</h3>
+<div class="outline-text-3" id="text-7-2">
+</div>
+<div id="outline-container-org0c3f0f1" class="outline-4">
+<h4 id="org0c3f0f1"><span class="section-number-4">7.2.1</span> sys_socket()</h4>
+<div class="outline-text-4" id="text-7-2-1">
+<p>
+sys_socket()把套接口的创建和与此套接口关联的文件描述符的分配做了封装。
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-layer/sys-socket-func.png" alt="sys-socket-func.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>socket系统调用中主要函数的调用关系</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_socket</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">family</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">retval</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#24182;&#21021;&#22987;&#21270;&#22871;&#25509;&#21475;</span>
+	retval = sock_create(family, type, protocol, &amp;sock);
+	<span style="color: #FF1493;">if</span> (retval &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#25991;&#20214;&#25551;&#36848;&#31526;&#65292;&#24182;&#36827;&#34892;&#32465;&#23450;</span>
+	retval = sock_map_fd(sock);
+	<span style="color: #FF1493;">if</span> (retval &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_release</span>;
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">It may be already another descriptor 8) Not kernel problem.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">return</span> retval;
+
+<span style="color: #AF87FF;">out_release</span>:
+	sock_release(sock);
+	<span style="color: #FF1493;">return</span> retval;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org782904c" class="outline-4">
+<h4 id="org782904c"><span class="section-number-4">7.2.2</span> sock_create()</h4>
+<div class="outline-text-4" id="text-7-2-2">
+<p>
+实际调用__sock_create()函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__sock_create</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">family</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;&#26063;</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span>,   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#31867;&#22411;</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#21327;&#35758;</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> **<span style="color: #FF8C00;">res</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#21442;&#25968;</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">kern</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26159;&#30001;&#24212;&#29992;&#31243;&#24207;&#36824;&#26159;&#20869;&#26680;&#21019;&#24314;</span>
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_proto_family</span> *<span style="color: #FF8C00;">pf</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26816;&#26597;&#21442;&#25968;&#30340;&#21512;&#27861;&#24615;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (family &lt; 0 || family &gt;= NPROTO)
+		<span style="color: #FF1493;">return</span> -EAFNOSUPPORT;
+	<span style="color: #FF1493;">if</span> (type &lt; 0 || type &gt;= SOCK_MAX)
+		<span style="color: #FF1493;">return</span> -EINVAL;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20860;&#23481;&#24615;&#12290;</span>
+<span style="color: #8B8878;">           SOCK_PACKET&#24050;&#32463;&#31227;&#38500;&#65292;&#32780;&#26159;&#20351;&#29992;PF_PACKET&#26367;&#20195;</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (family == PF_INET &amp;&amp; type == SOCK_PACKET) {
+		<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">warned</span>;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>warned) {
+			warned = 1;
+			printk(KERN_INFO <span style="color: #CDC673;">"%s uses obsolete (PF_INET,SOCK_PACKET)\n"</span>,
+			       current-&gt;comm);
+		}
+		family = PF_PACKET;
+	}
+
+	err = security_socket_create(family, type, protocol, kern);
+	<span style="color: #FF1493;">if</span> (err)
+		<span style="color: #FF1493;">return</span> err;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Allocate the socket and allow the family to set things up. if</span>
+<span style="color: #8B8878;">         *      the protocol is 0, the family is instructed to select an appropriate</span>
+<span style="color: #8B8878;">         *      default.</span>
+<span style="color: #8B8878;">         */</span>
+	sock = sock_alloc(); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#22871;&#25509;&#21475;&#20197;&#21450;&#20851;&#32852;&#30340;i&#32467;&#28857;&#65292;&#24182;&#21021;&#22987;&#21270;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock) {
+		<span style="color: #FF1493;">if</span> (net_ratelimit())
+			printk(KERN_WARNING <span style="color: #CDC673;">"socket: no more sockets\n"</span>);
+		<span style="color: #FF1493;">return</span> -ENFILE; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Not exactly a match, but its the</span>
+<span style="color: #8B8878;">                                   closest posix thing</span><span style="color: #8B8878;"> */</span>
+	}
+
+	sock-&gt;type = type;
+
+<span style="color: #FF1493;">#if</span> <span style="color: #FF1493;">defined</span>(CONFIG_KMOD)
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Attempt to load a protocol module if the find failed.</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         * 12/09/1996 Marcin: But! this makes REALLY only sense, if the user</span>
+<span style="color: #8B8878;">         * requested real, full-featured networking support upon configuration.</span>
+<span style="color: #8B8878;">         * Otherwise module support will break!</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (net_families[family] == <span style="color: #AF87FF;">NULL</span>)
+		request_module(<span style="color: #CDC673;">"net-pf-%d"</span>, family); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21160;&#24577;&#21152;&#36733;&#27169;&#22359;</span>
+<span style="color: #FF1493;">#endif</span>
+
+	rcu_read_lock();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#23545;&#24212;&#21327;&#35758;&#26063;&#30340; net_proto_family&#32467;&#26500;</span>
+	pf = rcu_dereference(net_families[family]);
+	err = -EAFNOSUPPORT;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>pf)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_release</span>;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * We will call the -&gt;create function, that possibly is in a loadable</span>
+<span style="color: #8B8878;">         * module, so we have to bump that loadable module refcnt first.</span>
+<span style="color: #8B8878;">         *///</span><span style="color: #8B8878;">&#22914;&#26524;&#21327;&#35758;&#26063;&#30340;net_proto_family&#26159;&#20197;&#20869;&#26680;&#27169;&#22359;&#30340;&#21152;&#36733;&#65292;&#21017;&#22686;&#21152;&#24341;&#29992;&#65292;&#38450;&#27490;&#21368;&#36733;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>try_module_get(pf-&gt;owner))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_release</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Now protected by module ref count</span><span style="color: #8B8878;"> */</span>
+	rcu_read_unlock();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#21327;&#35758;&#26063;&#30340;create&#20989;&#25968;&#65292;&#23545;&#22871;&#25509;&#21475;&#36827;&#34892;&#21021;&#22987;&#21270;&#65292;&#21516;&#26102;&#36824;&#21019;&#24314;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	err = pf-&gt;create(sock, protocol);
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_module_put</span>;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * Now to bump the refcnt of the [loadable] module that owns this</span>
+<span style="color: #8B8878;">         * socket at sock_release time we decrement its refcnt.</span>
+<span style="color: #8B8878;">         *///</span><span style="color: #8B8878;">&#22914;&#26524;&#22871;&#25509;&#21475;&#23545;&#24212;&#30340;proto_ops&#32467;&#26500;&#23454;&#20363;&#26159;&#21160;&#24577;&#21152;&#36733;&#30340;&#20869;&#26680;&#27169;&#22359;&#65292;&#21017;&#22686;&#21152;&#24341;&#29992;&#65292;&#38450;&#27490;&#21368;&#36733;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>try_module_get(sock-&gt;ops-&gt;owner))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_module_busy</span>;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * Now that we're done with the -&gt;create function, the [loadable]</span>
+<span style="color: #8B8878;">         * module can have its refcnt decremented</span>
+<span style="color: #8B8878;">         */</span>
+	module_put(pf-&gt;owner);
+	err = security_socket_post_create(sock, family, type, protocol, kern);
+	<span style="color: #FF1493;">if</span> (err)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_release</span>;
+	*res = sock;
+
+	<span style="color: #FF1493;">return</span> 0;
+
+<span style="color: #AF87FF;">out_module_busy</span>:
+	err = -EAFNOSUPPORT;
+<span style="color: #AF87FF;">out_module_put</span>:
+	sock-&gt;ops = <span style="color: #AF87FF;">NULL</span>;
+	module_put(pf-&gt;owner);
+<span style="color: #AF87FF;">out_sock_release</span>:
+	sock_release(sock);
+	<span style="color: #FF1493;">return</span> err;
+
+<span style="color: #AF87FF;">out_release</span>:
+	rcu_read_unlock();
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_sock_release</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfaa7356" class="outline-4">
+<h4 id="orgfaa7356"><span class="section-number-4">7.2.3</span> inet_create()</h4>
+<div class="outline-text-4" id="text-7-2-3">
+<p>
+该函数用于创建与套接口对应的传输控制块，并建立关联。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      Create an inet socket.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_create</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> *<span style="color: #FF8C00;">p</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span> *<span style="color: #FF8C00;">answer</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span> *<span style="color: #FF8C00;">inet</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> *<span style="color: #FF8C00;">answer_prot</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">answer_flags</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">answer_no_check</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">try_loading_module</span> = 0;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	sock-&gt;state = SS_UNCONNECTED;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Look for the requested type/protocol pair.</span><span style="color: #8B8878;"> */</span>
+	answer = <span style="color: #AF87FF;">NULL</span>;
+<span style="color: #AF87FF;">lookup_protocol</span>:
+	err = -ESOCKTNOSUPPORT;
+	rcu_read_lock();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382; inetsw &#25955;&#21015;&#34920;&#65292;&#33719;&#21462;&#23545;&#24212;&#30340; inet_protosw &#32467;&#26500;&#23454;&#20363;</span>
+	list_for_each_rcu(p, &amp;inetsw[sock-&gt;type]) {
+		answer = list_entry(p, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span>, list);
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Check the non-wild match.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (protocol == answer-&gt;protocol) {
+			<span style="color: #FF1493;">if</span> (protocol != IPPROTO_IP)
+				<span style="color: #FF1493;">break</span>;
+		} <span style="color: #FF1493;">else</span> {
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Check for the two wild cases.</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (IPPROTO_IP == protocol) {
+				protocol = answer-&gt;protocol;
+				<span style="color: #FF1493;">break</span>;
+			}
+			<span style="color: #FF1493;">if</span> (IPPROTO_IP == answer-&gt;protocol)
+				<span style="color: #FF1493;">break</span>;
+		}
+		err = -EPROTONOSUPPORT;
+		answer = <span style="color: #AF87FF;">NULL</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#33719;&#21462;&#22833;&#36133;&#65292;&#21017;&#23581;&#35797;&#36890;&#36807;&#21160;&#24577;&#21152;&#36733;&#20869;&#26680;&#27169;&#22359;&#26469;&#33719;&#21462;</span>
+	<span style="color: #FF1493;">if</span> (unlikely(answer == <span style="color: #AF87FF;">NULL</span>)) {
+		<span style="color: #FF1493;">if</span> (try_loading_module &lt; 2) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#22810;&#23581;&#35797;&#20004;&#27425;</span>
+			rcu_read_unlock();
+			<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                         * Be more specific, e.g. net-pf-2-proto-132-type-1</span>
+<span style="color: #8B8878;">                         * (net-pf-PF_INET-proto-IPPROTO_SCTP-type-SOCK_STREAM)</span>
+<span style="color: #8B8878;">                         */</span>
+			<span style="color: #FF1493;">if</span> (++try_loading_module == 1)
+				request_module(<span style="color: #CDC673;">"net-pf-%d-proto-%d-type-%d"</span>,
+					       PF_INET, protocol, sock-&gt;type);
+			<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                         * Fall back to generic, e.g. net-pf-2-proto-132</span>
+<span style="color: #8B8878;">                         * (net-pf-PF_INET-proto-IPPROTO_SCTP)</span>
+<span style="color: #8B8878;">                         */</span>
+			<span style="color: #FF1493;">else</span>
+				request_module(<span style="color: #CDC673;">"net-pf-%d-proto-%d"</span>,
+					       PF_INET, protocol);
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">lookup_protocol</span>;
+		} <span style="color: #FF1493;">else</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_rcu_unlock</span>;
+	}
+
+	err = -EPERM;
+	<span style="color: #FF1493;">if</span> (answer-&gt;capability &gt; 0 &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>capable(answer-&gt;capability))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_rcu_unlock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#22871;&#25509;&#21475;&#30340;&#22871;&#25509;&#21475;&#23618;&#21644;&#20256;&#36755;&#23618;&#20043;&#38388;&#30340;&#25509;&#21475; ops</span>
+	sock-&gt;ops = answer-&gt;ops;
+	answer_prot = answer-&gt;prot;
+	answer_no_check = answer-&gt;no_check;
+	answer_flags = answer-&gt;flags;
+	rcu_read_unlock();
+
+	BUG_TRAP(answer_prot-&gt;slab != <span style="color: #AF87FF;">NULL</span>);
+
+	err = -ENOBUFS;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	sk = sk_alloc(PF_INET, GFP_KERNEL, answer_prot, 1);
+	<span style="color: #FF1493;">if</span> (sk == <span style="color: #AF87FF;">NULL</span>)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	err = 0;
+	sk-&gt;sk_no_check = answer_no_check; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#25511;&#21046;&#22359;&#26159;&#21542;&#38656;&#35201;&#26657;&#39564;&#21644;</span>
+	<span style="color: #FF1493;">if</span> (INET_PROTOSW_REUSE &amp; answer_flags) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#21487;&#20197;&#37325;&#29992;&#22320;&#22336;&#21644;&#31471;&#21475;</span>
+		sk-&gt;sk_reuse = 1;
+
+	inet = inet_sk(sk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26159;&#21542;&#26159;&#38754;&#21521;&#36830;&#25509;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	inet-&gt;is_icsk = (INET_PROTOSW_ICSK &amp; answer_flags) != 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#21407;&#22987;&#22871;&#25509;&#21475;&#65292;&#21017;&#35774;&#32622;&#31471;&#21475;&#20026; &#21327;&#35758;&#21495;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (SOCK_RAW == sock-&gt;type) {
+		inet-&gt;num = protocol;
+		<span style="color: #FF1493;">if</span> (IPPROTO_RAW == protocol)
+			inet-&gt;hdrincl = 1; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;RAW&#21327;&#35758;&#65292;&#38656;&#35201;&#33258;&#24049;&#26500;&#24314;IP&#39318;&#37096;</span>
+	}
+
+	<span style="color: #FF1493;">if</span> (ipv4_config.no_pmtu_disc)<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21028;&#26029;&#20256;&#36755;&#25511;&#21046;&#22359;&#26159;&#21542;&#25903;&#25345;PMTU</span>
+		inet-&gt;pmtudisc = IP_PMTUDISC_DONT;
+	<span style="color: #FF1493;">else</span>
+		inet-&gt;pmtudisc = IP_PMTUDISC_WANT;
+
+	inet-&gt;id = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;&#20256;&#36755;&#25511;&#21046;&#22359;&#36827;&#34892;&#21021;&#22987;&#21270;</span>
+	sock_init_data(sock, sk);
+
+	sk-&gt;sk_destruct    = inet_sock_destruct;
+	sk-&gt;sk_family      = PF_INET;
+	sk-&gt;sk_protocol    = protocol;
+	sk-&gt;sk_backlog_rcv = sk-&gt;sk_prot-&gt;backlog_rcv; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21518;&#22791;&#38431;&#21015;&#25509;&#25910;&#20989;&#25968;</span>
+
+	inet-&gt;uc_ttl    = -1;
+	inet-&gt;mc_loop   = 1;
+	inet-&gt;mc_ttl    = 1;
+	inet-&gt;mc_index  = 0;
+	inet-&gt;mc_list   = <span style="color: #AF87FF;">NULL</span>;
+
+	sk_refcnt_debug_inc(sk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;num&#35774;&#32622;&#20102;&#26412;&#22320;&#31471;&#21475;&#21495;&#65292;&#21017;&#38656;&#35201;&#35774;&#32622;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;sport&#20026;&#32593;&#32476;&#23383;&#33410;&#24207;&#30340;&#26412;&#22320;&#31471;&#21475;</span>
+	<span style="color: #FF1493;">if</span> (inet-&gt;num) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">It assumes that any protocol which allows</span>
+<span style="color: #8B8878;">                 * the user to assign a number at socket</span>
+<span style="color: #8B8878;">                 * creation time automatically</span>
+<span style="color: #8B8878;">                 * shares.</span>
+<span style="color: #8B8878;">                 */</span>
+		inet-&gt;sport = htons(inet-&gt;num);
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#20256;&#36755;&#25511;&#21046;&#22359;&#21152;&#20837;&#21040;&#31649;&#29702;&#30340;&#25955;&#21015;&#34920;</span><span style="color: #8B8878;"> */</span>
+		sk-&gt;sk_prot-&gt;hash(sk);
+	}
+
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_prot-&gt;init) {
+		err = sk-&gt;sk_prot-&gt;init(sk);
+		<span style="color: #FF1493;">if</span> (err)
+			sk_common_release(sk);
+	}
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> err;
+<span style="color: #AF87FF;">out_rcu_unlock</span>:
+	rcu_read_unlock();
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org251263c" class="outline-3">
+<h3 id="org251263c"><span class="section-number-3">7.3</span> bind系统调用</h3>
+<div class="outline-text-3" id="text-7-3">
+</div>
+<div id="outline-container-org70b8638" class="outline-4">
+<h4 id="org70b8638"><span class="section-number-4">7.3.1</span> sys_bind()</h4>
+<div class="outline-text-4" id="text-7-3-1">
+<p>
+bind()系统调用用于将本地的地址和传输层端口，与套接口关联起来。
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-layer/bind.png" alt="bind.png" />
+</p>
+<p><span class="figure-number">Figure 5: </span>bind()调用过程</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      Bind a name to a socket. Nothing much to do here since it's</span>
+<span style="color: #8B8878;"> *      the protocol's responsibility to handle the local address.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      We move the socket address to kernel space before we call</span>
+<span style="color: #8B8878;"> *      the protocol layer (having also checked the address is ok).</span>
+<span style="color: #8B8878;"> */</span>
+
+asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_bind</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">umyaddr</span><span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#32465;&#23450;&#30340;&#22320;&#22336;</span><span style="color: #8B8878;">*/</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addrlen</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">address</span>[MAX_SOCK_ADDR];
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">fput_needed</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#25991;&#20214;&#25551;&#36848;&#31526;&#65292;&#33719;&#21462;&#22871;&#25509;&#21475;&#25351;&#38024;&#65292; fput_needed&#26159;&#36820;&#22238;&#20540;&#65292;&#34920;&#31034;&#26159;&#21542;&#38656;&#35201;&#20943;&#23569;&#25991;&#20214;&#24341;&#29992;&#35745;&#25968;</span>
+	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+	<span style="color: #FF1493;">if</span>(sock) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22797;&#21046;&#29992;&#25143;&#31354;&#38388;&#30340;&#25968;&#25454;&#21040;&#20869;&#26680;&#31354;&#38388;</span>
+		err = move_addr_to_kernel(umyaddr, addrlen, address);
+		<span style="color: #FF1493;">if</span> (err &gt;= 0) {
+			err = security_socket_bind(sock,
+						   (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)address,
+						   addrlen);
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>err) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#21327;&#35758;&#26063;&#30340;bind&#25509;&#21475;&#65292;IPv4&#20013;&#26159; inet_bind()</span>
+				err = sock-&gt;ops-&gt;bind(sock,
+						      (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)
+						      address, addrlen);
+		}
+		fput_light(sock-&gt;file, fput_needed); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;fput_light&#25805;&#20316;&#25991;&#20214;&#24341;&#29992;&#35745;&#25968;&#12290;</span>
+	}
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7f57cc8" class="outline-4">
+<h4 id="org7f57cc8"><span class="section-number-4">7.3.2</span> 套接口层的实现 inet_bind()</h4>
+<div class="outline-text-4" id="text-7-3-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_bind</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *<span style="color: #FF8C00;">addr</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)uaddr;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = sock-&gt;sk;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span> *<span style="color: #FF8C00;">inet</span> = inet_sk(sk);
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">snum</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">chk_addr_ret</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#23545;&#24212;&#30340;&#20256;&#36755;&#23618;&#26159;&#21542;&#23454;&#29616;&#20102;&#33258;&#36523;&#30340;bind&#20989;&#25968;&#65288;&#20363;&#22914;SOCK_RAW&#65289;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_prot-&gt;bind) {
+		err = sk-&gt;sk_prot-&gt;bind(sk, uaddr, addr_len);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+	err = -EINVAL;
+	<span style="color: #FF1493;">if</span> (addr_len &lt; <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span>))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#22320;&#22336;&#31867;&#22411;</span>
+	chk_addr_ret = inet_addr_type(addr-&gt;sin_addr.s_addr);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Not specified by any standard per-se, however it breaks too</span>
+<span style="color: #8B8878;">         * many applications when removed.  It is unfortunate since</span>
+<span style="color: #8B8878;">         * allowing applications to make a non-local bind solves</span>
+<span style="color: #8B8878;">         * several problems with systems using dynamic addressing.</span>
+<span style="color: #8B8878;">         * (ie. your servers still start up even if your ISDN link</span>
+<span style="color: #8B8878;">         *  is temporarily down)</span>
+<span style="color: #8B8878;">         */</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#26159;&#21542;&#21487;&#20197;&#36827;&#34892;&#22320;&#22336;&#21644;&#31471;&#21475;&#30340;&#32465;&#23450;</span>
+	err = -EADDRNOTAVAIL;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sysctl_ip_nonlocal_bind &amp;&amp;
+	    <span style="color: #CDC673; font-weight: bold;">!</span>inet-&gt;freebind &amp;&amp;
+	    addr-&gt;sin_addr.s_addr != INADDR_ANY &amp;&amp;
+	    chk_addr_ret != RTN_LOCAL &amp;&amp;
+	    chk_addr_ret != RTN_MULTICAST &amp;&amp;
+	    chk_addr_ret != RTN_BROADCAST)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	snum = ntohs(addr-&gt;sin_port);
+	err = -EACCES;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#32465;&#23450;&#30340;&#31471;&#21475;&#65292;&#21028;&#26029;&#36827;&#31243;&#26159;&#21542;&#20801;&#35768;&#32465;&#23450;&#23567;&#20110;1024&#30340;&#31471;&#21475;</span>
+	<span style="color: #FF1493;">if</span> (snum &amp;&amp; snum &lt; PROT_SOCK &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>capable(CAP_NET_BIND_SERVICE))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	<span style="color: #8B8878;">/*      </span><span style="color: #8B8878;">We keep a pair of addresses. rcv_saddr is the one</span>
+<span style="color: #8B8878;">         *      used by hash lookups, and saddr is used for transmit.</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         *      In the BSD API these are the same except where it</span>
+<span style="color: #8B8878;">         *      would be illegal to use them (multicast/broadcast) in</span>
+<span style="color: #8B8878;">         *      which case the sending device address is used.</span>
+<span style="color: #8B8878;">         */</span>
+	lock_sock(sk);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Check these errors (active socket, double bind).</span><span style="color: #8B8878;"> */</span>
+	err = -EINVAL;
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state != TCP_CLOSE || inet-&gt;num)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_release_sock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#22320;&#22336;&#35774;&#32622;&#21040;&#20256;&#36755;&#25511;&#21046;&#22359;&#20013;</span>
+	inet-&gt;rcv_saddr = inet-&gt;saddr = addr-&gt;sin_addr.s_addr;
+	<span style="color: #FF1493;">if</span> (chk_addr_ret == RTN_MULTICAST || chk_addr_ret == RTN_BROADCAST)
+		inet-&gt;saddr = 0;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Use device</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#29992;&#20256;&#36755;&#23618;&#25509;&#21475;&#30340;get_port()&#65292;&#36827;&#34892;&#20855;&#20307;&#20256;&#36755;&#23618;&#30340;&#22320;&#22336;&#32465;&#23450;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_prot-&gt;get_port(sk, snum)) {
+		inet-&gt;saddr = inet-&gt;rcv_saddr = 0;
+		err = -EADDRINUSE;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_release_sock</span>;
+	}
+
+	<span style="color: #FF1493;">if</span> (inet-&gt;rcv_saddr)
+		sk-&gt;sk_userlocks |= SOCK_BINDADDR_LOCK;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#32465;&#23450;&#20102;&#26412;&#22320;&#22320;&#22336;</span>
+	<span style="color: #FF1493;">if</span> (snum)
+		sk-&gt;sk_userlocks |= SOCK_BINDPORT_LOCK;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#32465;&#23450;&#20102;&#26412;&#22320;&#31471;&#21475;</span>
+	inet-&gt;sport = htons(inet-&gt;num);
+	inet-&gt;daddr = 0;
+	inet-&gt;dport = 0;
+	sk_dst_reset(sk);
+	err = 0;
+<span style="color: #AF87FF;">out_release_sock</span>:
+	release_sock(sk);
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5825849" class="outline-3">
+<h3 id="org5825849"><span class="section-number-3">7.4</span> listen系统调用</h3>
+<div class="outline-text-3" id="text-7-4">
+<p>
+listen系统调用用于通知进程准备好接收套接口上的连接请求，同时指定该套接口上可以排队的连接数。如果超过限制，则拒绝连接请求。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_listen</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">backlog</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">fput_needed</span>;
+
+	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+	<span style="color: #FF1493;">if</span> (sock) {
+		<span style="color: #FF1493;">if</span> ((<span style="color: #5FD7FF;">unsigned</span>)backlog &gt; sysctl_somaxconn) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#38480;&#21046;&#26159;&#21542;&#21512;&#27861;</span>
+			backlog = sysctl_somaxconn;
+
+		err = security_socket_listen(sock, backlog);
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>err)<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#23545;&#24212;&#20256;&#36755;&#23618;&#30340;listen&#25805;&#20316;</span>
+			err = sock-&gt;ops-&gt;listen(sock, backlog);
+		fput_light(sock-&gt;file, fput_needed);
+	}
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3a471ef" class="outline-3">
+<h3 id="org3a471ef"><span class="section-number-3">7.5</span> accept系统调用</h3>
+<div class="outline-text-3" id="text-7-5">
+<p>
+调用listen之后，可以通过accept等待连接请求。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      For accept, we attempt to create a new socket, set up the link</span>
+<span style="color: #8B8878;"> *      with the client, wake up the client, then return the new</span>
+<span style="color: #8B8878;"> *      connected fd. We collect the address of the connector in kernel</span>
+<span style="color: #8B8878;"> *      space and move it to user at the very end. This is unclean because</span>
+<span style="color: #8B8878;"> *      we open the socket then return an error.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      1003.1g adds the ability to recvmsg() to query connection pending</span>
+<span style="color: #8B8878;"> *      status to recvmsg. We need to add that support in a way thats</span>
+<span style="color: #8B8878;"> *      clean when we restucture accept also.</span>
+<span style="color: #8B8878;"> */</span>
+
+asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_accept</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">upeer_sockaddr</span>,
+			   <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *upeer_addrlen)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, *<span style="color: #FF8C00;">newsock</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">newfile</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">len</span>, <span style="color: #FF8C00;">newfd</span>, <span style="color: #FF8C00;">fput_needed</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">address</span>[MAX_SOCK_ADDR];
+
+	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	err = -ENFILE;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(newsock = sock_alloc()))<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#26032;&#30340;&#22871;&#25509;&#21475;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
+
+	newsock-&gt;type = sock-&gt;type; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#31867;&#22411;</span>
+	newsock-&gt;ops = sock-&gt;ops; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#30340;&#31995;&#32479;&#35843;&#29992;&#36339;&#36716;&#34920;</span>
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * We don't need try_module_get here, as the listening socket (sock)</span>
+<span style="color: #8B8878;">         * has the protocol module (sock-&gt;ops-&gt;owner) held.</span>
+<span style="color: #8B8878;">         */</span>
+	__module_get(newsock-&gt;ops-&gt;owner);
+	newfd = sock_alloc_fd(&amp;newfile);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#25991;&#20214;&#25551;&#36848;&#31526;</span>
+	<span style="color: #FF1493;">if</span> (unlikely(newfd &lt; 0)) {
+		err = newfd;
+		sock_release(newsock);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21644;&#22871;&#25509;&#21475;&#32465;&#23450;&#12290;</span>
+	err = sock_attach_fd(newsock, newfile);
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_fd</span>;
+
+	err = security_socket_accept(sock, newsock);
+	<span style="color: #FF1493;">if</span> (err)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_fd</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#23545;&#24212;&#20256;&#36755;&#21327;&#35758;&#30340;accept&#25805;&#20316;&#12290;</span>
+	err = sock-&gt;ops-&gt;accept(sock, newsock, sock-&gt;file-&gt;f_flags);
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_fd</span>;
+
+	<span style="color: #FF1493;">if</span> (upeer_sockaddr) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#33719;&#21462;&#23458;&#25143;&#31471;&#30340;&#22320;&#22336;</span>
+		<span style="color: #FF1493;">if</span> (newsock-&gt;ops-&gt;getname(newsock, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)address,
+					  &amp;len, 2) &lt; 0) {
+			err = -ECONNABORTED;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_fd</span>;
+		}
+		err = move_addr_to_user(address, len, upeer_sockaddr,
+					upeer_addrlen);
+		<span style="color: #FF1493;">if</span> (err &lt; 0)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_fd</span>;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">File flags are not inherited via accept() unlike another OSes.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#25991;&#20214;&#25551;&#36848;&#31526;&#28155;&#21152;&#21040;&#36827;&#31243;&#30340;&#24050;&#25171;&#24320;&#25991;&#20214;&#21015;&#34920;&#20013;&#12290;</span>
+	fd_install(newfd, newfile);
+	err = newfd;
+
+	security_socket_post_accept(sock, newsock);
+
+<span style="color: #AF87FF;">out_put</span>:
+	fput_light(sock-&gt;file, fput_needed);
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> err;
+<span style="color: #AF87FF;">out_fd</span>:
+	fput(newfile);
+	put_unused_fd(newfd);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgde6ffb7" class="outline-3">
+<h3 id="orgde6ffb7"><span class="section-number-3">7.6</span> connect系统调用</h3>
+<div class="outline-text-3" id="text-7-6">
+<p>
+对于面向连接的协议（TCP），connect() 会与指定的外部地址建立连接。
+</p>
+
+<p>
+对于无连接协议（UDP或ICMP），connect记录外部地址，以便发送数据报时使用。
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-layer/connect.png" alt="connect.png" />
+</p>
+<p><span class="figure-number">Figure 6: </span>conect()调用过程</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      Attempt to connect to a socket with the server address.  The address</span>
+<span style="color: #8B8878;"> *      is in user space so we verify it is OK and move it to kernel space.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      For 1003.1g we need to add clean support for a bind to AF_UNSPEC to</span>
+<span style="color: #8B8878;"> *      break bindings</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      NOTE: 1003.1g draft 6.3 is broken with respect to AX.25/NetROM and</span>
+<span style="color: #8B8878;"> *      other SEQPACKET protocols that take time to connect() as it doesn't</span>
+<span style="color: #8B8878;"> *      include the -EINPROGRESS status for such sockets.</span>
+<span style="color: #8B8878;"> */</span>
+
+asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_connect</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">uservaddr</span>,
+			    <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addrlen</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">address</span>[MAX_SOCK_ADDR];
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">fput_needed</span>;
+
+	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	err = move_addr_to_kernel(uservaddr, addrlen, address);
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
+
+	err =
+	    security_socket_connect(sock, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)address, addrlen);
+	<span style="color: #FF1493;">if</span> (err)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#20256;&#36755;&#23618;&#30340;connect&#65292;tcp&#20026; inet_stream_connect()</span>
+	err = sock-&gt;ops-&gt;connect(sock, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)address, addrlen,
+				 sock-&gt;file-&gt;f_flags);
+<span style="color: #AF87FF;">out_put</span>:
+	fput_light(sock-&gt;file, fput_needed);
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9ff2fbc" class="outline-3">
+<h3 id="org9ff2fbc"><span class="section-number-3">7.7</span> shutdown系统调用</h3>
+<div class="outline-text-3" id="text-7-7">
+</div>
+<div id="outline-container-org24d2009" class="outline-4">
+<h4 id="org24d2009"><span class="section-number-4">7.7.1</span> sys_shutdown()</h4>
+<div class="outline-text-4" id="text-7-7-1">
+<p>
+shutdown 用于关闭连接的读通道、写通道或者读写通道，如果关闭读通道，则丢弃还未读取的数据和之后到达的数据。对于写通道，会调用对应的协议处理，例如TCP会发送所有剩余的数据，并在发送完成后发送FIN。
+</p>
+
+<p>
+为了删除和释放文件描述符，还需要调用close()。
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-layer/shutdown.png" alt="shutdown.png" />
+</p>
+<p><span class="figure-number">Figure 7: </span>shutdown()系统调用过程</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_shutdown</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">fput_needed</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+
+	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+	<span style="color: #FF1493;">if</span> (sock != <span style="color: #AF87FF;">NULL</span>) {
+		err = security_socket_shutdown(sock, how);
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>err)
+			err = sock-&gt;ops-&gt;shutdown(sock, how);
+		fput_light(sock-&gt;file, fput_needed);
+	}
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3537d62" class="outline-4">
+<h4 id="org3537d62"><span class="section-number-4">7.7.2</span> 套接口层的实现</h4>
+<div class="outline-text-4" id="text-7-7-2">
+<p>
+inet_shutdown()
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_shutdown</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = sock-&gt;sk;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = 0;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This should really check to make sure</span>
+<span style="color: #8B8878;">         * the socket is a TCP socket. (WHY AC...)</span>
+<span style="color: #8B8878;">         */</span>
+	how++; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">maps 0-&gt;1 has the advantage of making bit 1 rcvs and</span>
+<span style="color: #8B8878;">                       1-&gt;2 bit 2 snds.</span>
+<span style="color: #8B8878;">                       2-&gt;3</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> ((how &amp; ~SHUTDOWN_MASK) || <span style="color: #CDC673; font-weight: bold;">!</span>how)     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">MAXINT-&gt;0</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">return</span> -EINVAL;
+
+	lock_sock(sk);
+	<span style="color: #FF1493;">if</span> (sock-&gt;state == SS_CONNECTING) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#29366;&#24577;&#37325;&#26032;&#35774;&#32622;&#22871;&#25509;&#21475;&#29366;&#24577;&#65292;&#20351;&#24471;&#22871;&#25509;&#21475;&#22312;&#23436;&#25104;&#20851;&#38381;&#21069;&#21482;&#26377;&#20004;&#31181;&#29366;&#24577;</span>
+		<span style="color: #FF1493;">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp;
+		    (TCPF_SYN_SENT | TCPF_SYN_RECV | TCPF_CLOSE))
+			sock-&gt;state = SS_DISCONNECTING;
+		<span style="color: #FF1493;">else</span>
+			sock-&gt;state = SS_CONNECTED;
+	}
+
+	<span style="color: #FF1493;">switch</span> (sk-&gt;sk_state) {
+	<span style="color: #FF1493;">case</span> TCP_CLOSE:
+		err = -ENOTCONN;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Hack to wake up other listeners, who can poll for</span>
+<span style="color: #8B8878;">                   POLLHUP, even on eg. unconnected UDP sockets -- RR</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">default</span>:
+		sk-&gt;sk_shutdown |= how;
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_prot-&gt;shutdown)
+			sk-&gt;sk_prot-&gt;shutdown(sk, how); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#20256;&#36755;&#23618;&#30340;shutdown()&#25805;&#20316;</span>
+		<span style="color: #FF1493;">break</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Remaining two branches are temporary solution for missing</span>
+<span style="color: #8B8878;">         * close() in multithreaded environment. It is _not_ a good idea,</span>
+<span style="color: #8B8878;">         * but we have no choice until close() is repaired at VFS level.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">case</span> TCP_LISTEN:
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(how &amp; RCV_SHUTDOWN)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#20851;&#38381;&#30340;&#25509;&#25910;&#26041;&#21521;&#65292;&#21017;&#21644;TCP_SYN_SENT&#29366;&#24577;&#22788;&#29702;&#30456;&#21516;</span>
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Fall through</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">case</span> TCP_SYN_SENT: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#20110;&#24314;&#31435;&#36830;&#25509;&#36807;&#31243;&#20013;</span>
+		err = sk-&gt;sk_prot-&gt;disconnect(sk, O_NONBLOCK);
+		sock-&gt;state = err ? SS_DISCONNECTING : SS_UNCONNECTED;
+		<span style="color: #FF1493;">break</span>;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Wake up anyone sleeping in poll.</span><span style="color: #8B8878;"> */</span>
+	sk-&gt;sk_state_change(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21796;&#37266;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#31561;&#24453;&#38431;&#21015;&#19978;&#30340;&#36827;&#31243;&#12290;</span>
+	release_sock(sk);
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9b64593" class="outline-3">
+<h3 id="org9b64593"><span class="section-number-3">7.8</span> close系统调用</h3>
+<div class="outline-text-3" id="text-7-8">
+
+<div class="figure">
+<p><img src="image/socket-layer/close.png" alt="close.png" />
+</p>
+<p><span class="figure-number">Figure 8: </span>close系统调用</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sock_close</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">filp</span>)
+{
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      It was possible the inode is NULL we were</span>
+<span style="color: #8B8878;">         *      closing an unfinished socket.</span>
+<span style="color: #8B8878;">         */</span>
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>inode) {
+		printk(KERN_DEBUG <span style="color: #CDC673;">"sock_close: NULL inode\n"</span>);
+		<span style="color: #FF1493;">return</span> 0;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#19982;&#25991;&#20214;&#25551;&#36848;&#31526;&#20851;&#32852;&#30340;&#22871;&#25509;&#21475;&#30340;&#24322;&#27493;&#36890;&#30693;&#38431;&#21015;&#20013;&#21024;&#38500;&#23545;&#24212;&#30340;&#32467;&#28857;</span>
+	sock_fasync(-1, filp, 0);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#22871;&#25509;&#21475;&#12290;</span>
+	sock_release(SOCKET_I(inode));
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org171261a" class="outline-4">
+<h4 id="org171261a"><span class="section-number-4">7.8.1</span> 关闭套接口</h4>
+<div class="outline-text-4" id="text-7-8-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> *      sock_release    -       close a socket</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@sock</span><span style="color: #CDC673;">: socket to close</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> *      The socket is released from the protocol stack if it has a release</span>
+<span style="color: #CDC673;"> *      callback, and the inode is then released if the socket is bound to</span>
+<span style="color: #CDC673;"> *      an inode not a file.</span>
+<span style="color: #CDC673;"> */</span>
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_release</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>)
+{
+	<span style="color: #FF1493;">if</span> (sock-&gt;ops) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#23618;&#30340;proto_ops&#25805;&#20316;&#25509;&#21475;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span> = sock-&gt;ops-&gt;owner;
+		sock-&gt;ops-&gt;release(sock);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">IPv4&#20013;&#20026; inet_release(),&#20854;&#20013;&#35843;&#29992;&#20855;&#20307;&#20256;&#36755;&#23618;&#30340;close&#25805;&#20316;&#12290;</span>
+		sock-&gt;ops = <span style="color: #AF87FF;">NULL</span>;
+		module_put(owner);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20043;&#21069;&#24050;&#32463;&#22788;&#29702;&#20102;&#24322;&#27493;&#36890;&#30693;&#38431;&#21015;&#65292;&#22914;&#26524;&#19981;&#20026;&#31354;&#65292;&#21017;&#25171;&#21360;&#20449;&#24687;</span>
+	<span style="color: #FF1493;">if</span> (sock-&gt;fasync_list)
+		printk(KERN_ERR <span style="color: #CDC673;">"sock_release: fasync list not empty!\n"</span>);
+
+	get_cpu_var(sockets_in_use)--;
+	put_cpu_var(sockets_in_use);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock-&gt;file) {
+		iput(SOCK_INODE(sock));
+		<span style="color: #FF1493;">return</span>;
+	}
+	sock-&gt;file = <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfd4180b" class="outline-4">
+<h4 id="orgfd4180b"><span class="section-number-4">7.8.2</span> 套接口层的实现</h4>
+<div class="outline-text-4" id="text-7-8-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      The peer socket should always be NULL (or else). When we call this</span>
+<span style="color: #8B8878;"> *      function we are destroying the object and from then on nobody</span>
+<span style="color: #8B8878;"> *      should refer to it.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_release</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = sock-&gt;sk;
+
+	<span style="color: #FF1493;">if</span> (sk) {
+		<span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeout</span>;
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#31163;&#24320;&#21152;&#20837;&#30340;&#22810;&#25773;&#32452;</span><span style="color: #8B8878;"> */</span>
+		ip_mc_drop_socket(sk);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If linger is set, we don't return until the close</span>
+<span style="color: #8B8878;">                 * is complete.  Otherwise we return immediately. The</span>
+<span style="color: #8B8878;">                 * actually closing is done the same either way.</span>
+<span style="color: #8B8878;">                 *</span>
+<span style="color: #8B8878;">                 * If the close is due to the process exiting, we never</span>
+<span style="color: #8B8878;">                 * linger..</span>
+<span style="color: #8B8878;">                 */</span>
+		timeout = 0;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">SOCK_LINGER&#34920;&#31034;&#22914;&#26524;&#26377;&#25968;&#25454;&#24102;&#21457;&#36865;&#65292;&#21017;&#24310;&#36831;&#20851;&#38381;</span>
+		<span style="color: #FF1493;">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp;
+		    <span style="color: #CDC673; font-weight: bold;">!</span>(current-&gt;flags &amp; PF_EXITING))  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#31243;&#19981;&#22788;&#20110;&#36864;&#20986;&#36807;&#31243;&#20013;</span>
+			timeout = sk-&gt;sk_lingertime; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#24310;&#36831;&#20851;&#38381;&#30340;&#26102;&#38388;</span>
+		sock-&gt;sk = <span style="color: #AF87FF;">NULL</span>;
+		sk-&gt;sk_prot-&gt;close(sk, timeout);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#20256;&#36755;&#23618;&#30340;close&#25509;&#21475;</span>
+	}
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd3115d4" class="outline-3">
+<h3 id="orgd3115d4"><span class="section-number-3">7.9</span> select系统调用实现</h3>
+<div class="outline-text-3" id="text-7-9">
+<p>
+select用来实现非阻塞 I/O。
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-layer/select.png" alt="select.png" />
+</p>
+<p><span class="figure-number">Figure 9: </span>select系统调用</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-01-22 Sat 22:35</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

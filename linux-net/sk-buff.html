@@ -1,0 +1,1184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-12-31 Fri 22:55 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>套接口缓存</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">套接口缓存</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org44fd9af">1. sk_buff 结构</a>
+<ul>
+<li><a href="#org6e1c1c1">1.1. SKB组织相关的变量</a></li>
+<li><a href="#org53eefd5">1.2. 数据存储相关的变量</a></li>
+<li><a href="#org2f44aa3">1.3. 通用的成员变量</a></li>
+<li><a href="#orga56715e">1.4. 标志性变量</a></li>
+<li><a href="#org4d4eadc">1.5. 特性相关的成员变量</a></li>
+</ul>
+</li>
+<li><a href="#orgdba1eb9">2. skb_shared_info结构</a>
+<ul>
+<li><a href="#org1a6492f">2.1. 零拷贝</a></li>
+<li><a href="#orgfb0092f">2.2. 对聚合分散I/O数据的支持</a></li>
+<li><a href="#org5d681bd">2.3. 对GSO的支持</a></li>
+<li><a href="#org1883ab7">2.4. 访问skb_shared_info结构</a></li>
+</ul>
+</li>
+<li><a href="#org8c39dd5">3. 管理函数</a>
+<ul>
+<li>
+<ul>
+<li><a href="#org8cb4383">3.0.1. SKB缓存池</a></li>
+<li><a href="#org089b185">3.0.2. 分配SKB</a></li>
+<li><a href="#orge723270">3.0.3. 释放SKB</a></li>
+<li><a href="#org7582c3f">3.0.4. 数据预留和对齐</a></li>
+<li><a href="#org7b1bf1d">3.0.5. 克隆和复制SKB</a></li>
+<li><a href="#org986faed">3.0.6. 链表管理函数</a></li>
+<li><a href="#org9639717">3.0.7. 添加或删除尾部数据</a></li>
+<li><a href="#org2c567d5">3.0.8. 拆分数据：skb_split()</a></li>
+<li><a href="#orgc1ff9bc">3.0.9. 重新分配SKB的线性数据区：pskb_expand_head()</a></li>
+<li><a href="#org082cbfb">3.0.10. 其他函数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="figure">
+<p><img src="image/sk-buff/skbuff.png" alt="skbuff.png" />
+</p>
+</div>
+
+
+<p>
+linux中使用 <code>sruct sk_buff</code> 数据结构来描述已经接受或者代发送的数据报文信息。后续我们使用“SKB”来指代 <code>struct sk_buff</code> 。
+</p>
+
+<p>
+SKB的操作函数以及宏定义设计以下文件：
+</p>
+<ul class="org-ul">
+<li>include/linux/skbuff.h，SKB结构定义以及宏定义。</li>
+<li>net/core/skbuff.c，操作SKB的函数。</li>
+</ul>
+
+<div id="outline-container-org44fd9af" class="outline-2">
+<h2 id="org44fd9af"><span class="section-number-2">1</span> sk_buff 结构</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+struct sk_buff结构定义比较复杂，其成员大致可以分为以下几类：
+</p>
+<ul class="org-ul">
+<li>组织SKB的成员变量。</li>
+<li>通用成员变量。</li>
+<li>标志性成员变量。</li>
+<li>与特性相关的成员变量。</li>
+</ul>
+
+
+<p>
+SKB分为两个部分，一部分是SKB描述符（sk_buff结构本身），另一部分为数据缓冲区。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">These two members must be first.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>          *<span style="color: #FF8C00;">next</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>          *<span style="color: #FF8C00;">prev</span>;
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span>             *<span style="color: #FF8C00;">sk</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">skb_timeval</span>      <span style="color: #FF8C00;">tstamp</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">input_dev</span>;
+
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span>   *<span style="color: #FF8C00;">th</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">udphdr</span>   *<span style="color: #FF8C00;">uh</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">icmphdr</span>  *<span style="color: #FF8C00;">icmph</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">igmphdr</span>  *<span style="color: #FF8C00;">igmph</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span>    *<span style="color: #FF8C00;">ipiph</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipv6hdr</span>  *<span style="color: #FF8C00;">ipv6h</span>;
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   *<span style="color: #FF8C00;">raw</span>;
+	} <span style="color: #FF8C00;">h</span>;
+
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span>    *<span style="color: #FF8C00;">iph</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipv6hdr</span>  *<span style="color: #FF8C00;">ipv6h</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span>   *<span style="color: #FF8C00;">arph</span>;
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   *<span style="color: #FF8C00;">raw</span>;
+	} <span style="color: #FF8C00;">nh</span>;
+
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   *<span style="color: #FF8C00;">raw</span>;
+	} <span style="color: #FF8C00;">mac</span>;
+
+	<span style="color: #FF1493;">struct</span>  <span style="color: #5FD7FF;">dst_entry</span>       *<span style="color: #FF8C00;">dst</span>;
+	<span style="color: #FF1493;">struct</span>  <span style="color: #5FD7FF;">sec_path</span>        *<span style="color: #FF8C00;">sp</span>;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * This is the control buffer. It is free to use for every</span>
+<span style="color: #8B8878;">         * layer. Please put your private variables there. If you</span>
+<span style="color: #8B8878;">         * want to keep them across layers you have to do a skb_clone()</span>
+<span style="color: #8B8878;">         * first. This is owned by whoever has the skb queued ATM.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #5FD7FF;">char</span>                    <span style="color: #FF8C00;">cb</span>[48];
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">len</span>,
+				<span style="color: #FF8C00;">data_len</span>,
+				<span style="color: #FF8C00;">mac_len</span>;
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #5FD7FF;">__wsum</span>          <span style="color: #FF8C00;">csum</span>;
+		<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">csum_offset</span>;
+	};
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">priority</span>;
+	<span style="color: #5FD7FF;">__u8</span>                    <span style="color: #FF8C00;">local_df</span>:1,
+				<span style="color: #FF8C00;">cloned</span>:1,
+				<span style="color: #FF8C00;">ip_summed</span>:2,
+				<span style="color: #FF8C00;">nohdr</span>:1,
+				<span style="color: #FF8C00;">nfctinfo</span>:3;
+	<span style="color: #5FD7FF;">__u8</span>                    <span style="color: #FF8C00;">pkt_type</span>:3,
+				<span style="color: #FF8C00;">fclone</span>:2,
+				<span style="color: #FF8C00;">ipvs_property</span>:1;
+	<span style="color: #5FD7FF;">__be16</span>                  <span style="color: #FF8C00;">protocol</span>;
+
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">destructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NETFILTER
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nf_conntrack</span>     *<span style="color: #FF8C00;">nfct</span>;
+<span style="color: #FF1493;">#if</span> <span style="color: #FF1493;">defined</span>(CONFIG_NF_CONNTRACK) || <span style="color: #FF1493;">defined</span>(CONFIG_NF_CONNTRACK_MODULE)
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>          *<span style="color: #FF8C00;">nfct_reasm</span>;
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_BRIDGE_NETFILTER
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nf_bridge_info</span>   *<span style="color: #FF8C00;">nf_bridge</span>;
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#endif</span> <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">CONFIG_NETFILTER</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_SCHED
+	<span style="color: #5FD7FF;">__u16</span>                   <span style="color: #FF8C00;">tc_index</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">traffic control index</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_CLS_ACT
+	<span style="color: #5FD7FF;">__u16</span>                   <span style="color: #FF8C00;">tc_verd</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">traffic control verdict</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_DMA
+	<span style="color: #5FD7FF;">dma_cookie_t</span>            <span style="color: #FF8C00;">dma_cookie</span>;
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NETWORK_SECMARK
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">secmark</span>;
+<span style="color: #FF1493;">#endif</span>
+
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">mark</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">These elements must be at the end, see alloc_skb() for details.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">truesize</span>;
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">users</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           *<span style="color: #FF8C00;">head</span>,
+				*<span style="color: #FF8C00;">data</span>,
+				*<span style="color: #FF8C00;">tail</span>,
+				*<span style="color: #FF8C00;">end</span>;
+};
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org6e1c1c1" class="outline-3">
+<h3 id="org6e1c1c1"><span class="section-number-3">1.1</span> SKB组织相关的变量</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+sk_buff结构中，很多结构是为了便于组织结构本身，例如下面两个变量。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">next</span>;
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">prev</span>;
+</pre>
+</div>
+
+<p>
+通过这两个指针，将SKB连接成一个双向链表。此链表有一个要求：每个SKB必须能被整个链表头部快速找到，通过在第一个SKB节点前面插入另一个辅助的sk_buff_head结构的头节点，可以认为该sk_buff_head结构就是SKB链表的头节点。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">These two members must be first.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>  *<span style="color: #FF8C00;">next</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>  *<span style="color: #FF8C00;">prev</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">SKB&#38142;&#34920;&#20013;&#30340;&#33410;&#28857;&#25968;&#37327;&#65292;&#21363;&#38431;&#21015;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">qlen</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25511;&#21046;&#23545;SKB&#38142;&#34920;&#30340;&#24182;&#21457;&#25805;&#20316;&#30340;&#33258;&#36873;&#38145;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">spinlock_t</span>      <span style="color: #FF8C00;">lock</span>;
+};
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/sk-buff-head.png" alt="sk-buff-head.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>SKB链表</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org53eefd5" class="outline-3">
+<h3 id="org53eefd5"><span class="section-number-3">1.2</span> 数据存储相关的变量</h3>
+<div class="outline-text-3" id="text-1-2">
+<ul class="org-ul">
+<li><p>
+struct sock *sk
+</p>
+
+<p>
+SKB的宿主传输控制块。SKB的宿主传输控制块在网络数据报文由本地发出或者由本地接受时才有效，使传输控制块与套接口及用户应用程序相关。当一个SKB仅在二层或者三层被转发时（即源IP和目的IP都不是本机地址），指针为NULL。
+</p></li>
+
+<li><p>
+unsigned int len
+</p>
+
+<p>
+SKB中数据部分长度，包括线性缓存区中数据长度（data指向），SG类型的聚合分散I/O的数据以及FRAGLIST类型的聚合分散I/O的数据长度。该字段值随着SKB从一个协议向另一个协议层传递而改变，向上传递时，下层首部不再需要，向下层传递时，需要添加本层首部。因此len也包含了协议首部的长度。
+</p></li>
+
+<li><p>
+unsigned int mac_len
+</p>
+
+<p>
+二层首部长度
+</p></li>
+
+<li><p>
+void (*destructor)(struct sk_buff *skb)
+</p>
+
+<p>
+SKB的析构函数指针，在释放SKB时被调用，完成一些必要的工作。在转发时，SKB没有宿主传输控制块，该指针通常为NULL。通常分别在skb_set_owner_t()和skb_set_owner_w()中被初始化成sock_rfree()和sock_wfree()。当释放SKB后，该SKB不再属于制定的传输控制块，因此要根据释放的SKB的truesize来调整传输控制块的接收和发送缓存区大小（sk_rmem_alloc和sk_wmem_alloc）。
+</p></li>
+
+<li><p>
+unsigned char *head, *data, *tail, *end
+</p>
+
+<p>
+head和end分别指向缓冲区的头和尾；data和tail分别指向数据的头和尾。在发送数据时，每一层协议在head和data之间填充协议首部数据，还可能在tail和end之间添加数据。
+</p></li>
+
+<li><p>
+unsigned int trusize
+</p>
+
+<p>
+整个数据缓冲区的总长度，包括SKB描述符和数据缓冲区部分（保活线性存储区和聚合分散I/O缓冲区）。
+</p></li>
+
+<li><p>
+atomic_t users
+</p>
+
+<p>
+引用计数，用来表示有多少实体引用了该SKB，用于确定SKB的释放时机，计数为0时，SKB才能被释放。注意该计数器之保护SKB描述符，SKB数据缓冲区也有类似的计数器。
+</p></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2f44aa3" class="outline-3">
+<h3 id="org2f44aa3"><span class="section-number-3">1.3</span> 通用的成员变量</h3>
+<div class="outline-text-3" id="text-1-3">
+<ul class="org-ul">
+<li><p>
+struct skb_timeval tstamp
+</p>
+
+<p>
+接收时间戳或者发送时间戳。通常在网络设备受到一个数据包之后，通过netif_receive_skb()或者netif_rx()调用net_timestamp()进行设置。
+</p></li>
+
+<li><p>
+struct net_device *dev
+</p>
+
+<p>
+网络设备指针。改组段的作用与SKB时发送包还是接收包有关。在初始化网络设备驱动分配接受缓存队列时，将该指针指向收到数据包的网络设备。
+</p>
+
+<p>
+发送数据包时，该指针指向输出数据包的网络设备。
+</p>
+
+<p>
+Linux支持多种形式的虚拟网络设备，并由一个虚拟网络设备驱动管理。当这个虚拟设备被使用时，dev指针指向该虚拟设备的net_device结构。在输出时，虚拟设备驱动会在一组设备中选择合适的设备，并将dev指针修改为指向这个设备的net_device结构。而在输入时，当院士网络设备接收到报文后，根据某种算法选择合适的虚拟网络设备，并将dev指针指向这个虚拟设备的net_device结构。因此，某些情况下，此指针会在包处理过程中改变。
+</p></li>
+
+<li><p>
+struct net_device *input_dev
+</p>
+
+<p>
+接收报文的原始网络设备。如果是本地生成的，则为NULL，主要用于流量控制。
+</p></li>
+
+<li><p>
+h（四层）, nh（三层）, mac（二层）
+</p>
+
+<p>
+分别和i指向各层协议首部的指针。
+</p>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-mac-n.png" alt="skb-mac-n.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>报文从二层项三层传递时的data指针变化</p>
+</div></li>
+
+<li><p>
+struct dst_entry *dst
+</p>
+
+<p>
+目的路由缓存。
+</p></li>
+
+<li><p>
+char cb[48]
+</p>
+
+<p>
+SKB信息控制块，是每层协议的似有信息存储空间，由每一层协议自己维护并使用，并只在本层有效。在分配SKB时固定在SKB描述符中，当前为48字节，子沟为每一层协议存储必要的似有信息。在每个协议中，访问该字段的代码通常用宏实现以增强代码的可读性。例如，TCP用此成员存储tcp_sbk_cb结构的数据。
+</p></li>
+
+<li><p>
+校验和
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">union</span> {
+      <span style="color: #5FD7FF;">__wsum</span>            <span style="color: #FF8C00;">csum</span>;
+      <span style="color: #5FD7FF;">__u32</span>             <span style="color: #FF8C00;">csum_offset</span>;
+};
+</pre>
+</div></li>
+
+<li><p>
+__u8 ip_summed:2
+</p>
+
+<p>
+标记传输层校验和的状态。
+</p></li>
+
+<li><p>
+__u8 cloned
+</p>
+
+<p>
+标记所属SKB是否已经克隆。
+</p></li>
+
+<li><p>
+__u8 pkt_type
+</p>
+
+<p>
+帧类型，分类是由二层目的地址来决定，对于以太网设备来说，该字段由eth_type_trans()初始化。
+</p></li>
+
+<li><p>
+__u32 priority
+</p>
+
+<p>
+发送或者转发数据包QoS类别。如果数据包是本地生成的，套接口层会设置该字段；如果包是转发的，则rt_tos2priority()会根据IP首部中TOS域来计算该字段值。
+</p></li>
+
+<li><p>
+__be16 protocol
+</p>
+
+<p>
+从二层设备的角度看到的上层协议，即链路层承载的三层协议类型。典型的协议包括IP、IPv6和ARP。由于每个协议都有各自处理接收数据包的函数，因此该区域被设备驱动用来通知上层电泳那个协议处理函数。由于每个网络驱动都调用netif_rx()来通知上层网络协议的处理函数，因此protocol必须在这些协议处理函数调用前初始化。
+</p></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orga56715e" class="outline-3">
+<h3 id="orga56715e"><span class="section-number-3">1.4</span> 标志性变量</h3>
+<div class="outline-text-3" id="text-1-4">
+<ul class="org-ul">
+<li><p>
+__u8 nohdr:1
+</p>
+
+<p>
+标识payload是否被单独引用，不存在协议首部。如果被引用，则决不能再修改协议首部，也不能通过skb-&gt;data来访问协议首部。
+</p></li>
+
+<li><p>
+__u8 local_df
+</p>
+
+<p>
+表示此SKB在本地允许分片。
+</p></li>
+
+<li><p>
+__u8 fclone:2
+</p>
+
+<p>
+当前的克隆状态。
+</p></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4d4eadc" class="outline-3">
+<h3 id="org4d4eadc"><span class="section-number-3">1.5</span> 特性相关的成员变量</h3>
+<div class="outline-text-3" id="text-1-5">
+<ul class="org-ul">
+<li>__u8 nfct</li>
+<li>struct nf_conntrack *nfct;</li>
+<li>struct nf_bridge_info *nf_bridge;</li>
+
+<li>__u16 tc_index</li>
+<li>__u16 tc_verd</li>
+<li>struct sec_path *sp</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdba1eb9" class="outline-2">
+<h2 id="orgdba1eb9"><span class="section-number-2">2</span> skb_shared_info结构</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+skb_shared_info 保存了数据块的附加信息，其位置紧邻end指针指向的地址。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">skb_shared_info</span> {
+	<span style="color: #5FD7FF;">atomic_t</span>        <span style="color: #FF8C00;">dataref</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25968;&#25454;&#32531;&#20914;&#21306;&#30340;&#24341;&#29992;&#35745;&#25968;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">nr_frags</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">gso_size</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">gso_segs</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">gso_type</span>;
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">ip6_frag_id</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>  *<span style="color: #FF8C00;">frag_list</span>;
+	<span style="color: #5FD7FF;">skb_frag_t</span>      <span style="color: #FF8C00;">frags</span>[MAX_SKB_FRAGS];
+};
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org1a6492f" class="outline-3">
+<h3 id="org1a6492f"><span class="section-number-3">2.1</span> 零拷贝</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+<b>sendfile系统调用</b>
+</p>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/read-write-copy.png" alt="read-write-copy.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>read+write系统调用过程中的数据复制</p>
+</div>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/open-sendfile-copy.png" alt="open-sendfile-copy.png" />
+</p>
+<p><span class="figure-number">Figure 5: </span>open+sendfile系统调用过程中的数据复制</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfb0092f" class="outline-3">
+<h3 id="orgfb0092f"><span class="section-number-3">2.2</span> 对聚合分散I/O数据的支持</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+聚合分散I/O 使得无需将报文组装成一个单块，可以避免大量的拷贝。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">// </span><span style="color: #8B8878;">frags&#21644;frag_list &#29992;&#20110;&#25351;&#21521;&#32858;&#21512;&#20998;&#25955; I/O &#25968;&#25454;</span>
+<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">nr_frags</span>;
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>  *<span style="color: #FF8C00;">frag_list</span>;
+<span style="color: #5FD7FF;">skb_frag_t</span>      <span style="color: #FF8C00;">frags</span>[MAX_SKB_FRAGS];
+
+
+
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">MAX_SKB_FRAGS</span> (65536/PAGE_SIZE + 2)
+<span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">skb_frag_struct</span> <span style="color: #5FD7FF;">skb_frag_t</span>;
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">skb_frag_struct</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#31995;&#32479;&#32531;&#23384;&#39029;&#30340;&#25351;&#38024;</span>
+	<span style="color: #5FD7FF;">__u16</span> <span style="color: #FF8C00;">page_offset</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25968;&#25454;&#36215;&#22987;&#22320;&#22336;&#22312;&#25991;&#20214;&#32531;&#23384;&#39029;&#20013;&#30340;&#20559;&#31227;</span>
+	<span style="color: #5FD7FF;">__u16</span> <span style="color: #FF8C00;">size</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25968;&#25454;&#22312;&#25991;&#20214;&#31995;&#32479;&#32531;&#23384;&#39029;&#20013;&#30340;&#38271;&#24230;</span>
+};
+</pre>
+</div>
+
+<p>
+frag_list的使用场景：
+</p>
+<ul class="org-ul">
+<li>在接收分片组后链接多个分片，组成一个完成的IP数据报。</li>
+<li>在UDP数据报的输出中，将待分片的SKB链接到第一个SKB中。</li>
+<li>用于存放FRAGLIST类型的聚合分散I/O的数据包，如果网络设备支持FRAGLIST类型的聚合分散I/O（lo），则可以直接输出。</li>
+</ul>
+
+<p>
+分片通过shb_shared_info结构的 nr_frags 和 frag_list 来控制。
+</p>
+
+<p>
+skb_is_nonlinear()用来测试是否存在聚合分散I/O缓存区（判断data_len成员）。
+</p>
+
+<p>
+skb_linearize()可以把含有聚合分散I/O的缓存区线性化到线性缓存区。
+</p>
+
+
+
+<div class="figure">
+<p><img src="image/sk-buff/linear.png" alt="linear.png" />
+</p>
+<p><span class="figure-number">Figure 6: </span>未启用聚合分散I/O分片的报文</p>
+</div>
+
+<p>
+data_len为0，nr_frags 为0， frag_list为NULL。
+</p>
+
+
+
+<div class="figure">
+<p><img src="image/sk-buff/nonlinear.png" alt="nonlinear.png" />
+</p>
+<p><span class="figure-number">Figure 7: </span>启用聚合分散I/O分片的报文</p>
+</div>
+
+<p>
+数据长度len 为 x+S1+S2。 nr_frags为2，frags_list为NULL，说明为聚合分散I/O分片。
+</p>
+
+
+
+<div class="figure">
+<p><img src="image/sk-buff/nonlinear-shared.png" alt="nonlinear-shared.png" />
+</p>
+<p><span class="figure-number">Figure 8: </span>启用聚合分散I/O分片的两个报文共享物理内存页</p>
+</div>
+
+
+
+<div class="figure">
+<p><img src="image/sk-buff/nonlinear-fraglist.png" alt="nonlinear-fraglist.png" />
+</p>
+<p><span class="figure-number">Figure 9: </span>包含FRAGLIST类型的分散聚合I/O数据的报文</p>
+</div>
+
+<p>
+frag_list不为NULL，说明存在FRAGLIST类型的分散聚合I/O数据。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5d681bd" class="outline-3">
+<h3 id="org5d681bd"><span class="section-number-3">2.3</span> 对GSO的支持</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+现在很多网络设备都可以完成一些三层四层校验和的计算，有些甚至可以维护四层协议的状态机，通过硬件完成分段或者分片，因此传输层通过网络层提交给设备时可能是GSO段。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29983;&#25104;GSO&#27573;&#26159;&#30340;MSS&#65292;GSO&#27573;&#26159;MSS&#30340;&#25972;&#25968;&#20493;</span>
+<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">gso_size</span>;
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;gso_size&#20998;&#21106;&#26102;&#20135;&#29983;&#30340;&#27573;&#25968;</span>
+<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">gso_segs</span>;
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25903;&#25345;&#30340;GSO&#31867;&#22411;</span>
+<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">gso_type</span>;
+</pre>
+</div>
+
+<p>
+常见GSO类型：
+</p>
+<ul class="org-ul">
+<li>SKB_GSO_TCPV4 ipv4的tcp段卸载</li>
+<li>SKB_GSO_UDP ipv4的udp分片卸载</li>
+<li>SKB_GSO_TCPV6 ipv6的tcp段卸载</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1883ab7" class="outline-3">
+<h3 id="org1883ab7"><span class="section-number-3">2.4</span> 访问skb_shared_info结构</h3>
+<div class="outline-text-3" id="text-2-4">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #87D700;">skb_shinfo</span>(<span style="color: #FF8C00;">SKB</span>) ((<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">skb_shared_info</span> *)(skb_end_pointer(SKB)))
+</pre>
+</div>
+
+<p>
+sk_buff结构中并没有指向skb_shared_info结构的指针，可以通过上面的宏来访问skb_shared_info结构。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8c39dd5" class="outline-2">
+<h2 id="org8c39dd5"><span class="section-number-2">3</span> 管理函数</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org8cb4383" class="outline-4">
+<h4 id="org8cb4383"><span class="section-number-4">3.0.1</span> SKB缓存池</h4>
+<div class="outline-text-4" id="text-3-0-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__init</span> skb_init(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21019;&#24314;skbuff_head_cache&#39640;&#36895;&#32531;&#23384;&#65292;&#19968;&#33324;&#24773;&#20917;&#19979;&#65292;SKB&#37117;&#26159;&#20174;&#35813;&#32531;&#23384;&#20013;&#20998;&#37197;</span><span style="color: #8B8878;"> */</span>
+	skbuff_head_cache = kmem_cache_create(<span style="color: #CDC673;">"skbuff_head_cache"</span>,
+					      <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>),
+					      0,
+					      SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+					      <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">        &#21019;&#24314;skbuff_fclone_cache&#39640;&#36895;&#32531;&#23384;&#12290;</span>
+
+<span style="color: #8B8878;">        &#22914;&#26524;&#22312;&#20998;&#37197;&#26102;&#30693;&#36947;SKB&#21487;&#33021;&#34987;&#20811;&#38534;&#65292;&#37027;&#20040;&#24212;&#35813;&#20174;&#35813;&#39640;&#36895;&#32531;&#23384;&#20013;&#20998;&#37197;SKB&#65292;</span>
+<span style="color: #8B8878;">        &#22312;&#27492;&#39640;&#36895;&#32531;&#23384;&#20013;&#20998;&#37197;SKB&#26102;&#65292;&#20250;&#21516;&#26102;&#20998;&#37197;&#19968;&#20010;&#21518;&#22791;&#30340;SKB&#65292;&#20415;&#20110;&#23558;&#26469;&#20811;&#38534;&#65292;</span>
+<span style="color: #8B8878;">        &#22914;&#27492;&#65292;&#22312;&#20811;&#38534;&#26102;&#23601;&#26080;&#38656;&#20877;&#27425;&#20998;&#37197;SKB&#65292;&#25552;&#21319;&#25928;&#29575;&#12290;</span>
+
+<span style="color: #8B8878;">        &#32467;&#23614;&#30340;atomic_t&#34920;&#31034;&#36825;&#19968;&#23545;SKB&#26377;&#20960;&#20010;&#34987;&#20351;&#29992;</span>
+<span style="color: #8B8878;">        */</span>
+	skbuff_fclone_cache = kmem_cache_create(<span style="color: #CDC673;">"skbuff_fclone_cache"</span>,
+						(2*<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>)) +
+						<span style="color: #FF1493;">sizeof</span>(atomic_t),
+						0,
+						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+						<span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org089b185" class="outline-4">
+<h4 id="org089b185"><span class="section-number-4">3.0.2</span> 分配SKB</h4>
+<div class="outline-text-4" id="text-3-0-2">
+<ol class="org-ol">
+<li>alloc_skb()
+<ul class="org-ul">
+<li>kmem_cache_alloc_node 分配SKB描述符。</li>
+<li>kmalloc_node_track_caller分配数据缓存区。</li>
+</ul></li>
+
+<li>dev_alloc_skb()，通常用于中断上下文，要求原子操作。</li>
+</ol>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">dev_alloc_skb</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">length</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">GFP_ATOMIC&#34920;&#31034;&#20998;&#37197;&#36807;&#31243;&#20026;&#21407;&#23376;&#25805;&#20316;</span>
+	<span style="color: #FF1493;">return</span> __dev_alloc_skb(length, GFP_ATOMIC);
+}
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">__dev_alloc_skb</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">length</span>,
+					      <span style="color: #5FD7FF;">gfp_t</span> <span style="color: #FF8C00;">gfp_mask</span>)
+{
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39044;&#30041;NET_SKB_PAD&#20010;&#23383;&#33410;&#65292;&#29992;&#20110;&#23384;&#20648;&#30828;&#20214;&#24103;&#22836;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span> = alloc_skb(length + NET_SKB_PAD, gfp_mask);
+	<span style="color: #FF1493;">if</span> (likely(skb))
+		skb_reserve(skb, NET_SKB_PAD);
+	<span style="color: #FF1493;">return</span> skb;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge723270" class="outline-4">
+<h4 id="orge723270"><span class="section-number-4">3.0.3</span> 释放SKB</h4>
+<div class="outline-text-4" id="text-3-0-3">
+
+<div class="figure">
+<p><img src="image/sk-buff/kfree-skb.png" alt="kfree-skb.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7582c3f" class="outline-4">
+<h4 id="org7582c3f"><span class="section-number-4">3.0.4</span> 数据预留和对齐</h4>
+<div class="outline-text-4" id="text-3-0-4">
+<ol class="org-ol">
+<li>skb_reverse()，在数据缓存区头部预留一定的空间。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-reverse.png" alt="skb-reverse.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>skb_push()，在数据缓存区前面加入数据。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-push.png" alt="skb-push.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>skb_put()，修改指向数据末尾的tail指针，使之向下扩大。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-put.png" alt="skb-put.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>skb_pull()，将skb的data指针向下移动。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-pull.png" alt="skb-pull.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7b1bf1d" class="outline-4">
+<h4 id="org7b1bf1d"><span class="section-number-4">3.0.5</span> 克隆和复制SKB</h4>
+<div class="outline-text-4" id="text-3-0-5">
+<ol class="org-ol">
+<li>skb_clone()，只复制SKB描述符。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-clone.png" alt="skb-clone.png" />
+</p>
+<p><span class="figure-number">Figure 15: </span>克隆后的SKB</p>
+</div>
+
+<ol class="org-ol">
+<li>pskb_copy()，同时复制SKB描述符和数据缓存区。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/pskb-copy.png" alt="pskb-copy.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>skb_copy()，同时复制SKB描述符、数据缓存区、聚合分散I/O存储区。</li>
+</ol>
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-copy.png" alt="skb-copy.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org986faed" class="outline-4">
+<h4 id="org986faed"><span class="section-number-4">3.0.6</span> 链表管理函数</h4>
+<div class="outline-text-4" id="text-3-0-6">
+<ol class="org-ol">
+<li>skb_queue_head_init()，初始化SKB链表头。</li>
+<li>skb_quiue_head(), skb_queue_tail() 加入头部和尾部。</li>
+<li>skb_dequeue(), skb_dequeue_tail()</li>
+<li>skb_queue_purge() 清空SKB链表。</li>
+<li>skb_queue_walk() 遍历SKB链表。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org9639717" class="outline-4">
+<h4 id="org9639717"><span class="section-number-4">3.0.7</span> 添加或删除尾部数据</h4>
+<div class="outline-text-4" id="text-3-0-7">
+<ol class="org-ol">
+<li>skb_add_data() 将用户空间数据添加到SKB数据缓存区尾部。</li>
+</ol>
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-add-data.png" alt="skb-add-data.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>skb_trim()，根据指定长度，删除SKB数据缓存区尾部数据。</li>
+</ol>
+
+<div class="figure">
+<p><img src="image/sk-buff/skb-trim.png" alt="skb-trim.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>pskb_trim()，类似skb_trim，能够可以处理非线性SKB。</li>
+</ol>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><img src="image/sk-buff/pskb-trima.png" alt="pskb-trima.png" /></td>
+<td class="org-left"><img src="image/sk-buff/pskb-trimb.png" alt="pskb-trimb.png" /></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div id="outline-container-org2c567d5" class="outline-4">
+<h4 id="org2c567d5"><span class="section-number-4">3.0.8</span> 拆分数据：skb_split()</h4>
+<div class="outline-text-4" id="text-3-0-8">
+<ol class="org-ol">
+<li>拆分长度不大于线性长度：</li>
+</ol>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><img src="image/sk-buff/skb-splita.png" alt="skb-splita.png" /></td>
+</tr>
+
+<tr>
+<td class="org-left"><img src="image/sk-buff/skb-splitb.png" alt="skb-splitb.png" /></td>
+</tr>
+</tbody>
+</table>
+
+<ol class="org-ol">
+<li>拆分长度大于线性长度：</li>
+</ol>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><img src="image/sk-buff/skb-split-morea.png" alt="skb-split-morea.png" /></td>
+</tr>
+
+<tr>
+<td class="org-left"><img src="image/sk-buff/skb-split-moreb.png" alt="skb-split-moreb.png" /></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgc1ff9bc" class="outline-4">
+<h4 id="orgc1ff9bc"><span class="section-number-4">3.0.9</span> 重新分配SKB的线性数据区：pskb_expand_head()</h4>
+<div class="outline-text-4" id="text-3-0-9">
+<p>
+根据指定长度重新扩展headroom和tailroom的空间。
+</p>
+
+
+<div class="figure">
+<p><img src="image/sk-buff/pskb-expand-head.png" alt="pskb-expand-head.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org082cbfb" class="outline-4">
+<h4 id="org082cbfb"><span class="section-number-4">3.0.10</span> 其他函数</h4>
+<div class="outline-text-4" id="text-3-0-10">
+<ol class="org-ol">
+<li>pskb_may_pull() 检测SKB是否有指定长度</li>
+<li>skb_queue_empty() SKB队列是否为空</li>
+<li>skb_realloc_headroom() 根据SKB得到新的SKB，确保新SKB有指定的headroom空间</li>
+<li>skb_get() 引用SKB</li>
+<li>skb_shared() SKB是否被引用多次</li>
+<li>skb_share_check() 若SKB被引用多次，则克隆SKB，并返回SKB。</li>
+<li>skb_unshare() 如果SKB被克隆，则复制SKB，返回复制的SKB。</li>
+<li>skb_orphan() 使得SKB不属于任何传输控制块。</li>
+<li>skb_cow() 确保SKB存在指定的headroom空间，若不足，则重新分配。</li>
+<li>skb_pagelen() 获取SKB线性数据区和SG类型的聚合分散I/O分片中的数据长度（不包括frag_list的数据）。</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-12-31 Fri 22:55</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

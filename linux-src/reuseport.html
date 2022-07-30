@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-18 Sat 22:34 -->
+<!-- 2022-04-25 Mon 22:45 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux reuseport</title>
@@ -248,36 +248,47 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgf968211">1. UDP reuseport</a>
+<li><a href="#orgd1176a9">1. TCP reuseport</a></li>
+<li><a href="#orgf968211">2. UDP reuseport</a>
 <ul>
-<li><a href="#orgb7d5562">1.1. 相关结构</a></li>
-<li><a href="#org7ffa177">1.2. udp_table</a></li>
-<li><a href="#org436e1df">1.3. inet_bind</a>
+<li><a href="#orgb7d5562">2.1. 相关结构</a></li>
+<li><a href="#org7ffa177">2.2. udp_table</a></li>
+<li><a href="#org436e1df">2.3. inet_bind</a>
 <ul>
-<li><a href="#org85817a2">1.3.1. udp_lib_get_port</a></li>
-<li><a href="#org2aa8898">1.3.2. udp_reuseport_add_sock</a></li>
+<li><a href="#org85817a2">2.3.1. udp_lib_get_port</a></li>
+<li><a href="#org2aa8898">2.3.2. udp_reuseport_add_sock</a></li>
 </ul>
 </li>
-<li><a href="#org137ebb0">1.4. udp_rcv</a>
+<li><a href="#org137ebb0">2.4. udp_rcv</a>
 <ul>
-<li><a href="#orgfe289be">1.4.1. reuseport_select_sock</a></li>
-<li><a href="#org9a8d09b">1.4.2. bpf注册</a></li>
+<li><a href="#orgfe289be">2.4.1. reuseport_select_sock</a></li>
+<li><a href="#org9a8d09b">2.4.2. bpf注册</a></li>
 </ul>
 </li>
-<li><a href="#org061db03">1.5. udp connect (指定SO_REUSEPORT属性的)</a></li>
+<li><a href="#org061db03">2.5. udp connect (指定SO_REUSEPORT属性的)</a></li>
+</ul>
+</li>
+<li><a href="#org40053db">3. 草稿</a>
+<ul>
+<li><a href="#org37a8e1d">3.1. 无端口</a></li>
+<li><a href="#org7796ea7">3.2. 有端口</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
+<div id="outline-container-orgd1176a9" class="outline-2">
+<h2 id="orgd1176a9"><span class="section-number-2">1</span> TCP reuseport</h2>
+</div>
+
 <div id="outline-container-orgf968211" class="outline-2">
-<h2 id="orgf968211"><span class="section-number-2">1</span> UDP reuseport</h2>
-<div class="outline-text-2" id="text-1">
+<h2 id="orgf968211"><span class="section-number-2">2</span> UDP reuseport</h2>
+<div class="outline-text-2" id="text-2">
 </div>
 <div id="outline-container-orgb7d5562" class="outline-3">
-<h3 id="orgb7d5562"><span class="section-number-3">1.1</span> 相关结构</h3>
-<div class="outline-text-3" id="text-1-1">
+<h3 id="orgb7d5562"><span class="section-number-3">2.1</span> 相关结构</h3>
+<div class="outline-text-3" id="text-2-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> <span style="color: #FF8C00;">udp_prot</span> = {
 	.name              = <span style="color: #CDC673;">"UDP"</span>,
@@ -349,8 +360,8 @@ for the JavaScript code in this tag.
 
 
 <div id="outline-container-org7ffa177" class="outline-3">
-<h3 id="org7ffa177"><span class="section-number-3">1.2</span> udp_table</h3>
-<div class="outline-text-3" id="text-1-2">
+<h3 id="org7ffa177"><span class="section-number-3">2.2</span> udp_table</h3>
+<div class="outline-text-3" id="text-2-2">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #CDC673;">/**</span>
 <span style="color: #CDC673;"> *      struct udp_table - UDP table</span>
@@ -379,8 +390,8 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-org436e1df" class="outline-3">
-<h3 id="org436e1df"><span class="section-number-3">1.3</span> inet_bind</h3>
-<div class="outline-text-3" id="text-1-3">
+<h3 id="org436e1df"><span class="section-number-3">2.3</span> inet_bind</h3>
+<div class="outline-text-3" id="text-2-3">
 
 <div class="figure">
 <p><img src="plantuml/reuseport/inet-bind.png" alt="inet-bind.png" />
@@ -389,8 +400,8 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-org85817a2" class="outline-4">
-<h4 id="org85817a2"><span class="section-number-4">1.3.1</span> udp_lib_get_port</h4>
-<div class="outline-text-4" id="text-1-3-1">
+<h4 id="org85817a2"><span class="section-number-4">2.3.1</span> udp_lib_get_port</h4>
+<div class="outline-text-4" id="text-2-3-1">
 <p>
 udp_prot 的get_port成员是udp_v4_get_port函数， 该函数会调用 udp_lib_get_port。
 </p>
@@ -437,8 +448,8 @@ udp_prot 的get_port成员是udp_v4_get_port函数， 该函数会调用 udp_lib
 </div>
 
 <div id="outline-container-org2aa8898" class="outline-4">
-<h4 id="org2aa8898"><span class="section-number-4">1.3.2</span> udp_reuseport_add_sock</h4>
-<div class="outline-text-4" id="text-1-3-2">
+<h4 id="org2aa8898"><span class="section-number-4">2.3.2</span> udp_reuseport_add_sock</h4>
+<div class="outline-text-4" id="text-2-3-2">
 <p>
 udp_reuseport_add_sock首先进行一系列检查：
 </p>
@@ -457,8 +468,8 @@ udp_reuseport_add_sock首先进行一系列检查：
 
 
 <div id="outline-container-org137ebb0" class="outline-3">
-<h3 id="org137ebb0"><span class="section-number-3">1.4</span> udp_rcv</h3>
-<div class="outline-text-3" id="text-1-4">
+<h3 id="org137ebb0"><span class="section-number-3">2.4</span> udp_rcv</h3>
+<div class="outline-text-3" id="text-2-4">
 
 <div class="figure">
 <p><img src="plantuml/reuseport/udp-rcv.png" alt="udp-rcv.png" />
@@ -467,8 +478,8 @@ udp_reuseport_add_sock首先进行一系列检查：
 </div>
 
 <div id="outline-container-orgfe289be" class="outline-4">
-<h4 id="orgfe289be"><span class="section-number-4">1.4.1</span> reuseport_select_sock</h4>
-<div class="outline-text-4" id="text-1-4-1">
+<h4 id="orgfe289be"><span class="section-number-4">2.4.1</span> reuseport_select_sock</h4>
+<div class="outline-text-4" id="text-2-4-1">
 <p>
 从reuseport组中选择一个sock。
 </p>
@@ -508,8 +519,8 @@ udp_reuseport_add_sock首先进行一系列检查：
 </div>
 
 <div id="outline-container-org9a8d09b" class="outline-4">
-<h4 id="org9a8d09b"><span class="section-number-4">1.4.2</span> bpf注册</h4>
-<div class="outline-text-4" id="text-1-4-2">
+<h4 id="org9a8d09b"><span class="section-number-4">2.4.2</span> bpf注册</h4>
+<div class="outline-text-4" id="text-2-4-2">
 <p>
 通过 setsockopt 函数可以注册reuseport 的bpf过滤器。
 </p>
@@ -578,8 +589,8 @@ udp_reuseport_add_sock首先进行一系列检查：
 </div>
 
 <div id="outline-container-org061db03" class="outline-3">
-<h3 id="org061db03"><span class="section-number-3">1.5</span> udp connect (指定SO_REUSEPORT属性的)</h3>
-<div class="outline-text-3" id="text-1-5">
+<h3 id="org061db03"><span class="section-number-3">2.5</span> udp connect (指定SO_REUSEPORT属性的)</h3>
+<div class="outline-text-3" id="text-2-5">
 <p>
 调用connect之后，会经由一下路径：
 </p>
@@ -599,11 +610,57 @@ udp_reuseport_add_sock首先进行一系列检查：
 </div>
 </div>
 </div>
+
+<div id="outline-container-org40053db" class="outline-2">
+<h2 id="org40053db"><span class="section-number-2">3</span> 草稿</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+UDP socket的绑定过程
+</p>
+
+<p>
+hash2_nulladdr: 根据端口计算的 hash key
+hash2_partial: 根据地址计算的 hash key，并赋值给udp_sk的 udp_portaddr_hash成员 用于预计算二级hash key
+</p>
+
+<p>
+调用 udp_lib_get_port(sk, snum, hash2_nulladdr)
+</p>
+</div>
+
+<div id="outline-container-org37a8e1d" class="outline-3">
+<h3 id="org37a8e1d"><span class="section-number-3">3.1</span> 无端口</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+获取端口范围，从一级hash中查找
+</p>
+
+<p>
+跳转 found：
+</p>
+
+<p>
+udp_port_hash = 端口
+udp_portaddr_hash ^= 端口
+</p>
+
+<p>
+从 sk_node 链表移出该sock
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org7796ea7" class="outline-3">
+<h3 id="org7796ea7"><span class="section-number-3">3.2</span> 有端口</h3>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-18 Sat 22:34</p>
+<p class="date">Created: 2022-04-25 Mon 22:45</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

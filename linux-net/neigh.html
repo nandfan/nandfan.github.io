@@ -1,0 +1,1938 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-01-07 Fri 23:25 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>邻居子系统</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">邻居子系统</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgc3a5f8b">1. 邻居子系统</a>
+<ul>
+<li><a href="#org5cf3eb3">1.1. 系统参数</a></li>
+</ul>
+</li>
+<li><a href="#orgbadb413">2. 邻居子系统结构</a>
+<ul>
+<li><a href="#org2cf519f">2.1. neigh_table结构</a></li>
+<li><a href="#org38277a0">2.2. neighbour结构</a></li>
+<li><a href="#orgf883580">2.3. neigh_ops结构</a></li>
+<li><a href="#org8b3496b">2.4. neigh_parms结构</a></li>
+<li><a href="#org871062a">2.5. pneigh_entry结构</a></li>
+<li><a href="#orgfb07d83">2.6. neigh_statistics结构</a></li>
+<li><a href="#orgbd746df">2.7. hh_cache结构</a></li>
+</ul>
+</li>
+<li><a href="#orgb50f846">3. 邻居表的初始化</a></li>
+<li><a href="#org4a8a0f4">4. 邻居项的状态机</a></li>
+<li><a href="#orgbe67a19">5. 邻居项的添加和删除</a>
+<ul>
+<li><a href="#org78ae16d">5.1. netlink接口</a>
+<ul>
+<li><a href="#org94e49e6">5.1.1. neigh_add</a></li>
+</ul>
+</li>
+<li><a href="#orgb4d9d4c">5.2. ioctl</a></li>
+<li><a href="#orgf934ae5">5.3. 路由表项和邻居项的绑定</a></li>
+<li><a href="#orgb630001">5.4. 接收到并非请求的应答报文</a></li>
+</ul>
+</li>
+<li><a href="#org43af9dd">6. 邻居项的创建和初始化</a>
+<ul>
+<li><a href="#org481f1be">6.1. neigh_alloc()</a></li>
+<li><a href="#orgd200a86">6.2. neigh_create()</a></li>
+</ul>
+</li>
+<li><a href="#org637bc59">7. 邻居项散列表的扩容</a></li>
+<li><a href="#orgf1695ff">8. 邻居项的查找</a>
+<ul>
+<li><a href="#orgd7c083a">8.1. neigh_lookup()</a></li>
+<li><a href="#orgf2b91f5">8.2. neigh_lookup_nodev()</a></li>
+<li><a href="#org7deba2a">8.3. __neigh_lookup() 和 neigh_lookup_errno()</a></li>
+</ul>
+</li>
+<li><a href="#org3ab0b01">9. 邻居项的更新</a></li>
+<li><a href="#org1dc9715">10. 垃圾回收</a>
+<ul>
+<li><a href="#org42bcf6b">10.1. 同步回收</a></li>
+<li><a href="#org868f968">10.2. 异步回收</a></li>
+</ul>
+</li>
+<li><a href="#orgdd41dd0">11. 外部事件</a></li>
+<li><a href="#org0666000">12. 邻居项状态</a></li>
+<li><a href="#org71de390">13. 代理项</a>
+<ul>
+<li><a href="#org419d26f">13.1. 代理项的查找添加删除</a></li>
+<li><a href="#org76d4bca">13.2. 延时处理代理的请求报文</a></li>
+</ul>
+</li>
+<li><a href="#orgdd4b0cc">14. 邻居项输出函数</a>
+<ul>
+<li><a href="#org7934510">14.1. 丢弃</a></li>
+<li><a href="#org9ef9939">14.2. 慢速发送</a>
+<ul>
+<li><a href="#org8ee27ac">14.2.1. neigh_resolve_output()</a></li>
+<li><a href="#org0d0f5fc">14.2.2. neigh_event_send()</a></li>
+<li><a href="#orgaea9b26">14.2.3. neigh_hh_init()</a></li>
+</ul>
+</li>
+<li><a href="#orgd2c08a9">14.3. 快速发送</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgc3a5f8b" class="outline-2">
+<h2 id="orgc3a5f8b"><span class="section-number-2">1</span> 邻居子系统</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+邻居是指在同一个IP局域网内的主机，或者邻居之间在三层上仅相隔一跳的距离。
+</p>
+
+<p>
+邻居子系统提供了三层协议地址与二层协议地址之间的映射关系，此外还提供二层首部缓存，以加速发送数据包。
+</p>
+
+<p>
+发送数据时，首先查找路由，如果找到，则查看邻居表中是否存在相应的映射关系，没有映射关系则新建邻居项; 然后判断邻居项是否为可用状态，如果不可用，则将数据报缓存到发送队列，然后发送请求; 接收到应答后，将邻居项置为可用，并将缓存队列的报文发送出去; 如果指定时间内未收到应答，则将邻居项置为无效。
+</p>
+</div>
+
+<div id="outline-container-org5cf3eb3" class="outline-3">
+<h3 id="org5cf3eb3"><span class="section-number-3">1.1</span> 系统参数</h3>
+<div class="outline-text-3" id="text-1-1">
+<ul class="org-ul">
+<li>mcast_solicit  标识一个多播或广播的邻居项不可达之前，尝试解析的最大次数</li>
+<li>ucast_solicit  请求ARP守护进程前，尝试发送单播探测的最大次数</li>
+<li>retrans_time 重传请求的延迟时间</li>
+<li>base_reachable_time  另据项有效期初始值</li>
+<li>delay_first_probe_time 邻居项过期后，间隔多长时间发送探测</li>
+<li>gc_stale_time 检测邻居项过期的间隔</li>
+<li>unres_qlen 指定每个未解析地址上排队的数据报排队数量</li>
+<li>proxy_qlen 指定允许在proxy-ARP地址上排队的数据报数量</li>
+<li>anycast_delay</li>
+<li>proxy_delay 收到未知代理ARP地址的ARP请求时，延迟响应的时间</li>
+<li>locktime</li>
+<li>gc_interval  垃圾回收的间隔</li>
+<li>gc_thresh1  缓存中最少保持的邻居项条数</li>
+<li>gc_thresh2  缓存中保持的邻居项条数的软上限</li>
+<li>gc_thresh3  缓存中保持的邻居项条数的硬上限</li>
+<li>retrans_time_ms 同retrans_time  单位ms</li>
+<li>base_reachable_time_ms 同base_reachable_time 单位ms</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbadb413" class="outline-2">
+<h2 id="orgbadb413"><span class="section-number-2">2</span> 邻居子系统结构</h2>
+<div class="outline-text-2" id="text-2">
+
+<div class="figure">
+<p><img src="image/neigh/neigh-st.png" alt="neigh-st.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>邻居子系统结构</p>
+</div>
+</div>
+
+<div id="outline-container-org2cf519f" class="outline-3">
+<h3 id="org2cf519f"><span class="section-number-3">2.1</span> neigh_table结构</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+neigh_table结构用来存储与邻居协议相关的参数、功能函数，及邻居散列表。
+</p>
+
+<p>
+每个neigh_table结构的实例对应一个邻居协议，所有实例链接在全局链表neigh_tables中。
+</p>
+
+<p>
+ARP协议的neigh_table结构的实例是 <i><b>arp_tbl</b></i> 。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span>      *<span style="color: #FF8C00;">next</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#38142;&#25509;&#21040; neigh_tables &#38142;&#34920;&#20013;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">family</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25152;&#23646;&#22320;&#22336;&#26063;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">entry_size</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#32467;&#26500;&#22823;&#23567;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">key_len</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">hash&#20989;&#25968;&#20351;&#29992;&#30340;key&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">__u32</span>           (*<span style="color: #87D700;">hash</span>)(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">pkey</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#34920;&#39033;&#21021;&#22987;&#21270;&#20989;&#25968;&#65292; arp&#20026; arp_constructor()</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">constructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20195;&#29702;&#34920;&#39033;&#21021;&#22987;&#21270;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">pconstructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pneigh_entry</span> *);
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">pdestructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pneigh_entry</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#22788;&#29702;neigh_table-&gt;proxy_queue&#32531;&#23384;&#38431;&#21015;&#30340;&#20195;&#29702;ARP&#25253;&#25991;</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">proxy_redo</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #5FD7FF;">char</span>            *<span style="color: #FF8C00;">id</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#20998;&#37197;neighbour&#32467;&#26500;&#23454;&#20363;&#30340;&#32531;&#20914;&#27744;&#21517;&#31216;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span>      <span style="color: #FF8C00;">parms</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;&#30456;&#20851;&#30340;&#21487;&#35843;&#33410;&#21442;&#25968;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">HACK. gc_* shoul follow parms without a gap!</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">gc_interval</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22403;&#22334;&#22238;&#25910;&#38388;&#38548;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">gc_thresh1</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32531;&#23384;&#20013;&#30340;&#37051;&#23621;&#39033;&#23567;&#20110;&#35813;&#20540;&#26102;&#19981;&#20250;&#36827;&#34892;&#22403;&#22334;&#22238;&#25910;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">gc_thresh2</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#25968;&#37327;&#36229;&#36807;&#35813;&#20540;&#65292;&#21017;&#26032;&#24314;&#37051;&#23621;&#39033;&#26102;&#65292;&#22914;&#26524;&#36229;&#36807;5s&#26410;&#21047;&#26032;&#65292;&#21017;&#31435;&#21363;&#21047;&#26032;&#24182;&#24378;&#21046;&#22403;&#22334;&#22238;&#25910;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">gc_thresh3</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#36229;&#36807;&#35813;&#20540;&#26102;&#65292;&#26032;&#24314;&#37051;&#23621;&#39033;&#26102;&#25110;&#24378;&#21046;&#21047;&#26032;&#24182;&#25191;&#34892;&#22403;&#22334;&#22238;&#25910;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">last_flush</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#21892;&#24515;&#37051;&#23621;&#34920;&#30340;&#26102;&#38388;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>   <span style="color: #FF8C00;">gc_timer</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22403;&#22334;&#22238;&#25910;&#23450;&#26102;&#22120;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>   <span style="color: #FF8C00;">proxy_timer</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">proxy_queue&#38431;&#21015;&#30340;&#23450;&#26102;&#22120;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">proxy_queue</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#32531;&#23384;&#38656;&#35201;&#36827;&#34892;&#20195;&#29702;&#30340;ARP&#25253;&#25991;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">entries</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25972;&#20010;&#34920;&#20013;&#30340;&#37051;&#23621;&#39033;&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">rwlock_t</span>                <span style="color: #FF8C00;">lock</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#34920;&#30340;&#35835;&#20889;&#38145;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">last_rand</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35760;&#24405;neigh_params&#32467;&#26500;&#20013;reachable_time&#25104;&#21592;&#30340;&#26356;&#26032;&#26102;&#38388;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kmem_cache</span>               *<span style="color: #FF8C00;">kmem_cachep</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#20998;&#37197;neighbour&#32467;&#26500;&#23454;&#20363;&#30340;&#32531;&#23384;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_statistics</span> *<span style="color: #FF8C00;">stats</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32479;&#35745;&#25968;&#25454;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span>        **<span style="color: #FF8C00;">hash_buckets</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#23384;&#20648;&#37051;&#23621;&#39033;&#30340;&#25955;&#21015;&#34920;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">hash_mask</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25955;&#21015;&#34920;&#26742;&#25968;&#20943;1</span>
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">hash_rnd</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38543;&#26426;&#25968;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">hash_chain_gc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#26631;&#35760;&#19979;&#19968;&#27425;&#36827;&#34892;&#22403;&#22334;&#22238;&#25910;&#30340;&#25955;&#21015;&#34920;&#30340;&#26742;&#24207;&#21495;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pneigh_entry</span>     **<span style="color: #FF8C00;">phash_buckets</span>;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_PROC_FS
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span>   *<span style="color: #FF8C00;">pde</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312; /proc/net/stat/ &#30446;&#24405;&#27880;&#20876;arp_cache &#25991;&#20214;</span>
+<span style="color: #FF1493;">#endif</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org38277a0" class="outline-3">
+<h3 id="org38277a0"><span class="section-number-3">2.2</span> neighbour结构</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+邻居项使用neighbour结构表示，存储了邻居相关的信息，例如状态、二层三层协议地址、提供给三层协议的函数指针、定时器、缓存的二层首部等等。
+</p>
+
+<p>
+<i><b>一个邻居并不代表一个主机，而是一个三层协议地址。</b></i>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span>        *<span style="color: #FF8C00;">next</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#25554;&#20837;&#21040;&#25955;&#21015;&#34920;&#26742;&#30340;&#38142;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span>      *<span style="color: #FF8C00;">tbl</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#30456;&#20851;&#30340;neigh_table&#32467;&#26500;&#23454;&#20363;&#12290;&#20363;&#22914;arp_tbl</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span>      *<span style="color: #FF8C00;">parms</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35843;&#33410;&#37051;&#23621;&#21327;&#35758;&#30340;&#21442;&#25968;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">dev</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;&#35813;&#35774;&#22791;&#25165;&#33021;&#35775;&#38382;&#21040;&#37051;&#23621;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">used</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#19968;&#27425;&#34987;&#20351;&#29992;&#30340;&#26102;&#38388;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">confirmed</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#21518;&#19968;&#27425;&#30830;&#35748;&#35813;&#37051;&#23621;&#21487;&#36798;&#30340;&#26102;&#38388;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">updated</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#19968;&#27425;&#34987;neigh_update()&#26356;&#26032;&#30340;&#26102;&#38388;&#12290;</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">flags</span>;
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">nud_state</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#37051;&#23621;&#39033;&#30340;&#29366;&#24577;</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">type</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#30340;&#22320;&#22336;&#31867;&#22411;&#12290;&#21644;&#36335;&#30001;&#34920;&#39033;&#31867;&#22411;&#20540;&#30456;&#21516;</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">dead</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;1&#26102;&#65292;&#34920;&#31034;&#35813;&#37051;&#23621;&#39033;&#27491;&#22312;&#34987;&#21024;&#38500;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">probes</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23581;&#35797;&#21457;&#36865;&#35831;&#27714;&#25253;&#25991;&#30340;&#27425;&#25968;</span>
+	<span style="color: #5FD7FF;">rwlock_t</span>                <span style="color: #FF8C00;">lock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19982;&#23384;&#20648;&#22312;primary_key&#20013;&#30340;&#19977;&#23618;&#21327;&#35758;&#22320;&#22336;&#30456;&#23545;&#24212;&#30340;&#20108;&#36827;&#21046;&#20108;&#23618;&#30828;&#20214;&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">ha</span>[ALIGN(MAX_ADDR_LEN, <span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>))];
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span> *<span style="color: #FF8C00;">hh</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#32531;&#23384;&#20108;&#23618;&#21327;&#35758;&#39318;&#37096;&#30340;&#38142;&#34920;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">refcnt</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#25253;&#25991;&#36755;&#20986;&#21040;&#35813;&#37051;&#23621;&#30340;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">arp_queue</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#37051;&#23621;&#39033;&#26080;&#25928;&#26102;&#65292;&#32531;&#23384;&#35201;&#21457;&#36865;&#30340;&#25253;&#25991;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>       <span style="color: #FF8C00;">timer</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_ops</span>        *<span style="color: #FF8C00;">ops</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#37051;&#23621;&#39033;&#20989;&#25968;&#25351;&#38024;&#34920;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">primary_key</span>[0]; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;hash&#20989;&#25968;&#20351;&#29992;&#30340;&#19977;&#23618;&#21327;&#35758;&#22320;&#22336;&#65292;&#20363;&#22914;ipv4&#30340;ip&#22320;&#22336;</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf883580" class="outline-3">
+<h3 id="orgf883580"><span class="section-number-3">2.3</span> neigh_ops结构</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+用于表示邻居项函数指针表，其中包含了在邻居的生存周期中的不同时期需要调用的函数，通过该结构实现三层和二层的dev_queue_xmit之间的转接。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_ops</span>
+{
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">family</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22320;&#22336;&#26063;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#35831;&#27714;&#25253;&#25991;</span>
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">solicit</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#32531;&#23384;&#20102;&#25253;&#25991;&#65292;&#32780;&#37051;&#23621;&#39033;&#26080;&#25928;&#65292;&#27492;&#26102;&#36890;&#36807;&#35813;&#20989;&#25968;&#21521;&#19977;&#23618;&#21327;&#35758;&#25253;&#21578;&#38169;&#35823;</span>
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">error_report</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#29992;&#36755;&#20986;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#21487;&#36798;&#26102;&#30340;&#36755;&#20986;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">connected_output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32531;&#23384;&#20102;&#20108;&#23618;&#39318;&#37096;&#26102;&#30340;&#36755;&#20986;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">hh_output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20197;&#19978;&#25509;&#21475;&#38500;&#20102;hh_output&#22806;&#65292;&#37117;&#26159;&#22312;&#20934;&#22791;&#22909;&#20108;&#23618;&#39318;&#37096;&#21518;&#65292;&#35843;&#29992;queue_xmit&#25509;&#21475;&#36755;&#20986;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">queue_xmit</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8b3496b" class="outline-3">
+<h3 id="org8b3496b"><span class="section-number-3">2.4</span> neigh_parms结构</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+邻居协议参数配置块。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span> *<span style="color: #FF8C00;">next</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#21516;&#19968;&#20010;&#21327;&#35758;&#26063;&#30340;&#23454;&#20363;&#38142;&#25509;&#22312;&#19968;&#36215;</span>
+	<span style="color: #5FD7FF;">int</span>     (*<span style="color: #87D700;">neigh_setup</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *);
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">neigh_destructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#25152;&#23646;&#30340;&#37051;&#23621;&#34920; &#22914;arp_tbl.</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#34920;&#30340;sysctl&#34920;</span>
+	<span style="color: #5FD7FF;">void</span>    *<span style="color: #FF8C00;">sysctl_table</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">dead</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;1&#34920;&#31034;&#35813;&#23454;&#20363;&#27491;&#22312;&#21024;&#38500;</span>
+	<span style="color: #5FD7FF;">atomic_t</span> <span style="color: #FF8C00;">refcnt</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rcu_head</span> <span style="color: #FF8C00;">rcu_head</span>;
+
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">base_reachable_time</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35745;&#31639; retrans_time &#30340;&#22522;&#20934;&#20540;</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">retrans_time</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;ARP&#35831;&#27714;&#25253;&#25991;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">gc_staletime</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#31354;&#38386;&#26102;&#38388;&#36798;&#21040;&#35813;&#20540;&#26102;&#65292;&#20250;&#34987;&#21024;&#38500;</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">reachable_time</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">NUD_REACHABLE&#29366;&#24577;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#22312;NUD_DELAY&#29366;&#24577;&#30340;&#26102;&#38388;&#36798;&#21040;&#35813;&#20540;&#21518; &#36827;&#20837;NUD_PROBE&#29366;&#24577;</span>
+<span style="color: #8B8878;">        &#25110;&#32773;&#22312;NUD_REACHABLE&#29366;&#24577;&#25345;&#32493;&#35813;&#26102;&#38388;&#21518;&#65292;&#36827;&#20837;NUD_DELAY&#29366;&#24577;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">delay_probe_time</span>;
+
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">queue_len</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">arp_queue&#38431;&#21015;&#38271;&#24230;&#19978;&#38480;</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">ucast_probes</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">app_probes</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">mcast_probes</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35299;&#26512;&#37051;&#23621;&#22320;&#22336;&#26102;&#65292;&#21487;&#21457;&#36865;&#30340;&#24191;&#25773;ARP&#35831;&#27714;&#30340;&#25253;&#25991;&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">anycast_delay</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">proxy_delay</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">proxy_qlen</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">locktime</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org871062a" class="outline-3">
+<h3 id="org871062a"><span class="section-number-3">2.5</span> pneigh_entry结构</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+该结构用于保存允许代理的条件，只有和结构中的接收设备及目标地址匹配时，才能代理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pneigh_entry</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pneigh_entry</span>     *<span style="color: #FF8C00;">next</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38142;&#25509;&#21040; neigh_table &#30340; phash_buchets&#25955;&#21015;&#34920;&#30340;&#19968;&#20010;&#26742;&#20869;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">dev</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;&#35813;&#35774;&#22791;&#25509;&#25910;&#30340;ARP&#35831;&#27714;&#25253;&#25991;&#25165;&#33021;&#20195;&#29702;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">flags</span>;
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">key</span>[0]; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#19977;&#23618;&#21327;&#35758;&#22320;&#22336;</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfb07d83" class="outline-3">
+<h3 id="orgfb07d83"><span class="section-number-3">2.6</span> neigh_statistics结构</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+该结构用来存储统计信息。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_statistics</span>
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">allocs</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#20998;&#37197;&#30340;neighbour&#32467;&#26500;&#23454;&#20363;&#24635;&#25968;&#65288;&#21253;&#21547;&#24050;&#37322;&#25918;&#30340;&#65289;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">destroys</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#37322;&#25918;&#30340;&#37051;&#23621;&#39033;&#24635;&#25968;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">hash_grows</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25193;&#23481;hash_buckets&#25955;&#21015;&#34920;&#30340;&#27425;&#25968;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">res_failed</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23581;&#35797;&#35299;&#26512;&#37051;&#23621;&#22320;&#22336;&#30340;&#22833;&#36133;&#27425;&#25968;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">lookups</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#29992;neigh_lookup()&#30340;&#27425;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">hits</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">neigh_lookup() &#25104;&#21151;&#30340;&#27425;&#25968;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">rcv_probes_mcast</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">rcv_probes_ucast</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">periodic_gc_runs</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#29992;neigh_periodic_timer()&#30340;&#27425;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">forced_gc_runs</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#29992;neigh_forced_gc()&#30340;&#27425;&#25968;</span><span style="color: #8B8878;"> */</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbd746df" class="outline-3">
+<h3 id="orgbd746df"><span class="section-number-3">2.7</span> hh_cache结构</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+该结构用来缓存二层首部。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span> *<span style="color: #FF8C00;">hh_next</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38142;&#25509;&#21516;&#19968;&#20010;&#37051;&#23621;&#39033;&#30340;&#22810;&#20010;hh_cache&#23454;&#20363;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>        <span style="color: #FF8C00;">hh_refcnt</span>;
+
+	<span style="color: #5FD7FF;">u16</span>             <span style="color: #FF8C00;">hh_len</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20108;&#23618;&#39318;&#37096;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">hh_output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25253;&#25991;&#36755;&#20986;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">seqlock_t</span>       <span style="color: #FF8C00;">hh_lock</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">cached hardware header; allow for machine alignment needs.</span><span style="color: #8B8878;">        */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">HH_DATA_MOD</span>     16
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">HH_DATA_OFF</span>(<span style="color: #FF8C00;">__len</span>) \
+	(HH_DATA_MOD - (((__len - 1) &amp; (HH_DATA_MOD - 1)) + 1))
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">HH_DATA_ALIGN</span>(<span style="color: #FF8C00;">__len</span>) \
+	(((__len)+(HH_DATA_MOD-1))&amp;~(HH_DATA_MOD - 1))
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#23384;&#25918;&#20108;&#23618;&#39318;&#37096;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">hh_data</span>[HH_DATA_ALIGN(LL_MAX_HEADER) / <span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">long</span>)];
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb50f846" class="outline-2">
+<h2 id="orgb50f846"><span class="section-number-2">3</span> 邻居表的初始化</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+邻居表通过neigh_table_init()函数初始化。
+</p>
+
+<p>
+对于arp协议，则邻居表为 arp_tbl，在ARP模块初始化时由 arp_init()调用neigh_table_init进行初始化， 实际的初始化工作是由函数neigh_table_init_no_netlink 来完成。
+</p>
+
+<p>
+邻居表的初始化过程：
+</p>
+<ul class="org-ul">
+<li>以base_reachable_time为基准值调用随机函数来初始化reachable_time</li>
+<li>分配该邻居表的邻居项缓存</li>
+<li>分配邻居表的nenigh_statistics实例</li>
+<li>创建 /proc/net/stat/arp_cache文件</li>
+<li>创建存储邻居项的hash_buckets散列表</li>
+<li>创建存储代理项的phash_buckets散列表</li>
+<li>获取计算hash_buckets散列表关键字的随机值</li>
+<li>初始化垃圾回收定时器 gc_timer</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org4a8a0f4" class="outline-2">
+<h2 id="org4a8a0f4"><span class="section-number-2">4</span> 邻居项的状态机</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+邻居项结构 neighbour 中的 nud_state成员，用于表示该邻居项当前所处的状态。
+</p>
+
+<p>
+邻居表的垃圾回收定时器定期扫描所有邻居表项，清除状态为 NUD_FAILED 以及长时间未被使用的邻居表项，还将超时的邻居表项从NUD_CONNECTED 改为过期状态 NUD_STALE。
+</p>
+
+
+<div class="figure">
+<p><img src="image/neigh/neigh-stat.png" alt="neigh-stat.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>邻居项状态迁移</p>
+</div>
+
+<ul class="org-ul">
+<li>NUD_NONE 邻居项刚建立时的状态。此状态下，没有硬件地址可用，一旦有报文输出到该邻居，则触发请求该邻居的硬件地址，进入 NUD_INCOMPLETE状态，并缓存要发送的报文。</li>
+<li>NUD_INCOMPLETE 请求报文已经发送</li>
+<li>NUD_REACHABLE 可达状态，已经得到并缓存了邻居的硬件地址。进入该状态时，会设置邻居项相关的output函数，并发送缓存的报文。 在该状态闲置时间达到阈值时，进入NUD_STALE状态</li>
+<li>NUD_STALE 过期状态</li>
+<li>NUD_DELAY 报文已发出，需得到邻居的可达性确认。指定时间未收到确认，则进入 NUD_PROBE状态，否则进入NUD_REACHABLE</li>
+<li>NUD_PROBE 过度状态，类似 NUD_INComplete</li>
+<li>NUD_FAILED 由于没有接收到应答而无法访问状态</li>
+<li>NUD_NOARP 标识邻居项无需将三层协议地址映射到二层协议地址</li>
+<li>NUD_PERMANENT 该状态一般通过应用鞥命令设置，邻居项的硬件地址被静态配置。</li>
+</ul>
+
+<p>
+以上状态可以分为三大类，对此，内核定义了三个组合状态：
+</p>
+<ul class="org-ul">
+<li>NUD_IN_TIMER  定时器状态</li>
+<li>NUD_VALID 有效状态</li>
+<li>NUD_CONNECTED 连接状态</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NUD_IN_TIMER</span>    (NUD_INCOMPLETE|NUD_REACHABLE|NUD_DELAY|NUD_PROBE)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NUD_IN_TIMER</span>    (NUD_INCOMPLETE|NUD_REACHABLE|NUD_DELAY|NUD_PROBE)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NUD_IN_TIMER</span>    (NUD_INCOMPLETE|NUD_REACHABLE|NUD_DELAY|NUD_PROBE)
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbe67a19" class="outline-2">
+<h2 id="orgbe67a19"><span class="section-number-2">5</span> 邻居项的添加和删除</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+添加邻居项的方式：
+</p>
+<ul class="org-ul">
+<li>应用层可以通过ip和arp命令添加邻居项;</li>
+<li>在添加的路由项与路径绑定时，也会创建邻居项;</li>
+<li>接收到并非请求的应答时，也可能创建邻居项;</li>
+</ul>
+
+<p>
+删除邻居项的方式：
+</p>
+<ul class="org-ul">
+<li>ip 和 arp 命令删除;</li>
+<li>垃圾回收删除;</li>
+</ul>
+</div>
+
+<div id="outline-container-org78ae16d" class="outline-3">
+<h3 id="org78ae16d"><span class="section-number-3">5.1</span> netlink接口</h3>
+<div class="outline-text-3" id="text-5-1">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">操作类型</th>
+<th scope="col" class="org-left">执行函数</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">RTM_NEWNEIGH</td>
+<td class="org-left">neigh_add</td>
+<td class="org-left">添加邻居项</td>
+</tr>
+
+<tr>
+<td class="org-left">RTM_DELNEIGH</td>
+<td class="org-left">neigh_delete</td>
+<td class="org-left">邻居项删除</td>
+</tr>
+
+<tr>
+<td class="org-left">RTM_GETNEIGH</td>
+<td class="org-left">neigh_dump_info</td>
+<td class="org-left">获取邻居项</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="figure">
+<p><img src="image/neigh/neigh-nl-msg.png" alt="neigh-nl-msg.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>操作邻居项的netlink消息结构</p>
+</div>
+
+<ul class="org-ul">
+<li>ndm_family 邻居项所属的地址族</li>
+<li>ndm_ifindex 邻居项的网络设备索引</li>
+<li>ndm_state 邻居项状态</li>
+<li>ndm_flags 邻居项标志</li>
+<li>ndm_type 邻居项地址类型</li>
+</ul>
+</div>
+
+<div id="outline-container-org94e49e6" class="outline-4">
+<h4 id="org94e49e6"><span class="section-number-4">5.1.1</span> neigh_add</h4>
+<div class="outline-text-4" id="text-5-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">neigh_add</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span> *<span style="color: #FF8C00;">nlh</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ndmsg</span> *<span style="color: #FF8C00;">ndm</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span> *<span style="color: #FF8C00;">tb</span>[NDA_MAX+1];
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35299;&#26512;netlink&#28040;&#24687;&#20013;neigh&#28040;&#24687;&#30340;&#25193;&#23637;&#23646;&#24615;</span>
+	err = nlmsg_parse(nlh, <span style="color: #FF1493;">sizeof</span>(*ndm), tb, NDA_MAX, <span style="color: #AF87FF;">NULL</span>);
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	err = -EINVAL;
+	<span style="color: #FF1493;">if</span> (tb[NDA_DST] == <span style="color: #AF87FF;">NULL</span>)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	ndm = nlmsg_data(nlh); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;neigh&#28040;&#24687;</span>
+	<span style="color: #FF1493;">if</span> (ndm-&gt;ndm_ifindex) {
+		dev = dev_get_by_index(ndm-&gt;ndm_ifindex);
+		<span style="color: #FF1493;">if</span> (dev == <span style="color: #AF87FF;">NULL</span>) {
+			err = -ENODEV;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;&#20108;&#23618;&#22320;&#22336;&#25193;&#23637;&#23646;&#24615;&#65292;&#21017;&#26657;&#39564;&#22320;&#22336;&#38271;&#24230;</span>
+		<span style="color: #FF1493;">if</span> (tb[NDA_LLADDR] &amp;&amp; nla_len(tb[NDA_LLADDR]) &lt; dev-&gt;addr_len)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+	}
+
+	read_lock(&amp;neigh_tbl_lock);
+	<span style="color: #FF1493;">for</span> (tbl = neigh_tables; tbl; tbl = tbl-&gt;next) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#25152;&#26377;&#37051;&#23621;&#34920;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span> = NEIGH_UPDATE_F_ADMIN | NEIGH_UPDATE_F_OVERRIDE;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>;
+		<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">dst</span>, *<span style="color: #FF8C00;">lladdr</span>;
+		<span style="color: #FF1493;">if</span> (tbl-&gt;family != ndm-&gt;ndm_family)
+			<span style="color: #FF1493;">continue</span>;
+		read_unlock(&amp;neigh_tbl_lock);
+		<span style="color: #FF1493;">if</span> (nla_len(tb[NDA_DST]) &lt; tbl-&gt;key_len)<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#37051;&#23621;&#39033;&#30340;&#22320;&#22336;&#38271;&#24230;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+		dst = nla_data(tb[NDA_DST]); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#37051;&#23621;&#39033;&#22320;&#22336;</span>
+		lladdr = tb[NDA_LLADDR] ? nla_data(tb[NDA_LLADDR]) : <span style="color: #AF87FF;">NULL</span>;
+		<span style="color: #FF1493;">if</span> (ndm-&gt;ndm_flags &amp; NTF_PROXY) {
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pneigh_entry</span> *<span style="color: #FF8C00;">pn</span>;
+			err = -ENOBUFS;
+			pn = pneigh_lookup(tbl, dst, dev, 1);
+			<span style="color: #FF1493;">if</span> (pn) {
+				pn-&gt;flags = ndm-&gt;ndm_flags;
+				err = 0;
+			}
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+		}
+
+		<span style="color: #FF1493;">if</span> (dev == <span style="color: #AF87FF;">NULL</span>)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#37051;&#23621;&#39033;&#22320;&#22336;&#21644;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#65292;&#26597;&#25214;&#37051;&#23621;&#34920;&#26159;&#21542;&#23384;&#22312;&#37051;&#23621;&#39033;</span>
+		neigh = neigh_lookup(tbl, dst, dev);
+		<span style="color: #FF1493;">if</span> (neigh == <span style="color: #AF87FF;">NULL</span>) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;</span>
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(nlh-&gt;nlmsg_flags &amp; NLM_F_CREATE)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#25351;&#23450;&#21019;&#24314;&#26631;&#35782;</span>
+				err = -ENOENT;
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+			}
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#24182;&#28155;&#21152;&#37051;&#23621;&#39033;</span>
+			neigh = __neigh_lookup_errno(tbl, dst, dev);
+			<span style="color: #FF1493;">if</span> (IS_ERR(neigh)) {
+				err = PTR_ERR(neigh);
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+			}
+		} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;</span>
+			<span style="color: #FF1493;">if</span> (nlh-&gt;nlmsg_flags &amp; NLM_F_EXCL) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#26367;&#25442;</span>
+				err = -EEXIST;
+				neigh_release(neigh);
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+			}
+
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(nlh-&gt;nlmsg_flags &amp; NLM_F_REPLACE))  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#25351;&#23450;&#26367;&#25442;&#26631;&#35782;</span>
+				flags &amp;= ~NEIGH_UPDATE_F_OVERRIDE;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21435;&#38500;&#37325;&#20889;&#26631;&#35782;</span>
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#37051;&#23621;&#39033;</span>
+		err = neigh_update(neigh, lladdr, ndm-&gt;ndm_state, flags);
+		neigh_release(neigh);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_dev_put</span>;
+	}
+
+	read_unlock(&amp;neigh_tbl_lock);
+	err = -EAFNOSUPPORT;
+
+<span style="color: #AF87FF;">out_dev_put</span>:
+	<span style="color: #FF1493;">if</span> (dev)
+		dev_put(dev);
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb4d9d4c" class="outline-3">
+<h3 id="orgb4d9d4c"><span class="section-number-3">5.2</span> ioctl</h3>
+</div>
+
+<div id="outline-container-orgf934ae5" class="outline-3">
+<h3 id="orgf934ae5"><span class="section-number-3">5.3</span> 路由表项和邻居项的绑定</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+arp_bind_neighbour()函数用来绑定路由表项和邻居项。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb630001" class="outline-3">
+<h3 id="orgb630001"><span class="section-number-3">5.4</span> 接收到并非请求的应答报文</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+当接收到并非请求的应答报文时，如果系统允许接收且邻居项不存在，则创建邻居项。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org43af9dd" class="outline-2">
+<h2 id="org43af9dd"><span class="section-number-2">6</span> 邻居项的创建和初始化</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org481f1be" class="outline-3">
+<h3 id="org481f1be"><span class="section-number-3">6.1</span> neigh_alloc()</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+该函数用来分配邻居项实例。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #87D700;">neigh_alloc</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span> = jiffies;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">entries</span>;
+
+	entries = atomic_inc_return(&amp;tbl-&gt;entries) - 1; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36882;&#22686;&#37051;&#23621;&#34920;&#30340;&#37051;&#23621;&#39033;&#25968;&#30446;</span>
+	<span style="color: #FF1493;">if</span> (entries &gt;= tbl-&gt;gc_thresh3 ||
+	    (entries &gt;= tbl-&gt;gc_thresh2 &amp;&amp;
+	     time_after(now, tbl-&gt;last_flush + 5 * HZ))) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#36827;&#34892;&#22403;&#22334;&#22238;&#25910;</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>neigh_forced_gc(tbl) &amp;&amp;
+		    entries &gt;= tbl-&gt;gc_thresh3)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_entries</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#37051;&#23621;&#39033;</span>
+	n = kmem_cache_alloc(tbl-&gt;kmem_cachep, GFP_ATOMIC);
+	<span style="color: #87D700;">memset</span>(n, 0, tbl-&gt;entry_size);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#32531;&#23384;&#38431;&#21015;</span>
+	skb_queue_head_init(&amp;n-&gt;arp_queue);
+	rwlock_init(&amp;n-&gt;lock);
+	n-&gt;updated        = n-&gt;used = now;
+	n-&gt;nud_state      = NUD_NONE;
+	n-&gt;output         = neigh_blackhole;
+	n-&gt;parms          = neigh_parms_clone(&amp;tbl-&gt;parms);
+	init_timer(&amp;n-&gt;timer);
+	n-&gt;timer.function = neigh_timer_handler;
+	n-&gt;timer.data     = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>)n;
+	<span style="color: #87D700;">NEIGH_CACHE_STAT_INC</span>(tbl, allocs);
+	n-&gt;tbl            = tbl;
+	atomic_set(&amp;n-&gt;refcnt, 1);
+	n-&gt;dead           = 1;
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> n;
+
+<span style="color: #AF87FF;">out_entries</span>:
+	atomic_dec(&amp;tbl-&gt;entries);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd200a86" class="outline-3">
+<h3 id="orgd200a86"><span class="section-number-3">6.2</span> neigh_create()</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+该函数用来完整的创建一个邻居项，并添加到散列表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #87D700;">neigh_create</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">pkey</span>,
+			       <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">hash_val</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">key_len</span> = tbl-&gt;key_len;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">error</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n1</span>, *<span style="color: #FF8C00;">rc</span>, *<span style="color: #FF8C00;">n</span> = neigh_alloc(tbl); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#37051;&#23621;&#39033;&#23454;&#20363;</span>
+	memcpy(n-&gt;primary_key, pkey, key_len); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#19977;&#23618;&#21327;&#35758;&#22320;&#22336;</span>
+	n-&gt;dev = dev; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#35774;&#22791;</span>
+	dev_hold(dev);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21327;&#35758;&#29305;&#23450;&#30340;&#26500;&#36896;&#20989;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (tbl-&gt;constructor &amp;&amp; (error = tbl-&gt;constructor(n)) &lt; 0) {
+		rc = ERR_PTR(error);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_neigh_release</span>;
+	}
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#29305;&#23450;&#30340;&#35774;&#32622;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (n-&gt;parms-&gt;neigh_setup &amp;&amp;
+	    (error = n-&gt;parms-&gt;neigh_setup(n)) &lt; 0) {
+		rc = ERR_PTR(error);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_neigh_release</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#30340;&#30830;&#35748;&#26102;&#38388;</span>
+	n-&gt;confirmed = jiffies - (n-&gt;parms-&gt;base_reachable_time &lt;&lt; 1);
+	write_lock_bh(&amp;tbl-&gt;lock);
+
+	<span style="color: #FF1493;">if</span> (atomic_read(&amp;tbl-&gt;entries) &gt; (tbl-&gt;hash_mask + 1))  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36229;&#36807;hash&#34920;&#23481;&#37327;&#38656;&#35201;&#25193;&#23481;</span>
+		neigh_hash_grow(tbl, (tbl-&gt;hash_mask + 1) &lt;&lt; 1);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;key</span>
+	hash_val = tbl-&gt;hash(pkey, dev) &amp; tbl-&gt;hash_mask;
+	<span style="color: #FF1493;">if</span> (n-&gt;parms-&gt;dead) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#37197;&#32622;&#21442;&#25968;&#27491;&#22312;&#21024;&#38500;</span>
+		rc = ERR_PTR(-EINVAL);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_tbl_unlock</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#37051;&#23621;&#34920;&#30340;&#25955;&#21015;&#26742;</span>
+	<span style="color: #FF1493;">for</span> (n1 = tbl-&gt;hash_buckets[hash_val]; n1; n1 = n1-&gt;next) {
+		<span style="color: #FF1493;">if</span> (dev == n1-&gt;dev &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>memcmp(n1-&gt;primary_key, pkey, key_len)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#23384;&#22312;</span>
+			neigh_hold(n1);
+			rc = n1;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_tbl_unlock</span>;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;&#65292;&#21017;&#28155;&#21152;</span>
+	n-&gt;next = tbl-&gt;hash_buckets[hash_val];
+	tbl-&gt;hash_buckets[hash_val] = n;
+	n-&gt;dead = 0;
+	neigh_hold(n);
+	write_unlock_bh(&amp;tbl-&gt;lock);
+	NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is created.\n"</span>, n);
+	rc = n;
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> rc;
+<span style="color: #AF87FF;">out_tbl_unlock</span>:
+	write_unlock_bh(&amp;tbl-&gt;lock);
+<span style="color: #AF87FF;">out_neigh_release</span>:
+	neigh_release(n);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org637bc59" class="outline-2">
+<h2 id="org637bc59"><span class="section-number-2">7</span> 邻居项散列表的扩容</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+创建邻居项时，如果邻居表的邻居项数量超过散列表容量时，则需要调用 neigh_hash_grow() 扩容。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">neigh_hash_grow</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">new_entries</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> **<span style="color: #FF8C00;">new_hash</span>, **<span style="color: #FF8C00;">old_hash</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>, <span style="color: #FF8C00;">new_hash_mask</span>, <span style="color: #FF8C00;">old_entries</span>;
+
+	NEIGH_CACHE_STAT_INC(tbl, hash_grows);
+
+	BUG_ON(new_entries &amp; (new_entries - 1));
+	new_hash = neigh_hash_alloc(new_entries); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#20998;&#37197;&#20869;&#23384;</span>
+
+	old_entries = tbl-&gt;hash_mask + 1;
+	new_hash_mask = new_entries - 1;
+	old_hash = tbl-&gt;hash_buckets;
+
+	get_random_bytes(&amp;tbl-&gt;hash_rnd, <span style="color: #FF1493;">sizeof</span>(tbl-&gt;hash_rnd)); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35745;&#31639;&#38543;&#26426;&#20540;</span>
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; old_entries; i++) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#21407;&#20808;&#30340;&#37051;&#23621;&#39033;&#37325;&#26032;&#25955;&#21015;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n</span>, *<span style="color: #FF8C00;">next</span>;
+		<span style="color: #FF1493;">for</span> (n = old_hash[i]; n; n = next) {
+			<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hash_val</span> = tbl-&gt;hash(n-&gt;primary_key, n-&gt;dev);
+			hash_val &amp;= new_hash_mask;
+			next = n-&gt;next;
+			n-&gt;next = new_hash[hash_val];
+			new_hash[hash_val] = n;
+		}
+	}
+	tbl-&gt;hash_buckets = new_hash;
+	tbl-&gt;hash_mask = new_hash_mask;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#26087;&#37051;&#23621;&#34920;</span>
+	neigh_hash_free(old_hash, old_entries);
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf1695ff" class="outline-2">
+<h2 id="orgf1695ff"><span class="section-number-2">8</span> 邻居项的查找</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-orgd7c083a" class="outline-3">
+<h3 id="orgd7c083a"><span class="section-number-3">8.1</span> neigh_lookup()</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+该函数根据三层协议地址和输出网络设备查找邻居项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #87D700;">neigh_lookup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">pkey</span>,
+			       <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">key_len</span> = tbl-&gt;key_len;
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">hash_val</span> = tbl-&gt;hash(pkey, dev);
+
+	NEIGH_CACHE_STAT_INC(tbl, lookups);
+
+	read_lock_bh(&amp;tbl-&gt;lock);
+	<span style="color: #FF1493;">for</span> (n = tbl-&gt;hash_buckets[hash_val &amp; tbl-&gt;hash_mask]; n; n = n-&gt;next) {
+		<span style="color: #FF1493;">if</span> (dev == n-&gt;dev &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>memcmp(n-&gt;primary_key, pkey, key_len)) {
+			neigh_hold(n);
+			NEIGH_CACHE_STAT_INC(tbl, hits);
+			<span style="color: #FF1493;">break</span>;
+		}
+	}
+	read_unlock_bh(&amp;tbl-&gt;lock);
+	<span style="color: #FF1493;">return</span> n;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf2b91f5" class="outline-3">
+<h3 id="orgf2b91f5"><span class="section-number-3">8.2</span> neigh_lookup_nodev()</h3>
+<div class="outline-text-3" id="text-8-2">
+<p>
+只根据三层协议地址查找邻居项。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7deba2a" class="outline-3">
+<h3 id="org7deba2a"><span class="section-number-3">8.3</span> __neigh_lookup() 和 neigh_lookup_errno()</h3>
+<div class="outline-text-3" id="text-8-3">
+<p>
+在 __neigh_lookup() 查找失败，并且允许创建新的邻居项，则通过 __neigh_lookup_errno()直接创建。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3ab0b01" class="outline-2">
+<h2 id="org3ab0b01"><span class="section-number-2">9</span> 邻居项的更新</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+neigh_update()用来更新指定的邻居项，更新后，根据状态设置相应的输出函数：
+</p>
+<ul class="org-ul">
+<li>NUD_CONNECTED 状态，则允许快速路径发送，设置输出函数为 neigh_connect()</li>
+<li>其他状态，设置为 neigh_suspect()。</li>
+</ul>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Generic update routine.</span>
+<span style="color: #8B8878;">   -- lladdr is new lladdr or NULL, if it is not supplied.</span>
+<span style="color: #8B8878;">   -- new    is new state.</span>
+<span style="color: #8B8878;">   -- flags</span>
+<span style="color: #8B8878;">        NEIGH_UPDATE_F_OVERRIDE allows to override existing lladdr,</span>
+<span style="color: #8B8878;">                                if it is different.</span>
+<span style="color: #8B8878;">        NEIGH_UPDATE_F_WEAK_OVERRIDE will suspect existing "connected"</span>
+<span style="color: #8B8878;">                                lladdr instead of overriding it</span>
+<span style="color: #8B8878;">                                if it is different.</span>
+<span style="color: #8B8878;">                                It also allows to retain current state</span>
+<span style="color: #8B8878;">                                if lladdr is unchanged.</span>
+<span style="color: #8B8878;">        NEIGH_UPDATE_F_ADMIN    means that the change is administrative.</span>
+
+<span style="color: #8B8878;">        NEIGH_UPDATE_F_OVERRIDE_ISROUTER allows to override existing</span>
+<span style="color: #8B8878;">                                NTF_ROUTER flag.</span>
+<span style="color: #8B8878;">        NEIGH_UPDATE_F_ISROUTER indicates if the neighbour is known as</span>
+<span style="color: #8B8878;">                                a router.</span>
+
+<span style="color: #8B8878;">   Caller MUST hold reference count on the entry.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">neigh_update</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">u8</span> *<span style="color: #FF8C00;">lladdr</span>, <span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">new</span>,
+		 <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">flags</span>)
+{
+	<span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">old</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">notify</span> = 0;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">update_isrouter</span> = 0;
+
+	write_lock_bh(&amp;neigh-&gt;lock);
+
+	dev    = neigh-&gt;dev;
+	old    = neigh-&gt;nud_state;
+	err    = -EPERM;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(flags &amp; NEIGH_UPDATE_F_ADMIN) &amp;&amp;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#26159;&#30001;&#20110;&#29992;&#25143;&#31649;&#29702;&#23548;&#33268;&#30340;&#25913;&#21464;</span>
+	    (old &amp; (NUD_NOARP | NUD_PERMANENT)))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(new &amp; NUD_VALID)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#26159;&#26377;&#25928;&#30340;&#29366;&#24577;</span>
+		neigh_del_timer(neigh);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#23450;&#26102;&#22120;</span>
+		<span style="color: #FF1493;">if</span> (old &amp; NUD_CONNECTED) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#26356;&#26032;&#36755;&#20986;&#20989;&#25968;</span>
+			neigh_suspect(neigh);
+		neigh-&gt;nud_state = new;
+		err = 0;
+		notify = old &amp; NUD_VALID;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Compare new lladdr with cached one</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>dev-&gt;addr_len) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30828;&#20214;&#22320;&#22336;&#38271;&#24230;&#20026;0</span>
+		lladdr = neigh-&gt;ha;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20351;&#29992;&#37051;&#23621;&#39033;&#30340;&#30828;&#20214;&#22320;&#22336;</span>
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (lladdr) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21442;&#25968;&#25351;&#23450;&#20102;&#30828;&#20214;&#22320;&#22336;</span>
+		<span style="color: #FF1493;">if</span> ((old &amp; NUD_VALID) &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#22788;&#20110;&#26377;&#25928;&#29366;&#24577;</span>
+		    <span style="color: #CDC673; font-weight: bold;">!</span>memcmp(lladdr, neigh-&gt;ha, dev-&gt;addr_len)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22320;&#22336;&#30456;&#31561;&#65311;&#65311;&#65311;</span>
+			lladdr = neigh-&gt;ha;
+	} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21442;&#25968;&#27809;&#26377;&#25351;&#23450;&#30828;&#20214;&#22320;&#22336;</span>
+		err = -EINVAL;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(old &amp; NUD_VALID))
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		lladdr = neigh-&gt;ha; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20351;&#29992;&#37051;&#23621;&#39033;&#30340;&#30828;&#20214;&#22320;&#22336;</span>
+	}
+
+	<span style="color: #FF1493;">if</span> (new &amp; NUD_CONNECTED) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#20110;&#36830;&#25509;&#29366;&#24577;</span>
+		neigh-&gt;confirmed = jiffies;
+	neigh-&gt;updated = jiffies;
+
+	err = 0;
+	update_isrouter = flags &amp; NEIGH_UPDATE_F_OVERRIDE_ISROUTER;
+	<span style="color: #FF1493;">if</span> (old &amp; NUD_VALID) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21407;&#20808;&#22788;&#20110;&#26377;&#25928;&#29366;&#24577;</span>
+		<span style="color: #FF1493;">if</span> (lladdr != neigh-&gt;ha &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(flags &amp; NEIGH_UPDATE_F_OVERRIDE)) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30828;&#20214;&#22320;&#22336;&#19981;&#21516;</span>
+			update_isrouter = 0;
+			<span style="color: #FF1493;">if</span> ((flags &amp; NEIGH_UPDATE_F_WEAK_OVERRIDE) &amp;&amp;
+			    (old &amp; NUD_CONNECTED)) {
+				lladdr = neigh-&gt;ha;
+				new = NUD_STALE;
+			} <span style="color: #FF1493;">else</span>
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		} <span style="color: #FF1493;">else</span> {
+			<span style="color: #FF1493;">if</span> (lladdr == neigh-&gt;ha &amp;&amp; new == NUD_STALE &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30828;&#20214;&#22320;&#22336;&#27809;&#26377;&#21464;&#21270;</span>
+			    ((flags &amp; NEIGH_UPDATE_F_WEAK_OVERRIDE) ||
+			     (old &amp; NUD_CONNECTED))
+			    )
+				new = old;
+		}
+	}
+
+	<span style="color: #FF1493;">if</span> (new != old) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#21069;&#65292;&#21024;&#38500;&#23450;&#26102;&#22120;</span>
+		neigh_del_timer(neigh);
+		<span style="color: #FF1493;">if</span> (new &amp; NUD_IN_TIMER) {
+			neigh_hold(neigh);
+			neigh_add_timer(neigh, (jiffies +
+						((new &amp; NUD_REACHABLE) ?
+						 neigh-&gt;parms-&gt;reachable_time :
+						 0)));
+		}
+		neigh-&gt;nud_state = new;
+	}
+
+	<span style="color: #FF1493;">if</span> (lladdr != neigh-&gt;ha) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#20102;&#26032;&#30340;&#30828;&#20214;&#22320;&#22336;&#65292;&#21017;&#26356;&#26032;</span>
+		memcpy(&amp;neigh-&gt;ha, lladdr, dev-&gt;addr_len);
+		neigh_update_hhs(neigh);
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(new &amp; NUD_CONNECTED))
+			neigh-&gt;confirmed = jiffies -
+				      (neigh-&gt;parms-&gt;base_reachable_time &lt;&lt; 1);
+		notify = 1;
+	}
+	<span style="color: #FF1493;">if</span> (new == old)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	<span style="color: #FF1493;">if</span> (new &amp; NUD_CONNECTED)
+		neigh_connect(neigh);
+	<span style="color: #FF1493;">else</span>
+		neigh_suspect(neigh);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(old &amp; NUD_VALID)) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21407;&#20808;&#26159;&#26080;&#25928;&#29366;&#24577;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+		<span style="color: #FF1493;">while</span> (neigh-&gt;nud_state &amp; NUD_VALID &amp;&amp;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21464;&#20026;&#26377;&#25928;&#29366;&#24577;</span>
+		       (skb = __skb_dequeue(&amp;neigh-&gt;arp_queue)) != <span style="color: #AF87FF;">NULL</span>) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#37051;&#23621;&#39033;arp&#32531;&#23384;&#38431;&#21015;</span>
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n1</span> = neigh;
+			write_unlock_bh(&amp;neigh-&gt;lock);
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">On shaper/eql skb-&gt;dst-&gt;neighbour != neigh :(</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (skb-&gt;dst &amp;&amp; skb-&gt;dst-&gt;neighbour)
+				n1 = skb-&gt;dst-&gt;neighbour;
+			n1-&gt;output(skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#25253;&#25991;</span>
+			write_lock_bh(&amp;neigh-&gt;lock);
+		}
+		skb_queue_purge(&amp;neigh-&gt;arp_queue);
+	}
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">if</span> (update_isrouter) {
+		neigh-&gt;flags = (flags &amp; NEIGH_UPDATE_F_ISROUTER) ?
+			(neigh-&gt;flags | NTF_ROUTER) :
+			(neigh-&gt;flags &amp; ~NTF_ROUTER);
+	}
+	write_unlock_bh(&amp;neigh-&gt;lock);
+
+	<span style="color: #FF1493;">if</span> (notify)
+		call_netevent_notifiers(NETEVENT_NEIGH_UPDATE, neigh);
+<span style="color: #FF1493;">#ifdef</span> CONFIG_ARPD
+	<span style="color: #FF1493;">if</span> (notify &amp;&amp; neigh-&gt;parms-&gt;app_probes)
+		neigh_app_notify(neigh);
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1dc9715" class="outline-2">
+<h2 id="org1dc9715"><span class="section-number-2">10</span> 垃圾回收</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+异步回收通过定时器周期性回收，在进行垃圾回收时，会清理状态为 NUD_FAILED 且引用计数为1的邻居项，以及闲置时间超过指定阈值的邻居项。
+</p>
+
+<p>
+同步回收则是在创建邻居项时，邻居项数量超过阈值，则触发同步清理，清理时，将引用计数为1且非静态的邻居项全部清除。
+</p>
+</div>
+
+<div id="outline-container-org42bcf6b" class="outline-3">
+<h3 id="org42bcf6b"><span class="section-number-3">10.1</span> 同步回收</h3>
+<div class="outline-text-3" id="text-10-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">neigh_forced_gc</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">shrunk</span> = 0;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
+	NEIGH_CACHE_STAT_INC(tbl, forced_gc_runs);
+	write_lock_bh(&amp;tbl-&gt;lock);
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt;= tbl-&gt;hash_mask; i++) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#25152;&#26377;&#37051;&#23621;&#34920;&#25152;&#26377;&#26742;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n</span>, **<span style="color: #FF8C00;">np</span>;
+		np = &amp;tbl-&gt;hash_buckets[i];
+		<span style="color: #FF1493;">while</span> ((n = *np) != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#25955;&#21015;&#26742;&#20013;&#30340;&#25152;&#26377;&#37051;&#23621;&#39033;</span>
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Neighbour record may be discarded if:</span>
+<span style="color: #8B8878;">                         * - nobody refers to it.</span>
+<span style="color: #8B8878;">                         * - it is not permanent</span>
+<span style="color: #8B8878;">                         */</span>
+			write_lock(&amp;n-&gt;lock);
+			<span style="color: #FF1493;">if</span> (atomic_read(&amp;n-&gt;refcnt) == 1 &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20043;&#28165;&#29702;&#24341;&#29992;&#35745;&#25968;&#20026;1&#30340;</span>
+			    <span style="color: #CDC673; font-weight: bold;">!</span>(n-&gt;nud_state &amp; NUD_PERMANENT)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38750;&#38745;&#24577;&#37051;&#23621;&#39033;&#25165;&#33021;&#28165;&#29702;</span>
+				*np     = n-&gt;next;
+				n-&gt;dead = 1; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#27491;&#22312;&#21024;&#38500;</span>
+				shrunk  = 1;
+				write_unlock(&amp;n-&gt;lock);
+				neigh_release(n); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28165;&#29702;&#37051;&#23621;&#39033;</span>
+				<span style="color: #FF1493;">continue</span>;
+			}
+			write_unlock(&amp;n-&gt;lock);
+			np = &amp;n-&gt;next;
+		}
+	}
+	tbl-&gt;last_flush = jiffies;
+	write_unlock_bh(&amp;tbl-&gt;lock);
+	<span style="color: #FF1493;">return</span> shrunk;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org868f968" class="outline-3">
+<h3 id="org868f968"><span class="section-number-3">10.2</span> 异步回收</h3>
+<div class="outline-text-3" id="text-10-2">
+<p>
+在初始化邻居子系统时， neigh_table_init_no_netlink() 中启动gc_timer定时器，其处理函数为 neigh_periodic_timer()。每次 neigh_periodic_timer() 激活时，之扫描邻居散列表的一个桶，并保存对应的桶序号到邻居表的 hash_chain_gc 成员变量中，以便获取下次扫描的桶。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">neigh_periodic_timer</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *)arg;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n</span>, **<span style="color: #FF8C00;">np</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">expire</span>, <span style="color: #FF8C00;">now</span> = jiffies;
+	NEIGH_CACHE_STAT_INC(tbl, periodic_gc_runs);
+	write_lock(&amp;tbl-&gt;lock);
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      periodically recompute ReachableTime from random function</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27599;&#38548;300s,&#23558;&#37051;&#23621;&#34920;&#25152;&#26377;&#30340;neigh_params&#32467;&#26500;&#30340;reachalbe_time(NUD_REACHABLE&#29366;&#24577;&#30340;&#36229;&#26102;&#26102;&#38388;)&#26356;&#26032;&#20026;&#19968;&#20010;&#38543;&#26426;&#20540;</span>
+	<span style="color: #FF1493;">if</span> (time_after(now, tbl-&gt;last_rand + 300 * HZ)) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span> *<span style="color: #FF8C00;">p</span>;
+		tbl-&gt;last_rand = now;
+		<span style="color: #FF1493;">for</span> (p = &amp;tbl-&gt;parms; p; p = p-&gt;next)
+			p-&gt;reachable_time =
+				neigh_rand_reach_time(p-&gt;base_reachable_time);
+	}
+
+	np = &amp;tbl-&gt;hash_buckets[tbl-&gt;hash_chain_gc]; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#35201;&#25195;&#25551;&#30340;&#26742;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#19979;&#27425;&#35201;&#25195;&#25551;&#30340;&#26742;</span>
+	tbl-&gt;hash_chain_gc = ((tbl-&gt;hash_chain_gc + 1) &amp; tbl-&gt;hash_mask);
+	<span style="color: #FF1493;">while</span> ((n = *np) != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#26742;&#20013;&#30340;&#37051;&#23621;&#39033;</span>
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">state</span>;
+		write_lock(&amp;n-&gt;lock);
+		state = n-&gt;nud_state;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#20110;&#23450;&#26102;&#22120;&#29366;&#24577;&#25110;&#32773;&#38745;&#24577;&#37051;&#23621;&#39033;&#65292;&#30452;&#25509;&#36339;&#36807;</span>
+		<span style="color: #FF1493;">if</span> (state &amp; (NUD_PERMANENT | NUD_IN_TIMER)) {
+			write_unlock(&amp;n-&gt;lock);
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">next_elt</span>;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#21518;&#19968;&#27425;&#20351;&#29992;&#26102;&#38388;&#22312;&#26368;&#21518;&#30340;&#30830;&#35748;&#26102;&#38388;&#20043;&#21069;&#65292;&#21017;&#26368;&#21518;&#26356;&#26032;&#20351;&#29992;&#26102;&#38388;</span>
+		<span style="color: #FF1493;">if</span> (time_before(n-&gt;used, n-&gt;confirmed))
+			n-&gt;used = n-&gt;confirmed;
+		<span style="color: #FF1493;">if</span> (atomic_read(&amp;n-&gt;refcnt) == 1 &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24341;&#29992;&#35745;&#25968;&#20026;1</span>
+		    (state == NUD_FAILED ||  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#20110;NUD_FAILD&#29366;&#24577; &#25110;&#32773;&#38386;&#32622;&#26102;&#38388;&#36229;&#36807;&#19978;&#38480;</span>
+		     time_after(now, n-&gt;used + n-&gt;parms-&gt;gc_staletime))) {
+			*np = n-&gt;next;
+			n-&gt;dead = 1;
+			write_unlock(&amp;n-&gt;lock);
+			neigh_release(n); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#37051;&#23621;&#39033;</span>
+			<span style="color: #FF1493;">continue</span>;
+		}
+		write_unlock(&amp;n-&gt;lock);
+<span style="color: #AF87FF;">next_elt</span>:
+		np = &amp;n-&gt;next;
+	}
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Cycle through all hash buckets every base_reachable_time/2 ticks.</span>
+<span style="color: #8B8878;">         * ARP entry timeouts range from 1/2 base_reachable_time to 3/2</span>
+<span style="color: #8B8878;">         * base_reachable_time.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#23450;&#26102;&#22120;&#30340;&#19979;&#27425;&#36807;&#26399;&#26102;&#38388;</span>
+	expire = tbl-&gt;parms.base_reachable_time &gt;&gt; 1;
+	expire /= (tbl-&gt;hash_mask + 1);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>expire)
+		expire = 1;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#23450;&#26102;&#22120;</span>
+	mod_timer(&amp;tbl-&gt;gc_timer, now + expire);
+	write_unlock(&amp;tbl-&gt;lock);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdd41dd0" class="outline-2">
+<h2 id="orgdd41dd0"><span class="section-number-2">11</span> 外部事件</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+neigh_ifdown接口，用来响应网络设备的 NETDEV_UNREGISTER 事件。
+</p>
+
+<p>
+以IPv4为例：
+  产生NETEDEV_UNREGISTER 事件时， arp_ifdown() 被调用， 其中会调用到 neigh_ifdown() ，使得邻居子系统处理该事件。
+</p>
+
+<p>
+neigh_ifdown() 会删除并释放对应网络设备相关的邻居项和代理项，如果由于引用计数大于1无法删除，则将邻居项的output函数设置为 neigh_blackhole(), 此函数直接丢弃报文。
+</p>
+
+<p>
+neigh_changeaddr 接口用于响应网络设备的 NETDEV_CHANGEADDR 事件。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org0666000" class="outline-2">
+<h2 id="org0666000"><span class="section-number-2">12</span> 邻居项状态</h2>
+<div class="outline-text-2" id="text-12">
+<p>
+邻居项的各个状态中，有些属于定时状态，由定时器来处理状态的转变。每个邻居项的定时器在创建邻居项时被初始化，处理函数为 neigh_timer_handler()。
+</p>
+
+
+<div class="figure">
+<p><img src="image/neigh/neigh-stat.png" alt="neigh-stat.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>邻居项状态迁移</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Called when a timer expires for a neighbour entry.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">neigh_timer_handler</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span>, <span style="color: #FF8C00;">next</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *)arg;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">state</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">notify</span> = 0;
+	write_lock(&amp;neigh-&gt;lock);
+	state = neigh-&gt;nud_state;
+	now = jiffies;
+	next = now + HZ;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(state &amp; NUD_IN_TIMER)) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#39033;&#19981;&#26159;&#23450;&#26102;&#22120;&#29366;&#24577;&#65292;&#21017;&#19981;&#22788;&#29702;</span>
+		printk(KERN_WARNING <span style="color: #CDC673;">"neigh: timer &amp; !nud_in_timer\n"</span>);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+
+	<span style="color: #FF1493;">if</span> (state &amp; NUD_REACHABLE) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">NUD_REACHABLE&#29366;&#24577;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36317;&#19978;&#27425;&#30830;&#35748;&#26102;&#38388;&#27809;&#26377;&#36798;&#21040; reachable_time, &#21017;&#32487;&#32493;&#32500;&#25345;&#35813;&#29366;&#24577;</span>
+		<span style="color: #FF1493;">if</span> (time_before_eq(now,
+				   neigh-&gt;confirmed + neigh-&gt;parms-&gt;reachable_time)) {
+			NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is still alive.\n"</span>, neigh);
+			next = neigh-&gt;confirmed + neigh-&gt;parms-&gt;reachable_time; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#26032;&#30340;&#21040;&#26399;&#26102;&#38388;</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#36317;&#19978;&#27425;&#30830;&#35748;&#26102;&#38388;&#36798;&#21040;reachable_time&#65292;&#20294;&#26159;&#38386;&#32622;&#26102;&#38388;&#26410;&#36798;&#21040;</span>
+<span style="color: #8B8878;">                delay_probe_time &#65292;&#21017;&#36716;&#21464;&#20026; NUD_DELAY&#29366;&#24577;</span>
+<span style="color: #8B8878;">                */</span>
+		} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (time_before_eq(now,
+					  neigh-&gt;used + neigh-&gt;parms-&gt;delay_probe_time)) {
+			NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is delayed.\n"</span>, neigh);
+			neigh-&gt;nud_state = NUD_DELAY;
+			neigh-&gt;updated = jiffies; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20462;&#25913;&#26356;&#26032;&#26102;&#38388;</span>
+			neigh_suspect(neigh); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35774;&#32622;&#36755;&#20986;&#20989;&#25968;</span>
+			next = now + neigh-&gt;parms-&gt;delay_probe_time; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#23450;&#26102;&#22120;&#21040;&#26399;&#26102;&#38388;</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36317;&#19978;&#27425;&#30830;&#35748;&#26102;&#38388;&#36798;&#21040; reachable_time, &#38386;&#32622;&#26102;&#38388;&#36229;&#36807; delay_probe_time&#65292; &#21017;&#36716;&#21464;&#20026; NUD_STALE.</span>
+<span style="color: #8B8878;">*/</span>
+		} <span style="color: #FF1493;">else</span> {
+			NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is suspected.\n"</span>, neigh);
+			neigh-&gt;nud_state = NUD_STALE;
+			neigh-&gt;updated = jiffies;
+			neigh_suspect(neigh);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35774;&#32622;&#36755;&#20986;&#20989;&#25968;</span>
+			notify = 1;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#38656;&#35201;&#36890;&#30693; NETEVENT_NEIGH_UPDATE&#20107;&#20214;</span>
+		}
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (state &amp; NUD_DELAY) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">NUD_DELAY&#29366;&#24577;</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36317;&#19978;&#27425;&#30830;&#35748;&#26102;&#38388;&#26410;&#36798;&#21040; delay_probe_time, &#21017;&#21464;&#20026; NUD_REACHABLE&#12290;</span>
+<span style="color: #8B8878;">                */</span>
+		<span style="color: #FF1493;">if</span> (time_before_eq(now,
+				   neigh-&gt;confirmed + neigh-&gt;parms-&gt;delay_probe_time)) {
+			NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is now reachable.\n"</span>, neigh);
+			neigh-&gt;nud_state = NUD_REACHABLE;
+			neigh-&gt;updated = jiffies;
+			neigh_connect(neigh); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#36755;&#20986;&#20989;&#25968;</span>
+			notify = 1;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#36890;&#30693;&#37051;&#23621;&#34920;&#26356;&#26032;&#20107;&#20214;</span>
+			next = neigh-&gt;confirmed + neigh-&gt;parms-&gt;reachable_time;
+		} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36317;&#19978;&#27425;&#30830;&#35748;&#26102;&#38388;&#36798;&#21040; delay_probe_time</span>
+			NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is probed.\n"</span>, neigh);
+			neigh-&gt;nud_state = NUD_PROBE;
+			neigh-&gt;updated = jiffies;
+			atomic_set(&amp;neigh-&gt;probes, 0);
+			next = now + neigh-&gt;parms-&gt;retrans_time;
+		}
+	} <span style="color: #FF1493;">else</span> {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">NUD_PROBE|NUD_INCOMPLETE</span><span style="color: #8B8878;"> */</span>
+		next = now + neigh-&gt;parms-&gt;retrans_time;
+	}
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">NUD_PROBE &#21644; NUD_INCOMPLETE &#29366;&#24577;&#19979;&#65292;&#21457;&#36865;&#30340;&#35831;&#27714;&#25253;&#25991;&#22823;&#20110;&#19978;&#38480;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> ((neigh-&gt;nud_state &amp; (NUD_INCOMPLETE | NUD_PROBE)) &amp;&amp;
+	    atomic_read(&amp;neigh-&gt;probes) &gt;= neigh_max_probes(neigh)) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+		neigh-&gt;nud_state = NUD_FAILED;
+		neigh-&gt;updated = jiffies;
+		notify = 1;
+		NEIGH_CACHE_STAT_INC(neigh-&gt;tbl, res_failed);
+		NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is failed.\n"</span>, neigh);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">It is very thin place. report_unreachable is very complicated</span>
+<span style="color: #8B8878;">                   routine. Particularly, it can hit the same neighbour entry!</span>
+
+<span style="color: #8B8878;">                   So that, we try to be accurate and avoid dead loop. --ANK</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#21464;&#20026; NUD_FAILED &#29366;&#24577;&#21518;&#65292;&#38656;&#35201;&#37322;&#25918;&#35813;&#37051;&#23621;&#39033;&#30340;&#32531;&#23384;&#38431;&#21015;&#30340;&#25253;&#25991;</span>
+		<span style="color: #FF1493;">while</span> (neigh-&gt;nud_state == NUD_FAILED &amp;&amp;
+		       (skb = __skb_dequeue(&amp;neigh-&gt;arp_queue)) != <span style="color: #AF87FF;">NULL</span>) {
+			write_unlock(&amp;neigh-&gt;lock);
+			neigh-&gt;ops-&gt;error_report(neigh, skb);
+			write_lock(&amp;neigh-&gt;lock);
+		}
+		skb_queue_purge(&amp;neigh-&gt;arp_queue);
+	}
+
+	<span style="color: #FF1493;">if</span> (neigh-&gt;nud_state &amp; NUD_IN_TIMER) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#19979;&#27425;&#21040;&#26399;&#26102;&#38388;</span>
+		<span style="color: #FF1493;">if</span> (time_before(next, jiffies + HZ/2))
+			next = jiffies + HZ/2;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>mod_timer(&amp;neigh-&gt;timer, next))
+			neigh_hold(neigh);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36825;&#20004;&#31181;&#29366;&#24577;&#19979;&#65292;&#21457;&#36865;&#30340;&#35831;&#27714;&#25253;&#25991;&#27809;&#26377;&#36798;&#21040;&#19978;&#38480;&#65292;&#21017;&#32531;&#23384;&#25253;&#25991;&#65292;&#24182;&#21521;&#37051;&#23621;&#21457;&#36865;&#35831;&#27714;&#25253;&#25991;</span>
+	<span style="color: #FF1493;">if</span> (neigh-&gt;nud_state &amp; (NUD_INCOMPLETE | NUD_PROBE)) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span> = skb_peek(&amp;neigh-&gt;arp_queue);
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">keep skb alive even if arp_queue overflows</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (skb)
+			skb_get(skb);
+		write_unlock(&amp;neigh-&gt;lock);
+		neigh-&gt;ops-&gt;solicit(neigh, skb);
+		atomic_inc(&amp;neigh-&gt;probes);
+		<span style="color: #FF1493;">if</span> (skb)
+			kfree_skb(skb);
+	} <span style="color: #FF1493;">else</span> {
+<span style="color: #AF87FF;">out</span>:
+		write_unlock(&amp;neigh-&gt;lock);
+	}
+	<span style="color: #FF1493;">if</span> (notify) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#30693;&#26356;&#26032;&#20107;&#20214;</span>
+		call_netevent_notifiers(NETEVENT_NEIGH_UPDATE, neigh);
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_ARPD
+	<span style="color: #FF1493;">if</span> (notify &amp;&amp; neigh-&gt;parms-&gt;app_probes)
+		neigh_app_notify(neigh);
+<span style="color: #FF1493;">#endif</span>
+	neigh_release(neigh);
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org71de390" class="outline-2">
+<h2 id="org71de390"><span class="section-number-2">13</span> 代理项</h2>
+<div class="outline-text-2" id="text-13">
+</div>
+<div id="outline-container-org419d26f" class="outline-3">
+<h3 id="org419d26f"><span class="section-number-3">13.1</span> 代理项的查找添加删除</h3>
+<div class="outline-text-3" id="text-13-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pneigh_entry</span> * <span style="color: #87D700;">pneigh_lookup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">pkey</span>,
+				    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">creat</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">pneigh_delete</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> *<span style="color: #FF8C00;">tbl</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">pkey</span>,
+		  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org76d4bca" class="outline-3">
+<h3 id="org76d4bca"><span class="section-number-3">13.2</span> 延时处理代理的请求报文</h3>
+<div class="outline-text-3" id="text-13-2">
+<ol class="org-ol">
+<li>pneigh_enqueue()  将报文缓存到proxy_queue队列。设置 proxy_timer定时器，并等待处理。</li>
+
+<li>neigh_proxy_process() 是 proxy_timer定时器的处理函数。该函数逐个处理proxy_queue队列的报文。</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdd4b0cc" class="outline-2">
+<h2 id="orgdd4b0cc"><span class="section-number-2">14</span> 邻居项输出函数</h2>
+<div class="outline-text-2" id="text-14">
+<p>
+neigh_connect() 和 ngigh_suspect() 函数用来初始化 struct neigh_ops 结构实例，以便在邻居项发生变化时，根据状态选择适当的输出函数。
+</p>
+</div>
+
+<div id="outline-container-org7934510" class="outline-3">
+<h3 id="org7934510"><span class="section-number-3">14.1</span> 丢弃</h3>
+<div class="outline-text-3" id="text-14-1">
+<p>
+neigh_blackhole() 函数用来丢弃报文。
+</p>
+
+<p>
+使用 neigh_blackhole() 函数的情况：
+</p>
+<ul class="org-ul">
+<li>neigh_alloc() 分配邻居项后，在做协议无关的初始化时，使用该函数作为输出。</li>
+<li>接收到网络设备的 NETDEV_UNREGISTER 事件，但又由于邻居项引用计数大于1而无法删除，则使用该函数作为输出。</li>
+<li>在删除邻居项时，也会删除邻居项中的二层首部缓存，如果该缓存的引用计数大于1而无法删除时，使用该函数作为二层首部缓存的输出函数（hh_output).</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9ef9939" class="outline-3">
+<h3 id="org9ef9939"><span class="section-number-3">14.2</span> 慢速发送</h3>
+<div class="outline-text-3" id="text-14-2">
+</div>
+<div id="outline-container-org8ee27ac" class="outline-4">
+<h4 id="org8ee27ac"><span class="section-number-4">14.2.1</span> neigh_resolve_output()</h4>
+<div class="outline-text-4" id="text-14-2-1">
+<p>
+邻居项不处于NUD_CONNECTED状态时，不允许通过快速路径发送报文。
+</p>
+
+<p>
+neigh_resolve_output() 用于慢速路径的发送，通常用来初始化 neigh_ops结构实例的 output函数指针。
+</p>
+
+<p>
+邻居项从 NUD_CONNECTED 变为其他状态时，会调用 neigh_suspect() 将邻居项的output设置为 neigh_resolve_output().
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Slow and careful.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">neigh_resolve_output</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *<span style="color: #FF8C00;">dst</span> = skb-&gt;dst;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rc</span> = 0;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>dst || <span style="color: #CDC673; font-weight: bold;">!</span>(neigh = dst-&gt;neighbour))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">discard</span>;
+
+	__skb_pull(skb, skb-&gt;nh.raw - skb-&gt;data);
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>neigh_event_send(neigh, skb)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#20445;&#37051;&#23621;&#39033;&#30340;&#29366;&#24577;&#26377;&#25928;&#65292;&#25165;&#21487;&#20197;&#21457;&#36865;&#25968;&#25454;&#21253;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = neigh-&gt;dev;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#25903;&#25345;&#30828;&#20214;&#39318;&#37096;&#32531;&#23384;&#65292;&#21516;&#26102;&#36335;&#30001;&#32531;&#23384;&#39033;&#20013;&#30340;&#20108;&#23618;&#39318;&#37096;&#32531;&#23384;&#36824;&#27809;&#26377;&#24314;&#31435;&#65292;&#21017;&#24314;&#31435;&#30828;&#20214;&#39318;&#37096;&#32531;&#23384;</span>
+		<span style="color: #FF1493;">if</span> (dev-&gt;hard_header_cache &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>dst-&gt;hh) {
+			write_lock_bh(&amp;neigh-&gt;lock);
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>dst-&gt;hh)
+				neigh_hh_init(neigh, dst, dst-&gt;ops-&gt;protocol);
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21521;SKB&#28155;&#21152;&#30828;&#20214;&#39318;&#37096;</span>
+			err = dev-&gt;hard_header(skb, dev, ntohs(skb-&gt;protocol),
+					       neigh-&gt;ha, <span style="color: #AF87FF;">NULL</span>, skb-&gt;len);
+			write_unlock_bh(&amp;neigh-&gt;lock);
+		} <span style="color: #FF1493;">else</span> {
+			read_lock_bh(&amp;neigh-&gt;lock);
+			err = dev-&gt;hard_header(skb, dev, ntohs(skb-&gt;protocol),
+					       neigh-&gt;ha, <span style="color: #AF87FF;">NULL</span>, skb-&gt;len);
+			read_unlock_bh(&amp;neigh-&gt;lock);
+		}
+		<span style="color: #FF1493;">if</span> (err &gt;= 0)
+			rc = neigh-&gt;ops-&gt;queue_xmit(skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#21040;&#35774;&#22791;</span>
+		<span style="color: #FF1493;">else</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_kfree_skb</span>;
+	}
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> rc;
+<span style="color: #AF87FF;">discard</span>:
+	NEIGH_PRINTK1(<span style="color: #CDC673;">"neigh_resolve_output: dst=%p neigh=%p\n"</span>,
+		      dst, dst ? dst-&gt;neighbour : <span style="color: #AF87FF;">NULL</span>);
+<span style="color: #AF87FF;">out_kfree_skb</span>:
+	rc = -EINVAL;
+	kfree_skb(skb);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0d0f5fc" class="outline-4">
+<h4 id="org0d0f5fc"><span class="section-number-4">14.2.2</span> neigh_event_send()</h4>
+<div class="outline-text-4" id="text-14-2-2">
+<p>
+该函数检测邻居项状态是否有效，如果为 NUD_CONNECTED、NUD_DELAY 和 NUD_PROBE 状态，则可以直接发送，否则调用 __neigh_event_send() 做进一步检测。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__neigh_event_send</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rc</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span>;
+	write_lock_bh(&amp;neigh-&gt;lock);
+	rc = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29366;&#24577;&#26377;&#25928;&#65292;&#26080;&#38656;&#22788;&#29702;</span>
+	<span style="color: #FF1493;">if</span> (neigh-&gt;nud_state &amp; (NUD_CONNECTED | NUD_DELAY | NUD_PROBE))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_unlock_bh</span>;
+	now = jiffies;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(neigh-&gt;nud_state &amp; (NUD_STALE | NUD_INCOMPLETE))) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38750;&#36825;&#20004;&#31181;&#29366;&#24577;&#65292;&#21017;&#20026; NUD_NONE</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20801;&#35768;&#21457;&#36865;&#24191;&#25773;&#35831;&#27714;&#25110;&#32773;&#20801;&#35768;&#24212;&#29992;&#21457;&#36865;&#35831;&#27714;&#26469;&#35299;&#26512;&#37051;&#23621;&#22320;&#22336;</span>
+		<span style="color: #FF1493;">if</span> (neigh-&gt;parms-&gt;mcast_probes + neigh-&gt;parms-&gt;app_probes) {
+			atomic_set(&amp;neigh-&gt;probes, neigh-&gt;parms-&gt;ucast_probes);
+			neigh-&gt;nud_state     = NUD_INCOMPLETE;
+			neigh-&gt;updated = jiffies;
+			neigh_hold(neigh);
+			neigh_add_timer(neigh, now + 1);
+		} <span style="color: #FF1493;">else</span> {
+			neigh-&gt;nud_state = NUD_FAILED;
+			neigh-&gt;updated = jiffies;
+			write_unlock_bh(&amp;neigh-&gt;lock);
+
+			<span style="color: #FF1493;">if</span> (skb)
+				kfree_skb(skb);
+			<span style="color: #FF1493;">return</span> 1;
+		}
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (neigh-&gt;nud_state &amp; NUD_STALE) {
+		NEIGH_PRINTK2(<span style="color: #CDC673;">"neigh %p is delayed.\n"</span>, neigh);
+		neigh_hold(neigh);
+		neigh-&gt;nud_state = NUD_DELAY;
+		neigh-&gt;updated = jiffies;
+		neigh_add_timer(neigh,
+				jiffies + neigh-&gt;parms-&gt;delay_probe_time);
+	}
+
+	<span style="color: #FF1493;">if</span> (neigh-&gt;nud_state == NUD_INCOMPLETE) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35831;&#27714;&#21457;&#36865;&#65292;&#36824;&#25910;&#21040;&#21040;&#24212;&#31572;</span>
+		<span style="color: #FF1493;">if</span> (skb) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32531;&#23384;&#25253;&#25991;</span>
+			<span style="color: #FF1493;">if</span> (skb_queue_len(&amp;neigh-&gt;arp_queue) &gt;=
+			    neigh-&gt;parms-&gt;queue_len) {
+				<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">buff</span>;
+				buff = neigh-&gt;arp_queue.next;
+				__skb_unlink(buff, &amp;neigh-&gt;arp_queue);
+				kfree_skb(buff);
+			}
+			__skb_queue_tail(&amp;neigh-&gt;arp_queue, skb);
+		}
+		rc = 1;
+	}
+<span style="color: #AF87FF;">out_unlock_bh</span>:
+	write_unlock_bh(&amp;neigh-&gt;lock);
+	<span style="color: #FF1493;">return</span> rc;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaea9b26" class="outline-4">
+<h4 id="orgaea9b26"><span class="section-number-4">14.2.3</span> neigh_hh_init()</h4>
+<div class="outline-text-4" id="text-14-2-3">
+<p>
+该函数为指定路由缓存项建立硬件首部缓存。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">neigh_hh_init</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">n</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *<span style="color: #FF8C00;">dst</span>,
+			  <span style="color: #5FD7FF;">__be16</span> <span style="color: #FF8C00;">protocol</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span> *<span style="color: #FF8C00;">hh</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = dst-&gt;dev;
+
+	<span style="color: #FF1493;">for</span> (hh = n-&gt;hh; hh; hh = hh-&gt;hh_next)
+		<span style="color: #FF1493;">if</span> (hh-&gt;hh_type == protocol)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#37051;&#23621;&#39033;&#20013;&#26597;&#25214;&#23545;&#24212;&#21327;&#35758;&#30340;&#30828;&#20214;&#32531;&#23384;&#21015;&#34920;</span>
+			<span style="color: #FF1493;">break</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26410;&#25214;&#21040;&#65292;&#21017;&#21019;&#24314;&#26032;&#30340;&#30828;&#20214;&#39318;&#37096;&#32531;&#23384;&#65292;&#24182;&#28155;&#21152;&#21040;&#30828;&#20214;&#39318;&#37096;&#32531;&#23384;&#21015;&#34920;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>hh &amp;&amp; (hh = kzalloc(<span style="color: #FF1493;">sizeof</span>(*hh), GFP_ATOMIC)) != <span style="color: #AF87FF;">NULL</span>) {
+		seqlock_init(&amp;hh-&gt;hh_lock);
+		hh-&gt;hh_type = protocol;
+		atomic_set(&amp;hh-&gt;hh_refcnt, 0);
+		hh-&gt;hh_next = <span style="color: #AF87FF;">NULL</span>;
+		<span style="color: #FF1493;">if</span> (dev-&gt;hard_header_cache(n, hh)) {
+			kfree(hh);
+			hh = <span style="color: #AF87FF;">NULL</span>;
+		} <span style="color: #FF1493;">else</span> {
+			atomic_inc(&amp;hh-&gt;hh_refcnt);
+			hh-&gt;hh_next = n-&gt;hh;
+			n-&gt;hh       = hh;
+			<span style="color: #FF1493;">if</span> (n-&gt;nud_state &amp; NUD_CONNECTED)
+				hh-&gt;hh_output = n-&gt;ops-&gt;hh_output;
+			<span style="color: #FF1493;">else</span>
+				hh-&gt;hh_output = n-&gt;ops-&gt;output;
+		}
+	}
+	<span style="color: #FF1493;">if</span> (hh) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#36335;&#30001;&#32531;&#23384;&#39033;&#30340;&#30828;&#20214;&#39318;&#37096;</span>
+		atomic_inc(&amp;hh-&gt;hh_refcnt);
+		dst-&gt;hh = hh;
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd2c08a9" class="outline-3">
+<h3 id="orgd2c08a9"><span class="section-number-3">14.3</span> 快速发送</h3>
+<div class="outline-text-3" id="text-14-3">
+<p>
+dst_output()函数根据数据包的目的路由缓存项输出数据报。对于单播数据报会调用到 ip_finish_output2()。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_finish_output2</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+
+	<span style="color: #FF1493;">if</span> (dst-&gt;hh)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#36335;&#30001;&#32531;&#23384;&#39033; &#32531;&#23384;&#20102; &#38142;&#36335;&#23618;&#39318;&#37096;</span>
+		<span style="color: #FF1493;">return</span> neigh_hh_output(dst-&gt;hh, skb);
+	<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (dst-&gt;neighbour) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#32531;&#23384;&#38142;&#36335;&#23618;&#39318;&#37096;&#65292;&#20294;&#26159;&#23384;&#22312;&#37051;&#23621;&#39033;&#65292;&#21017;&#20351;&#29992;&#37051;&#23621;&#39033;&#30340;&#36755;&#20986;&#26041;&#27861;</span>
+		<span style="color: #FF1493;">return</span> dst-&gt;neighbour-&gt;output(skb);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+}
+</pre>
+</div>
+
+<p>
+邻居项处于NUD_CONNECTED状态时，可以通过快速路径发送报文。 neigh_hh_output()和neigh_connected_output() 都用于快速路径的输出。neigh_hh_output()直接复制链路层首部到数据报， neigh_connected_output()需要逐步构建链路层首部。
+</p>
+
+<ol class="org-ol">
+<li>neigh_hh_output()</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">neigh_hh_output</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span> *<span style="color: #FF8C00;">hh</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">seq</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hh_len</span>;
+
+	<span style="color: #FF1493;">do</span> {
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hh_alen</span>;
+
+		seq = read_seqbegin(&amp;hh-&gt;hh_lock);
+		hh_len = hh-&gt;hh_len;
+		hh_alen = HH_DATA_ALIGN(hh_len);
+		memcpy(skb-&gt;data - hh_alen, hh-&gt;hh_data, hh_alen);
+	} <span style="color: #FF1493;">while</span> (read_seqretry(&amp;hh-&gt;hh_lock, seq));
+
+	skb_push(skb, hh_len);
+	<span style="color: #FF1493;">return</span> hh-&gt;hh_output(skb);
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>neigh_connected_output()</li>
+</ol>
+
+<p>
+此函数初始化 neigh_ops 结构实例的 connected_output() 函数指针。当邻居项从非 NUD_CONNECTED 变为 NUD_CONNECTED 状态，会调用 neigh_connect() 将邻居项的output设置为 neigh_connected_output()。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">As fast as possible without hh cache</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">neigh_connected_output</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *<span style="color: #FF8C00;">dst</span> = skb-&gt;dst;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span> = dst-&gt;neighbour;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = neigh-&gt;dev;
+
+	__skb_pull(skb, skb-&gt;nh.raw - skb-&gt;data);
+
+	read_lock_bh(&amp;neigh-&gt;lock);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21521;&#24453;&#36755;&#20986;&#30340;&#25253;&#25991;&#21069;&#38754;&#28155;&#21152;&#30828;&#20214;&#39318;&#37096;&#12290;</span>
+	err = dev-&gt;hard_header(skb, dev, ntohs(skb-&gt;protocol),
+			       neigh-&gt;ha, <span style="color: #AF87FF;">NULL</span>, skb-&gt;len);
+	read_unlock_bh(&amp;neigh-&gt;lock);
+	<span style="color: #FF1493;">if</span> (err &gt;= 0)
+		err = neigh-&gt;ops-&gt;queue_xmit(skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#25253;&#25991;&#21040;&#32593;&#32476;&#35774;&#22791;&#12290;</span>
+	<span style="color: #FF1493;">else</span> {
+		err = -EINVAL;
+		kfree_skb(skb);
+	}
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-01-07 Fri 23:25</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,1851 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-01-22 Sat 22:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>路由表</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">路由表</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org81820e4">1. 系统参数</a></li>
+<li><a href="#org295c2f8">2. 路由缓存的组织结构</a>
+<ul>
+<li><a href="#org1642994">2.1. rtable结构</a></li>
+<li><a href="#org67ddbe2">2.2. flowi结构</a></li>
+<li><a href="#org99c89b3">2.3. dst_entry结构</a></li>
+<li><a href="#org1c50056">2.4. dst_ops结构</a></li>
+</ul>
+</li>
+<li><a href="#org46815b3">3. 初始化</a></li>
+<li><a href="#orgbdb2965">4. 创建路由缓存项</a>
+<ul>
+<li><a href="#org08bde94">4.1. 创建输入路由缓存项</a></li>
+<li><a href="#org3dbca82">4.2. 创建输出路由缓存项</a></li>
+</ul>
+</li>
+<li><a href="#orge60343a">5. 添加路由表项到缓存中：rt_intern_hash()</a></li>
+<li><a href="#org40dba68">6. 输入路由缓存查询： ip_route_input()</a></li>
+<li><a href="#org1d20aec">7. 输出路由缓存查询</a></li>
+<li><a href="#orgccb6cdf">8. 垃圾回收</a>
+<ul>
+<li><a href="#org250f585">8.1. 路由缓存项的过期</a></li>
+<li><a href="#orgc10a398">8.2. 判断缓存路由表项是否可以删除</a></li>
+<li><a href="#org973fb33">8.3. 同步清理</a></li>
+<li><a href="#orgca3d986">8.4. 异步清理</a></li>
+<li><a href="#org09bee9b">8.5. 路由缓存项的释放</a></li>
+</ul>
+</li>
+<li><a href="#orge55cdfc">9. 刷新缓存</a>
+<ul>
+<li>
+<ul>
+<li><a href="#org0bc09b0">9.0.1. 定时器刷新</a></li>
+<li><a href="#org9e13f20">9.0.2. 网络设备硬件地址改变时的刷新</a></li>
+<li><a href="#org6e62462">9.0.3. 网络设备状态发生变化</a></li>
+<li><a href="#orga77ea01">9.0.4. 给设备添加或删除IP地址</a></li>
+<li><a href="#org88efe1b">9.0.5. 全局转发状态或者设备转发状态发生变化</a></li>
+<li><a href="#orgba1835d">9.0.6. 路由项被删除</a></li>
+<li><a href="#org7468ae4">9.0.7. 写 /proc 下的 flush 文件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org2a1164a">10. ICMP重定向消息的处理</a></li>
+<li><a href="#org39c4545">11. ICMP目的不可达，需要分片的消息处理</a></li>
+</ul>
+</div>
+</div>
+<p>
+路由缓存用于提高路由查找的命中率，减少路由表查找时间。
+</p>
+
+<div id="outline-container-org81820e4" class="outline-2">
+<h2 id="org81820e4"><span class="section-number-2">1</span> 系统参数</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>flush 控制路由缓存的刷新。当用户将n写入文件时，会调用 ipv4_sysctl_rtcache_flush()，在n秒后对路由表缓存进行刷新。如果写入一个负数，则内核在默认延迟 min_delay 秒之后进行一个刷新。</li>
+<li>gc_elasticity 添加路由缓存项时，如果路由缓存散列表桶的长度超过此值，则释放最老的缓存项。</li>
+<li>gc_min_interval 和 gc_min_interval_ms 用于控制路由缓存垃圾回收的频率和行为。</li>
+<li>gc_thresh 缓存中的路由条数超过此值时，开始垃圾回收。</li>
+<li>max_delay 用户调度刷新和内核实际刷新缓存之间的最长间隔，默认10s。</li>
+<li>min_delay 用户调度刷新和内核实际刷新缓存之间的最短间隔，默认2s。</li>
+<li>max_size 路由缓存数量的最大值。缓存数量达到该值时，老的路由表项会被清除。</li>
+<li>min_adv_mss 用于初始化路由表项的度量值中的MSS，取设备MTU和该值之间的较大值。</li>
+<li>mtu_expires 缓存在路由缓存项度量值中的PMTU的过期时间。</li>
+<li>min_pmtu 路径MTU发现协议根据此值设置最小的PMTU值。</li>
+<li>secret_interval 定时刷新路由缓存的周期，每隔secret_interval刷新一次。</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org295c2f8" class="outline-2">
+<h2 id="org295c2f8"><span class="section-number-2">2</span> 路由缓存的组织结构</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+路由缓存散列表的类型为 rt_hash_bucket 结构，该结构只包含指向缓存元素链表的指针，缓存项的类型为rtable结构。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib-cache/fib-cache-st.png" alt="fib-cache-st.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>路由缓存结构</p>
+</div>
+
+<p>
+dst_entry结构包含了缓存与邻居层的接口、transformers以及路由缓存管理。
+</p>
+</div>
+
+<div id="outline-container-org1642994" class="outline-3">
+<h3 id="org1642994"><span class="section-number-3">2.1</span> rtable结构</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+IPv4使用rtable结构存储路由缓存表项。
+</p>
+
+<p>
+查看路由缓存的内容：
+</p>
+<ul class="org-ul">
+<li>/proc/net/rt_cache 文件</li>
+<li>ip route list cache</li>
+<li>route -C</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>
+{
+	<span style="color: #FF1493;">union</span>
+	{
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span>        <span style="color: #FF8C00;">dst</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>   *<span style="color: #FF8C00;">rt_next</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#25351;&#38024;&#21644;dst&#30340;&#31532;&#19968;&#20010;&#25104;&#21592;next&#30456;&#21516;&#65288;union&#32467;&#26500;&#65289;</span>
+	} <span style="color: #FF8C00;">u</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span>        *<span style="color: #FF8C00;">idev</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#30340;IPv4&#21327;&#35758;&#26063;&#30340;IP&#37197;&#32622;&#22359;</span>
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">rt_flags</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#36335;&#30001;&#34920;&#39033;&#30340;&#29305;&#24615;&#21644;&#26631;&#24535;</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">rt_type</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#30340;&#31867;&#22411;</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">rt_multipath_alg</span>;
+
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">rt_dst</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Path destination</span><span style="color: #8B8878;">     */</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">rt_src</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Path source</span><span style="color: #8B8878;">          */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">rt_iif</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20837;&#32593;&#32476;&#35774;&#22791;&#26631;&#35782;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">rt_gateway</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#20449;&#24687;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span>    <span style="color: #FF8C00;">fl</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#25628;&#32034;&#32531;&#23384;&#30340;&#26465;&#20214;&#32452;&#21512;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Miscellaneous cached information</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">rt_spec_dst</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RFC1122 specific destination</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_peer</span>        *<span style="color: #FF8C00;">peer</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#19982;&#30446;&#30340;&#22320;&#22336;&#30456;&#20851;&#30340;&#23545;&#31471;&#20449;&#24687;&#22359;</span><span style="color: #8B8878;"> */</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org67ddbe2" class="outline-3">
+<h3 id="org67ddbe2"><span class="section-number-3">2.2</span> flowi结构</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+利用flowi数据结构，就可以根据输入网络设备、输出网络设备、三层和思成协议报头中的参数等字段的组合对流量进行分类。 通常被用作路由查找的条件组合。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> {
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">oif</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">iif</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20837;&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;</span>
+	<span style="color: #5FD7FF;">__u32</span>   <span style="color: #FF8C00;">mark</span>;
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #FF1493;">struct</span> {
+			<span style="color: #5FD7FF;">__be32</span>                  <span style="color: #FF8C00;">daddr</span>;
+			<span style="color: #5FD7FF;">__be32</span>                  <span style="color: #FF8C00;">saddr</span>;
+			<span style="color: #5FD7FF;">__u8</span>                    <span style="color: #FF8C00;">tos</span>;
+			<span style="color: #5FD7FF;">__u8</span>                    <span style="color: #FF8C00;">scope</span>;
+		} <span style="color: #FF8C00;">ip4_u</span>;
+
+		<span style="color: #FF1493;">struct</span> {
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in6_addr</span>         <span style="color: #FF8C00;">daddr</span>;
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in6_addr</span>         <span style="color: #FF8C00;">saddr</span>;
+			<span style="color: #5FD7FF;">__be32</span>                  <span style="color: #FF8C00;">flowlabel</span>;
+		} <span style="color: #FF8C00;">ip6_u</span>;
+
+		<span style="color: #FF1493;">struct</span> {
+			<span style="color: #5FD7FF;">__le16</span>                  <span style="color: #FF8C00;">daddr</span>;
+			<span style="color: #5FD7FF;">__le16</span>                  <span style="color: #FF8C00;">saddr</span>;
+			<span style="color: #5FD7FF;">__u8</span>                    <span style="color: #FF8C00;">scope</span>;
+		} <span style="color: #FF8C00;">dn_u</span>;
+	} <span style="color: #FF8C00;">nl_u</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fld_dst</span>         nl_u.dn_u.daddr
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fld_src</span>         nl_u.dn_u.saddr
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fld_scope</span>       nl_u.dn_u.scope
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl6_dst</span>         nl_u.ip6_u.daddr
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl6_src</span>         nl_u.ip6_u.saddr
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl6_flowlabel</span>   nl_u.ip6_u.flowlabel
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl4_dst</span>         nl_u.ip4_u.daddr
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl4_src</span>         nl_u.ip4_u.saddr
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl4_tos</span>         nl_u.ip4_u.tos
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl4_scope</span>       nl_u.ip4_u.scope
+
+	<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">proto</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#22235;&#23618;&#21327;&#35758;</span>
+	<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">flags</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FLOWI_FLAG_MULTIPATHOLDROUTE</span> 0x01
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #FF1493;">struct</span> {
+			<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">sport</span>;
+			<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">dport</span>;
+		} <span style="color: #FF8C00;">ports</span>;
+
+		<span style="color: #FF1493;">struct</span> {
+			<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">type</span>;
+			<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">code</span>;
+		} <span style="color: #FF8C00;">icmpt</span>;
+
+		<span style="color: #FF1493;">struct</span> {
+			<span style="color: #5FD7FF;">__le16</span>  <span style="color: #FF8C00;">sport</span>;
+			<span style="color: #5FD7FF;">__le16</span>  <span style="color: #FF8C00;">dport</span>;
+		} <span style="color: #FF8C00;">dnports</span>;
+
+		<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">spi</span>;
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IPV6_MIP6
+		<span style="color: #FF1493;">struct</span> {
+			<span style="color: #5FD7FF;">__u8</span>    <span style="color: #FF8C00;">type</span>;
+		} <span style="color: #FF8C00;">mht</span>;
+<span style="color: #FF1493;">#endif</span>
+	} <span style="color: #FF8C00;">uli_u</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl_ip_sport</span>     uli_u.ports.sport
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl_ip_dport</span>     uli_u.ports.dport
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl_icmp_type</span>    uli_u.icmpt.type
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl_icmp_code</span>    uli_u.icmpt.code
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl_ipsec_spi</span>    uli_u.spi
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IPV6_MIP6
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fl_mh_type</span>      uli_u.mht.type
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">secid</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">used by xfrm; see secid.txt</span><span style="color: #8B8878;"> */</span>
+} <span style="color: #FF1493;">__attribute__</span>((__aligned__(BITS_PER_LONG/8)));
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org99c89b3" class="outline-3">
+<h3 id="org99c89b3"><span class="section-number-3">2.3</span> dst_entry结构</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+dst_entry结构被用于存储缓存路由项中独立于协议的信息。三层协议在另外的结构中存储本协议中更多的私有信息（例如：IPv4使用rtable结构）。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span>    *<span style="color: #FF8C00;">next</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#20998;&#24067;&#22312;&#21516;&#19968;&#20010;&#25955;&#21015;&#34920;&#26742;&#20869;&#30340;dst_entry&#23454;&#20363;&#38142;&#25509;&#22312;&#19968;&#36215;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">__refcnt</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">client references</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">__use</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#34920;&#39033;&#24050;&#32463;&#34987;&#20351;&#29992;&#30340;&#27425;&#25968;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span>        *<span style="color: #FF8C00;">child</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>   *<span style="color: #FF8C00;">dev</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span>
+	<span style="color: #5FD7FF;">short</span>           <span style="color: #FF8C00;">error</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">fib_loopup()&#26597;&#25214;&#22833;&#36133;&#26102;&#65292;&#38169;&#35823;&#30721;&#20540;&#20250;&#34987;&#20445;&#23384;&#22312;&#36825;&#20010;&#23383;&#27573;&#20013;&#12290;</span>
+	<span style="color: #5FD7FF;">short</span>           <span style="color: #FF8C00;">obsolete</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#26631;&#35782;dst_entry&#23454;&#20363;&#30340;&#21487;&#29992;&#29366;&#24577;&#12290;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">flags</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">DST_HOST</span>                1
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">DST_NOXFRM</span>              2
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">DST_NOPOLICY</span>    4
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">DST_NOHASH</span>              8
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">DST_BALANCED</span>        0x10
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">lastuse</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#35813;&#34920;&#39033;&#26368;&#21518;&#19968;&#27425;&#34987;&#20351;&#29992;&#30340;&#26102;&#38388;&#25139;&#12290;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">expires</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#34920;&#39033;&#30340;&#36807;&#26399;&#26102;&#38388;&#25139;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">header_len</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">more space at head required</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">nfheader_len</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">more non-fragment space at head required</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">trailer_len</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">space to reserve at tail</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">metrics</span>[RTAX_MAX];
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span>        *<span style="color: #FF8C00;">path</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">rate_last</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">rate limiting for ICMP</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">rate_tokens</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span>        *<span style="color: #FF8C00;">neighbour</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span> *<span style="color: #FF8C00;">hh</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32531;&#23384;&#30340;&#20108;&#23618;&#39318;&#37096;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">xfrm_state</span>       *<span style="color: #FF8C00;">xfrm</span>;
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">input</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*);
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_CLS_ROUTE
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">tclassid</span>;
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">struct</span>  <span style="color: #5FD7FF;">dst_ops</span>     *<span style="color: #FF8C00;">ops</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rcu_head</span> <span style="color: #FF8C00;">rcu_head</span>;
+	<span style="color: #5FD7FF;">char</span>            <span style="color: #FF8C00;">info</span>[0];
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1c50056" class="outline-3">
+<h3 id="org1c50056"><span class="section-number-3">2.4</span> dst_ops结构</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+dst_ops结构是三层协议与独立于协议的缓存之间的接口。 协议相关的结构（例如rtable）等对这个结构进行了封装。
+</p>
+
+<p>
+IP层拥有路由缓存，但其他协议通常保持到这些路由缓存元素的引用，所有这些引用都指向dst_entry，而不是封装该结构的rtable。 SKB缓冲区也能保持到 dst_entry 结构的一个引用， 而不是到rtable结构的引用，这个引用被用于存储路由查找结果。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_ops</span>
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;&#24212;&#30340;&#22320;&#22336;&#26063;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">family</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;ID</span>
+	<span style="color: #5FD7FF;">__be16</span>          <span style="color: #FF8C00;">protocol</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#20102;&#36335;&#30001;&#32531;&#23384;&#30340;&#23481;&#37327;</span>
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">gc_thresh</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22403;&#22334;&#22238;&#25910;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">gc</span>)(<span style="color: #5FD7FF;">void</span>);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *      (*<span style="color: #87D700;">check</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *, <span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">cookie</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;dst_entry&#23454;&#20363;&#21069;&#30340;&#28165;&#29702;&#24037;&#20316;</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">destroy</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#19968;&#20010;&#35774;&#22791;&#34987;&#20851;&#38381;&#25110;&#32773;&#27880;&#38144;&#26102;&#65292;&#35843;&#29992;&#35813;&#25509;&#21475;&#12290;</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">ifdown</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#26816;&#27979;&#36335;&#30001;&#32531;&#23384;&#39033;&#65292;&#24403;TCP&#20256;&#36755;&#36229;&#26102;&#26102;&#65292;&#20250;&#35843;&#29992;&#27492;&#25509;&#21475;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *      (*<span style="color: #87D700;">negative_advice</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#22788;&#29702;&#30446;&#30340;&#22320;&#22336;&#19981;&#21487;&#36798;&#38169;&#35823;&#12290;</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">link_failure</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#32531;&#23384;&#36335;&#30001;&#39033;&#30340;PMTU&#12290;&#36890;&#24120;&#22312;&#22788;&#29702;&#25152;&#25509;&#25910;&#21040;&#30340;ICMP&#20998;&#29255;&#38656;&#27714;&#28040;&#24687;&#26102;&#35843;&#29992;&#12290;</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">update_pmtu</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *<span style="color: #FF8C00;">dst</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">mtu</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19977;&#23618;&#36335;&#30001;&#32531;&#23384;&#32467;&#26500;&#30340;&#22823;&#23567;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">entry_size</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#20998;&#37197;&#30340;dst_entry&#23454;&#20363;&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">entries</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#36335;&#30001;&#32531;&#23384;&#20803;&#32032;&#30340;&#20869;&#23384;&#27744;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kmem_cache</span>   *<span style="color: #FF8C00;">kmem_cachep</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org46815b3" class="outline-2">
+<h2 id="org46815b3"><span class="section-number-2">3</span> 初始化</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+IPv4路由模块是由ip_rt_init()进行初始化的，该函数在系统启动时，通过IP模块的 ip_init() 接口调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__init</span> ip_rt_init(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rc</span> = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;hash&#38543;&#26426;&#20540;</span>
+	rt_hash_rnd = (<span style="color: #5FD7FF;">int</span>) ((num_physpages ^ (num_physpages&gt;&gt;8)) ^
+			     (jiffies ^ (jiffies &gt;&gt; 7)));
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_CLS_ROUTE <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#30340;classifier&#26631;&#31614;&#30456;&#20851;</span>
+	{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">order</span>;
+	<span style="color: #FF1493;">for</span> (order = 0;
+	     (PAGE_SIZE &lt;&lt; order) &lt; 256 * <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_rt_acct</span>) * NR_CPUS; order++)
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">NOTHING</span><span style="color: #8B8878;"> */</span>;
+	ip_rt_acct = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_rt_acct</span> *)__get_free_pages(GFP_KERNEL, order);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ip_rt_acct)
+		panic(<span style="color: #CDC673;">"IP: failed to allocate ip_rt_acct\n"</span>);
+	memset(ip_rt_acct, 0, PAGE_SIZE &lt;&lt; order);
+	}
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#29992;&#20110;&#20998;&#37197;&#36335;&#30001;&#32531;&#23384;&#39033;&#30340;&#32531;&#23384;&#20869;&#23384;&#27744;</span>
+	ipv4_dst_ops.kmem_cachep =
+		kmem_cache_create(<span style="color: #CDC673;">"ip_dst_cache"</span>, <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>), 0,
+				  SLAB_HWCACHE_ALIGN|SLAB_PANIC, <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;rt_hash_table&#25955;&#21015;&#34920;&#65292;&#29992;&#20110;&#23384;&#20648;&#36335;&#30001;&#32531;&#23384;&#39033;&#12290;</span>
+	rt_hash_table = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rt_hash_bucket</span> *)
+		alloc_large_system_hash(<span style="color: #CDC673;">"IP route cache"</span>,
+					<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rt_hash_bucket</span>),
+					rhash_entries,
+					(num_physpages &gt;= 128 * 1024) ?
+					15 : 17,
+					0,
+					&amp;rt_hash_log,
+					&amp;rt_hash_mask,
+					0);
+	memset(rt_hash_table, 0, (rt_hash_mask + 1) * <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rt_hash_bucket</span>));
+	rt_hash_lock_init();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#23450;&#22403;&#22334;&#22238;&#25910;&#31639;&#27861;&#20351;&#29992;&#30340;gc_thresh&#38376;&#38480;&#20540;</span>
+	ipv4_dst_ops.gc_thresh = (rt_hash_mask + 1);
+	ip_rt_max_size = (rt_hash_mask + 1) * 16;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#32593;&#32476;&#35774;&#22791;IPv4&#30456;&#20851;&#30340;IP&#32534;&#22336;</span>
+	devinet_init();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#36335;&#30001;&#34920;</span>
+	ip_fib_init();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#36335;&#30001;&#32531;&#23384;&#30340;&#30456;&#20851;&#23450;&#26102;&#22120;</span>
+	init_timer(&amp;rt_flush_timer);
+	rt_flush_timer.function = rt_run_flush;
+	init_timer(&amp;rt_periodic_timer);
+	rt_periodic_timer.function = rt_check_expire;
+	init_timer(&amp;rt_secret_timer);
+	rt_secret_timer.function = rt_secret_rebuild;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">All the timers, started at system startup tend</span>
+<span style="color: #8B8878;">           to synchronize. Perturb it a bit.</span>
+<span style="color: #8B8878;">         */</span>
+	rt_periodic_timer.expires = jiffies + net_random() % ip_rt_gc_interval +
+					ip_rt_gc_interval;
+	add_timer(&amp;rt_periodic_timer);
+
+	rt_secret_timer.expires = jiffies + net_random() % ip_rt_secret_interval +
+		ip_rt_secret_interval;
+	add_timer(&amp;rt_secret_timer);
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_PROC_FS
+	{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">rtstat_pde</span> = <span style="color: #AF87FF;">NULL</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">keep gcc happy</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>proc_net_fops_create(<span style="color: #CDC673;">"rt_cache"</span>, S_IRUGO, &amp;rt_cache_seq_fops) ||
+	    <span style="color: #CDC673; font-weight: bold;">!</span>(rtstat_pde = create_proc_entry(<span style="color: #CDC673;">"rt_cache"</span>, S_IRUGO,
+					     proc_net_stat))) {
+		<span style="color: #FF1493;">return</span> -ENOMEM;
+	}
+	rtstat_pde-&gt;proc_fops = &amp;rt_cpu_seq_fops;
+	}
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_CLS_ROUTE
+	create_proc_read_entry(<span style="color: #CDC673;">"rt_acct"</span>, 0, proc_net, ip_rt_acct_read, <span style="color: #AF87FF;">NULL</span>);
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_XFRM
+	xfrm_init();
+	xfrm4_init();
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">return</span> rc;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbdb2965" class="outline-2">
+<h2 id="orgbdb2965"><span class="section-number-2">4</span> 创建路由缓存项</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+输入的报文通常调用 ip_route_input() 在路由缓存中查找路由，当缓存查找没有匹配路由时，将调用 ip_route_input_slow() 在路由表查找路由，命中后再添加路由缓存。
+</p>
+
+<p>
+dst_alloc() 为新缓存分配空间，并对缓存项的一些字段初始化。
+</p>
+</div>
+
+<div id="outline-container-org08bde94" class="outline-3">
+<h3 id="org08bde94"><span class="section-number-3">4.1</span> 创建输入路由缓存项</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+__mkroute_input 用来创建输入路由缓存项，但仅限于创建进行转发的路由缓存项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__mkroute_input</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+				  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span>* <span style="color: #FF8C00;">res</span>,<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#26597;&#25214;&#21040;&#30340;&#20449;&#24687;</span>
+				  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20837;&#32593;&#32476;&#35774;&#22791;</span>
+				  <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">daddr</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">tos</span>,
+				  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> **<span style="color: #FF8C00;">result</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36820;&#22238;&#25104;&#21151;&#21019;&#24314;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+{
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">out_dev</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">flags</span> = 0;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">spec_dst</span>;
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">itag</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#33719;&#21462;&#25253;&#25991;&#30340;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
+	out_dev = in_dev_get(FIB_RES_DEV(*res));
+	<span style="color: #FF1493;">if</span> (out_dev == <span style="color: #AF87FF;">NULL</span>) {
+		<span style="color: #FF1493;">if</span> (net_ratelimit())
+			printk(KERN_CRIT <span style="color: #CDC673;">"Bug in ip_route_input"</span> \
+			       <span style="color: #CDC673;">"_slow(). Please, report\n"</span>);
+		<span style="color: #FF1493;">return</span> -EINVAL;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#28304;&#22320;&#22336;&#30340;&#26377;&#25928;&#24615;</span>
+	err = fib_validate_source(saddr, daddr, tos, FIB_RES_OIF(*res),
+				  in_dev-&gt;dev, &amp;spec_dst, &amp;itag);
+	<span style="color: #FF1493;">if</span> (err &lt; 0) {
+		ip_handle_martian_source(in_dev-&gt;dev, in_dev, skb, daddr, saddr);
+		err = -EINVAL;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">cleanup</span>;
+	}
+
+	<span style="color: #FF1493;">if</span> (err)
+		flags |= RTCF_DIRECTSRC;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#19981;&#26159;&#26368;&#20248;&#36335;&#30001;&#65292;&#21017;&#28155;&#21152; RTCF_DOREDIRECT &#26631;&#24535;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (out_dev == in_dev &amp;&amp; err &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(flags &amp; (RTCF_NAT | RTCF_MASQ)) &amp;&amp;
+	    (IN_DEV_SHARED_MEDIA(out_dev) ||
+	     inet_addr_onlink(out_dev, saddr, FIB_RES_GW(*res))))
+		flags |= RTCF_DOREDIRECT;
+
+	<span style="color: #FF1493;">if</span> (skb-&gt;protocol != htons(ETH_P_IP)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#20195;&#29702;ARP</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Not IP (i.e. ARP). Do not create route, if it is</span>
+<span style="color: #8B8878;">                 * invalid for proxy arp. DNAT routes are always valid.</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (out_dev == in_dev &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(flags &amp; RTCF_DNAT)) {
+			err = -EINVAL;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">cleanup</span>;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#36335;&#30001;&#32531;&#23384;&#39033;&#20998;&#37197;&#20869;&#23384;&#65292;&#24182;&#35774;&#32622;&#30456;&#20851;&#30340;&#20540;&#12290;</span>
+	rth = dst_alloc(&amp;ipv4_dst_ops);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rth) {
+		err = -ENOBUFS;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">cleanup</span>;
+	}
+
+	atomic_set(&amp;rth-&gt;u.dst.__refcnt, 1);
+	rth-&gt;u.dst.flags= DST_HOST;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_MULTIPATH_CACHED
+	<span style="color: #FF1493;">if</span> (res-&gt;fi-&gt;fib_nhs &gt; 1)
+		rth-&gt;u.dst.flags |= DST_BALANCED;
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">if</span> (in_dev-&gt;cnf.no_policy)
+		rth-&gt;u.dst.flags |= DST_NOPOLICY;
+	<span style="color: #FF1493;">if</span> (out_dev-&gt;cnf.no_xfrm)
+		rth-&gt;u.dst.flags |= DST_NOXFRM;
+	rth-&gt;fl.fl4_dst = daddr;
+	rth-&gt;rt_dst     = daddr;
+	rth-&gt;fl.fl4_tos = tos;
+	rth-&gt;fl.mark    = skb-&gt;mark;
+	rth-&gt;fl.fl4_src = saddr;
+	rth-&gt;rt_src     = saddr;
+	rth-&gt;rt_gateway = daddr;
+	rth-&gt;rt_iif     =
+		rth-&gt;fl.iif     = in_dev-&gt;dev-&gt;ifindex;
+	rth-&gt;u.dst.dev  = (out_dev)-&gt;dev;
+	dev_hold(rth-&gt;u.dst.dev);
+	rth-&gt;idev       = in_dev_get(rth-&gt;u.dst.dev);
+	rth-&gt;fl.oif     = 0;
+	rth-&gt;rt_spec_dst= spec_dst;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#32531;&#23384;&#39033;&#30340;&#36755;&#20837;&#36755;&#20986;&#20989;&#25968;</span>
+	rth-&gt;u.dst.input = ip_forward;
+	rth-&gt;u.dst.output = ip_output;
+	rt_set_nexthop(rth, res, itag);
+	rth-&gt;rt_flags = flags;
+
+	*result = rth;
+	err = 0;
+ <span style="color: #AF87FF;">cleanup</span>:
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">release the working reference to the output device</span><span style="color: #8B8878;"> */</span>
+	in_dev_put(out_dev);
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3dbca82" class="outline-3">
+<h3 id="org3dbca82"><span class="section-number-3">4.2</span> 创建输出路由缓存项</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+__mkroute_output()用来创建输出路由缓存项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__mkroute_output</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> **<span style="color: #FF8C00;">result</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#36820;&#22238;&#25104;&#21151;&#21019;&#24314;&#36755;&#20986;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+				   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span>* <span style="color: #FF8C00;">res</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#26597;&#21040;&#30340;&#20449;&#24687;</span>
+				   <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">fl</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22522;&#20110;oldflp&#20462;&#25913;&#21518;&#30340;&#26465;&#20214;&#32452;&#21512;</span>
+				   <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">oldflp</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#35810;&#36335;&#30001;&#30340;&#26465;&#20214;&#32452;&#21512;</span>
+				   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev_out</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span>
+				   <span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">flags</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;&#39033;&#30340;&#29305;&#24615;&#21644;&#26631;&#24535;</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span>;
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">tos</span> = RT_FL_TOS(oldflp);
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22238;&#29615;&#22320;&#22336;&#65292;&#21017;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#20063;&#24517;&#39035;&#26159;&#22238;&#29615;&#35774;&#22791;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (LOOPBACK(fl-&gt;fl4_src) &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(dev_out-&gt;flags&amp;IFF_LOOPBACK))
+		<span style="color: #FF1493;">return</span> -EINVAL;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#30446;&#30340;&#22320;&#22336;&#65292;&#35774;&#32622;&#36335;&#30001;&#32531;&#23384;&#39033;&#30340;&#31867;&#22411;</span>
+	<span style="color: #FF1493;">if</span> (fl-&gt;fl4_dst == htonl(0xFFFFFFFF))
+		res-&gt;type = RTN_BROADCAST;
+	<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (MULTICAST(fl-&gt;fl4_dst))
+		res-&gt;type = RTN_MULTICAST;
+	<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (BADCLASS(fl-&gt;fl4_dst) || ZERONET(fl-&gt;fl4_dst))
+		<span style="color: #FF1493;">return</span> -EINVAL;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#35774;&#22791;&#26159;&#22238;&#29615;&#35774;&#22791;&#65292;&#21017;&#36335;&#30001;&#32531;&#23384;&#39033;&#30340;&#30446;&#30340;&#22320;&#22336;&#26159;&#19968;&#20010;&#26412;&#22320;&#22320;&#22336;</span>
+	<span style="color: #FF1493;">if</span> (dev_out-&gt;flags &amp; IFF_LOOPBACK)
+		flags |= RTCF_LOCAL;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#33719;&#21462;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#30340;IP&#37197;&#32622;&#22359;</span><span style="color: #8B8878;"> */</span>
+	in_dev = in_dev_get(dev_out);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>in_dev)
+		<span style="color: #FF1493;">return</span> -EINVAL;
+
+	<span style="color: #FF1493;">if</span> (res-&gt;type == RTN_BROADCAST) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#39033;&#26159;&#24191;&#25773;&#31867;&#22411;</span>
+		flags |= RTCF_BROADCAST | RTCF_LOCAL;
+		<span style="color: #FF1493;">if</span> (res-&gt;fi) {
+			fib_info_put(res-&gt;fi);
+			res-&gt;fi = <span style="color: #AF87FF;">NULL</span>;
+		}
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (res-&gt;type == RTN_MULTICAST) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#39033;&#26159;&#22810;&#25773;&#31867;&#22411;</span>
+		flags |= RTCF_MULTICAST|RTCF_LOCAL;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ip_check_mc(in_dev, oldflp-&gt;fl4_dst, oldflp-&gt;fl4_src,
+				 oldflp-&gt;proto))
+			flags &amp;= ~RTCF_LOCAL;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If multicast route do not exist use</span>
+<span style="color: #8B8878;">                   default one, but do not gateway in this case.</span>
+<span style="color: #8B8878;">                   Yes, it is hack.</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (res-&gt;fi &amp;&amp; res-&gt;prefixlen &lt; 4) {
+			fib_info_put(res-&gt;fi);
+			res-&gt;fi = <span style="color: #AF87FF;">NULL</span>;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#36335;&#30001;&#32531;&#23384;&#39033;&#20998;&#37197;&#20869;&#23384;</span>
+	rth = dst_alloc(&amp;ipv4_dst_ops);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rth) {
+		err = -ENOBUFS;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">cleanup</span>;
+	}
+
+	atomic_set(&amp;rth-&gt;u.dst.__refcnt, 1);
+	rth-&gt;u.dst.flags= DST_HOST;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_MULTIPATH_CACHED
+	<span style="color: #FF1493;">if</span> (res-&gt;fi) {
+		rth-&gt;rt_multipath_alg = res-&gt;fi-&gt;fib_mp_alg;
+		<span style="color: #FF1493;">if</span> (res-&gt;fi-&gt;fib_nhs &gt; 1)
+			rth-&gt;u.dst.flags |= DST_BALANCED;
+	}
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">if</span> (in_dev-&gt;cnf.no_xfrm)
+		rth-&gt;u.dst.flags |= DST_NOXFRM;
+	<span style="color: #FF1493;">if</span> (in_dev-&gt;cnf.no_policy)
+		rth-&gt;u.dst.flags |= DST_NOPOLICY;
+
+	rth-&gt;fl.fl4_dst = oldflp-&gt;fl4_dst;
+	rth-&gt;fl.fl4_tos = tos;
+	rth-&gt;fl.fl4_src = oldflp-&gt;fl4_src;
+	rth-&gt;fl.oif     = oldflp-&gt;oif;
+	rth-&gt;fl.mark    = oldflp-&gt;mark;
+	rth-&gt;rt_dst     = fl-&gt;fl4_dst;
+	rth-&gt;rt_src     = fl-&gt;fl4_src;
+	rth-&gt;rt_iif     = oldflp-&gt;oif ? : dev_out-&gt;ifindex;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">get references to the devices that are to be hold by the routing</span>
+<span style="color: #8B8878;">           cache entry</span><span style="color: #8B8878;"> */</span>
+	rth-&gt;u.dst.dev  = dev_out;
+	dev_hold(dev_out);
+	rth-&gt;idev       = in_dev_get(dev_out);
+	rth-&gt;rt_gateway = fl-&gt;fl4_dst;
+	rth-&gt;rt_spec_dst= fl-&gt;fl4_src;
+
+	rth-&gt;u.dst.output=ip_output;
+
+	RT_CACHE_STAT_INC(out_slow_tot);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;flags,&#35774;&#32622;&#36755;&#20986;&#32531;&#23384;&#39033;&#30340;output&#20989;&#25968;</span>
+	<span style="color: #FF1493;">if</span> (flags &amp; RTCF_LOCAL) {
+		rth-&gt;u.dst.input = ip_local_deliver;
+		rth-&gt;rt_spec_dst = fl-&gt;fl4_dst;
+	}
+	<span style="color: #FF1493;">if</span> (flags &amp; (RTCF_BROADCAST | RTCF_MULTICAST)) {
+		rth-&gt;rt_spec_dst = fl-&gt;fl4_src;
+		<span style="color: #FF1493;">if</span> (flags &amp; RTCF_LOCAL &amp;&amp;
+		    <span style="color: #CDC673; font-weight: bold;">!</span>(dev_out-&gt;flags &amp; IFF_LOOPBACK)) {
+			rth-&gt;u.dst.output = ip_mc_output;
+			RT_CACHE_STAT_INC(out_slow_mc);
+		}
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_MROUTE
+		<span style="color: #FF1493;">if</span> (res-&gt;type == RTN_MULTICAST) {
+			<span style="color: #FF1493;">if</span> (IN_DEV_MFORWARD(in_dev) &amp;&amp;
+			    <span style="color: #CDC673; font-weight: bold;">!</span>LOCAL_MCAST(oldflp-&gt;fl4_dst)) {
+				rth-&gt;u.dst.input = ip_mr_input;
+				rth-&gt;u.dst.output = ip_mc_output;
+			}
+		}
+<span style="color: #FF1493;">#endif</span>
+	}
+	rt_set_nexthop(rth, res, 0);
+	rth-&gt;rt_flags = flags;
+	*result = rth;
+ <span style="color: #AF87FF;">cleanup</span>:
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">release work reference to inet device</span><span style="color: #8B8878;"> */</span>
+	in_dev_put(in_dev);
+
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge60343a" class="outline-2">
+<h2 id="orge60343a"><span class="section-number-2">5</span> 添加路由表项到缓存中：rt_intern_hash()</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+在为输入报文或者输出报文选择路由时，如果缓存查找失败，则会查找路由表并将表项保存到路由缓存内。 通过dst_alloc()分配新的缓存项后,根据路由表查找结果来初始化该表项的一些字段，最终会调用rt_intern_hash()将这个新表项插入到缓存散列表的桶连表首部。 在接收到ICMP重定向消息时，也会调用这个函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">rt_intern_hash</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">hash</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rt</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> **<span style="color: #FF8C00;">rp</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>   *<span style="color: #FF8C00;">rth</span>, **<span style="color: #FF8C00;">rthp</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>   <span style="color: #FF8C00;">now</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">cand</span>, **<span style="color: #FF8C00;">candp</span>;
+	<span style="color: #5FD7FF;">u32</span>             <span style="color: #FF8C00;">min_score</span>;
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">chain_length</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">attempts</span> = <span style="color: #CDC673; font-weight: bold;">!</span>in_softirq();
+
+<span style="color: #AF87FF;">restart</span>:
+	chain_length = 0;
+	min_score = ~(<span style="color: #5FD7FF;">u32</span>)0;
+	cand = <span style="color: #AF87FF;">NULL</span>;
+	candp = <span style="color: #AF87FF;">NULL</span>;
+	now = jiffies;
+	rthp = &amp;rt_hash_table[hash].chain; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#35813;hash&#20540;&#19978;&#30340;&#36335;&#30001;&#32531;&#23384;&#38142;&#34920;</span>
+	spin_lock_bh(rt_hash_lock_addr(hash));
+	<span style="color: #FF1493;">while</span> ((rth = *rthp) != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#32531;&#23384;&#38142;&#34920;&#65292;&#30830;&#23450;&#26159;&#21542;&#24050;&#32463;&#23384;&#22312;&#30456;&#21516;&#39033;</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_MULTIPATH_CACHED
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(rth-&gt;u.dst.flags &amp; DST_BALANCED) &amp;&amp;
+		    compare_keys(&amp;rth-&gt;fl, &amp;rt-&gt;fl)) {
+<span style="color: #FF1493;">#else</span>
+		<span style="color: #FF1493;">if</span> (compare_keys(&amp;rth-&gt;fl, &amp;rt-&gt;fl)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#25104;&#21151;&#65292;&#21017;&#19981;&#38656;&#35201;&#28155;&#21152;&#65292;&#26356;&#26032;&#36335;&#30001;&#32531;&#23384;&#34987;&#35775;&#38382;&#30340;&#26368;&#21518;&#26102;&#38388;&#65292;&#24182;&#31227;&#21160;&#21040;&#38142;&#34920;&#39318;&#37096;</span>
+<span style="color: #FF1493;">#endif</span>
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Put it first</span><span style="color: #8B8878;"> */</span>
+			*rthp = rth-&gt;u.rt_next;
+			<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                         * Since lookup is lockfree, the deletion</span>
+<span style="color: #8B8878;">                         * must be visible to another weakly ordered CPU before</span>
+<span style="color: #8B8878;">                         * the insertion at the start of the hash chain.</span>
+<span style="color: #8B8878;">                         */</span>
+			rcu_assign_pointer(rth-&gt;u.rt_next,
+					   rt_hash_table[hash].chain);
+			<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                         * Since lookup is lockfree, the update writes</span>
+<span style="color: #8B8878;">                         * must be ordered for consistency on SMP.</span>
+<span style="color: #8B8878;">                         */</span>
+			rcu_assign_pointer(rt_hash_table[hash].chain, rth);
+
+			rth-&gt;u.dst.__use++;
+			dst_hold(&amp;rth-&gt;u.dst);
+			rth-&gt;u.dst.lastuse = now;
+			spin_unlock_bh(rt_hash_lock_addr(hash));
+
+			rt_drop(rt);
+			*rp = rth;
+			<span style="color: #FF1493;">return</span> 0;
+		}
+
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>atomic_read(&amp;rth-&gt;u.dst.__refcnt)) {
+			<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">score</span> = rt_score(rth);
+
+			<span style="color: #FF1493;">if</span> (score &lt;= min_score) {
+				cand = rth;
+				candp = rthp;
+				min_score = score;
+			}
+		}
+
+		chain_length++;
+
+		rthp = &amp;rth-&gt;u.rt_next;
+	}
+
+	<span style="color: #FF1493;">if</span> (cand) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ip_rt_gc_elasticity used to be average length of chain</span>
+<span style="color: #8B8878;">                 * length, when exceeded gc becomes really aggressive.</span>
+<span style="color: #8B8878;">                 *</span>
+<span style="color: #8B8878;">                 * The second limit is less certain. At the moment it allows</span>
+<span style="color: #8B8878;">                 * only 2 entries per bucket. We will see.</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (chain_length &gt; ip_rt_gc_elasticity) {
+			*candp = cand-&gt;u.rt_next;
+			rt_free(cand);
+		}
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Try to bind route to arp only if it is output</span>
+<span style="color: #8B8878;">           route or unicast forwarding path.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21333;&#25773;&#36716;&#21457;&#25253;&#25991;&#25110;&#32773;&#26412;&#22320;&#29983;&#25104;&#30340;&#25253;&#25991;&#65292;&#38656;&#35201;ARP&#35299;&#26512;&#19979;&#19968;&#36339;&#30340;&#20108;&#23618;&#22320;&#22336;</span>
+	<span style="color: #FF1493;">if</span> (rt-&gt;rt_type == RTN_UNICAST || rt-&gt;fl.iif == 0) {
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = arp_bind_neighbour(&amp;rt-&gt;u.dst);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32465;&#23450;&#36335;&#30001;&#32531;&#23384;&#39033;&#21644;&#37051;&#23621;&#39033;</span>
+		<span style="color: #FF1493;">if</span> (err) {
+			spin_unlock_bh(rt_hash_lock_addr(hash));
+
+			<span style="color: #FF1493;">if</span> (err != -ENOBUFS) {
+				rt_drop(rt);
+				<span style="color: #FF1493;">return</span> err;
+			}
+
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Neighbour tables are full and nothing</span>
+<span style="color: #8B8878;">                           can be released. Try to shrink route cache,</span>
+<span style="color: #8B8878;">                           it is most likely it holds some neighbour records.</span>
+<span style="color: #8B8878;">                         */</span>
+			<span style="color: #FF1493;">if</span> (attempts-- &gt; 0) {
+				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">saved_elasticity</span> = ip_rt_gc_elasticity;
+				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">saved_int</span> = ip_rt_gc_min_interval;
+				ip_rt_gc_elasticity     = 1;
+				ip_rt_gc_min_interval   = 0;
+				rt_garbage_collect();
+				ip_rt_gc_min_interval   = saved_int;
+				ip_rt_gc_elasticity     = saved_elasticity;
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">restart</span>;
+			}
+
+			<span style="color: #FF1493;">if</span> (net_ratelimit())
+				printk(KERN_WARNING <span style="color: #CDC673;">"Neighbour table overflow.\n"</span>);
+			rt_drop(rt);
+			<span style="color: #FF1493;">return</span> -ENOBUFS;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#21040;&#36335;&#30001;&#32531;&#23384;&#25955;&#21015;&#34920;</span>
+	rt-&gt;u.rt_next = rt_hash_table[hash].chain;
+<span style="color: #FF1493;">#if</span> RT_CACHE_DEBUG &gt;= 2
+	<span style="color: #FF1493;">if</span> (rt-&gt;u.rt_next) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">trt</span>;
+		printk(KERN_DEBUG <span style="color: #CDC673;">"rt_cache @%02x: %u.%u.%u.%u"</span>, hash,
+		       NIPQUAD(rt-&gt;rt_dst));
+		<span style="color: #FF1493;">for</span> (trt = rt-&gt;u.rt_next; trt; trt = trt-&gt;u.rt_next)
+			printk(<span style="color: #CDC673;">" . %u.%u.%u.%u"</span>, NIPQUAD(trt-&gt;rt_dst));
+		printk(<span style="color: #CDC673;">"\n"</span>);
+	}
+<span style="color: #FF1493;">#endif</span>
+	rt_hash_table[hash].chain = rt;
+	spin_unlock_bh(rt_hash_lock_addr(hash));
+	*rp = rt;
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org40dba68" class="outline-2">
+<h2 id="org40dba68"><span class="section-number-2">6</span> 输入路由缓存查询： ip_route_input()</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+此函数用于输入报文的路由缓存查询。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_route_input</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">daddr</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span>,
+		   <span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">tos</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> * <span style="color: #FF8C00;">rth</span>;
+	<span style="color: #5FD7FF;">unsigned</span>        <span style="color: #FF8C00;">hash</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">iif</span> = dev-&gt;ifindex;
+
+	tos &amp;= IPTOS_RT_MASK;
+	hash = rt_hash(daddr, saddr, iif);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#25955;&#21015;&#34920;&#30340;&#26742;&#38142;&#34920;&#19979;&#26631;</span>
+
+	rcu_read_lock();
+	<span style="color: #FF1493;">for</span> (rth = rcu_dereference(rt_hash_table[hash].chain); rth;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#25955;&#21015;&#34920;&#26742;&#38142;&#34920;</span>
+	     rth = rcu_dereference(rth-&gt;u.rt_next)) {
+		<span style="color: #FF1493;">if</span> (rth-&gt;fl.fl4_dst == daddr &amp;&amp;
+		    rth-&gt;fl.fl4_src == saddr &amp;&amp;
+		    rth-&gt;fl.iif == iif &amp;&amp;
+		    rth-&gt;fl.oif == 0 &amp;&amp;
+		    rth-&gt;fl.mark == skb-&gt;mark &amp;&amp;
+		    rth-&gt;fl.fl4_tos == tos) {
+			rth-&gt;u.dst.lastuse = jiffies;
+			dst_hold(&amp;rth-&gt;u.dst);
+			rth-&gt;u.dst.__use++;
+			RT_CACHE_STAT_INC(in_hit);
+			rcu_read_unlock();
+			skb-&gt;dst = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span>*)rth;
+			<span style="color: #FF1493;">return</span> 0;
+		}
+		RT_CACHE_STAT_INC(in_hlist_search);
+	}
+	rcu_read_unlock();
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Multicast recognition logic is moved from route cache to here.</span>
+<span style="color: #8B8878;">           The problem was that too many Ethernet cards have broken/missing</span>
+<span style="color: #8B8878;">           hardware multicast filters :-( As result the host on multicasting</span>
+<span style="color: #8B8878;">           network acquires a lot of useless route cache entries, sort of</span>
+<span style="color: #8B8878;">           SDR messages from all the world. Now we try to get rid of them.</span>
+<span style="color: #8B8878;">           Really, provided software IP multicast filter is organized</span>
+<span style="color: #8B8878;">           reasonably (at least, hashed), it does not result in a slowdown</span>
+<span style="color: #8B8878;">           comparing with route cache reject entries.</span>
+<span style="color: #8B8878;">           Note, that multicast routers are not affected, because</span>
+<span style="color: #8B8878;">           route cache entry is created eventually.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (MULTICAST(daddr)) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#22810;&#25773;&#25253;&#25991;&#65292;&#19988;&#26597;&#25214;&#22833;&#36133;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span>;
+
+		rcu_read_lock();
+		<span style="color: #FF1493;">if</span> ((in_dev = __in_dev_get_rcu(dev)) != <span style="color: #AF87FF;">NULL</span>) {
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#30446;&#30340;&#22320;&#22336;&#26159;&#21542;&#20026;&#26412;&#22320;&#37197;&#32622;&#30340;&#22810;&#25773;&#22320;&#22336;</span>
+			<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">our</span> = ip_check_mc(in_dev, daddr, saddr,
+				skb-&gt;nh.iph-&gt;protocol);
+			<span style="color: #FF1493;">if</span> (our
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_MROUTE
+			    || (<span style="color: #CDC673; font-weight: bold;">!</span>LOCAL_MCAST(daddr) &amp;&amp; IN_DEV_MFORWARD(in_dev)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#19981;&#26159;&#26412;&#22320;&#22320;&#22336;&#65292;&#19988;&#25903;&#25345;&#22810;&#25773;&#36716;&#21457;</span>
+<span style="color: #FF1493;">#endif</span>
+			    ) {
+				rcu_read_unlock();
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22810;&#25773;&#22788;&#29702;</span>
+				<span style="color: #FF1493;">return</span> ip_route_input_mc(skb, daddr, saddr,
+							 tos, dev, our);
+			}
+		}
+		rcu_read_unlock();
+		<span style="color: #FF1493;">return</span> -EINVAL;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#36335;&#30001;&#34920;</span>
+	<span style="color: #FF1493;">return</span> ip_route_input_slow(skb, daddr, saddr, tos, dev);
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1d20aec" class="outline-2">
+<h2 id="org1d20aec"><span class="section-number-2">7</span> 输出路由缓存查询</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+本地生成的报文输出时会调用 ip_route_output_flow() 或者 ip_route_output_key() 进行路由查询。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #87D700;">EXPORT_SYMBOL_GPL</span>(__ip_route_output_key);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_route_output_flow</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> **<span style="color: #FF8C00;">rp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #FF1493;">if</span> ((err = __ip_route_output_key(rp, flp)) != 0)
+		<span style="color: #FF1493;">return</span> err;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ipsec&#30456;&#20851;&#30340;&#22788;&#29702;</span>
+	<span style="color: #FF1493;">if</span> (flp-&gt;proto) {
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>flp-&gt;fl4_src)
+			flp-&gt;fl4_src = (*rp)-&gt;rt_src;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>flp-&gt;fl4_dst)
+			flp-&gt;fl4_dst = (*rp)-&gt;rt_dst;
+		<span style="color: #FF1493;">return</span> xfrm_lookup((<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> **)rp, flp, sk, flags);
+	}
+	<span style="color: #FF1493;">return</span> 0;
+}
+
+<span style="color: #87D700;">EXPORT_SYMBOL_GPL</span>(ip_route_output_flow);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_route_output_key</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> **<span style="color: #FF8C00;">rp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>)
+{
+	<span style="color: #FF1493;">return</span> ip_route_output_flow(rp, flp, <span style="color: #AF87FF;">NULL</span>, 0);
+}
+</pre>
+</div>
+
+<p>
+__ip_route_output_key() 在路由缓存中查找缓存项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__ip_route_output_key</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> **<span style="color: #FF8C00;">rp</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#25104;&#21151;&#26102;&#65292;&#20445;&#23384;&#23545;&#24212;&#30340;&#32531;&#23384;&#39033;</span>
+			<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25628;&#32034;&#36335;&#30001;&#30340;&#26465;&#20214;&#32452;&#21512;</span>
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">hash</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>;
+	hash = rt_hash(flp-&gt;fl4_dst, flp-&gt;fl4_src, flp-&gt;oif);
+	rcu_read_lock_bh();
+	<span style="color: #FF1493;">for</span> (rth = rcu_dereference(rt_hash_table[hash].chain); rth;
+		rth = rcu_dereference(rth-&gt;u.rt_next)) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21305;&#37197;&#32531;&#23384;&#39033;</span>
+		<span style="color: #FF1493;">if</span> (rth-&gt;fl.fl4_dst == flp-&gt;fl4_dst &amp;&amp;
+		    rth-&gt;fl.fl4_src == flp-&gt;fl4_src &amp;&amp;
+		    rth-&gt;fl.iif == 0 &amp;&amp;
+		    rth-&gt;fl.oif == flp-&gt;oif &amp;&amp;
+		    rth-&gt;fl.mark == flp-&gt;mark &amp;&amp;
+		    <span style="color: #CDC673; font-weight: bold;">!</span>((rth-&gt;fl.fl4_tos ^ flp-&gt;fl4_tos) &amp;
+			    (IPTOS_RT_MASK | RTO_ONLINK))) {
+
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">check for multipath routes and choose one if</span>
+<span style="color: #8B8878;">                         * necessary</span>
+<span style="color: #8B8878;">                         */</span>
+			<span style="color: #FF1493;">if</span> (multipath_select_route(flp, rth, rp)) {
+				dst_hold(&amp;(*rp)-&gt;u.dst);
+				RT_CACHE_STAT_INC(out_hit);
+				rcu_read_unlock_bh();
+				<span style="color: #FF1493;">return</span> 0;
+			}
+
+			rth-&gt;u.dst.lastuse = jiffies;
+			dst_hold(&amp;rth-&gt;u.dst);
+			rth-&gt;u.dst.__use++;
+			RT_CACHE_STAT_INC(out_hit);
+			rcu_read_unlock_bh();
+			*rp = rth;
+			<span style="color: #FF1493;">return</span> 0;
+		}
+		RT_CACHE_STAT_INC(out_hlist_search);
+	}
+	rcu_read_unlock_bh();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32531;&#23384;&#26597;&#25214;&#22833;&#36133;&#65292;&#21017;&#35843;&#29992;ip_route_output_slow&#26597;&#25214;&#36335;&#30001;&#34920;</span>
+	<span style="color: #FF1493;">return</span> ip_route_output_slow(rp, flp);
+}
+
+<span style="color: #87D700;">EXPORT_SYMBOL_GPL</span>(__ip_route_output_key);
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgccb6cdf" class="outline-2">
+<h2 id="orgccb6cdf"><span class="section-number-2">8</span> 垃圾回收</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+路由缓存项的回收分为同步和异步回收。
+</p>
+</div>
+
+<div id="outline-container-org250f585" class="outline-3">
+<h3 id="org250f585"><span class="section-number-3">8.1</span> 路由缓存项的过期</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+通常路由缓存项不会过期，只有发生以下事件时，会调用dst_set_expires()设置dst_entry的过期时间戳字段 expires :
+</p>
+<ul class="org-ul">
+<li>接收到ICMP的 UNREACHABLE 或者 FRAGMENTATION NEEDED 消息时，相关的路由项的PMTU必须被更新为ICMP头中指定的MTU。 ICMP模块调用 ip_rt_frag_needed() 更新路由缓存。</li>
+<li>当TCP代码使用路径MTU发现算法来更新一条路由的MTU时，调用ip_rt_update_pmtu()，其中会调用 dst_set_expires()。</li>
+<li>当目的IP地址被认为不可达时，通过直接或者间接调用 dst_ops 数据结构中的 link_failure 方法，将缓存内相关的 dst_entry 结构标记为不可达。 IPv4中是 ipv4_link_failure() 函数。</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgc10a398" class="outline-3">
+<h3 id="orgc10a398"><span class="section-number-3">8.2</span> 判断缓存路由表项是否可以删除</h3>
+<div class="outline-text-3" id="text-8-2">
+<p>
+同步和异步回收，都使用 rt_may_expire() 函数判断是否符合删除条件。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">rt_may_expire</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">tmo1</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">tmo2</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">age</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ret</span> = 0;
+
+	<span style="color: #FF1493;">if</span> (atomic_read(&amp;rth-&gt;u.dst.__refcnt))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	ret = 1;
+	<span style="color: #FF1493;">if</span> (rth-&gt;u.dst.expires &amp;&amp;
+	    time_after_eq(jiffies, rth-&gt;u.dst.expires))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	age = jiffies - rth-&gt;u.dst.lastuse;
+	ret = 0;
+	<span style="color: #FF1493;">if</span> ((age &lt;= tmo1 &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>rt_fast_clean(rth)) ||
+	    (age &lt;= tmo2 &amp;&amp; rt_valuable(rth)))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	ret = 1;
+<span style="color: #AF87FF;">out</span>:    <span style="color: #FF1493;">return</span> ret;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org973fb33" class="outline-3">
+<h3 id="org973fb33"><span class="section-number-3">8.3</span> 同步清理</h3>
+<div class="outline-text-3" id="text-8-3">
+<p>
+路由缓存的同步清理函数： rt_garbage_collect()。
+</p>
+
+<ul class="org-ul">
+<li>当在添加新表项到路由缓存的 rt_intern_hash() 中时，如果绑定邻居项出错，会调用 rt_garbage_collect() 函数清理。</li>
+<li>分配表项调用 dst_alloc() 时，如果表项总数超过门限值 gc_thresh， 则调用 rt_garbage_collect() 函数清理。</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="image/fib-cache/rt-garbage-collect.png" alt="rt-garbage-collect.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>rt_garbage_collect()流程</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">   Short description of GC goals.</span>
+
+<span style="color: #8B8878;">   We want to build algorithm, which will keep routing cache</span>
+<span style="color: #8B8878;">   at some equilibrium point, when number of aged off entries</span>
+<span style="color: #8B8878;">   is kept approximately equal to newly generated ones.</span>
+
+<span style="color: #8B8878;">   Current expiration strength is variable "expire".</span>
+<span style="color: #8B8878;">   We try to adjust it dynamically, so that if networking</span>
+<span style="color: #8B8878;">   is idle expires is large enough to keep enough of warm entries,</span>
+<span style="color: #8B8878;">   and when load increases it reduces to limit cache size.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">rt_garbage_collect</span>(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">expire</span> = RT_GC_TIMEOUT; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21028;&#26029;&#36335;&#30001;&#39033;&#26159;&#21542;&#36807;&#26399;&#30340;&#36229;&#26102;&#26465;&#20214;</span>
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">last_gc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35760;&#24405;&#27599;&#27425;&#22403;&#22334;&#22238;&#25910;&#30340;&#26102;&#38388;</span>
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rover</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#19978;&#27425;&#22403;&#22334;&#22238;&#25910;&#26102;&#25195;&#25551;&#30340;&#26368;&#21518;&#19968;&#20010;&#26742;</span>
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">equilibrium</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>, **<span style="color: #FF8C00;">rthp</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span> = jiffies;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">goal</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22403;&#22334;&#22238;&#25910;&#27604;&#36739;&#32791;&#36153;CPU&#26102;&#38388;&#65292;&#25152;&#20197;&#22238;&#25910;&#19981;&#24212;&#35813;&#22826;&#39057;&#32321;</span><span style="color: #8B8878;"> */</span>
+	RT_CACHE_STAT_INC(gc_total);
+	<span style="color: #FF1493;">if</span> (now - last_gc &lt; ip_rt_gc_min_interval &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36317;&#31163;&#19978;&#27425;&#22403;&#22334;&#22238;&#25910;&#30340;&#38388;&#38548;&#23567;&#20110;ip_rt_gc_min_interval</span>
+	    atomic_read(&amp;ipv4_dst_ops.entries) &lt; ip_rt_max_size) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24182;&#19988;&#32531;&#23384;&#39033;&#25968;&#30446;&#36824;&#27809;&#26377;&#36798;&#21040;&#19978;&#38480; ip_rt_max_size</span>
+		RT_CACHE_STAT_INC(gc_ignored);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#24453;&#21024;&#38500;&#30340;&#32531;&#23384;&#39033;&#25968;&#30446;&#21644;&#21097;&#20313;&#30340;&#25968;&#30446;</span>
+	goal = atomic_read(&amp;ipv4_dst_ops.entries) -
+		(ip_rt_gc_elasticity &lt;&lt; rt_hash_log);
+	<span style="color: #FF1493;">if</span> (goal &lt;= 0) {
+		<span style="color: #FF1493;">if</span> (equilibrium &lt; ipv4_dst_ops.gc_thresh)
+			equilibrium = ipv4_dst_ops.gc_thresh;
+		goal = atomic_read(&amp;ipv4_dst_ops.entries) - equilibrium;
+		<span style="color: #FF1493;">if</span> (goal &gt; 0) {
+			equilibrium += min_t(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>, goal / 2, rt_hash_mask + 1);
+			goal = atomic_read(&amp;ipv4_dst_ops.entries) - equilibrium;
+		}
+	} <span style="color: #FF1493;">else</span> {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">We are in dangerous area. Try to reduce cache really</span>
+<span style="color: #8B8878;">                 * aggressively.</span>
+<span style="color: #8B8878;">                 */</span>
+		goal = max_t(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>, goal / 2, rt_hash_mask + 1);
+		equilibrium = atomic_read(&amp;ipv4_dst_ops.entries) - goal;
+	}
+
+	<span style="color: #FF1493;">if</span> (now - last_gc &gt;= ip_rt_gc_min_interval)
+		last_gc = now; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#22403;&#22334;&#22238;&#25910;&#26102;&#38388;</span>
+
+	<span style="color: #FF1493;">if</span> (goal &lt;= 0) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;&#24453;&#21024;&#38500;&#30340;&#32531;&#23384;&#39033;</span>
+		equilibrium += goal;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">work_done</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24320;&#22987;&#36941;&#21382;&#25955;&#21015;&#34920;</span>
+	<span style="color: #FF1493;">do</span> {
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>, <span style="color: #FF8C00;">k</span>;
+		<span style="color: #FF1493;">for</span> (i = rt_hash_mask, k = rover; i &gt;= 0; i--) {
+			<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">tmo</span> = expire;
+			k = (k + 1) &amp; rt_hash_mask;
+			rthp = &amp;rt_hash_table[k].chain;
+			spin_lock_bh(rt_hash_lock_addr(k));
+			<span style="color: #FF1493;">while</span> ((rth = *rthp) != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;hash &#26742;&#38142;&#34920;</span>
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#32531;&#23384;&#39033;&#26159;&#21542;&#36807;&#26399;</span>
+				<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rt_may_expire(rth, tmo, expire)) {
+					tmo &gt;&gt;= 1;
+					rthp = &amp;rth-&gt;u.rt_next;
+					<span style="color: #FF1493;">continue</span>;
+				}
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36807;&#26399;&#21017;&#36827;&#34892;&#21024;&#38500;&#25805;&#20316;</span>
+				*rthp = rth-&gt;u.rt_next;
+				rt_free(rth);
+				goal--;
+			}
+			spin_unlock_bh(rt_hash_lock_addr(k));
+			<span style="color: #FF1493;">if</span> (goal &lt;= 0)
+				<span style="color: #FF1493;">break</span>;
+		}
+		rover = k;
+
+		<span style="color: #FF1493;">if</span> (goal &lt;= 0) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#36798;&#21040;&#24453;&#21024;&#38500;&#30340;&#30446;&#26631;&#25968;&#37327;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">work_done</span>;
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36824;&#27809;&#26377;&#36798;&#21040;&#21024;&#38500;&#30446;&#26631;. &#22914;&#26524;&#26377;&#20197;&#19979;&#24773;&#20917;&#21017;&#20572;&#27490;&#22788;&#29702;:</span>
+
+<span style="color: #8B8878;">                   - &#36807;&#26399;&#26102;&#38388;&#20943;&#23567;&#20026;0&#65292;&#21542;&#21017;&#20943;&#21322;</span>
+<span style="color: #8B8878;">                   - &#32531;&#23384;&#39033;&#25968;&#37327;&#23567;&#20110;&#19978;&#38480;</span>
+<span style="color: #8B8878;">                   - &#30001;&#20013;&#26029;&#24341;&#21457;&#30340;&#35843;&#29992;</span>
+<span style="color: #8B8878;">                   -</span>
+<span style="color: #8B8878;">                 */</span>
+
+		RT_CACHE_STAT_INC(gc_goal_miss);
+		<span style="color: #FF1493;">if</span> (expire == 0)
+			<span style="color: #FF1493;">break</span>;
+		expire &gt;&gt;= 1;
+		printk(KERN_DEBUG <span style="color: #CDC673;">"expire&gt;&gt; %u %d %d %d\n"</span>, expire,
+				atomic_read(&amp;ipv4_dst_ops.entries), goal, i);
+
+		<span style="color: #FF1493;">if</span> (atomic_read(&amp;ipv4_dst_ops.entries) &lt; ip_rt_max_size)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	} <span style="color: #FF1493;">while</span> (<span style="color: #CDC673; font-weight: bold;">!</span>in_softirq() &amp;&amp; time_before_eq(jiffies, now));
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32531;&#23384;&#39033;&#30340;&#25968;&#30446;&#23567;&#20110;&#19978;&#38480;</span>
+	<span style="color: #FF1493;">if</span> (atomic_read(&amp;ipv4_dst_ops.entries) &lt; ip_rt_max_size)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	<span style="color: #FF1493;">if</span> (net_ratelimit())
+		printk(KERN_WARNING <span style="color: #CDC673;">"dst cache overflow\n"</span>);
+	RT_CACHE_STAT_INC(gc_dst_overflow);
+	<span style="color: #FF1493;">return</span> 1;
+
+<span style="color: #AF87FF;">work_done</span>: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23436;&#25104;&#22403;&#22334;&#32780;&#22238;&#25910;&#21518;&#65292;&#38656;&#35201;&#35843;&#25972;expire</span>
+	expire += ip_rt_gc_min_interval;
+	<span style="color: #FF1493;">if</span> (expire &gt; ip_rt_gc_timeout ||
+	    atomic_read(&amp;ipv4_dst_ops.entries) &lt; ipv4_dst_ops.gc_thresh)
+		expire = ip_rt_gc_timeout;
+<span style="color: #FF1493;">#if</span> RT_CACHE_DEBUG &gt;= 2
+	printk(KERN_DEBUG <span style="color: #CDC673;">"expire++ %u %d %d %d\n"</span>, expire,
+			atomic_read(&amp;ipv4_dst_ops.entries), goal, rover);
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #AF87FF;">out</span>:    <span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgca3d986" class="outline-3">
+<h3 id="orgca3d986"><span class="section-number-3">8.4</span> 异步清理</h3>
+<div class="outline-text-3" id="text-8-4">
+<p>
+rt_periodic_timer 函数用来周期性的进行垃圾回收工作，其处理函数为 rt_check_expire()。
+</p>
+
+<p>
+定时器的默认间隔为 ip_rt_gc_interval 秒，为了防止不同内核模块在同一时间到期， ip_rt_init 函数中设置定时器的第一次过期时间为 ip_rt_gc_interval和 2*ip_rt_gc_interval 之间的一个随机值。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This runs via a timer and thus is always in BH context.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">rt_check_expire</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">dummy</span>)
+{
+	<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rover</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span> = rover, <span style="color: #FF8C00;">goal</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#19978;&#27425;&#22238;&#25910;&#25195;&#25551;&#30340;&#26368;&#21518;&#19968;&#20010;&#26742;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>, **<span style="color: #FF8C00;">rthp</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span> = jiffies;
+	<span style="color: #5FD7FF;">u64</span> <span style="color: #FF8C00;">mult</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#24453;&#21024;&#38500;&#30340;&#32531;&#23384;&#39033;&#25968;&#30446;</span>
+	mult = ((<span style="color: #5FD7FF;">u64</span>)ip_rt_gc_interval) &lt;&lt; rt_hash_log;
+	<span style="color: #FF1493;">if</span> (ip_rt_gc_timeout &gt; 1)
+		do_div(mult, ip_rt_gc_timeout);
+	goal = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>)mult;
+	<span style="color: #FF1493;">if</span> (goal &gt; rt_hash_mask) goal = rt_hash_mask + 1;
+	<span style="color: #FF1493;">for</span> (; goal &gt; 0; goal--) {
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">tmo</span> = ip_rt_gc_timeout;
+
+		i = (i + 1) &amp; rt_hash_mask;
+		rthp = &amp;rt_hash_table[i].chain;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24320;&#22987;&#36941;&#21382;&#26742;&#38142;&#34920;</span>
+
+		<span style="color: #FF1493;">if</span> (*rthp == 0)
+			<span style="color: #FF1493;">continue</span>;
+		spin_lock(rt_hash_lock_addr(i));
+		<span style="color: #FF1493;">while</span> ((rth = *rthp) != <span style="color: #AF87FF;">NULL</span>) {
+			<span style="color: #FF1493;">if</span> (rth-&gt;u.dst.expires) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#36807;&#26399;</span>
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Entry is expired even if it is in use</span><span style="color: #8B8878;"> */</span>
+				<span style="color: #FF1493;">if</span> (time_before_eq(now, rth-&gt;u.dst.expires)) {
+					tmo &gt;&gt;= 1;
+					rthp = &amp;rth-&gt;u.rt_next;
+					<span style="color: #FF1493;">continue</span>;
+				}
+			} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rt_may_expire(rth, tmo, ip_rt_gc_timeout)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#26159;&#21542;&#36807;&#26399;</span>
+				tmo &gt;&gt;= 1;
+				rthp = &amp;rth-&gt;u.rt_next;
+				<span style="color: #FF1493;">continue</span>;
+			}
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#36807;&#26399;&#39033;</span>
+			*rthp = rth-&gt;u.rt_next;
+			rt_free(rth);
+		}
+		spin_unlock(rt_hash_lock_addr(i));
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Fallback loop breaker.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (time_after(jiffies, now))
+			<span style="color: #FF1493;">break</span>;
+	}
+	rover = i; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#26412;&#27425;&#25195;&#25551;&#30340;&#26742;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#19979;&#27425;&#36229;&#26102;&#26102;&#38388;</span>
+	mod_timer(&amp;rt_periodic_timer, jiffies + ip_rt_gc_interval);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org09bee9b" class="outline-3">
+<h3 id="org09bee9b"><span class="section-number-3">8.5</span> 路由缓存项的释放</h3>
+<div class="outline-text-3" id="text-8-5">
+<p>
+在进行垃圾回收时，并不会直接释放缓存项，而是将其插入到 dst_garbage_list 链表。当dst_gc_timer定时器到期时，调用定时器处理函数 dst_run_gc() 。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge55cdfc" class="outline-2">
+<h2 id="orge55cdfc"><span class="section-number-2">9</span> 刷新缓存</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+当系统中发生某种变化时，使得缓存中的一些信息过期，内核就会刷新路由缓存。
+</p>
+
+<p>
+在许多情况下，即使只有一条表项过期，但内核为简化操作，会清空所有表项。
+</p>
+
+<p>
+在进行写请求时，会调用 rt_cache_flush() 来刷新缓存，该函数根据输入参数 delay 来决定是立即刷新还是启动定时器刷新。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">rt_cache_flush</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">delay</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span> = jiffies;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">user_mode</span> = <span style="color: #CDC673; font-weight: bold;">!</span>in_softirq();
+
+	<span style="color: #FF1493;">if</span> (delay &lt; 0) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20351;&#29992;ip_rt_min_delay&#25191;&#34892;&#30340;&#26102;&#38388;&#24310;&#36831;&#21047;&#26032;</span>
+		delay = ip_rt_min_delay;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21047;&#26032;&#22810;&#36335;&#24452;&#36335;&#30001;&#23454;&#20363;&#30340;&#29366;&#24577;</span><span style="color: #8B8878;">*/</span>
+	multipath_flush();
+
+	spin_lock_bh(&amp;rt_flush_lock);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26032;&#25552;&#20132;&#19968;&#20010;&#24310;&#36831;&#21047;&#26032;&#35831;&#27714;&#65292;&#38656;&#35201;&#20808;&#21024;&#38500;&#26087;&#30340;&#21047;&#26032;&#35831;&#27714;</span>
+	<span style="color: #FF1493;">if</span> (del_timer(&amp;rt_flush_timer) &amp;&amp; delay &gt; 0 &amp;&amp; rt_deadline) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">rt_deadline&#29992;&#26469;&#20445;&#35777;&#26032;&#35831;&#27714;&#30340;&#36807;&#26399;&#26102;&#38388;&#19981;&#33021;&#36831;&#20110;&#19978;&#27425;&#35831;&#27714;&#20043;&#21518;&#30340;ip_rt_max_delay&#31186;&#20043;&#21518;</span>
+		<span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">tmo</span> = (<span style="color: #5FD7FF;">long</span>)(rt_deadline - now);
+		<span style="color: #FF1493;">if</span> (user_mode &amp;&amp; tmo &lt; ip_rt_max_delay-ip_rt_min_delay)
+			tmo = 0;
+		<span style="color: #FF1493;">if</span> (delay &gt; tmo)
+			delay = tmo;
+	}
+	<span style="color: #FF1493;">if</span> (delay &lt;= 0) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31435;&#21363;&#21047;&#26032;</span>
+		spin_unlock_bh(&amp;rt_flush_lock);
+		rt_run_flush(0);
+		<span style="color: #FF1493;">return</span>;
+	}
+
+	<span style="color: #FF1493;">if</span> (rt_deadline == 0)
+		rt_deadline = now + ip_rt_max_delay;
+
+	mod_timer(&amp;rt_flush_timer, now+delay);
+	spin_unlock_bh(&amp;rt_flush_lock);
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org0bc09b0" class="outline-4">
+<h4 id="org0bc09b0"><span class="section-number-4">9.0.1</span> 定时器刷新</h4>
+<div class="outline-text-4" id="text-9-0-1">
+<p>
+rt_secret_timer定时器每隔secret_interval秒进行刷新，定时器的处理函数为 rt_secret_rebuild()。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9e13f20" class="outline-4">
+<h4 id="org9e13f20"><span class="section-number-4">9.0.2</span> 网络设备硬件地址改变时的刷新</h4>
+<div class="outline-text-4" id="text-9-0-2">
+<p>
+网络设备硬件地址变化时，ARP模块会收到通知，进而调用 arp_netdev_notifier 来处理。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6e62462" class="outline-4">
+<h4 id="org6e62462"><span class="section-number-4">9.0.3</span> 网络设备状态发生变化</h4>
+<div class="outline-text-4" id="text-9-0-3">
+<p>
+网络设备状态变化或者某些配置变化时，路由子系统会收到通知，调用 fib_netdev_event() 进行处理，比如 NETDEV_UNREGISTER、NETDEV_DOWN、NETDEV_UP、NETDEV_CHANGEMTU、NETDEV_CHANGE等事件。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga77ea01" class="outline-4">
+<h4 id="orga77ea01"><span class="section-number-4">9.0.4</span> 给设备添加或删除IP地址</h4>
+<div class="outline-text-4" id="text-9-0-4">
+<p>
+当删除地址时，相关的路由项也会被删除。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org88efe1b" class="outline-4">
+<h4 id="org88efe1b"><span class="section-number-4">9.0.5</span> 全局转发状态或者设备转发状态发生变化</h4>
+<div class="outline-text-4" id="text-9-0-5">
+<p>
+例如当禁止转发时，就需要删除转发流量的路由缓存项。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgba1835d" class="outline-4">
+<h4 id="orgba1835d"><span class="section-number-4">9.0.6</span> 路由项被删除</h4>
+<div class="outline-text-4" id="text-9-0-6">
+<p>
+相关的路由缓存也需要删除
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7468ae4" class="outline-4">
+<h4 id="org7468ae4"><span class="section-number-4">9.0.7</span> 写 /proc 下的 flush 文件</h4>
+<div class="outline-text-4" id="text-9-0-7">
+<p>
+对flush文件写入时，会调用 ipv4_sysctl_rtcache_flush()，最终调用rt_cache_flush()进行刷新。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2a1164a" class="outline-2">
+<h2 id="org2a1164a"><span class="section-number-2">10</span> ICMP重定向消息的处理</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+ip_rt_redirect() 函数用来处理输入的ICMP重定向消息。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ip_rt_redirect</span>(<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">old_gw</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#35813;ICMP&#37325;&#23450;&#21521;&#28040;&#24687;&#30340;&#36335;&#30001;&#22120;&#22320;&#22336;</span>
+<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">daddr</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;ICMP&#37325;&#23450;&#21521;&#28040;&#24687;&#30340;&#30446;&#30340;&#22320;&#22336;</span>
+ <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">new_gw</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20248;&#36873;&#36335;&#30001;&#22120;&#30340;IP&#22320;&#22336;</span>
+ <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24341;&#21457;&#35813;ICMP&#28040;&#24687;&#30340;&#21407;IP&#25968;&#25454;&#25253;&#30340;&#28304;&#22320;&#22336;</span>
+ <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#28040;&#24687;&#30340;&#36755;&#20837;&#35774;&#22791;</span>
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>, <span style="color: #FF8C00;">k</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = in_dev_get(dev);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>, **<span style="color: #FF8C00;">rthp</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">skeys</span>[2] = { saddr, 0 };
+	<span style="color: #5FD7FF;">int</span>  <span style="color: #FF8C00;">ikeys</span>[2] = { dev-&gt;ifindex, 0 };
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">netevent_redirect</span> <span style="color: #FF8C00;">netevent</span>;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>in_dev)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">IP&#37197;&#32622;&#22359;</span>
+		<span style="color: #FF1493;">return</span>;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31526;&#21512;&#20197;&#19979;&#26465;&#20214;&#21017;&#25298;&#32477;&#25509;&#21463;&#35813;ICMP&#37325;&#23450;&#21521;&#28040;&#24687;</span>
+	<span style="color: #FF1493;">if</span> (new_gw == old_gw || <span style="color: #CDC673; font-weight: bold;">!</span>IN_DEV_RX_REDIRECTS(in_dev)
+	    || MULTICAST(new_gw) || BADCLASS(new_gw) || ZERONET(new_gw))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">reject_redirect</span>;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IN_DEV_SHARED_MEDIA(in_dev)) {
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>inet_addr_onlink(in_dev, new_gw, old_gw))
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">reject_redirect</span>;
+		<span style="color: #FF1493;">if</span> (IN_DEV_SEC_REDIRECTS(in_dev) &amp;&amp; ip_fib_check_default(new_gw, dev))
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">reject_redirect</span>;
+	} <span style="color: #FF1493;">else</span> {
+		<span style="color: #FF1493;">if</span> (inet_addr_type(new_gw) != RTN_UNICAST)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">reject_redirect</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;&#20004;&#23618;&#24490;&#29615;&#65292;&#21305;&#37197;&#26465;&#20214;&#20174;&#20005;&#26684;&#21040;&#23485;&#26494;&#65292;&#21024;&#38500;&#29616;&#26377;&#30340;&#31526;&#21512;&#26465;&#20214;&#30340;&#32531;&#23384;&#39033;&#65292;&#28155;&#21152;&#26032;&#30340;&#32531;&#23384;&#39033;</span>
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; 2; i++) {
+		<span style="color: #FF1493;">for</span> (k = 0; k &lt; 2; k++) {
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;hash key</span>
+			<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">hash</span> = rt_hash(daddr, skeys[i], ikeys[k]);
+			rthp=&amp;rt_hash_table[hash].chain; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#25955;&#21015;&#26742;&#38142;&#34920;</span>
+			rcu_read_lock();
+			<span style="color: #FF1493;">while</span> ((rth = rcu_dereference(*rthp)) != <span style="color: #AF87FF;">NULL</span>) {
+				<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rt</span>;
+
+				<span style="color: #FF1493;">if</span> (rth-&gt;fl.fl4_dst != daddr ||
+				    rth-&gt;fl.fl4_src != skeys[i] ||
+				    rth-&gt;fl.oif != ikeys[k] ||
+				    rth-&gt;fl.iif != 0) {
+					rthp = &amp;rth-&gt;u.rt_next;
+					<span style="color: #FF1493;">continue</span>;
+				}
+
+				<span style="color: #FF1493;">if</span> (rth-&gt;rt_dst != daddr ||
+				    rth-&gt;rt_src != saddr ||
+				    rth-&gt;u.dst.error ||
+				    rth-&gt;rt_gateway != old_gw ||
+				    rth-&gt;u.dst.dev != dev)
+					<span style="color: #FF1493;">break</span>;
+				dst_hold(&amp;rth-&gt;u.dst);
+				rcu_read_unlock();
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25214;&#21040;&#32531;&#23384;&#39033;&#65292;&#21017;&#20998;&#37197;&#26032;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+				rt = dst_alloc(&amp;ipv4_dst_ops);
+				<span style="color: #FF1493;">if</span> (rt == <span style="color: #AF87FF;">NULL</span>) {
+					ip_rt_put(rth);
+					in_dev_put(in_dev);
+					<span style="color: #FF1493;">return</span>;
+				}
+
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Copy all the information.</span><span style="color: #8B8878;"> */</span>
+				*rt = *rth;
+				INIT_RCU_HEAD(&amp;rt-&gt;u.dst.rcu_head);
+				rt-&gt;u.dst.__use         = 1;
+				atomic_set(&amp;rt-&gt;u.dst.__refcnt, 1);
+				rt-&gt;u.dst.child         = <span style="color: #AF87FF;">NULL</span>;
+				<span style="color: #FF1493;">if</span> (rt-&gt;u.dst.dev)
+					dev_hold(rt-&gt;u.dst.dev);
+				<span style="color: #FF1493;">if</span> (rt-&gt;idev)
+					in_dev_hold(rt-&gt;idev);
+				rt-&gt;u.dst.obsolete      = 0;
+				rt-&gt;u.dst.lastuse       = jiffies;
+				rt-&gt;u.dst.path          = &amp;rt-&gt;u.dst;
+				rt-&gt;u.dst.neighbour     = <span style="color: #AF87FF;">NULL</span>;
+				rt-&gt;u.dst.hh            = <span style="color: #AF87FF;">NULL</span>;
+				rt-&gt;u.dst.xfrm          = <span style="color: #AF87FF;">NULL</span>;
+
+				rt-&gt;rt_flags            |= RTCF_REDIRECTED;
+
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Gateway is different ...</span><span style="color: #8B8878;"> */</span>
+				rt-&gt;rt_gateway          = new_gw;
+
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Redirect received -&gt; path was valid</span><span style="color: #8B8878;"> */</span>
+				dst_confirm(&amp;rth-&gt;u.dst);
+
+				<span style="color: #FF1493;">if</span> (rt-&gt;peer)
+					atomic_inc(&amp;rt-&gt;peer-&gt;refcnt);
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;&#39033;&#21644;&#37051;&#23621;&#39033;&#30340;&#32465;&#23450;</span>
+				<span style="color: #FF1493;">if</span> (arp_bind_neighbour(&amp;rt-&gt;u.dst) ||
+				    <span style="color: #CDC673; font-weight: bold;">!</span>(rt-&gt;u.dst.neighbour-&gt;nud_state &amp;
+					    NUD_VALID)) {
+					<span style="color: #FF1493;">if</span> (rt-&gt;u.dst.neighbour)
+						neigh_event_send(rt-&gt;u.dst.neighbour, <span style="color: #AF87FF;">NULL</span>);
+					ip_rt_put(rth);
+					rt_drop(rt);
+					<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">do_next</span>;
+				}
+
+				netevent.old = &amp;rth-&gt;u.dst;
+				netevent.new = &amp;rt-&gt;u.dst;
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#30693;&#37325;&#23450;&#21521;&#20107;&#20214;</span>
+				call_netevent_notifiers(NETEVENT_REDIRECT,
+							&amp;netevent);
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#32769;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+				rt_del(hash, rth);
+				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25554;&#20837;&#26032;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+				<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rt_intern_hash(hash, rt, &amp;rt))
+					ip_rt_put(rt);
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">do_next</span>;
+			}
+			rcu_read_unlock();
+		<span style="color: #AF87FF;">do_next</span>: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25918;&#23485;&#26465;&#20214;&#32487;&#32493;&#26597;&#25214;</span>
+			;
+		}
+	}
+	in_dev_put(in_dev);
+	<span style="color: #FF1493;">return</span>;
+
+<span style="color: #AF87FF;">reject_redirect</span>:
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_VERBOSE
+	<span style="color: #FF1493;">if</span> (IN_DEV_LOG_MARTIANS(in_dev) &amp;&amp; net_ratelimit())
+		printk(KERN_INFO <span style="color: #CDC673;">"Redirect from %u.%u.%u.%u on %s about "</span>
+			<span style="color: #CDC673;">"%u.%u.%u.%u ignored.\n"</span>
+			<span style="color: #CDC673;">"  Advised path = %u.%u.%u.%u -&gt; %u.%u.%u.%u\n"</span>,
+		       NIPQUAD(old_gw), dev-&gt;name, NIPQUAD(new_gw),
+		       NIPQUAD(saddr), NIPQUAD(daddr));
+<span style="color: #FF1493;">#endif</span>
+	in_dev_put(in_dev);
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org39c4545" class="outline-2">
+<h2 id="org39c4545"><span class="section-number-2">11</span> ICMP目的不可达，需要分片的消息处理</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+当收到 ICMP 的 FRAGMENTATION NEEDED 消息时，所有相关路由项的PMTU必须更新为ICMP首部指定的MTU, ICMP模块调用 ip_rt_frag_needed() 来更新路由缓存项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #87D700;">ip_rt_frag_needed</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">new_mtu</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">old_mtu</span> = ntohs(iph-&gt;tot_len);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">skeys</span>[2] = { iph-&gt;saddr, 0, };
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">daddr</span> = iph-&gt;daddr;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">est_mtu</span> = 0;
+
+	<span style="color: #FF1493;">if</span> (ipv4_config.no_pmtu_disc)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#21551;&#29992;PMTU&#21151;&#33021;&#65292; &#21017;&#19981;&#22788;&#29702;</span>
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#36335;&#30001;&#32531;&#23384;&#20013;&#26597;&#25214;&#25351;&#23450;&#30446;&#30340;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; 2; i++) {
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">hash</span> = rt_hash(daddr, skeys[i], 0);
+
+		rcu_read_lock();
+		<span style="color: #FF1493;">for</span> (rth = rcu_dereference(rt_hash_table[hash].chain); rth;
+		     rth = rcu_dereference(rth-&gt;u.rt_next)) {
+			<span style="color: #FF1493;">if</span> (rth-&gt;fl.fl4_dst == daddr &amp;&amp;
+			    rth-&gt;fl.fl4_src == skeys[i] &amp;&amp;
+			    rth-&gt;rt_dst  == daddr &amp;&amp;
+			    rth-&gt;rt_src  == iph-&gt;saddr &amp;&amp;
+			    rth-&gt;fl.iif == 0 &amp;&amp;
+			    <span style="color: #CDC673; font-weight: bold;">!</span>(dst_metric_locked(&amp;rth-&gt;u.dst, RTAX_MTU))) {
+				<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">mtu</span> = new_mtu;
+
+				<span style="color: #FF1493;">if</span> (new_mtu &lt; 68 || new_mtu &gt;= old_mtu) {
+
+					<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">BSD 4.2 compatibility hack :-(</span><span style="color: #8B8878;"> */</span>
+					<span style="color: #FF1493;">if</span> (mtu == 0 &amp;&amp;
+					    old_mtu &gt;= rth-&gt;u.dst.metrics[RTAX_MTU-1] &amp;&amp;
+					    old_mtu &gt;= 68 + (iph-&gt;ihl &lt;&lt; 2))
+						old_mtu -= iph-&gt;ihl &lt;&lt; 2;
+
+					mtu = guess_mtu(old_mtu);
+				}
+				<span style="color: #FF1493;">if</span> (mtu &lt;= rth-&gt;u.dst.metrics[RTAX_MTU-1]) {
+					<span style="color: #FF1493;">if</span> (mtu &lt; rth-&gt;u.dst.metrics[RTAX_MTU-1]) {
+						dst_confirm(&amp;rth-&gt;u.dst);
+						<span style="color: #FF1493;">if</span> (mtu &lt; ip_rt_min_pmtu) {
+							mtu = ip_rt_min_pmtu;
+							rth-&gt;u.dst.metrics[RTAX_LOCK-1] |=
+								(1 &lt;&lt; RTAX_MTU);
+						}
+						rth-&gt;u.dst.metrics[RTAX_MTU-1] = mtu;
+						dst_set_expires(&amp;rth-&gt;u.dst,
+							ip_rt_mtu_expires);
+					}
+					est_mtu = mtu;
+				}
+			}
+		}
+		rcu_read_unlock();
+	}
+	<span style="color: #FF1493;">return</span> est_mtu ? : new_mtu;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-01-22 Sat 22:35</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

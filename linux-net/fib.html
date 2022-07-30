@@ -1,0 +1,2253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-01-22 Sat 22:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>路由表</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">路由表</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org2b9fb68">1. 路由表</a>
+<ul>
+<li><a href="#org09c1ac0">1.1. 路由的要素</a></li>
+<li><a href="#org8f7b6a7">1.2. 特殊路由</a></li>
+<li><a href="#orge988c57">1.3. 路由缓存</a></li>
+</ul>
+</li>
+<li><a href="#orga8661f3">2. 路由表组成结构</a>
+<ul>
+<li><a href="#org5b69c1a">2.1. fib_table结构</a></li>
+<li><a href="#orgebd929f">2.2. fn_zone结构</a></li>
+<li><a href="#org64d25ec">2.3. fib_node结构</a></li>
+<li><a href="#orgbff50e7">2.4. fib_alias结构</a></li>
+<li><a href="#org9cdc05e">2.5. fib_info结构</a></li>
+<li><a href="#org8cd494d">2.6. fib_nh结构</a></li>
+</ul>
+</li>
+<li><a href="#orged602fe">3. 路由表初始化</a></li>
+<li><a href="#org20fe3f2">4. netlink接口</a>
+<ul>
+<li><a href="#org5055068">4.1. netlink路由表项消息结构</a></li>
+<li><a href="#orge09aa9e">4.2. inet_rtm_newroute()</a></li>
+<li><a href="#orge54da16">4.3. inet_rtm_delroute()</a></li>
+</ul>
+</li>
+<li><a href="#org66ae660">5. 获取指定路由表</a></li>
+<li><a href="#org9e0bd07">6. 路由表项的添加</a></li>
+<li><a href="#orga01b92c">7. 路由表项的删除</a></li>
+<li><a href="#orgb730c92">8. 外部事件</a>
+<ul>
+<li><a href="#org8bf5fa0">8.1. 网络设备状态变化事件</a></li>
+<li><a href="#org3eb5bb4">8.2. IP地址变化事件</a></li>
+<li><a href="#orgf3a79c1">8.3. fib_add_ifaddr()</a></li>
+<li><a href="#orgd05f6c3">8.4. fib_del_ifaddr()</a></li>
+<li><a href="#org3998b59">8.5. fib_disable_ip()</a></li>
+<li><a href="#org659b5f8">8.6. fib_magic()</a></li>
+</ul>
+</li>
+<li><a href="#org1b27fed">9. 选路</a>
+<ul>
+<li><a href="#orge675920">9.1. 输入选路: ip_route_input_slow()</a></li>
+<li><a href="#org44b6201">9.2. 组播输入选路：ip_route_input_mc()</a></li>
+<li><a href="#orgdf9698a">9.3. 输出选路：ip_route_output_slow()</a></li>
+<li><a href="#org866a00a">9.4. fib_lookup()</a></li>
+<li><a href="#org00ab9d2">9.5. fn_hash_lookup()</a></li>
+</ul>
+</li>
+<li><a href="#orgc390945">10. ICMP重定向消息的发送</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2b9fb68" class="outline-2">
+<h2 id="org2b9fb68"><span class="section-number-2">1</span> 路由表</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+路由子系统的核心是转发信息库（Forwarding Information Base, FIB），即路由表。
+</p>
+
+<p>
+路由表用来存储以下信息：
+</p>
+<ul class="org-ul">
+<li>用来确定输入数据报是到本机还是转发的信息;</li>
+<li>如果是转发，则是正确转发数据报所需的信息;</li>
+<li>用来确定输出数据报的输出设备的信息;</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="image/arp/rt-netsys.png" alt="rt-netsys.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>路由子系统和其他网络子系统的关系</p>
+</div>
+</div>
+
+
+<div id="outline-container-org09c1ac0" class="outline-3">
+<h3 id="org09c1ac0"><span class="section-number-3">1.1</span> 路由的要素</h3>
+<div class="outline-text-3" id="text-1-1">
+<ol class="org-ol">
+<li>路由表</li>
+<li>metrics：路由上配置的相关度量值</li>
+<li>路由作用范围
+<ul class="org-ul">
+<li>Host 路由的目的地址为本地主机</li>
+<li>Link 路由的目的地址问本地网络</li>
+<li>Universe 路由的目的地址超过一跳</li>
+</ul></li>
+<li>默认网关</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org8f7b6a7" class="outline-3">
+<h3 id="org8f7b6a7"><span class="section-number-3">1.2</span> 特殊路由</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+路由子系统有两张特殊的路由表：
+</p>
+<ul class="org-ul">
+<li>用于本地地址的路由表，存储了所有的本地地址，如果该表中能查到匹配表项，代表是发送给本机的。</li>
+<li>用于所有其他的路由，路由表项有用户手工静态配置或有路由协议动态配置。</li>
+</ul>
+
+<p>
+路由查找时先扫描本地路由表，没查到，再去查另一路由表。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge988c57" class="outline-3">
+<h3 id="orge988c57"><span class="section-number-3">1.3</span> 路由缓存</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+路由缓存分为两部分：一部分是协议相关的缓存，每个元素被定义为一个有具体协议字段组成的集合; 另一部分是与协议无关的缓存，通常成为DST，嵌套在缓存框架中，之存储与协议无关的协议。
+</p>
+
+<p>
+如果启用了策略路由，系统中会有多张独立的路由表，但是只有一个路由缓存。
+</p>
+
+<p>
+路由表使用的是连续地址的集合（子网），而路由缓存与单个IP地址相关联。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga8661f3" class="outline-2">
+<h2 id="orga8661f3"><span class="section-number-2">2</span> 路由表组成结构</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+2.6.20版本的内核支持 FIB_HASH 和 FIB_TRIE 两种路由查找算法。下面以FIB_HASH算法为例。
+</p>
+
+<p>
+路由表通过 fib_table 结构来描述，所有的 fib_table 结构链接在全局散列表 fib_table_hash 中。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib/fib-table-hash.png" alt="fib-table-hash.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>fib_table_hash散列表</p>
+</div>
+
+<p>
+路由表初始化函数为 fib_hash_init，初始化时会将fib_table结构和fn_hash结构一起分配，fib_table 结构主要包含了路由表ID和一些管理路由表的函数，其tb_data成员是零长度数组，指向紧接的 fn_hash 结构， fn_hash 结构包含了一个由 33 个 fn_zone 结构指针组成的向量，用来把路由表项按照木彼岸地址掩码的长度分成33个区，所有非空的fn_zone结构又通过其fz_next字段和fn_hash结构的fn_zone_list字段链接成一个循环单链表，fn_zone_list指向掩码最短的那个fn_zone结构，掩码地址最长的fn_zone结构的fz_next字段指向fn_zone_list。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib/fn-hash.png" alt="fn-hash.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>fib_table中的fn_hash结构</p>
+</div>
+
+<p>
+上图中，每个fn_zone结构代表了路由表中所有同一掩码长度的表项集合，为进一步划分该集合，fn_zone结构的fz_hash字段指向一个长度为 fz_divisor字段 的HASH表，用于存储 <b>fib_node</b> 结构，冲突的 <b>fib_node</b> 结构通过其 <b>fn_hash</b> 字段链接为双向链表。
+</p>
+
+<p>
+具体的路由表项是由 fib_alias 和 fib_info 构成，fib_info中是一些可能被多个 fib_alias 共享的信息。
+</p>
+
+<p>
+每个网段对应一个 fib_node 实例，网段使用其 fn_key 字段来表示，例如，对于子网 10.1.1.0/24，fn_key为10.1.1。 注意：fib_node 和网段相关，而不是和路由项相关，多条路由表项可能有相同的网段。
+</p>
+
+<p>
+相同网段的路由表项（fn_key相同）共享一个fib_node。每条路由表项有各自的fib_alias结构（例如网段相同，但是TOS值不同的路由表项）。每个fib_alias实例与一个存储真正路由信息的fib_info结构相关联。
+</p>
+
+<p>
+对于一个fib_node实例，相关的fib_alias实例链表按照IP的TOS（fa_tos字段）值递增排列。 fa_tos相同的fib_alias实例按照关联的fib_info结构的fib_protocol字段递增排列。
+</p>
+
+<p>
+fib_alias与fib_info之间的关联不是一对一，多个fib_alias结构可能共享一个fib_info结构。例如：五条到不同目的网络的路由项使用用同一个下一跳网关，那么就有五个 fib_node 结构和五个 fib_alias 结构，但只有一个 fib_info 结构。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib/fn-zone.png" alt="fn-zone.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>fn_zone结构</p>
+</div>
+
+<p>
+在上图中：
+</p>
+<ul class="org-ul">
+<li>存在四条路由表项（四个fib_alias）。</li>
+<li>四条路由表项是到三个不同的网段（三个fib_node实例），有两个fib_alias实例共享一个fib_node实例。</li>
+<li>四条路由表项中有两条共享同一个下一跳路由器，因此有两个fib_alias结构的fa_info字段指向同一个fib_info结构。</li>
+</ul>
+</div>
+
+<div id="outline-container-org5b69c1a" class="outline-3">
+<h3 id="org5b69c1a"><span class="section-number-3">2.1</span> fib_table结构</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+每个路由表实例都对应一个fib_table结构的实例。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> <span style="color: #FF8C00;">tb_hlist</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#21508;&#20010;&#36335;&#30001;&#34920;&#38142;&#25509;&#20026;&#19968;&#20010;&#21452;&#21521;&#38142;&#34920;</span>
+	<span style="color: #5FD7FF;">u32</span>             <span style="color: #FF8C00;">tb_id</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#26631;&#35782;</span>
+	<span style="color: #5FD7FF;">unsigned</span>        <span style="color: #FF8C00;">tb_stamp</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#36335;&#30001;&#34920;&#20013;&#25628;&#32034;&#36335;&#30001;&#34920;&#39033;&#65292;FIB_HASH&#31639;&#27861;&#20013;&#20026; fn_hash_lookup()</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">tb_lookup</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> *<span style="color: #FF8C00;">res</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21521;&#36335;&#30001;&#34920;&#20013;&#25554;&#20837;&#32473;&#23450;&#30340;&#36335;&#30001;&#34920;&#39033;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">tb_insert</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#36335;&#30001;&#34920;&#39033;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">tb_delete</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#36335;&#30001;&#34920;&#20869;&#23481;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">tb_dump</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">table</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">netlink_callback</span> *<span style="color: #FF8C00;">cb</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#35774;&#32622;&#26377; RTNH_F_DEAD &#26631;&#24535;&#30340;fib_info&#32467;&#26500;&#23454;&#20363;&#12290;</span>
+	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">tb_flush</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">table</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36873;&#25321;&#19968;&#26465;&#40664;&#35748;&#36335;&#30001;</span>
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">tb_select_default</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">table</span>,
+					     <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> *<span style="color: #FF8C00;">res</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#30340;&#25955;&#21015;&#34920;&#36215;&#22987;&#22320;&#22336;&#12290;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">tb_data</span>[0];
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgebd929f" class="outline-3">
+<h3 id="orgebd929f"><span class="section-number-3">2.2</span> fn_zone结构</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+每个fn_zone结构实例，代表一组有着相同目的地址掩码长度的路由表项散列表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_zone</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_zone</span>  *<span style="color: #FF8C00;">fz_next</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38142;&#25509;fn_zone&#32467;&#26500;&#30340;&#38142;&#34920;&#65292;&#38142;&#34920;&#39318;&#37096;&#22312;fn_hash&#32467;&#26500;&#30340;fn_zone_list&#23383;&#27573;&#20013;</span><span style="color: #8B8878;">     */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span>       *<span style="color: #FF8C00;">fz_hash</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#35813;fz_zone&#20013;&#30340;&#36335;&#30001;&#39033;&#30340;&#25955;&#21015;&#34920;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fz_nent</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25955;&#21015;&#34920;&#20013; fib_node &#23454;&#20363;&#30340;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fz_divisor</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">fz_hash&#25955;&#21015;&#34920;&#30340;&#23481;&#37327;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fz_hashmask</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">(fz_divisor - 1)</span><span style="color: #8B8878;">     */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">FZ_HASHMASK</span>(<span style="color: #FF8C00;">fz</span>) ((fz)-&gt;fz_hashmask)
+
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fz_order</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32593;&#32476;&#25513;&#30721; fz_mask &#30340;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">fz_mask</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;fz_order&#26500;&#36896;&#24471;&#21040;&#30340;&#32593;&#32476;&#25513;&#30721;</span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">FZ_MASK</span>(<span style="color: #FF8C00;">fz</span>)             ((fz)-&gt;fz_mask)
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org64d25ec" class="outline-3">
+<h3 id="org64d25ec"><span class="section-number-3">2.3</span> fib_node结构</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+fib_node结构的实例代表一个唯一的目的网络的路由表项，即同一个子网的所有路由表项共享的信息。
+</p>
+
+<p>
+目的网络相同，但是其他配置参数不同的路由表项共享同一个 fib_node 实例，所以fib_node实例可能存在一个或多个路由表项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_node</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#25955;&#21015;&#34920;&#20013;&#21516;&#19968;&#20010;&#26742;&#20869;&#30340;&#25152;&#26377;fib_node&#23454;&#20363;&#38142;&#25509;&#20026;&#21452;&#38142;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">fn_hash</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;fn_alias&#32467;&#26500;&#23454;&#20363;&#30340;&#38142;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">fn_alias</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;IP&#22320;&#22336;&#21644;&#36335;&#30001;&#39033;&#30340;netmask&#25805;&#20316;&#21518;&#24471;&#21040;&#65292;&#29992;&#20316;&#26597;&#25214;&#36335;&#30001;&#34920;&#30340;&#26465;&#20214;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">fn_key</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbff50e7" class="outline-3">
+<h3 id="orgbff50e7"><span class="section-number-3">2.4</span> fib_alias结构</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+fib_alias代表一条路由表项，目的地址相同但其他配置参数不同的表项共享 fib_node 实例。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_alias</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20849;&#20139;&#21516;&#19968;&#20010;fib_node&#23454;&#20363;&#30340;&#25152;&#26377;fib_alias&#23454;&#20363;&#38142;&#25509;&#22312;&#19968;&#36215;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">fa_list</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rcu_head</span>     <span style="color: #FF8C00;">rcu</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;fib_info&#23454;&#20363;&#65292;fib_info&#23454;&#20363;&#20013;&#23384;&#20648;&#36825;&#22914;&#20309;&#22788;&#29702;&#19982;&#35813;&#36335;&#30001;&#39033;&#21305;&#37197;&#30340;&#25968;&#25454;&#25253;&#20449;&#24687;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_info</span> *<span style="color: #FF8C00;">fa_info</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#30340;&#26381;&#21153;&#31867;&#22411;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fa_tos</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#31867;&#22411;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fa_type</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#20316;&#29992;&#33539;&#22260;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fa_scope</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19968;&#20123;&#26631;&#24535;&#20301;&#22270;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fa_state</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9cdc05e" class="outline-3">
+<h3 id="org9cdc05e"><span class="section-number-3">2.5</span> fib_info结构</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+fib_node结构和fib_alias结构的组合可以标识一条路由表项，其中存储了部分相关信息，还有一部分信息存储在fib_info结构中。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * This structure contains data shared by many of routes.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_info</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#23558;fib_info&#23454;&#20363;&#25554;&#20837;fib_info_hash&#20840;&#23616;&#25955;&#21015;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">fib_hash</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#23558;fib_info&#23454;&#20363;&#25554;&#20837;fib_info_laddrhash&#20840;&#23616;&#25955;&#21015;&#34920;&#65288;&#36335;&#30001;&#34920;&#39033;&#26377;&#19968;&#20010;&#39318;&#36873;&#28304;&#22320;&#22336;&#26102;&#25165;&#25554;&#20837;&#65289;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">fib_lhash</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25345;&#26377;&#35813;fib_info&#23454;&#20363;&#30340;fib_node&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fib_treeref</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;&#20110;&#36335;&#30001;&#26597;&#25214;&#25104;&#21151;&#32780;&#34987;&#25345;&#26377;&#30340;&#35745;&#25968;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">fib_clntref</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27491;&#22312;&#21024;&#38500;&#26631;&#24535;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fib_dead</span>;
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">fib_flags</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#36335;&#30001;&#30340;&#21327;&#35758;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fib_protocol</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#36873;&#28304;IP&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">fib_prefsrc</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#20248;&#20808;&#32423;&#65292;&#20540;&#36234;&#23567;&#20248;&#20808;&#32423;&#36234;&#39640;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fib_priority</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19982;&#36335;&#30001;&#30456;&#20851;&#30340;&#19968;&#26063;&#24230;&#37327;&#20540;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fib_metrics</span>[RTAX_MAX];
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fib_mtu</span> fib_metrics[RTAX_MTU-1]
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fib_window</span> fib_metrics[RTAX_WINDOW-1]
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fib_rtt</span> fib_metrics[RTAX_RTT-1]
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fib_advmss</span> fib_metrics[RTAX_ADVMSS-1]
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21487;&#29992;&#19979;&#19968;&#36339;&#30340;&#25968;&#37327;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fib_nhs</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fib_power</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fib_mp_alg</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_nh</span>   <span style="color: #FF8C00;">fib_nh</span>[0];
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">fib_dev</span>         fib_nh[0].nh_dev
+};
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> 路由相关的度量值 Metric</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Metric</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">RTAX_LOCK</td>
+<td class="org-left">不是度量值，用比特位置图标识各种度量值的上索状态</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_MTU</td>
+<td class="org-left">路径MTU</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_WINDOW</td>
+<td class="org-left">最大通告窗口</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_RTT</td>
+<td class="org-left">往返时间</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_RTTVAR</td>
+<td class="org-left">RTT方差</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_SSTHRESH</td>
+<td class="org-left">慢启动门限值</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_CWND</td>
+<td class="org-left">拥塞窗口</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_ADVMSS</td>
+<td class="org-left">最大段长度</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_REORDERING</td>
+<td class="org-left">当前的reordering</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_HOPLIMIT</td>
+<td class="org-left">默认生存时间</td>
+</tr>
+
+<tr>
+<td class="org-left">RTAX_INITCWND</td>
+<td class="org-left">初始拥塞窗口</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org8cd494d" class="outline-3">
+<h3 id="org8cd494d"><span class="section-number-3">2.6</span> fib_nh结构</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+fib_nh结构存放着下一跳路由的地址（nh_hw）。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_nh</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">nh_dev</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#23558;nh_hash&#38142;&#25509;&#21040;&#25955;&#21015;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">nh_hash</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#25152;&#23646;&#30340;&#36335;&#30001;&#34920;&#39033;&#30340;fib_info&#32467;&#26500;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_info</span> *<span style="color: #FF8C00;">nh_parent</span>;
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">nh_flags</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#33539;&#22260;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">nh_scope</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">nh_weight</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">nh_power</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22522;&#20110;&#31574;&#30053;&#36335;&#30001;&#30340;&#20998;&#31867;&#26631;&#31614;</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">nh_tclassid</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#36335;&#30001;&#34920;&#39033;&#30340;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">nh_oif</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#39033;&#30340;&#32593;&#20851;&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">nh_gw</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orged602fe" class="outline-2">
+<h2 id="orged602fe"><span class="section-number-2">3</span> 路由表初始化</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+fib_hash_init()函数执行路由表的初始化。 ip_fib_init()执行IP路由子系统的初始化，其中会调用fib_hash_init来分别创建 ip_fib_main_table 和 ip_fib_local_table 表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#ifdef</span> CONFIG_IP_MULTIPLE_TABLES <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37197;&#32622;&#31574;&#30053;&#36335;&#30001;</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> * <span style="color: #87D700;">fib_hash_init</span>(<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">id</span>)
+<span style="color: #FF1493;">#else</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27809;&#26377;&#37197;&#32622;&#31574;&#30053;&#36335;&#30001;&#65292;&#21017;&#20351;&#29992;_init&#23439;</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> * <span style="color: #87D700;">__init</span> fib_hash_init(<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">id</span>)
+<span style="color: #FF1493;">#endif</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>;
+
+	<span style="color: #FF1493;">if</span> (fn_hash_kmem == <span style="color: #AF87FF;">NULL</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;fib_node&#20869;&#23384;&#27744;</span>
+		fn_hash_kmem = kmem_cache_create(<span style="color: #CDC673;">"ip_fib_hash"</span>,
+						 <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_node</span>),
+						 0, SLAB_HWCACHE_ALIGN,
+						 <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+
+	<span style="color: #FF1493;">if</span> (fn_alias_kmem == <span style="color: #AF87FF;">NULL</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;fib_alias&#20869;&#23384;&#27744;</span>
+		fn_alias_kmem = kmem_cache_create(<span style="color: #CDC673;">"ip_fib_alias"</span>,
+						  <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_alias</span>),
+						  0, SLAB_HWCACHE_ALIGN,
+						  <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;fib_table&#21644;fn_hash&#32467;&#26500;</span>
+	tb = kmalloc(<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span>) + <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span>),
+		     GFP_KERNEL);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#36335;&#30001;&#34920;&#25104;&#21592;</span>
+	tb-&gt;tb_id = id;
+	tb-&gt;tb_lookup = fn_hash_lookup;
+	tb-&gt;tb_insert = fn_hash_insert;
+	tb-&gt;tb_delete = fn_hash_delete;
+	tb-&gt;tb_flush = fn_hash_flush;
+	tb-&gt;tb_select_default = fn_hash_select_default;
+	tb-&gt;tb_dump = fn_hash_dump;
+	memset(tb-&gt;tb_data, 0, <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span>));
+	<span style="color: #FF1493;">return</span> tb;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org20fe3f2" class="outline-2">
+<h2 id="org20fe3f2"><span class="section-number-2">4</span> netlink接口</h2>
+<div class="outline-text-2" id="text-4">
+
+<div class="figure">
+<p><img src="image/fib/netlink-api.png" alt="netlink-api.png" />
+</p>
+<p><span class="figure-number">Figure 5: </span>neilink接口</p>
+</div>
+</div>
+
+<div id="outline-container-org5055068" class="outline-3">
+<h3 id="org5055068"><span class="section-number-3">4.1</span> netlink路由表项消息结构</h3>
+<div class="outline-text-3" id="text-4-1">
+
+<div class="figure">
+<p><img src="image/fib/nl-rt-msg.png" alt="nl-rt-msg.png" />
+</p>
+<p><span class="figure-number">Figure 6: </span>路由表项的netlink消息</p>
+</div>
+
+<p>
+nlmsghdr 为netlink消息首部（四字节对齐），rtmsg是路由消息。
+</p>
+
+<ul class="org-ul">
+<li>rtm_family 路由表项所属地址族</li>
+<li>rtm_dst_len 目的地址掩码长度</li>
+<li>rtm_src_len 源地址掩码长度</li>
+<li>rtm_tos 路由的服务类型</li>
+<li>rtm_table 路由表ID</li>
+<li>rtm_protocol 路由的特性或则和标志</li>
+<li>rtm_scope 路由寻址范围</li>
+<li>rtm_type 路由表项类型</li>
+<li>rtm_flags 标志</li>
+<li>Attribute 属性，标识配置的各种值</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> Attribute的取值</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">属性</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">RTA_UNSPEC</td>
+<td class="org-left">hulve</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_DST</td>
+<td class="org-left">路由项的目的地址</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_SRC</td>
+<td class="org-left">路由项的源地址</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_IIF</td>
+<td class="org-left">路由项的输入网络设备索引</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_OIF</td>
+<td class="org-left">路由项的输出网络设备索引</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_GATEWAY</td>
+<td class="org-left">路由项的网关地址</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_PRIORITY</td>
+<td class="org-left">路由项的优先级</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_PREFSRC</td>
+<td class="org-left">首选源地址</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_METRICS</td>
+<td class="org-left">路由和协议相关的度量值（例RTT、PMTU等）</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_MULTIPATH</td>
+<td class="org-left">多路径路由下一跳的属性值</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_PROTOINFO</td>
+<td class="org-left">居于策略路由的防火墙属性值</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_FLOW</td>
+<td class="org-left">居于策略路由的分类标签信息</td>
+</tr>
+
+<tr>
+<td class="org-left">RTA_CACHEINFO</td>
+<td class="org-left">缓存的路由信息</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orge09aa9e" class="outline-3">
+<h3 id="orge09aa9e"><span class="section-number-3">4.2</span> inet_rtm_newroute()</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_rtm_newroute</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span>* <span style="color: #FF8C00;">nlh</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> <span style="color: #FF8C00;">cfg</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;netlink&#28040;&#24687;&#20013;&#33719;&#21462;&#29992;&#20110;&#37197;&#32622;&#36335;&#30001;&#34920;&#39033;&#30340;&#20449;&#24687;</span>
+	err = rtm_to_fib_config(skb, nlh, &amp;cfg);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#25351;&#23450;&#30340;&#36335;&#30001;&#34920;ID,&#33719;&#21462;&#36335;&#30001;&#34920;&#65292;&#22914;&#26524;&#19981;&#25903;&#25345;&#31574;&#30053;&#36335;&#30001;&#65292;&#21017;&#36820;&#22238;local&#25110;&#32773;main,&#21542;&#21017;&#26597;&#25214;fib_table_hash&#25955;&#21015;&#34920;</span>
+	tb = fib_new_table(cfg.fc_table);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#36335;&#30001;&#34920;&#39033;&#21040;&#36335;&#30001;&#34920;</span>
+	err = tb-&gt;tb_insert(tb, &amp;cfg);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge54da16" class="outline-3">
+<h3 id="orge54da16"><span class="section-number-3">4.3</span> inet_rtm_delroute()</h3>
+<div class="outline-text-3" id="text-4-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_rtm_delroute</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span>* <span style="color: #FF8C00;">nlh</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> <span style="color: #FF8C00;">cfg</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	err = rtm_to_fib_config(skb, nlh, &amp;cfg);
+	tb = fib_get_table(cfg.fc_table);
+	err = tb-&gt;tb_delete(tb, &amp;cfg);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org66ae660" class="outline-2">
+<h2 id="org66ae660"><span class="section-number-2">5</span> 获取指定路由表</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+fib_new_table() 用于获取指定路由表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #87D700;">fib_new_table</span>(<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">id</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">h</span>;
+
+	<span style="color: #FF1493;">if</span> (id == 0)
+		id = RT_TABLE_MAIN;
+	tb = fib_get_table(id);
+	<span style="color: #FF1493;">if</span> (tb)
+		<span style="color: #FF1493;">return</span> tb;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26410;&#25214;&#21040;&#21017;&#21019;&#24314;&#36335;&#30001;&#34920;</span>
+	tb = fib_hash_init(id);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tb)
+		<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+	h = id &amp; (FIB_TABLE_HASHSZ - 1);
+	hlist_add_head_rcu(&amp;tb-&gt;tb_hlist, &amp;fib_table_hash[h]);
+	<span style="color: #FF1493;">return</span> tb;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9e0bd07" class="outline-2">
+<h2 id="org9e0bd07"><span class="section-number-2">6</span> 路由表项的添加</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+fn_hash_insert() 函数用来添加新的路由表项。根据netlink消息首部的 nlmsg_flags 字段，分为插入新的路由项，尾部追加路由项，首部追加路由项，替换路由项等操作，这些都通过fn_hash_insert实现。
+</p>
+
+<p>
+添加路由表项时，如果存在目的地址和TOS值都相同的路由表项，并且添加标志为NLM_F_EXCL，此时返回错误，只有标志为NLM_F_REPLACE时才能处理。
+</p>
+
+<p>
+插入路由表项后，如果fz_hash散列表容量发生变化，则通过fn_reshash_zone 重建散列表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> {
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fc_dst_len</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#25513;&#30721;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fc_tos</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#30340;&#26381;&#21153;&#31867;&#22411;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fc_protocol</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#29305;&#24615;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fc_scope</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#33539;&#22260;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">fc_type</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#31867;&#22411;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">3 bytes unused</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fc_table</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;ID</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">fc_dst</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#39033;&#30340;&#30446;&#30340;&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">fc_gw</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#39033;&#30340;&#32593;&#20851;&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fc_oif</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#39033;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fc_flags</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fc_priority</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#39033;&#20248;&#20808;&#32423;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">fc_prefsrc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#36873;&#28304;&#22320;&#22336;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span>           *<span style="color: #FF8C00;">fc_mx</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#21644;&#21327;&#35758;&#30456;&#20851;&#30340;&#24230;&#37327;&#20540;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtnexthop</span>        *<span style="color: #FF8C00;">fc_mp</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22810;&#36335;&#24452;&#36335;&#30001;&#19979;&#19968;&#36339;&#30340;&#23646;&#24615;&#20540;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fc_mx_len</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">fc_mp_len</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fc_flow</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22522;&#20110;&#31574;&#30053;&#36335;&#30001;&#30340;&#20998;&#31867;&#26631;&#31614;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fc_mp_alg</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22810;&#36335;&#24452;&#32531;&#23384;&#31639;&#27861;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">fc_nlflags</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25805;&#20316;&#27169;&#24335;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nl_info</span>  <span style="color: #FF8C00;">fc_nlinfo</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37197;&#32622;&#36335;&#30001;&#30340;neilink&#25968;&#25454;&#21253;&#20449;&#24687;</span>
+};
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> fc_nlflags取值</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">fc_nlflags</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">NLM_F_REPLACE</td>
+<td class="org-left">存在则替换</td>
+</tr>
+
+<tr>
+<td class="org-left">NLM_F_EXCL</td>
+<td class="org-left">存在则不添加</td>
+</tr>
+
+<tr>
+<td class="org-left">NLM_F_CREATE</td>
+<td class="org-left">不存在则创建</td>
+</tr>
+
+<tr>
+<td class="org-left">NLM_F_APPEND</td>
+<td class="org-left">追加到最后</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fn_hash_insert</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> *<span style="color: #FF8C00;">cfg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span> *<span style="color: #FF8C00;">table</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span> *) tb-&gt;tb_data;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_node</span> *<span style="color: #FF8C00;">new_f</span>, *<span style="color: #FF8C00;">f</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_alias</span> *<span style="color: #FF8C00;">fa</span>, *<span style="color: #FF8C00;">new_fa</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_zone</span> *<span style="color: #FF8C00;">fz</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_info</span> *<span style="color: #FF8C00;">fi</span>;
+	<span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">tos</span> = cfg-&gt;fc_tos;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">key</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #FF1493;">if</span> (cfg-&gt;fc_dst_len &gt; 32) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25513;&#30721;&#38271;&#24230;&#26159;&#21542;&#26377;&#25928;</span>
+		<span style="color: #FF1493;">return</span> -EINVAL;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#25513;&#30721;&#38271;&#24230;&#33719;&#21462; fn_zone</span>
+	fz = table-&gt;fn_zones[cfg-&gt;fc_dst_len];
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fz &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(fz = fn_new_zone(table, cfg-&gt;fc_dst_len))) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;&#21017;&#21019;&#24314;</span>
+		<span style="color: #FF1493;">return</span> -ENOBUFS;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#30446;&#30340;&#32593;&#32476;&#23545;&#24212;&#30340;fib_node&#23454;&#20363;&#30340;key</span>
+	key = 0;
+	<span style="color: #FF1493;">if</span> (cfg-&gt;fc_dst) {
+		<span style="color: #FF1493;">if</span> (cfg-&gt;fc_dst &amp; ~FZ_MASK(fz))
+			<span style="color: #FF1493;">return</span> -EINVAL;
+		key = fz_key(cfg-&gt;fc_dst, fz);
+	}
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;fib_info&#32467;&#26500;&#23454;&#20363;</span>
+	fi = fib_create_info(cfg);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">fz_hash&#25955;&#21015;&#34920;&#23481;&#37327;&#22914;&#26524;&#21464;&#21270;&#65292;&#21017;&#38656;&#35201;&#37325;&#24314;&#25955;&#21015;&#34920;</span>
+	<span style="color: #FF1493;">if</span> (fz-&gt;fz_nent &gt; (fz-&gt;fz_divisor&lt;&lt;1) &amp;&amp;
+	    fz-&gt;fz_divisor &lt; FZ_MAX_DIVISOR &amp;&amp;
+	    (cfg-&gt;fc_dst_len == 32 ||
+	     (1 &lt;&lt; cfg-&gt;fc_dst_len) &gt; fz-&gt;fz_divisor))
+		fn_rehash_zone(fz);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;key&#20540;&#33719;&#21462;fib_node&#23454;&#20363;</span>
+	f = fib_find_node(fz, key);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>f)
+		fa = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">else</span>
+		fa = fib_find_alias(&amp;f-&gt;fn_alias, tos, fi-&gt;fib_priority); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;tos&#21644;&#20248;&#20808;&#32423;&#26597;&#25214;fib_alias&#23454;&#20363;&#12290;</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Now fa, if non-NULL, points to the first fib alias</span>
+<span style="color: #8B8878;">         * with the same keys [prefix,tos,priority], if such key already</span>
+<span style="color: #8B8878;">         * exists or to the node before which we will insert new one.</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         * If fa is NULL, we will need to allocate a new one and</span>
+<span style="color: #8B8878;">         * insert to the head of f.</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         * If f is NULL, no fib node matched the destination key</span>
+<span style="color: #8B8878;">         * and we need to allocate a new one of those as well.</span>
+<span style="color: #8B8878;">         */</span>
+
+	<span style="color: #FF1493;">if</span> (fa &amp;&amp; fa-&gt;fa_tos == tos &amp;&amp;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">tos&#20540;&#30456;&#21516; &#19988;&#20248;&#20808;&#32423;&#30456;&#21516;</span>
+	    fa-&gt;fa_info-&gt;fib_priority == fi-&gt;fib_priority) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_alias</span> *<span style="color: #FF8C00;">fa_orig</span>;
+		err = -EEXIST;
+		<span style="color: #FF1493;">if</span> (cfg-&gt;fc_nlflags &amp; NLM_F_EXCL) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#35813;&#26631;&#24535;&#20195;&#34920;&#23384;&#22312;&#21017;&#19981;&#21019;&#24314;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		<span style="color: #FF1493;">if</span> (cfg-&gt;fc_nlflags &amp; NLM_F_REPLACE) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;&#21017;&#36827;&#34892;&#26367;&#25442;</span>
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_info</span> *<span style="color: #FF8C00;">fi_drop</span>;
+			<span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">state</span>;
+			write_lock_bh(&amp;fib_hash_lock);
+			fi_drop = fa-&gt;fa_info;
+			fa-&gt;fa_info = fi;
+			fa-&gt;fa_type = cfg-&gt;fc_type;
+			fa-&gt;fa_scope = cfg-&gt;fc_scope;
+			state = fa-&gt;fa_state;
+			fa-&gt;fa_state &amp;= ~FA_S_ACCESSED;
+			fib_hash_genid++;
+			write_unlock_bh(&amp;fib_hash_lock);
+
+			fib_release_info(fi_drop);
+			<span style="color: #FF1493;">if</span> (state &amp; FA_S_ACCESSED)
+				rt_cache_flush(-1);
+			<span style="color: #FF1493;">return</span> 0;
+		}
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Error if we find a perfect match which</span>
+<span style="color: #8B8878;">                 * uses the same scope, type, and nexthop</span>
+<span style="color: #8B8878;">                 * information.</span>
+<span style="color: #8B8878;">                 */</span>
+		fa_orig = fa;
+		fa = list_entry(fa-&gt;fa_list.prev, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_alias</span>, fa_list);
+		list_for_each_entry_continue(fa, &amp;f-&gt;fn_alias, fa_list) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#36827;&#34892;&#20840;&#21305;&#37197;</span>
+			<span style="color: #FF1493;">if</span> (fa-&gt;fa_tos != tos)
+				<span style="color: #FF1493;">break</span>;
+			<span style="color: #FF1493;">if</span> (fa-&gt;fa_info-&gt;fib_priority != fi-&gt;fib_priority)
+				<span style="color: #FF1493;">break</span>;
+			<span style="color: #FF1493;">if</span> (fa-&gt;fa_type == cfg-&gt;fc_type &amp;&amp;
+			    fa-&gt;fa_scope == cfg-&gt;fc_scope &amp;&amp;
+			    fa-&gt;fa_info == fi)
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21305;&#37197;&#25104;&#21151;&#65292;&#21017;&#23384;&#22312;&#30456;&#21516;&#30340;&#36335;&#30001;&#39033;&#65292;&#26080;&#38656;&#22788;&#29702;</span>
+		}
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(cfg-&gt;fc_nlflags &amp; NLM_F_APPEND)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#25351;&#23450; NLM_F_APPEND&#26631;&#24535;</span>
+			fa = fa_orig;
+	}
+
+	err = -ENOENT;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(cfg-&gt;fc_nlflags &amp; NLM_F_CREATE)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;NLM_F_CREATE&#26631;&#24535;&#65292;&#21017;&#19981;&#33021;&#28155;&#21152;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	err = -ENOBUFS;
+	new_fa = kmem_cache_alloc(fn_alias_kmem, GFP_KERNEL);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;fib_alias&#23454;&#20363;</span>
+
+	new_f = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>f) {
+		new_f = kmem_cache_alloc(fn_hash_kmem, GFP_KERNEL); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;fib_node&#23454;&#20363;</span>
+		INIT_HLIST_NODE(&amp;new_f-&gt;fn_hash);
+		INIT_LIST_HEAD(&amp;new_f-&gt;fn_alias);
+		new_f-&gt;fn_key = key;
+		f = new_f;
+	}
+
+	new_fa-&gt;fa_info = fi;
+	new_fa-&gt;fa_tos = tos;
+	new_fa-&gt;fa_type = cfg-&gt;fc_type;
+	new_fa-&gt;fa_scope = cfg-&gt;fc_scope;
+	new_fa-&gt;fa_state = 0;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * Insert new entry to the list.</span>
+<span style="color: #8B8878;">         */</span>
+
+	write_lock_bh(&amp;fib_hash_lock);
+	<span style="color: #FF1493;">if</span> (new_f)
+		fib_insert_node(fz, new_f); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#26032;&#30340;fib_node&#25554;&#20837;&#38142;&#34920;</span>
+	list_add_tail(&amp;new_fa-&gt;fa_list,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#26032;&#30340;fib_alias&#25554;&#20837;&#38142;&#34920;</span>
+		 (fa ? &amp;fa-&gt;fa_list : &amp;f-&gt;fn_alias));
+	fib_hash_genid++;
+	write_unlock_bh(&amp;fib_hash_lock);
+
+	<span style="color: #FF1493;">if</span> (new_f)
+		fz-&gt;fz_nent++; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#36335;&#30001;&#39033;&#23545;&#24212;&#30340;zone&#20013;&#30340;&#36335;&#30001;&#39033;&#25968;&#30446;</span>
+	rt_cache_flush(-1); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21047;&#26032;&#36335;&#30001;&#32531;&#23384;&#34920;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;netlink&#36890;&#30693; RTM_NEWROUTE&#20107;&#20214;</span>
+	rtmsg_fib(RTM_NEWROUTE, key, new_fa, cfg-&gt;fc_dst_len, tb-&gt;tb_id,
+		  &amp;cfg-&gt;fc_nlinfo);
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga01b92c" class="outline-2">
+<h2 id="orga01b92c"><span class="section-number-2">7</span> 路由表项的删除</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+fn_hash_delete()实现删除一条路由表项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fn_hash_delete</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> *<span style="color: #FF8C00;">cfg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span> *<span style="color: #FF8C00;">table</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span>*)tb-&gt;tb_data;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_node</span> *<span style="color: #FF8C00;">f</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_alias</span> *<span style="color: #FF8C00;">fa</span>, *<span style="color: #FF8C00;">fa_to_delete</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_zone</span> *<span style="color: #FF8C00;">fz</span>;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">key</span>;
+
+	<span style="color: #FF1493;">if</span> (cfg-&gt;fc_dst_len &gt; 32) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25513;&#30721;&#38271;&#24230;&#26159;&#21542;&#26377;&#25928;</span>
+		<span style="color: #FF1493;">return</span> -EINVAL;
+
+	<span style="color: #FF1493;">if</span> ((fz  = table-&gt;fn_zones[cfg-&gt;fc_dst_len]) == <span style="color: #AF87FF;">NULL</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#25351;&#23450;&#25513;&#30721;&#38271;&#24230;&#30340;fn_zone&#23454;&#20363;</span>
+		<span style="color: #FF1493;">return</span> -ESRCH;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#30446;&#30340;&#32593;&#32476;&#23545;&#24212;&#30340;fib_node&#23454;&#20363;&#30340;key</span>
+	key = 0;
+	<span style="color: #FF1493;">if</span> (cfg-&gt;fc_dst) {
+		<span style="color: #FF1493;">if</span> (cfg-&gt;fc_dst &amp; ~FZ_MASK(fz))
+			<span style="color: #FF1493;">return</span> -EINVAL;
+		key = fz_key(cfg-&gt;fc_dst, fz);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;key&#20540;&#33719;&#21462;fib_node&#23454;&#20363;</span>
+	f = fib_find_node(fz, key);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>f)
+		fa = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">else</span>
+		fa = fib_find_alias(&amp;f-&gt;fn_alias, cfg-&gt;fc_tos, 0); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;tos&#21644;&#20248;&#20808;&#32423;&#26597;&#25214;fib_alias&#23454;&#20363;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fa)
+		<span style="color: #FF1493;">return</span> -ESRCH;
+
+	fa_to_delete = <span style="color: #AF87FF;">NULL</span>;
+	fa = list_entry(fa-&gt;fa_list.prev, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_alias</span>, fa_list);
+	list_for_each_entry_continue(fa, &amp;f-&gt;fn_alias, fa_list) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;fib_alias&#23454;&#20363;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_info</span> *<span style="color: #FF8C00;">fi</span> = fa-&gt;fa_info;
+		<span style="color: #FF1493;">if</span> (fa-&gt;fa_tos != cfg-&gt;fc_tos)
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #FF1493;">if</span> ((<span style="color: #CDC673; font-weight: bold;">!</span>cfg-&gt;fc_type ||
+		     fa-&gt;fa_type == cfg-&gt;fc_type) &amp;&amp;
+		    (cfg-&gt;fc_scope == RT_SCOPE_NOWHERE ||
+		     fa-&gt;fa_scope == cfg-&gt;fc_scope) &amp;&amp;
+		    (<span style="color: #CDC673; font-weight: bold;">!</span>cfg-&gt;fc_protocol ||
+		     fi-&gt;fib_protocol == cfg-&gt;fc_protocol) &amp;&amp;
+		    fib_nh_match(cfg, fi) == 0) {
+			fa_to_delete = fa;
+			<span style="color: #FF1493;">break</span>;
+		}
+	}
+
+	<span style="color: #FF1493;">if</span> (fa_to_delete) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25214;&#21040;&#21305;&#37197;&#30340;&#36335;&#30001;&#39033;&#65292;&#21017;&#25191;&#34892;&#21024;&#38500;&#25805;&#20316;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">kill_fn</span>;
+		fa = fa_to_delete;
+		rtmsg_fib(RTM_DELROUTE, key, fa, cfg-&gt;fc_dst_len,
+			  tb-&gt;tb_id, &amp;cfg-&gt;fc_nlinfo);
+		kill_fn = 0;
+		write_lock_bh(&amp;fib_hash_lock);
+		list_del(&amp;fa-&gt;fa_list);
+		<span style="color: #FF1493;">if</span> (list_empty(&amp;f-&gt;fn_alias)) {
+			hlist_del(&amp;f-&gt;fn_hash);
+			kill_fn = 1;
+		}
+		fib_hash_genid++;
+		write_unlock_bh(&amp;fib_hash_lock);
+		<span style="color: #FF1493;">if</span> (fa-&gt;fa_state &amp; FA_S_ACCESSED)
+			rt_cache_flush(-1);
+		fn_free_alias(fa);
+		<span style="color: #FF1493;">if</span> (kill_fn) {
+			fn_free_node(f);
+			fz-&gt;fz_nent--;
+		}
+		<span style="color: #FF1493;">return</span> 0;
+	}
+	<span style="color: #FF1493;">return</span> -ESRCH;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb730c92" class="outline-2">
+<h2 id="orgb730c92"><span class="section-number-2">8</span> 外部事件</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-org8bf5fa0" class="outline-3">
+<h3 id="org8bf5fa0"><span class="section-number-3">8.1</span> 网络设备状态变化事件</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+路由子系统通过 fib_netdev_notifier 获取到网络设备状态变化事件，然后调用 fib_netdev_event() 处理事件。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_netdev_event</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">notifier_block</span> *<span style="color: #FF8C00;">this</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">event</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">ptr</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = ptr;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = __in_dev_get_rtnl(dev);
+
+	<span style="color: #FF1493;">if</span> (event == NETDEV_UNREGISTER) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#27880;&#38144;&#65292;&#21017;&#28165;&#38500;&#35813;&#32593;&#32476;&#35774;&#22791;&#30340;&#32593;&#32476;&#21151;&#33021;&#20449;&#24687;&#21644;&#30456;&#20851;&#21151;&#33021;</span>
+		fib_disable_ip(dev, 2);
+		<span style="color: #FF1493;">return</span> NOTIFY_DONE;
+	}
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>in_dev) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#30340;IP&#37197;&#32622;&#22359;&#26080;&#25928;</span>
+		<span style="color: #FF1493;">return</span> NOTIFY_DONE;
+
+	<span style="color: #FF1493;">switch</span> (event) {
+	<span style="color: #FF1493;">case</span> NETDEV_UP: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28608;&#27963;&#35774;&#22791;</span>
+		for_ifa(in_dev) {
+			fib_add_ifaddr(ifa);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#35774;&#22791;&#30340;&#26412;&#22320;&#22320;&#22336;&#21040;RT_TABLE_LOCAL&#36335;&#30001;&#34920;</span>
+		} endfor_ifa(in_dev);
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_MULTIPATH
+		fib_sync_up(dev);
+<span style="color: #FF1493;">#endif</span>
+		rt_cache_flush(-1);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> NETDEV_DOWN: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#20851;&#38381;&#65292;&#21017;&#28165;&#38500;&#35813;&#32593;&#32476;&#35774;&#22791;&#30340;&#32593;&#32476;&#21151;&#33021;&#20449;&#24687;&#21644;&#30456;&#20851;&#21151;&#33021;</span>
+		fib_disable_ip(dev, 0);
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> NETDEV_CHANGEMTU: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20462;&#25913;&#20102;&#35774;&#22791;&#30340;MTU</span>
+	<span style="color: #FF1493;">case</span> NETDEV_CHANGE:  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#29366;&#24577;&#21464;&#25442;</span>
+		rt_cache_flush(0); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21047;&#26032;&#36335;&#30001;&#32531;&#23384;</span>
+		<span style="color: #FF1493;">break</span>;
+	}
+	<span style="color: #FF1493;">return</span> NOTIFY_DONE;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3eb5bb4" class="outline-3">
+<h3 id="org3eb5bb4"><span class="section-number-3">8.2</span> IP地址变化事件</h3>
+<div class="outline-text-3" id="text-8-2">
+<p>
+路由子系统通过 fib_inetaddr_notifier 接收IP地址变化的通知，之后调用 fib_inetaddr_event() 处理IP地址变化的事件。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_inetaddr_event</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">notifier_block</span> *<span style="color: #FF8C00;">this</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">event</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">ptr</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span> *<span style="color: #FF8C00;">ifa</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span>*)ptr;
+	<span style="color: #FF1493;">switch</span> (event) {
+	<span style="color: #FF1493;">case</span> NETDEV_UP:
+		fib_add_ifaddr(ifa); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#26032;&#30340;&#26412;&#22320;&#22320;&#22336;&#28155;&#21152;&#21040; RT_TABLE_LOCAL &#36335;&#30001;&#34920;</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_MULTIPATH
+		fib_sync_up(ifa-&gt;ifa_dev-&gt;dev);
+<span style="color: #FF1493;">#endif</span>
+		rt_cache_flush(-1); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24310;&#26102;&#21047;&#26032;&#36335;&#30001;&#32531;&#23384;</span>
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> NETDEV_DOWN:
+		fib_del_ifaddr(ifa);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#22320;&#22336;&#20174; RT_TABLE_LOCAL&#36335;&#30001;&#34920;&#21024;&#38500;</span>
+		<span style="color: #FF1493;">if</span> (ifa-&gt;ifa_dev-&gt;ifa_list == <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22320;&#22336;&#34987;&#20840;&#37096;&#21024;&#38500;</span>
+			fib_disable_ip(ifa-&gt;ifa_dev-&gt;dev, 1); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31435;&#21051;&#21047;&#26032;&#36335;&#30001;&#32531;&#23384;&#21644;ARP&#34920;&#65292;&#24182;&#20572;&#27490;ARP&#21151;&#33021;</span>
+		} <span style="color: #FF1493;">else</span> {
+			rt_cache_flush(-1);
+		}
+		<span style="color: #FF1493;">break</span>;
+	}
+	<span style="color: #FF1493;">return</span> NOTIFY_DONE;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf3a79c1" class="outline-3">
+<h3 id="orgf3a79c1"><span class="section-number-3">8.3</span> fib_add_ifaddr()</h3>
+<div class="outline-text-3" id="text-8-3">
+<p>
+网络设备添加新地址后，会调用 fib_add_ifaddr() 函数进行路由表项的操作。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib/fib-add-ifaddr.png" alt="fib-add-ifaddr.png" />
+</p>
+<p><span class="figure-number">Figure 7: </span>fib_add_ifaddr()流程</p>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">fib_add_ifaddr</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span> *<span style="color: #FF8C00;">ifa</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = ifa-&gt;ifa_dev;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = in_dev-&gt;dev;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span> *<span style="color: #FF8C00;">prim</span> = ifa;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">mask</span> = ifa-&gt;ifa_mask;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">addr</span> = ifa-&gt;ifa_local;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">prefix</span> = ifa-&gt;ifa_address&amp;mask;
+
+	<span style="color: #FF1493;">if</span> (ifa-&gt;ifa_flags&amp;IFA_F_SECONDARY) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#30340;&#26159;&#20174;&#23646;IP&#22320;&#22336;&#65292;&#21017;&#26657;&#39564;&#26159;&#21542;&#23384;&#22312;&#20027;IP&#22320;&#22336;</span>
+		prim = inet_ifa_byprefix(in_dev, prefix, mask);
+		<span style="color: #FF1493;">if</span> (prim == <span style="color: #AF87FF;">NULL</span>) {
+			printk(KERN_DEBUG <span style="color: #CDC673;">"fib_add_ifaddr: bug: prim == NULL\n"</span>);
+			<span style="color: #FF1493;">return</span>;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#26032;IP&#22320;&#22336;&#28155;&#21152;&#21040;RT_TABLE_TABLE&#36335;&#30001;&#34920;</span>
+	fib_magic(RTM_NEWROUTE, RTN_LOCAL, addr, 32, prim);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(dev-&gt;flags&amp;IFF_UP)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#26159;&#21542;&#21551;&#29992;</span>
+		<span style="color: #FF1493;">return</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#28155;&#21152;&#30340;&#24191;&#25773;&#22320;&#22336;&#65292;&#19988;&#19981;&#26159;255.255.255.255&#65292;&#21017;&#28155;&#24191;&#25773;&#22320;&#22336;&#30340;&#36335;&#30001;&#39033;&#21040;&#36335;&#30001;&#34920;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF1493;">if</span> (ifa-&gt;ifa_broadcast &amp;&amp; ifa-&gt;ifa_broadcast != htonl(0xFFFFFFFF))
+		fib_magic(RTM_NEWROUTE, RTN_BROADCAST, ifa-&gt;ifa_broadcast, 32, prim);
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ZERONET(prefix) &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(ifa-&gt;ifa_flags&amp;IFA_F_SECONDARY) &amp;&amp;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20027;IP&#22320;&#22336;&#19988;&#32593;&#32476;&#25513;&#30721;&#38271;&#24230;&#23567;&#20110;32&#65292;&#21017;&#26681;&#25454;&#32593;&#32476;&#35774;&#22791;&#26469;&#28155;&#21152;&#35813;&#22320;&#22336;&#30340;&#36335;&#30001;&#34920;&#39033;</span>
+	    (prefix != addr || ifa-&gt;ifa_prefixlen &lt; 32)) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22238;&#29615;&#35774;&#22791;&#22312;RT_TABLE_LOCAL&#34920;&#28155;&#21152;&#65292;&#21542;&#21017;&#22312;RT_TABLE_MAIN&#36335;&#30001;&#34920;&#28155;&#21152;</span>
+		fib_magic(RTM_NEWROUTE, dev-&gt;flags&amp;IFF_LOOPBACK ? RTN_LOCAL :
+			  RTN_UNICAST, prefix, ifa-&gt;ifa_prefixlen, prim);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25513;&#30721;&#38271;&#24230;&#23567;&#20110;31 &#21017;&#22312;RT_TABLE_LOCAL&#36335;&#30001;&#34920;&#28155;&#21152;&#20004;&#26465;&#23448;&#27874;&#31867;&#22411;&#30340;&#34920;&#39033;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (ifa-&gt;ifa_prefixlen &lt; 31) {
+			fib_magic(RTM_NEWROUTE, RTN_BROADCAST, prefix, 32, prim);
+			fib_magic(RTM_NEWROUTE, RTN_BROADCAST, prefix|~mask, 32, prim);
+		}
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd05f6c3" class="outline-3">
+<h3 id="orgd05f6c3"><span class="section-number-3">8.4</span> fib_del_ifaddr()</h3>
+<div class="outline-text-3" id="text-8-4">
+<p>
+网络设备删除一个地址后，调用 fib_del_ifaddr 进行路由表项的操作。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib/fib-del-ifaddr.png" alt="fib-del-ifaddr.png" />
+</p>
+<p><span class="figure-number">Figure 8: </span>fib_del_ifaddr()流程</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">fib_del_ifaddr</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span> *<span style="color: #FF8C00;">ifa</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = ifa-&gt;ifa_dev;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = in_dev-&gt;dev;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span> *<span style="color: #FF8C00;">ifa1</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span> *<span style="color: #FF8C00;">prim</span> = ifa;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">brd</span> = ifa-&gt;ifa_address|~ifa-&gt;ifa_mask;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">any</span> = ifa-&gt;ifa_address&amp;ifa-&gt;ifa_mask;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">LOCAL_OK</span>        1
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">BRD_OK</span>          2
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">BRD0_OK</span>         4
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">BRD1_OK</span>         8
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">ok</span> = 0;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(ifa-&gt;ifa_flags&amp;IFA_F_SECONDARY)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#30340;&#26159;&#20027;IP&#22320;&#22336;&#65292;&#21017;&#21024;&#38500;&#23545;&#19968;&#20010;&#30340;&#36335;&#30001;&#34920;&#39033;</span>
+		fib_magic(RTM_DELROUTE, dev-&gt;flags&amp;IFF_LOOPBACK ? RTN_LOCAL :
+			  RTN_UNICAST, any, ifa-&gt;ifa_prefixlen, prim);
+	<span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#30340;&#20174;&#23646;IP&#22320;&#22336;&#65292;&#21017;&#26657;&#39564;&#20027;IP&#22320;&#22336;&#26159;&#21542;&#23384;&#22312;</span>
+		prim = inet_ifa_byprefix(in_dev, any, ifa-&gt;ifa_mask);
+		<span style="color: #FF1493;">if</span> (prim == <span style="color: #AF87FF;">NULL</span>) {
+			printk(KERN_DEBUG <span style="color: #CDC673;">"fib_del_ifaddr: bug: prim == NULL\n"</span>);
+			<span style="color: #FF1493;">return</span>;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25195;&#25551;&#22320;&#22336;&#21015;&#34920;&#65292;&#30830;&#35748;&#35813;&#22320;&#22336;&#24050;&#32463;&#30495;&#27491;&#21024;&#38500;</span>
+	<span style="color: #FF1493;">for</span> (ifa1 = in_dev-&gt;ifa_list; ifa1; ifa1 = ifa1-&gt;ifa_next) {
+		<span style="color: #FF1493;">if</span> (ifa-&gt;ifa_local == ifa1-&gt;ifa_local)
+			ok |= LOCAL_OK;
+		<span style="color: #FF1493;">if</span> (ifa-&gt;ifa_broadcast == ifa1-&gt;ifa_broadcast)
+			ok |= BRD_OK;
+		<span style="color: #FF1493;">if</span> (brd == ifa1-&gt;ifa_broadcast)
+			ok |= BRD1_OK;
+		<span style="color: #FF1493;">if</span> (any == ifa1-&gt;ifa_broadcast)
+			ok |= BRD0_OK;
+	}
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(ok&amp;BRD_OK)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;&#30456;&#21516;&#30340;&#24191;&#25773;&#22320;&#22336;</span>
+		fib_magic(RTM_DELROUTE, RTN_BROADCAST, ifa-&gt;ifa_broadcast, 32, prim); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#24191;&#25773;&#22320;&#22336;&#30340;&#36335;&#30001;&#34920;&#39033;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(ok&amp;BRD1_OK))
+		fib_magic(RTM_DELROUTE, RTN_BROADCAST, brd, 32, prim);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(ok&amp;BRD0_OK))
+		fib_magic(RTM_DELROUTE, RTN_BROADCAST, any, 32, prim);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(ok&amp;LOCAL_OK)) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;&#30456;&#21516;&#30340;&#26412;&#22320;&#22320;&#22336;&#65288;&#30830;&#23454;&#24050;&#32463;&#21024;&#38500;&#65289;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;RT_TABLE_LOCAL&#36335;&#30001;&#34920;&#30340;&#34920;&#39033;</span>
+		fib_magic(RTM_DELROUTE, RTN_LOCAL, ifa-&gt;ifa_local, 32, prim);
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Check, that this local address finally disappeared.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (inet_addr_type(ifa-&gt;ifa_local) != RTN_LOCAL) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#30340;&#22320;&#22336;&#38750;&#26412;&#22320;&#25509;&#21475;&#22320;&#22336;</span>
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">And the last, but not the least thing.</span>
+<span style="color: #8B8878;">                           We must flush stray FIB entries.</span>
+
+<span style="color: #8B8878;">                           First of all, we scan fib_info list searching</span>
+<span style="color: #8B8878;">                           for stray nexthop entries, then ignite fib_flush.</span>
+<span style="color: #8B8878;">                        */</span>
+			<span style="color: #FF1493;">if</span> (fib_sync_down(ifa-&gt;ifa_local, <span style="color: #AF87FF;">NULL</span>, 0)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#35813;&#22320;&#22336;&#30456;&#20851;&#30340;&#36335;&#30001;&#39033;&#26631;&#35782;&#20026;&#26080;&#25928;</span>
+				fib_flush(); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21047;&#26032;&#36335;&#30001;&#34920;</span>
+		}
+	}
+<span style="color: #FF1493;">#undef</span> LOCAL_OK
+<span style="color: #FF1493;">#undef</span> BRD_OK
+<span style="color: #FF1493;">#undef</span> BRD0_OK
+<span style="color: #FF1493;">#undef</span> BRD1_OK
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3998b59" class="outline-3">
+<h3 id="org3998b59"><span class="section-number-3">8.5</span> fib_disable_ip()</h3>
+<div class="outline-text-3" id="text-8-5">
+<p>
+fib_disable_ip() 清除网络设备的网络功能信息和相关功能，例如强制删除通过此网络设备的所有路由表项并刷新路由缓存，删除设备的ARP表，并停止ARP功能。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">fib_disable_ip</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">force</span>)
+{
+	<span style="color: #FF1493;">if</span> (fib_sync_down(0, dev, force))
+		fib_flush();
+	rt_cache_flush(0);
+	arp_ifdown(dev);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org659b5f8" class="outline-3">
+<h3 id="org659b5f8"><span class="section-number-3">8.6</span> fib_magic()</h3>
+<div class="outline-text-3" id="text-8-6">
+<p>
+在地址发生变化后，调用该函数来修改 RT_TABLE_MAIN 或者 RT_TABLE_LOCAL 路由表，由 fib_add_ifaddr()和 fib_del_ifaddr() 调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Prepare and feed intra-kernel routing request.</span>
+<span style="color: #8B8878;">   Really, it should be netlink message, but :-( netlink</span>
+<span style="color: #8B8878;">   can be not configured, so that we feed it directly</span>
+<span style="color: #8B8878;">   to fib engine. It is legal, because all events occur</span>
+<span style="color: #8B8878;">   only when netlink is already locked.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">fib_magic</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#36824;&#26159;&#21024;&#38500;&#36335;&#30001;&#34920;&#39033;</span>
+		      <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#30830;&#23450;&#25805;&#20316;&#30340;&#36335;&#30001;&#34920;</span>
+		       <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">dst</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#30340;&#30446;&#30340;&#22320;&#22336;</span>
+		       <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">dst_len</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#30340;&#30446;&#30340;&#22320;&#22336;&#38271;&#24230;</span>
+		       <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_ifaddr</span> *<span style="color: #FF8C00;">ifa</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#36335;&#30001;&#39033;&#30340;&#30456;&#20851;&#20449;&#24687;</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_config</span> <span style="color: #FF8C00;">cfg</span> = { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26500;&#36896;&#29992;&#20110;&#28155;&#21152;&#36335;&#30001;&#34920;&#39033;&#30340;&#20449;&#24687;</span>
+		.fc_protocol = RTPROT_KERNEL,
+		.fc_type = type,
+		.fc_dst = dst,
+		.fc_dst_len = dst_len,
+		.fc_prefsrc = ifa-&gt;ifa_local,
+		.fc_oif = ifa-&gt;ifa_dev-&gt;dev-&gt;ifindex,
+		.fc_nlflags = NLM_F_CREATE | NLM_F_APPEND,
+	};
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#23450;&#25805;&#20316;&#30340;&#36335;&#30001;&#34920;</span>
+	<span style="color: #FF1493;">if</span> (type == RTN_UNICAST)
+		tb = fib_new_table(RT_TABLE_MAIN);
+	<span style="color: #FF1493;">else</span>
+		tb = fib_new_table(RT_TABLE_LOCAL);
+
+	<span style="color: #FF1493;">if</span> (tb == <span style="color: #AF87FF;">NULL</span>)
+		<span style="color: #FF1493;">return</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#25805;&#20316;&#30340;&#36335;&#30001;&#34920;IP</span>
+	cfg.fc_table = tb-&gt;tb_id;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#25805;&#20316;&#30340;&#36335;&#30001;&#33539;&#22260;</span>
+	<span style="color: #FF1493;">if</span> (type != RTN_LOCAL)
+		cfg.fc_scope = RT_SCOPE_LINK;
+	<span style="color: #FF1493;">else</span>
+		cfg.fc_scope = RT_SCOPE_HOST;
+
+	<span style="color: #FF1493;">if</span> (cmd == RTM_NEWROUTE)
+		tb-&gt;tb_insert(tb, &amp;cfg); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#36335;&#30001;&#34920;&#39033;</span>
+	<span style="color: #FF1493;">else</span>
+		tb-&gt;tb_delete(tb, &amp;cfg); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#36335;&#30001;&#34920;&#39033;</span>
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1b27fed" class="outline-2">
+<h2 id="org1b27fed"><span class="section-number-2">9</span> 选路</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-orge675920" class="outline-3">
+<h3 id="orge675920"><span class="section-number-3">9.1</span> 输入选路: ip_route_input_slow()</h3>
+<div class="outline-text-3" id="text-9-1">
+<p>
+输入的数据报路由时，调用 ip_route_input 选路，如果没有命中缓存，则调用 ip_route_input_slow()在路由表进行查找，命中后，将该表项添加到缓存。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      NOTE. We drop all the packets that has local source</span>
+<span style="color: #8B8878;"> *      addresses, because every properly looped back packet</span>
+<span style="color: #8B8878;"> *      must have correct destination already attached by output routine.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      Such approach solves two big problems:</span>
+<span style="color: #8B8878;"> *      1. Not simplex devices are handled properly.</span>
+<span style="color: #8B8878;"> *      2. IP spoofing attempts are filtered with 100% of guarantee.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_route_input_slow</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">daddr</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span>,
+			       <span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">tos</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> <span style="color: #FF8C00;">res</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = in_dev_get(dev);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> <span style="color: #FF8C00;">fl</span> = { .nl_u = { .ip4_u =  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32452;&#32455;&#36335;&#30001;&#34920;&#30340;&#26597;&#25214;&#26465;&#20214;</span>
+				      { .daddr = daddr,
+					.saddr = saddr,
+					.tos = tos,
+					.scope = RT_SCOPE_UNIVERSE,
+				      } },
+			    .mark = skb-&gt;mark,
+			    .iif = dev-&gt;ifindex };
+	<span style="color: #5FD7FF;">unsigned</span>        <span style="color: #FF8C00;">flags</span> = 0;
+	<span style="color: #5FD7FF;">u32</span>             <span style="color: #FF8C00;">itag</span> = 0;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> * <span style="color: #FF8C00;">rth</span>;
+	<span style="color: #5FD7FF;">unsigned</span>        <span style="color: #FF8C00;">hash</span>;
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">spec_dst</span>;
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">err</span> = -EINVAL;
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">free_res</span> = 0;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IP&#37197;&#32622;&#22359;&#26159;&#21542;&#26377;&#25928;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>in_dev)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26816;&#26597;&#28304;&#22320;&#22336;&#21644;&#30446;&#30340;&#22320;&#22336;&#30340;&#26377;&#25928;&#24615;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (MULTICAST(saddr) || BADCLASS(saddr) || LOOPBACK(saddr))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">martian_source</span>;
+	<span style="color: #FF1493;">if</span> (daddr == htonl(0xFFFFFFFF) || (saddr == 0 &amp;&amp; daddr == 0))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">brd_input</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Accept zero addresses only to limited broadcast;</span>
+<span style="color: #8B8878;">         * I even do not know to fix it or not. Waiting for complains :-)</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (ZERONET(saddr))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">martian_source</span>;
+
+	<span style="color: #FF1493;">if</span> (BADCLASS(daddr) || ZERONET(daddr) || LOOPBACK(daddr))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">martian_destination</span>;
+
+	<span style="color: #FF1493;">if</span> ((err = fib_lookup(&amp;fl, &amp;res)) != 0) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#36335;&#30001;&#34920;&#22833;&#36133;</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IN_DEV_FORWARD(in_dev))  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#31105;&#27490;&#36716;&#21457;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_hostunreach</span>;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">no_route</span>;
+	}
+	free_res = 1;
+	RT_CACHE_STAT_INC(in_slow_tot);
+	<span style="color: #FF1493;">if</span> (res.type == RTN_BROADCAST) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#20026;&#24191;&#25773;&#22320;&#22336;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">brd_input</span>;
+
+	<span style="color: #FF1493;">if</span> (res.type == RTN_LOCAL) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#20026;&#26412;&#22320;&#25509;&#21475;&#30340;&#22320;&#22336;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">result</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#28304;&#22320;&#22336;&#26159;&#21542;&#26377;&#25928;</span>
+		result = fib_validate_source(saddr, daddr, tos,
+					     loopback_dev.ifindex,
+					     dev, &amp;spec_dst, &amp;itag);
+		<span style="color: #FF1493;">if</span> (result &lt; 0)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">martian_source</span>;
+		<span style="color: #FF1493;">if</span> (result)
+			flags |= RTCF_DIRECTSRC;
+		spec_dst = daddr;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">local_input</span>;
+	}
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IN_DEV_FORWARD(in_dev))  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31995;&#32479;&#31105;&#27490;&#36716;&#21457;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_hostunreach</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27492;&#22788;&#21482;&#22788;&#29702;&#30446;&#30340;&#22320;&#22336;&#26159;&#21333;&#25773;&#22320;&#22336;&#30340;&#24773;&#20917;</span>
+	<span style="color: #FF1493;">if</span> (res.type != RTN_UNICAST) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#21040;&#30340;&#36335;&#30001;&#34920;&#39033;&#30446;&#30340;&#22320;&#22336;&#19981;&#26159;&#21333;&#25773;&#22320;&#22336;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">martian_destination</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;&#34920;&#39033;&#65292;&#24182;&#28155;&#21152;&#21040;&#32531;&#23384;</span>
+	err = ip_mkroute_input(skb, &amp;res, &amp;fl, in_dev, daddr, saddr, tos);
+	<span style="color: #FF1493;">if</span> (err == -ENOBUFS)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_nobufs</span>;
+	<span style="color: #FF1493;">if</span> (err == -EINVAL)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_inval</span>;
+
+<span style="color: #AF87FF;">done</span>:   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#35810;&#32467;&#26463;&#36820;&#22238;</span>
+	in_dev_put(in_dev);
+	<span style="color: #FF1493;">if</span> (free_res)
+		fib_res_put(&amp;res);
+<span style="color: #AF87FF;">out</span>:    <span style="color: #FF1493;">return</span> err;
+
+<span style="color: #AF87FF;">brd_input</span>:  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#20026;&#21463;&#38480;&#30340;&#24191;&#25773;&#22320;&#22336; 255.255.255.255 &#25110;&#32773; &#30446;&#30340;&#22320;&#22336;&#21644;&#28304;&#22320;&#22336;&#37117;&#20026;0&#30340;&#24773;&#20917;</span>
+	<span style="color: #FF1493;">if</span> (skb-&gt;protocol != htons(ETH_P_IP)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#26159;IP&#25968;&#25454;&#25253;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_inval</span>;
+
+	<span style="color: #FF1493;">if</span> (ZERONET(saddr)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#36873;&#25321;&#21512;&#36866;&#30340;&#28304;&#22320;&#22336;</span>
+		spec_dst = inet_select_addr(dev, 0, RT_SCOPE_LINK);
+	<span style="color: #FF1493;">else</span> {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#28304;&#22320;&#22336;&#26159;&#21542;&#26377;&#25928;</span>
+		err = fib_validate_source(saddr, 0, tos, 0, dev, &amp;spec_dst,
+					  &amp;itag);
+		<span style="color: #FF1493;">if</span> (err &lt; 0)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">martian_source</span>;
+		<span style="color: #FF1493;">if</span> (err)
+			flags |= RTCF_DIRECTSRC;
+	}
+	flags |= RTCF_BROADCAST;
+	res.type = RTN_BROADCAST; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#36335;&#30001;&#34920;&#39033;&#30340;&#30446;&#30340;&#22320;&#22336;&#26159;&#24191;&#25773;&#22320;&#22336;</span>
+	RT_CACHE_STAT_INC(in_brd);
+
+<span style="color: #AF87FF;">local_input</span>: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#20026;&#26412;&#22320;&#25509;&#21475;&#30340;&#22320;&#22336;&#65292;&#21019;&#24314;&#36335;&#30001;&#34920;&#39033;&#24182;&#28155;&#21152;&#21040;&#36335;&#30001;&#32531;&#23384;</span>
+	rth = dst_alloc(&amp;ipv4_dst_ops);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rth)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_nobufs</span>;
+
+	rth-&gt;u.dst.output= ip_rt_bug;
+
+	atomic_set(&amp;rth-&gt;u.dst.__refcnt, 1);
+	rth-&gt;u.dst.flags= DST_HOST;
+	<span style="color: #FF1493;">if</span> (in_dev-&gt;cnf.no_policy)
+		rth-&gt;u.dst.flags |= DST_NOPOLICY;
+	rth-&gt;fl.fl4_dst = daddr;
+	rth-&gt;rt_dst     = daddr;
+	rth-&gt;fl.fl4_tos = tos;
+	rth-&gt;fl.mark    = skb-&gt;mark;
+	rth-&gt;fl.fl4_src = saddr;
+	rth-&gt;rt_src     = saddr;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_CLS_ROUTE
+	rth-&gt;u.dst.tclassid = itag;
+<span style="color: #FF1493;">#endif</span>
+	rth-&gt;rt_iif     =
+	rth-&gt;fl.iif     = dev-&gt;ifindex;
+	rth-&gt;u.dst.dev  = &amp;loopback_dev;
+	dev_hold(rth-&gt;u.dst.dev);
+	rth-&gt;idev       = in_dev_get(rth-&gt;u.dst.dev);
+	rth-&gt;rt_gateway = daddr;
+	rth-&gt;rt_spec_dst= spec_dst;
+	rth-&gt;u.dst.input= ip_local_deliver;
+	rth-&gt;rt_flags   = flags|RTCF_LOCAL;
+	<span style="color: #FF1493;">if</span> (res.type == RTN_UNREACHABLE) {
+		rth-&gt;u.dst.input= ip_error;
+		rth-&gt;u.dst.error= -err;
+		rth-&gt;rt_flags   &amp;= ~RTCF_LOCAL;
+	}
+	rth-&gt;rt_type    = res.type;
+	hash = rt_hash(daddr, saddr, fl.iif);
+	err = rt_intern_hash(hash, rth, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>**)&amp;skb-&gt;dst);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">done</span>;
+
+<span style="color: #AF87FF;">no_route</span>:  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;RT_SCOPE_UNIVERSE &#33539;&#22260;&#36873;&#25321;&#22320;&#22336;&#20316;&#20026;&#36335;&#30001;&#30340;&#30446;&#30340;&#22320;&#22336;&#65292;</span>
+	RT_CACHE_STAT_INC(in_no_route);
+	spec_dst = inet_select_addr(dev, 0, RT_SCOPE_UNIVERSE);
+	res.type = RTN_UNREACHABLE;
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">local_input</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36716;&#21040; local_input &#21019;&#24314;&#36335;&#30001;&#32531;&#23384;&#34920;&#39033;</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36873;&#36335;&#22833;&#36133;&#22788;&#29702;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #AF87FF;">martian_destination</span>:
+	RT_CACHE_STAT_INC(in_martian_dst);
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_VERBOSE
+	<span style="color: #FF1493;">if</span> (IN_DEV_LOG_MARTIANS(in_dev) &amp;&amp; net_ratelimit())
+		printk(KERN_WARNING <span style="color: #CDC673;">"martian destination %u.%u.%u.%u from "</span>
+			<span style="color: #CDC673;">"%u.%u.%u.%u, dev %s\n"</span>,
+			NIPQUAD(daddr), NIPQUAD(saddr), dev-&gt;name);
+<span style="color: #FF1493;">#endif</span>
+
+<span style="color: #AF87FF;">e_hostunreach</span>:
+	err = -EHOSTUNREACH;
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">done</span>;
+<span style="color: #AF87FF;">e_inval</span>:
+	err = -EINVAL;
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">done</span>;
+<span style="color: #AF87FF;">e_nobufs</span>:
+	err = -ENOBUFS;
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">done</span>;
+<span style="color: #AF87FF;">martian_source</span>:
+	ip_handle_martian_source(dev, in_dev, skb, daddr, saddr);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_inval</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org44b6201" class="outline-3">
+<h3 id="org44b6201"><span class="section-number-3">9.2</span> 组播输入选路：ip_route_input_mc()</h3>
+<div class="outline-text-3" id="text-9-2">
+<p>
+如果输入的IP组播数据报没有查找到路由缓存项，则调用 ip_route_input_mc() 进行组播数据报来选路。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_route_input_mc</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#34892;&#36873;&#36335;&#30340;&#25968;&#25454;&#25253;</span>
+			     <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">daddr</span><span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;</span><span style="color: #8B8878;">*/</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span>,  <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#28304;&#22320;&#22336;</span><span style="color: #8B8878;">*/</span>
+			     <span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">tos</span><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25968;&#25454;&#25253;&#30340;tos</span><span style="color: #8B8878;">*/</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
+			     <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">our</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#36755;&#20837;&#21040;&#26412;&#22320;</span>
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">hash</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rth</span>;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">spec_dst</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = in_dev_get(dev);
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">itag</span> = 0;
+	<span style="color: #FF1493;">if</span> (in_dev == <span style="color: #AF87FF;">NULL</span>)
+		<span style="color: #FF1493;">return</span> -EINVAL;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28304;&#22320;&#22336;&#19981;&#21487;&#20197;&#26159;&#32452;&#25773;&#22320;&#22336;&#12289;&#24191;&#25773;&#22320;&#22336;&#12289;&#22238;&#29615;&#22320;&#22336;&#65292;&#19988;&#24517;&#39035;&#26159;IP&#25968;&#25454;&#25253;</span>
+	<span style="color: #FF1493;">if</span> (MULTICAST(saddr) || BADCLASS(saddr) || LOOPBACK(saddr) ||
+	    skb-&gt;protocol != htons(ETH_P_IP))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_inval</span>;
+	<span style="color: #FF1493;">if</span> (ZERONET(saddr)) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28304;&#22320;&#22336;&#20026;0&#65292;&#21017;&#30446;&#30340;&#22320;&#22336;&#19981;&#33021;&#26159;&#26412;&#22320;&#32452;&#25773;&#22320;&#22336;</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>LOCAL_MCAST(daddr))
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_inval</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36873;&#25321;&#39318;&#36873;&#28304;&#22320;&#22336;</span>
+		spec_dst = inet_select_addr(dev, 0, RT_SCOPE_LINK);
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (fib_validate_source(saddr, 0, tos, 0,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#28304;&#22320;&#22336;</span>
+					dev, &amp;spec_dst, &amp;itag) &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_inval</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#26032;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+	rth = dst_alloc(&amp;ipv4_dst_ops);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rth)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">e_nobufs</span>;
+
+	rth-&gt;u.dst.output= ip_rt_bug;
+	atomic_set(&amp;rth-&gt;u.dst.__refcnt, 1);
+	rth-&gt;u.dst.flags= DST_HOST;
+	<span style="color: #FF1493;">if</span> (in_dev-&gt;cnf.no_policy)
+		rth-&gt;u.dst.flags |= DST_NOPOLICY;
+	rth-&gt;fl.fl4_dst = daddr;
+	rth-&gt;rt_dst     = daddr;
+	rth-&gt;fl.fl4_tos = tos;
+	rth-&gt;fl.mark    = skb-&gt;mark;
+	rth-&gt;fl.fl4_src = saddr;
+	rth-&gt;rt_src     = saddr;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_CLS_ROUTE
+	rth-&gt;u.dst.tclassid = itag;
+<span style="color: #FF1493;">#endif</span>
+	rth-&gt;rt_iif     =
+	rth-&gt;fl.iif     = dev-&gt;ifindex;
+	rth-&gt;u.dst.dev  = &amp;loopback_dev;
+	dev_hold(rth-&gt;u.dst.dev);
+	rth-&gt;idev       = in_dev_get(rth-&gt;u.dst.dev);
+	rth-&gt;fl.oif     = 0;
+	rth-&gt;rt_gateway = daddr;
+	rth-&gt;rt_spec_dst= spec_dst;
+	rth-&gt;rt_type    = RTN_MULTICAST;
+	rth-&gt;rt_flags   = RTCF_MULTICAST;
+	<span style="color: #FF1493;">if</span> (our) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20837;&#21040;&#26412;&#22320;&#30340;&#32452;&#25773;&#22320;&#22336;</span>
+		rth-&gt;u.dst.input= ip_local_deliver; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#36755;&#20837;&#22788;&#29702;&#20989;&#25968;</span>
+		rth-&gt;rt_flags |= RTCF_LOCAL;
+	}
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_MROUTE
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#19981;&#26159;&#26412;&#22320;&#32452;&#25773;&#22320;&#22336; &#19988;&#31995;&#32479;&#20801;&#35768;&#36716;&#21457;&#32452;&#25773;&#25968;&#25454;&#25253;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>LOCAL_MCAST(daddr) &amp;&amp; IN_DEV_MFORWARD(in_dev))
+		rth-&gt;u.dst.input = ip_mr_input;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#36755;&#20986;&#20989;&#25968;</span>
+<span style="color: #FF1493;">#endif</span>
+	RT_CACHE_STAT_INC(in_slow_mc);
+	in_dev_put(in_dev);
+	hash = rt_hash(daddr, saddr, dev-&gt;ifindex);
+	<span style="color: #FF1493;">return</span> rt_intern_hash(hash, rth, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>**) &amp;skb-&gt;dst);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#21040;&#36335;&#30001;&#32531;&#23384;&#20013;</span>
+
+<span style="color: #AF87FF;">e_nobufs</span>:
+	in_dev_put(in_dev);
+	<span style="color: #FF1493;">return</span> -ENOBUFS;
+
+<span style="color: #AF87FF;">e_inval</span>:
+	in_dev_put(in_dev);
+	<span style="color: #FF1493;">return</span> -EINVAL;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdf9698a" class="outline-3">
+<h3 id="orgdf9698a"><span class="section-number-3">9.3</span> 输出选路：ip_route_output_slow()</h3>
+<div class="outline-text-3" id="text-9-3">
+<p>
+本地生成的数据报路由时，调用 ip_route_output_slow() 函数选路。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Major route resolver routine.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_route_output_slow</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> **<span style="color: #FF8C00;">rp</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">oldflp</span>)
+{
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">tos</span> = RT_FL_TOS(oldflp);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> <span style="color: #FF8C00;">fl</span> = { .nl_u = { .ip4_u =  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#32531;&#23384;&#26597;&#25214;&#26465;&#20214;fldflp,&#26469;&#21021;&#22987;&#21270;&#36335;&#30001;&#34920;&#26597;&#25214;&#26465;&#20214;</span>
+				      { .daddr = oldflp-&gt;fl4_dst,
+					.saddr = oldflp-&gt;fl4_src,
+					.tos = tos &amp; IPTOS_RT_MASK,
+					.scope = ((tos &amp; RTO_ONLINK) ?
+						  RT_SCOPE_LINK :
+						  RT_SCOPE_UNIVERSE),
+				      } },
+			    .mark = oldflp-&gt;mark,
+			    .iif = loopback_dev.ifindex,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#20026;&#22238;&#29615;&#35774;&#22791;&#65292;&#22240;&#20026;&#26159;&#26412;&#22320;&#29983;&#25104;&#30340;&#25968;&#25454;&#25253;</span>
+			    .oif = oldflp-&gt;oif };
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> <span style="color: #FF8C00;">res</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">flags</span> = 0;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev_out</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">free_res</span> = 0;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	res.fi          = <span style="color: #AF87FF;">NULL</span>;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_MULTIPLE_TABLES
+	res.r           = <span style="color: #AF87FF;">NULL</span>;
+<span style="color: #FF1493;">#endif</span>
+
+	<span style="color: #FF1493;">if</span> (oldflp-&gt;fl4_src) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26377;&#28304;&#22320;&#22336;&#65292;&#21017;&#26657;&#39564;&#28304;&#22320;&#22336;&#21644;&#23545;&#24212;&#30340;&#32593;&#32476;&#35774;&#22791;</span>
+		err = -EINVAL;
+		<span style="color: #FF1493;">if</span> (MULTICAST(oldflp-&gt;fl4_src) ||  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#33021;&#26159;&#32452;&#25773;&#22320;&#22336;</span>
+		    BADCLASS(oldflp-&gt;fl4_src) ||  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#33021;&#26159;&#24191;&#25773;&#22320;&#22336;</span>
+		    ZERONET(oldflp-&gt;fl4_src))  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#33021;&#20026;0</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">It is equivalent to inet_addr_type(saddr) == RTN_LOCAL</span><span style="color: #8B8878;"> */</span>
+		dev_out = ip_dev_find(oldflp-&gt;fl4_src);
+		<span style="color: #FF1493;">if</span> (dev_out == <span style="color: #AF87FF;">NULL</span>)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#28304;&#22320;&#22336;&#23545;&#24212;&#30340;&#32593;&#32476;&#35774;&#22791;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">I removed check for oif == dev_out-&gt;oif here.</span>
+<span style="color: #8B8878;">                   It was wrong for two reasons:</span>
+<span style="color: #8B8878;">                   1. ip_dev_find(saddr) can return wrong iface, if saddr is</span>
+<span style="color: #8B8878;">                      assigned to multiple interfaces.</span>
+<span style="color: #8B8878;">                   2. Moreover, we are allowed to send packets with saddr</span>
+<span style="color: #8B8878;">                      of another iface. --ANK</span>
+<span style="color: #8B8878;">                 */</span>
+
+		<span style="color: #FF1493;">if</span> (oldflp-&gt;oif == 0  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#35774;&#32622;&#32593;&#32476;&#35774;&#22791;&#65292;&#24182;&#19988;&#30446;&#30340;&#22320;&#22336;&#26159;&#32452;&#25773;&#25110;&#32773;&#24191;&#25773;&#22320;&#22336;</span>
+		    &amp;&amp; (MULTICAST(oldflp-&gt;fl4_dst) || oldflp-&gt;fl4_dst == htonl(0xFFFFFFFF))) {
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Special hack: user can direct multicasts</span>
+<span style="color: #8B8878;">                           and limited broadcast via necessary interface</span>
+<span style="color: #8B8878;">                           without fiddling with IP_MULTICAST_IF or IP_PKTINFO.</span>
+<span style="color: #8B8878;">                           This hack is not just for fun, it allows</span>
+<span style="color: #8B8878;">                           vic,vat and friends to work.</span>
+<span style="color: #8B8878;">                           They bind socket to loopback, set ttl to zero</span>
+<span style="color: #8B8878;">                           and expect that it will work.</span>
+<span style="color: #8B8878;">                           From the viewpoint of routing cache they are broken,</span>
+<span style="color: #8B8878;">                           because we are not allowed to build multicast path</span>
+<span style="color: #8B8878;">                           with loopback source addr (look, routing cache</span>
+<span style="color: #8B8878;">                           cannot know, that ttl is zero, so that packet</span>
+<span style="color: #8B8878;">                           will not leave this host and route is valid).</span>
+<span style="color: #8B8878;">                           Luckily, this hack is good workaround.</span>
+<span style="color: #8B8878;">                         */</span>
+
+			fl.oif = dev_out-&gt;ifindex; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20351;&#29992;&#26681;&#25454;&#28304;&#22320;&#22336;&#33719;&#21462;&#30340;&#32593;&#32476;&#35774;&#22791;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">make_route</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36339;&#36716;&#21040;&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;</span>
+		}
+		<span style="color: #FF1493;">if</span> (dev_out)
+			dev_put(dev_out);
+		dev_out = <span style="color: #AF87FF;">NULL</span>;
+	}
+
+	<span style="color: #FF1493;">if</span> (oldflp-&gt;oif) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26377;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span>
+		dev_out = dev_get_by_index(oldflp-&gt;oif);
+		err = -ENODEV;
+		<span style="color: #FF1493;">if</span> (dev_out == <span style="color: #AF87FF;">NULL</span>)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RACE: Check return value of inet_select_addr instead.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (__in_dev_get_rtnl(dev_out) == <span style="color: #AF87FF;">NULL</span>) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#35774;&#22791;&#30340;IPv4&#37197;&#32622;&#22359;&#26159;&#21542;&#26377;&#25928;</span>
+			dev_put(dev_out);
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Wrong error code</span><span style="color: #8B8878;"> */</span>
+		}
+
+		<span style="color: #FF1493;">if</span> (LOCAL_MCAST(oldflp-&gt;fl4_dst) || oldflp-&gt;fl4_dst == htonl(0xFFFFFFFF)) {
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fl.fl4_src)
+				fl.fl4_src = inet_select_addr(dev_out, 0,
+							      RT_SCOPE_LINK);
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">make_route</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36339;&#36716;&#21040;&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;</span>
+		}
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fl.fl4_src) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25628;&#32034;&#26465;&#20214;&#27809;&#26377;&#25552;&#20379;&#28304;&#22320;&#22336;</span>
+			<span style="color: #FF1493;">if</span> (MULTICAST(oldflp-&gt;fl4_dst))
+				fl.fl4_src = inet_select_addr(dev_out, 0,
+							      fl.fl4_scope);
+			<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>oldflp-&gt;fl4_dst)
+				fl.fl4_src = inet_select_addr(dev_out, 0,
+							      RT_SCOPE_HOST);
+		}
+	}
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fl.fl4_dst) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#35774;&#32622;&#30446;&#30340;&#22320;&#22336;</span>
+		fl.fl4_dst = fl.fl4_src;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#26597;&#25214;&#30340;&#30446;&#30340;&#22320;&#22336;&#35774;&#32622;&#20026;&#28304;&#22320;&#22336;</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fl.fl4_dst)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20063;&#27809;&#26377;&#35774;&#32622;&#28304;&#22320;&#22336;&#65292;&#21017;&#37117;&#35774;&#32622;&#20026;&#22238;&#29615;&#22320;&#22336;</span>
+			fl.fl4_dst = fl.fl4_src = htonl(INADDR_LOOPBACK);
+		<span style="color: #FF1493;">if</span> (dev_out)
+			dev_put(dev_out);
+		dev_out = &amp;loopback_dev; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#36755;&#20986;&#35774;&#22791;&#20026;&#22238;&#29615;&#35774;&#22791;</span>
+		dev_hold(dev_out);
+		fl.oif = loopback_dev.ifindex;
+		res.type = RTN_LOCAL;
+		flags |= RTCF_LOCAL;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">make_route</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36339;&#36716;&#21040;&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;</span>
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#36335;&#30001;&#34920;&#26597;&#25214;&#36335;&#30001;&#34920;&#39033;</span>
+	<span style="color: #FF1493;">if</span> (fib_lookup(&amp;fl, &amp;res)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#22833;&#36133;</span>
+		res.fi = <span style="color: #AF87FF;">NULL</span>;
+		<span style="color: #FF1493;">if</span> (oldflp-&gt;oif) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#36755;&#20986;&#30340;&#25968;&#25454;&#30830;&#23450;&#20102;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span>
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Apparently, routing tables are wrong. Assume,</span>
+<span style="color: #8B8878;">                           that the destination is on link.</span>
+
+<span style="color: #8B8878;">                           WHY? DW.</span>
+<span style="color: #8B8878;">                           Because we are allowed to send to iface</span>
+<span style="color: #8B8878;">                           even if it has NO routes and NO assigned</span>
+<span style="color: #8B8878;">                           addresses. When oif is specified, routing</span>
+<span style="color: #8B8878;">                           tables are looked up with only one purpose:</span>
+<span style="color: #8B8878;">                           to catch if destination is gatewayed, rather than</span>
+<span style="color: #8B8878;">                           direct. Moreover, if MSG_DONTROUTE is set,</span>
+<span style="color: #8B8878;">                           we send packet, ignoring both routing tables</span>
+<span style="color: #8B8878;">                           and ifaddr state. --ANK</span>
+
+
+<span style="color: #8B8878;">                           We could make it even if oif is unknown,</span>
+<span style="color: #8B8878;">                           likely IPv6, but we do not.</span>
+<span style="color: #8B8878;">                         */</span>
+
+			<span style="color: #FF1493;">if</span> (fl.fl4_src == 0)
+				fl.fl4_src = inet_select_addr(dev_out, 0,
+							      RT_SCOPE_LINK);
+			res.type = RTN_UNICAST;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">make_route</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36339;&#36716;&#21040;&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;</span>
+		}
+		<span style="color: #FF1493;">if</span> (dev_out)
+			dev_put(dev_out);
+		err = -ENETUNREACH;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+	free_res = 1;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#30340;&#36335;&#30001;&#34920;&#39033;&#30340;&#30446;&#30340;&#22320;&#22336;&#20026;&#26412;&#22320;</span>
+	<span style="color: #FF1493;">if</span> (res.type == RTN_LOCAL) {
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fl.fl4_src)
+			fl.fl4_src = fl.fl4_dst;
+		<span style="color: #FF1493;">if</span> (dev_out)
+			dev_put(dev_out);
+		dev_out = &amp;loopback_dev;
+		dev_hold(dev_out);
+		fl.oif = dev_out-&gt;ifindex;
+		<span style="color: #FF1493;">if</span> (res.fi)
+			fib_info_put(res.fi);
+		res.fi = <span style="color: #AF87FF;">NULL</span>;
+		flags |= RTCF_LOCAL;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">make_route</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36339;&#36716;&#21040;&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;</span>
+	}
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_MULTIPATH <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22810;&#36335;&#24452;&#30456;&#20851;</span>
+	<span style="color: #FF1493;">if</span> (res.fi-&gt;fib_nhs &gt; 1 &amp;&amp; fl.oif == 0)
+		fib_select_multipath(&amp;fl, &amp;res);
+	<span style="color: #FF1493;">else</span>
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#21040;&#30340;&#36335;&#30001;&#39033;&#26159;&#40664;&#35748;&#36335;&#30001;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>res.prefixlen &amp;&amp; res.type == RTN_UNICAST &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>fl.oif)
+		fib_select_default(&amp;fl, &amp;res); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20351;&#29992;&#40664;&#35748;&#32593;&#20851;</span>
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fl.fl4_src)
+		fl.fl4_src = FIB_RES_PREFSRC(res);
+
+	<span style="color: #FF1493;">if</span> (dev_out)
+		dev_put(dev_out);
+	dev_out = FIB_RES_DEV(res);
+	dev_hold(dev_out);
+	fl.oif = dev_out-&gt;ifindex;
+
+<span style="color: #AF87FF;">make_route</span>:  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#36335;&#30001;&#32531;&#23384;</span>
+	err = ip_mkroute_output(rp, &amp;res, &amp;fl, oldflp, dev_out, flags);
+
+	<span style="color: #FF1493;">if</span> (free_res)
+		fib_res_put(&amp;res);
+	<span style="color: #FF1493;">if</span> (dev_out)
+		dev_put(dev_out);
+<span style="color: #AF87FF;">out</span>:    <span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org866a00a" class="outline-3">
+<h3 id="org866a00a"><span class="section-number-3">9.4</span> fib_lookup()</h3>
+<div class="outline-text-3" id="text-9-4">
+<p>
+fib_lookup()用于搜索路由表。分为两个版本，一个不支持策略路由，一个支持策略路由。
+</p>
+
+<p>
+fib_lookup的查找结果使用fib_result结构表示。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> {
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">prefixlen</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#25513;&#30721;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">nh_sel</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36873;&#25321;&#36335;&#30001;&#30340;&#24207;&#21495;&#65292;&#36890;&#24120;&#20026;0&#12290; &#22810;&#36335;&#24452;&#26102;&#21487;&#33021;&#22823;&#20110;0</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">type</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#30340;&#31867;&#22411;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">scope</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#39033;&#30340;&#20316;&#29992;&#33539;&#22260;</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_MULTIPATH_CACHED
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">network</span>;
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">netmask</span>;
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_info</span> *<span style="color: #FF8C00;">fi</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#21040;&#30340;&#36335;&#30001;&#20449;&#24687;</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_MULTIPLE_TABLES
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">r</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#21040;&#30340;&#36335;&#30001;&#31574;&#30053;</span>
+<span style="color: #FF1493;">#endif</span>
+};
+</pre>
+</div>
+
+<p>
+不支持策略路由：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_lookup</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> *<span style="color: #FF8C00;">res</span>)
+{
+	<span style="color: #FF1493;">if</span> (ip_fib_local_table-&gt;tb_lookup(ip_fib_local_table, flp, res) &amp;&amp;
+	    ip_fib_main_table-&gt;tb_lookup(ip_fib_main_table, flp, res))
+		<span style="color: #FF1493;">return</span> -ENETUNREACH;
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+
+<p>
+支持策略路由：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_lookup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> *<span style="color: #FF8C00;">res</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_lookup_arg</span> <span style="color: #FF8C00;">arg</span> = {
+		.result = res,
+	};
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	err = fib_rules_lookup(&amp;fib4_rules_ops, flp, 0, &amp;arg);
+	res-&gt;r = arg.rule;
+
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org00ab9d2" class="outline-3">
+<h3 id="org00ab9d2"><span class="section-number-3">9.5</span> fn_hash_lookup()</h3>
+<div class="outline-text-3" id="text-9-5">
+<p>
+根据查找条件，在路由表中查找路由表项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span>
+<span style="color: #87D700;">fn_hash_lookup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tb</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> *<span style="color: #FF8C00;">res</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_zone</span> *<span style="color: #FF8C00;">fz</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span> *<span style="color: #FF8C00;">t</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fn_hash</span>*)tb-&gt;tb_data; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#36335;&#30001;&#34920;&#39033;&#25955;&#21015;&#34920;</span>
+
+	read_lock(&amp;fib_hash_lock);
+	<span style="color: #FF1493;">for</span> (fz = t-&gt;fn_zone_list; fz; fz = fz-&gt;fz_next) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#30456;&#21516;&#32593;&#27573;&#30340;&#36335;&#30001;&#34920;&#39033;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span> *<span style="color: #FF8C00;">head</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> *<span style="color: #FF8C00;">node</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_node</span> *<span style="color: #FF8C00;">f</span>;
+		<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">k</span> = fz_key(flp-&gt;fl4_dst, fz);
+
+		head = &amp;fz-&gt;fz_hash[fn_hash(k, fz)];
+		hlist_for_each_entry(f, node, head, fn_hash) {
+			<span style="color: #FF1493;">if</span> (f-&gt;fn_key != k)
+				<span style="color: #FF1493;">continue</span>;
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21305;&#37197;&#36335;&#30001;&#34920;&#39033;&#21644;&#26597;&#25214;&#26465;&#20214;</span>
+			err = fib_semantic_match(&amp;f-&gt;fn_alias,
+						 flp, res,
+						 f-&gt;fn_key, fz-&gt;fz_mask,
+						 fz-&gt;fz_order);
+			<span style="color: #FF1493;">if</span> (err &lt;= 0)
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		}
+	}
+	err = 1;
+<span style="color: #AF87FF;">out</span>:
+	read_unlock(&amp;fib_hash_lock);
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc390945" class="outline-2">
+<h2 id="orgc390945"><span class="section-number-2">10</span> ICMP重定向消息的发送</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+当为转发的数据报查询路由时，如果该路由不是最优，则会在路由表项上增加 RTCF_DOREDIRECT 标志，然后在转发该数据报时调用 ip_rt_send_redirect() 向数据包的发送方发送ICMP重定向消息。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Algorithm:</span>
+<span style="color: #8B8878;"> *      1. The first ip_rt_redirect_number redirects are sent</span>
+<span style="color: #8B8878;"> *         with exponential backoff, then we stop sending them at all,</span>
+<span style="color: #8B8878;"> *         assuming that the host ignores our redirects.</span>
+<span style="color: #8B8878;"> *      2. If we did not see packets requiring redirects</span>
+<span style="color: #8B8878;"> *         during ip_rt_redirect_silence, we assume that the host</span>
+<span style="color: #8B8878;"> *         forgot redirected route and start to send redirects again.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * This algorithm is much cheaper and more intelligent than dumb load limiting</span>
+<span style="color: #8B8878;"> * in icmp.c.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * NOTE. Do not forget to inhibit load limiting for redirects (redundant)</span>
+<span style="color: #8B8878;"> * and "frag. need" (breaks PMTU discovery) in icmp.c.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ip_rt_send_redirect</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rt</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>*)skb-&gt;dst;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = in_dev_get(rt-&gt;u.dst.dev);
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>in_dev)
+		<span style="color: #FF1493;">return</span>;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IN_DEV_TX_REDIRECTS(in_dev)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31995;&#32479;&#31105;&#27490;&#21457;ICMP&#37325;&#23450;&#21521;&#28040;&#24687;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36317;&#31163;&#19978;&#27425;&#21457;&#36865;ICMP&#37325;&#23450;&#21521;&#28040;&#24687;&#36229;&#36807; ip_rt_redirect_silence;</span>
+<span style="color: #8B8878;">         * &#21017;&#37325;&#32622;rate_tokens</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (time_after(jiffies, rt-&gt;u.dst.rate_last + ip_rt_redirect_silence))
+		rt-&gt;u.dst.rate_tokens = 0;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Too many ignored redirects; do not send anything</span>
+<span style="color: #8B8878;">         * set u.dst.rate_last to the last seen redirected packet.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ip_rt_redirect_silence&#30340;&#38388;&#38548;&#20869;&#65292;&#21457;&#36865;&#30340;&#37325;&#23450;&#21521;&#28040;&#24687;&#36798;&#21040; ip_rt_redirect_number&#65292;&#21017;&#21462;&#28040;&#27492;&#27425;&#21457;&#36865;</span>
+	<span style="color: #FF1493;">if</span> (rt-&gt;u.dst.rate_tokens &gt;= ip_rt_redirect_number) {
+		rt-&gt;u.dst.rate_last = jiffies;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Check for load limit; set rate_last to the latest sent</span>
+<span style="color: #8B8878;">         * redirect.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">ip_rt_redirect_silence&#30340;&#38388;&#38548;&#20869;&#36824;&#26410;&#21457;&#36865;&#36807;ICMP&#37325;&#23450;&#21521;&#28040;&#24687;</span>
+<span style="color: #8B8878;">        &#25110;&#32773;&#36317;&#31163;&#19978;&#27425;&#21457;&#36865;ICMP&#37325;&#23450;&#21521;&#28040;&#24687;&#30340;&#38388;&#38548;&#36798;&#21040;&#35268;&#23450;&#26102;&#38388;&#65292;&#21017;&#20801;&#35768;&#21457;&#36865;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #FF1493;">if</span> (rt-&gt;u.dst.rate_tokens == 0 ||
+	    time_after(jiffies,
+		       (rt-&gt;u.dst.rate_last +
+			(ip_rt_redirect_load &lt;&lt; rt-&gt;u.dst.rate_tokens)))) {
+		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, rt-&gt;rt_gateway);
+		rt-&gt;u.dst.rate_last = jiffies;
+		++rt-&gt;u.dst.rate_tokens;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_ROUTE_VERBOSE
+		<span style="color: #FF1493;">if</span> (IN_DEV_LOG_MARTIANS(in_dev) &amp;&amp;
+		    rt-&gt;u.dst.rate_tokens == ip_rt_redirect_number &amp;&amp;
+		    net_ratelimit())
+			printk(KERN_WARNING <span style="color: #CDC673;">"host %u.%u.%u.%u/if%d ignores "</span>
+				<span style="color: #CDC673;">"redirects for %u.%u.%u.%u to %u.%u.%u.%u.\n"</span>,
+				NIPQUAD(rt-&gt;rt_src), rt-&gt;rt_iif,
+				NIPQUAD(rt-&gt;rt_dst), NIPQUAD(rt-&gt;rt_gateway));
+<span style="color: #FF1493;">#endif</span>
+	}
+<span style="color: #AF87FF;">out</span>:
+	in_dev_put(in_dev);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-01-22 Sat 22:35</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

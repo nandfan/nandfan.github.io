@@ -1,0 +1,1583 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-12-31 Fri 22:55 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>网络模块初始化和网络设备</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">网络模块初始化和网络设备</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org3edbbef">1. 网络模块的初始化</a>
+<ul>
+<li><a href="#org68f81aa">1.1. 初始化顺序</a></li>
+<li><a href="#org76046ba">1.2. 优化基于宏的标记</a></li>
+<li><a href="#orgfe05d4f">1.3. 网络设备处理层初始化</a></li>
+</ul>
+</li>
+<li><a href="#org173d519">2. PCI设备</a>
+<ul>
+<li><a href="#org940027d">2.1. 数据结构</a>
+<ul>
+<li><a href="#org5c7a860">2.1.1. pci_device_id</a></li>
+<li><a href="#org711c4ee">2.1.2. pci_driver</a></li>
+</ul>
+</li>
+<li><a href="#org2dcabe8">2.2. 注册PCI驱动程序</a></li>
+</ul>
+</li>
+<li><a href="#org4519f76">3. 网络设备相关的数据结构</a>
+<ul>
+<li><a href="#org20aace0">3.1. net_device</a></li>
+<li><a href="#orgbecd0d9">3.2. 网络设备结构的关联</a></li>
+<li><a href="#orga2bd415">3.3. 相关函数</a></li>
+</ul>
+</li>
+<li><a href="#orgcbbfb0b">4. 网络设备的注册</a>
+<ul>
+<li><a href="#org5cb7dba">4.1. 注册时机</a></li>
+<li><a href="#org29b609c">4.2. 分配net_device结构</a>
+<ul>
+<li><a href="#org502d0da">4.2.1. alloc_netdev()</a></li>
+<li><a href="#orga3155c6">4.2.2. alloc_etherdev()</a></li>
+<li><a href="#orgeea4f3c">4.2.3. ether_setup()</a></li>
+</ul>
+</li>
+<li><a href="#org606efaf">4.3. 网络设备注册过程</a></li>
+<li><a href="#org5c2e59c">4.4. 注册设备的状态迁移</a></li>
+<li><a href="#orge807cd5">4.5. 设备注册状态通知</a>
+<ul>
+<li><a href="#org8f04d5e">4.5.1. netdev_chain通知链</a></li>
+<li><a href="#org51d535d">4.5.2. netlink通知</a></li>
+</ul>
+</li>
+<li><a href="#org83f7e71">4.6. 引用计数</a></li>
+</ul>
+</li>
+<li><a href="#org8a988d7">5. 网络设备注销</a>
+<ul>
+<li><a href="#org0154e54">5.1. 注销时机</a></li>
+<li><a href="#orgfe9ba1d">5.2. 注销过程</a>
+<ul>
+<li><a href="#org40dec33">5.2.1. unregister_netdevice()</a></li>
+<li><a href="#orge642caf">5.2.2. netdev_run_todo()</a></li>
+</ul>
+</li>
+<li><a href="#orgcd194de">5.3. 启用网络设备</a></li>
+<li><a href="#orgd4c485a">5.4. 禁用网络设备</a></li>
+</ul>
+</li>
+<li><a href="#orgc80d28b">6. 电源管理</a></li>
+<li><a href="#orgab9c8fc">7. 侦测设备的连接状态</a></li>
+<li><a href="#org8c3df67">8. 配置设备</a>
+<ul>
+<li><a href="#orgf27dbc9">8.1. ethtool</a></li>
+</ul>
+</li>
+<li><a href="#org76ad979">9. 虚拟网络设备</a></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org3edbbef" class="outline-2">
+<h2 id="org3edbbef"><span class="section-number-2">1</span> 网络模块的初始化</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+涉及的文件：
+</p>
+<ul class="org-ul">
+<li>include/linux/init.h，初始化相关的宏定义。</li>
+<li>include/asm-generic/vmlinux.lds.h，编译连接相关宏定义。</li>
+<li>init/main.c，启动时的高级初始化。</li>
+<li>net/core/dev.c，网络设备的注册、输入和输出等接口。</li>
+<li>drivers/net/e100.c，e100驱动程序。</li>
+</ul>
+</div>
+
+<div id="outline-container-org68f81aa" class="outline-3">
+<h3 id="org68f81aa"><span class="section-number-3">1.1</span> 初始化顺序</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">start_kernel();
+	...
+	trap_init();
+	rcu_init();
+	init_IRQ();
+	...
+	rest_init();
+
+rest_init();
+	kernel_thread(init, NULL, CLONE_FS | CLONE_SIGHAND);
+	......
+
+init();
+	......
+	do_basic_setup();
+	......
+
+do_basic_setup();
+	init_workqueues();
+	usermodehelper_init();
+	driver_init();
+	sysctl_init();
+	do_initcalls();
+
+</pre>
+</div>
+
+<p>
+有关网络的初始化过程主要由do_initcalls()完成，其不只是对网络模块进行初始化，只要是运用了initcall技术的模块都会被初始化。
+</p>
+
+<p>
+每个内核模块都必须提供两个函数： module_init和module_exit()，前者在内核加载模块的时候被调用以初始化模块，后者在内核卸载模块时调用，用来释放该模块资源。
+</p>
+
+<p>
+例如e100网络设备驱动（drivers/net/ethernet/intel/e100.c）：
+</p>
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #87D700;">module_param</span>(debug, <span style="color: #5FD7FF;">int</span>, 0);
+<span style="color: #87D700;">module_param</span>(eeprom_bad_csum_allow, <span style="color: #5FD7FF;">int</span>, 0);
+<span style="color: #87D700;">module_param</span>(use_io, <span style="color: #5FD7FF;">int</span>, 0);
+<span style="color: #87D700;">MODULE_PARM_DESC</span>(debug, <span style="color: #CDC673;">"Debug level (0=none,...,16=all)"</span>);
+<span style="color: #87D700;">MODULE_PARM_DESC</span>(eeprom_bad_csum_allow, <span style="color: #CDC673;">"Allow bad eeprom checksums"</span>);
+<span style="color: #87D700;">MODULE_PARM_DESC</span>(use_io, <span style="color: #CDC673;">"Force use of i/o access mode"</span>);
+
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__init</span> e100_init_module(<span style="color: #5FD7FF;">void</span>) {}
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__exit</span> e100_cleanup_module(<span style="color: #5FD7FF;">void</span>) {}
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+
+<span style="color: #87D700;">module_init</span>(e100_init_module);
+<span style="color: #87D700;">module_exit</span>(e100_cleanup_module);
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org76046ba" class="outline-3">
+<h3 id="org76046ba"><span class="section-number-3">1.2</span> 优化基于宏的标记</h3>
+<div class="outline-text-3" id="text-1-2">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> 修饰函数的宏</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">宏</th>
+<th scope="col" class="org-left">使用宏的函数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">__init</td>
+<td class="org-left">启动时初始化函数，再启动阶段执行，通常只执行一次。后期不再需要，这种函数在初始化完成后被从内存中清除</td>
+</tr>
+
+<tr>
+<td class="org-left">__exit</td>
+<td class="org-left">和__init匹配，相关内核组件卸载时调用</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">early_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">core_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">postcore_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">arch_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">subsys_initcall</td>
+<td class="org-left">用于标记启动时需要执行的初始化函数</td>
+</tr>
+
+<tr>
+<td class="org-left">fs_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">rootfs_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">device_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">late_initcall</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">__initcall</td>
+<td class="org-left">device_initcall的别名</td>
+</tr>
+
+<tr>
+<td class="org-left">__exitcall</td>
+<td class="org-left">标识退出函数，相关内核组建卸载时调用，通常仅用于标记module_exit函数</td>
+</tr>
+</tbody>
+</table>
+
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> 初始化数据结构的宏</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">宏</th>
+<th scope="col" class="org-left">使用宏的数据结构说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">__initdata</td>
+<td class="org-left">仅在启动时用于已初始化的数据结构</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">__exitdata</td>
+<td class="org-left">仅被由__exitcall修饰的函数使用的数据结构</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div id="outline-container-orgfe05d4f" class="outline-3">
+<h3 id="orgfe05d4f"><span class="section-number-3">1.3</span> 网络设备处理层初始化</h3>
+<div class="outline-text-3" id="text-1-3">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">文件</th>
+<th scope="col" class="org-left">初始化函数及宏</th>
+<th scope="col" class="org-left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">net/socket.c</td>
+<td class="org-left">core_initcall(sock_init)</td>
+<td class="org-left">套接口层的初始化函数</td>
+</tr>
+
+<tr>
+<td class="org-left">net/core/sock.c</td>
+<td class="org-left">subsys_initcall(proto_init)</td>
+<td class="org-left">传输层的初始化函数</td>
+</tr>
+
+<tr>
+<td class="org-left">net/ipv4/af_inet.c</td>
+<td class="org-left">fs_initcall(inet_init)</td>
+<td class="org-left">Internet协议族的初始化函数</td>
+</tr>
+
+<tr>
+<td class="org-left">net/core/dev.c</td>
+<td class="org-left">subsys_initcall(net_dev_init)</td>
+<td class="org-left">设备处理层的初始化函数</td>
+</tr>
+
+<tr>
+<td class="org-left">drivers/net/ethernet/intel/e100.c</td>
+<td class="org-left">module_init(e100_init_module)</td>
+<td class="org-left">e100型号的网络设备驱动程序的初始化函数</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+其中 sock_init()、proto_init()、inet_init()初始化函数设计网络的三层、四层协议。本节主要介绍net_dev_init()和e100_init_module()这两个初始化函数。
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/sk-buff/net-dev-init.png" alt="net-dev-init.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org173d519" class="outline-2">
+<h2 id="org173d519"><span class="section-number-2">2</span> PCI设备</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org940027d" class="outline-3">
+<h3 id="org940027d"><span class="section-number-3">2.1</span> 数据结构</h3>
+<div class="outline-text-3" id="text-2-1">
+</div>
+<div id="outline-container-org5c7a860" class="outline-4">
+<h4 id="org5c7a860"><span class="section-number-4">2.1.1</span> pci_device_id</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_device_id</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Vendor&#65306;&#21378;&#21830;ID device&#65306;&#35774;&#22791;ID</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">vendor</span>, <span style="color: #FF8C00;">device</span>;
+	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">subvendor</span>, <span style="color: #FF8C00;">subdevice</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20351;&#24471;&#39537;&#21160;&#31243;&#24207;&#21487;&#20197;&#25351;&#23450;&#25903;&#25345;&#26576;&#19968;&#31181;PIC&#31867;&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">class</span>, <span style="color: #FF8C00;">class_mask</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#30340;&#31169;&#26377;&#20449;&#24687;</span>
+	<span style="color: #5FD7FF;">kernel_ulong_t</span> <span style="color: #FF8C00;">driver_data</span>;
+};
+</pre>
+</div>
+
+<p>
+e100型设备的示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #87D700;">PCI_DEVICE</span>(<span style="color: #FF8C00;">vend</span>,<span style="color: #FF8C00;">dev</span>) \
+	.vendor = (vend), .device = (dev), \
+	.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">INTEL_E1000_ETHERNET_DEVICE</span>(<span style="color: #FF8C00;">device_id</span>) {\
+	PCI_DEVICE(PCI_VENDOR_ID_INTEL, device_id)}
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_device_id</span> <span style="color: #FF8C00;">e1000_pci_tbl</span>[] = {
+	INTEL_E1000_ETHERNET_DEVICE(0x1000),
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	INTEL_E1000_ETHERNET_DEVICE(0x10C4),
+	INTEL_E1000_ETHERNET_DEVICE(0x10C5),
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">required last entry</span><span style="color: #8B8878;"> */</span>
+	{0,}
+};
+
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">MODULE_DEVICE_TABLE</span>(<span style="color: #FF8C00;">type</span>,<span style="color: #FF8C00;">name</span>)          \
+  MODULE_GENERIC_TABLE(type##_device,name)
+
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">MODULE_GENERIC_TABLE</span>(<span style="color: #FF8C00;">gtype</span>,<span style="color: #FF8C00;">name</span>)                        \
+	<span style="color: #FF1493;">extern</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">gtype</span>##_id __mod_##gtype##_table            \
+		<span style="color: #FF1493;">__attribute__</span> ((unused, alias(__stringify(name))))
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20026;e100_id_table &#21019;&#24314;&#20102;&#19968;&#20010;&#21035;&#21517;&#20026; __mod_pci_table&#30340;&#23616;&#37096;&#21464;&#37327;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #87D700;">MODULE_DEVICE_TABLE</span>(pci, e1000_pci_tbl);
+</pre>
+</div>
+
+<p>
+MODULE_DEVICE_TABLE会将驱动支持的设备信息导出到用户空间， 上面的示例导出了 __mod_pci_table 符号。 depmod进程在所有模块中搜索符号 __mod_pci_table。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org711c4ee" class="outline-4">
+<h4 id="org711c4ee"><span class="section-number-4">2.1.2</span> pci_driver</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+pci_driver结构用来描述一个PCI设备，定义pic层和设备驱动程序之间的接口。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_driver</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">node</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39537;&#21160;&#31243;&#24207;&#21517;&#31216;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span>              *<span style="color: #FF8C00;">name</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">id&#21521;&#37327;, &#20869;&#26680;&#29992;&#20110;&#25226;&#19968;&#20123;&#35774;&#22791;&#20851;&#32852;&#21040;&#27492;&#39537;&#21160;&#31243;&#24207;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_device_id</span> *<span style="color: #FF8C00;">id_table</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;pci&#21457;&#29616;&#27491;&#22312;&#26597;&#25214;&#39537;&#21160;&#31243;&#24207;&#30340;&#35774;&#22791;&#30340;id&#21644;&#19978;&#38754;&#30340;id_table &#21305;&#37197;, &#20250;&#35843;&#29992;&#27492;&#20989;&#25968;</span>
+<span style="color: #8B8878;">           &#27492;&#20989;&#25968;&#24212;&#24403;&#24320;&#21551;&#30828;&#20214;, &#20998;&#37197;net_device&#32467;&#26500;, &#21021;&#22987;&#21270;&#24182;&#27880;&#20876;&#26032;&#35774;&#22791;,&#20998;&#37197;&#25152;&#38656;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>  (*<span style="color: #87D700;">probe</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_device_id</span> *<span style="color: #FF8C00;">id</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#20869;&#26680;&#31227;&#38500;&#39537;&#21160;&#31243;&#24207;&#25110;&#32773;&#28909;&#25554;&#25300;&#35774;&#22791;&#31227;&#38500;&#26102;, pci&#35843;&#29992;&#27492;&#20989;&#25968;, &#29992;&#20110;&#28165;&#29702;&#24037;&#20316;</span>
+<span style="color: #8B8878;">           &#32593;&#32476;&#35774;&#22791;&#20351;&#29992;&#27492;&#20989;&#25968;&#26469;&#37322;&#25918;&#20998;&#37197;&#30340;I/O&#31471;&#21475;&#21644;I/O&#20869;&#23384;,&#20026;&#35774;&#22791;&#38500;&#21517;,</span>
+<span style="color: #8B8878;">           &#37322;&#25918;net_device&#32467;&#26500;&#21644;probe&#20989;&#25968;&#20998;&#37197;&#30340;&#25968;&#25454;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">remove</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#25346;&#36215;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>  (*<span style="color: #87D700;">suspend</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">pm_message_t</span> <span style="color: #FF8C00;">state</span>);
+	<span style="color: #5FD7FF;">int</span>  (*<span style="color: #87D700;">suspend_late</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">pm_message_t</span> <span style="color: #FF8C00;">state</span>);
+	<span style="color: #5FD7FF;">int</span>  (*<span style="color: #87D700;">resume_early</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#21796;&#37266;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>  (*<span style="color: #87D700;">resume</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20851;&#26426;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">shutdown</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_error_handlers</span> *<span style="color: #FF8C00;">err_handler</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39537;&#21160;&#27169;&#22411;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">device_driver</span>    <span style="color: #FF8C00;">driver</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21160;&#24577;&#28155;&#21152;&#30340;&#35774;&#22791;ID&#21015;&#34920;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dynids</span>       <span style="color: #FF8C00;">dynids</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">multithread_probe</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2dcabe8" class="outline-3">
+<h3 id="org2dcabe8"><span class="section-number-3">2.2</span> 注册PCI驱动程序</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+以e1000为例：
+</p>
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span>
+<span style="color: #87D700;">e1000_probe</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">pdev</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_device_id</span> *<span style="color: #FF8C00;">ent</span>) {}
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">e1000_suspend</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">pdev</span>, <span style="color: #5FD7FF;">pm_message_t</span> <span style="color: #FF8C00;">state</span>) {}
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">e1000_shutdown</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_dev</span> *<span style="color: #FF8C00;">pdev</span>) {}
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_error_handlers</span> <span style="color: #FF8C00;">e1000_err_handler</span> = {
+	.error_detected = e1000_io_error_detected,
+	.slot_reset = e1000_io_slot_reset,
+	.resume = e1000_io_resume,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_driver</span> <span style="color: #FF8C00;">e1000_driver</span> = {
+	.name     = e1000_driver_name,
+	.id_table = e1000_pci_tbl,
+	.probe    = e1000_probe,
+	.remove   = __devexit_p(e1000_remove),
+<span style="color: #FF1493;">#ifdef</span> CONFIG_PM
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Power Managment Hooks</span><span style="color: #8B8878;"> */</span>
+	.suspend  = e1000_suspend,
+	.resume   = e1000_resume,
+<span style="color: #FF1493;">#endif</span>
+	.shutdown = e1000_shutdown,
+	.err_handler = &amp;e1000_err_handler
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__init</span>
+e1000_init_module(<span style="color: #5FD7FF;">void</span>)
+{
+	ret = pci_register_driver(&amp;e1000_driver);
+}
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__exit</span>
+e1000_exit_module(<span style="color: #5FD7FF;">void</span>)
+{
+	pci_unregister_driver(&amp;e1000_driver);
+}
+
+<span style="color: #87D700;">module_init</span>(e1000_init_module);
+<span style="color: #87D700;">module_exit</span>(e1000_exit_module);
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4519f76" class="outline-2">
+<h2 id="org4519f76"><span class="section-number-2">3</span> 网络设备相关的数据结构</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org20aace0" class="outline-3">
+<h3 id="org20aace0"><span class="section-number-3">3.1</span> net_device</h3>
+<div class="outline-text-3" id="text-3-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#21517;&#31216;</span>
+	<span style="color: #5FD7FF;">char</span>                    <span style="color: #FF8C00;">name</span>[IFNAMSIZ];
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21517;&#31216;&#25955;&#21015;&#34920;&#30340;&#20803;&#32032;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">name_hlist</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#20849;&#20139;&#20869;&#23384;&#30340;&#32467;&#26463;&#22320;&#22336; &#21644; &#36215;&#22987;&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">mem_end</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">mem_start</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#30340;&#20013;&#26029;&#21495;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">base_addr</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">irq</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#35774;&#22791;&#20998;&#37197;&#30340;DMA&#36890;&#36947;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">dma</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#29366;&#24577;&#65292; &#35265; enum netdev_state_t</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">state</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36830;&#25509;&#25152;&#26377;net_device&#32467;&#26500;&#30340;&#38142;&#34920;&#20803;&#32032;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">next</span>;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39537;&#21160;&#31243;&#24207;&#30340;&#21021;&#22987;&#21270;&#20989;&#25968;&#65292;&#22914;&#26524;&#35774;&#32622;&#65292;&#20250;&#30001; register_netdev()&#35843;&#29992;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">init</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">------- Fields preinitialized in Space.c finish here -------</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#21475;&#25903;&#25345;&#30340;&#29305;&#24615;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">features</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_SG</span>                  1   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">SG&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O&#26631;&#24535;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_IP_CSUM</span>         2       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20165;&#33021;&#26657;&#39564;IP&#25968;&#25454;&#25253;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_NO_CSUM</span>         4       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19981;&#38656;&#35201;&#25191;&#34892;&#26657;&#39564;&#21644;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_HW_CSUM</span>         8       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26377;&#30828;&#20214;&#36827;&#34892;&#26657;&#39564;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_HIGHDMA</span>         32      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21487;&#20197;&#22312;&#39640;&#31471;&#20869;&#23384;&#21306;&#20351;&#29992;DMA</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_FRAGLIST</span>            64  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">FRAGLIST&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O&#26631;&#24535;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_HW_VLAN_TX</span>          128 <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25903;&#25345;&#20256;&#36755;VLAN&#30828;&#20214;&#21152;&#36895;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_HW_VLAN_RX</span>          256 <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25903;&#25345;&#25509;&#21463;VLAN&#30828;&#20214;&#21152;&#36895;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_HW_VLAN_FILTER</span>  512     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25903;&#25345;VLAN&#25509;&#25910;&#36807;&#28388;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_VLAN_CHALLENGED</span> 1024
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_GSO</span>                 2048        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#35774;&#22791;&#25903;&#25345;GSO</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_LLTX</span>            4096    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26080;&#38145;&#20256;&#36755;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Segmentation offload features</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_GSO_SHIFT</span>       16
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_GSO_MASK</span>        0xffff0000
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_TSO</span>             (SKB_GSO_TCPV4 &lt;&lt; NETIF_F_GSO_SHIFT)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_UFO</span>             (SKB_GSO_UDP &lt;&lt; NETIF_F_GSO_SHIFT)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_GSO_ROBUST</span>      (SKB_GSO_DODGY &lt;&lt; NETIF_F_GSO_SHIFT)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_TSO_ECN</span>         (SKB_GSO_TCP_ECN &lt;&lt; NETIF_F_GSO_SHIFT)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_TSO6</span>            (SKB_GSO_TCPV6 &lt;&lt; NETIF_F_GSO_SHIFT)
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">List of features with software fallbacks.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_GSO_SOFTWARE</span>    (NETIF_F_TSO | NETIF_F_TSO_ECN | NETIF_F_TSO6)
+
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_GEN_CSUM</span>        (NETIF_F_NO_CSUM | NETIF_F_HW_CSUM)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETIF_F_ALL_CSUM</span>        (NETIF_F_IP_CSUM | NETIF_F_GEN_CSUM)
+
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#38142;&#25509;&#24050;&#32463;&#35843;&#24230;&#26377;&#25968;&#25454;&#21253;&#36755;&#20986;&#30340;&#32593;&#32476;&#35774;&#22791;&#25351;&#38024;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">next_sched</span>;
+
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">ifindex</span>;        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;&#21495;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">iflink</span>;         <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#21807;&#19968;&#26631;&#35782;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#25509;&#21475;&#32479;&#35745;&#20449;&#24687;&#30340;&#20989;&#25968;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device_stats</span>* (*<span style="color: #87D700;">get_stats</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ethtool&#30340;&#25805;&#20316;&#25509;&#21475;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ethtool_ops</span> *<span style="color: #FF8C00;">ethtool_ops</span>;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#25509;&#21475;&#29305;&#24615; IFF_UP IFF_BROADCAST ...</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">flags</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">interface flags (a la BSD)</span><span style="color: #8B8878;">   */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">gflags</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">priv_flags</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Like 'flags' but invisible to userspace.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">padded</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30001;alloc_netdev()&#22635;&#20805;&#30340;&#23383;&#33410;&#25968;&#65288;32&#23383;&#33410;&#23545;&#40784;&#65289;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+
+	<span style="color: #5FD7FF;">unsigned</span>                <span style="color: #FF8C00;">mtu</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#21475;MTU</span><span style="color: #8B8878;">      */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">type</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#21475;&#30828;&#20214;&#31867;&#22411;&#65292;&#20197;&#22826;&#32593;&#20026; ARPHDR_ETHER</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">hard_header_len</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30828;&#20214;&#39318;&#37096;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;bonding&#30340;&#34394;&#25311;&#32593;&#32476;&#35774;&#22791;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span>       *<span style="color: #FF8C00;">master</span>;
+
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">perm_addr</span>[MAX_ADDR_LEN]; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30828;&#20214;&#22320;&#22336;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">addr_len</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30828;&#20214;&#22320;&#22336;&#38271;&#24230;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">dev_id</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">for shared network cards</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dev_mc_list</span>      *<span style="color: #FF8C00;">mc_list</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32452;&#25773;mac&#22320;&#22336;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">mc_count</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32452;&#25773;&#22320;&#22336;&#25968;&#37327;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">promiscuity</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28151;&#26434;&#27169;&#24335;&#35745;&#25968;&#22120;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">allmulti</span>;
+
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29305;&#23450;&#21327;&#35758;&#26063;&#30456;&#20851;&#30340;&#37197;&#32622;&#22359;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">atalk_ptr</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">AppleTalk link</span><span style="color: #8B8878;">       */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">ip_ptr</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IPv4 specific data</span><span style="color: #8B8878;">   */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">dn_ptr</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">DECnet specific data</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">ip6_ptr</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IPv6 specific data</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">ec_ptr</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Econet specific data</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">ax25_ptr</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">AX.25 specific data</span><span style="color: #8B8878;"> */</span>
+
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Cache line mostly used on receive path (including eth_type_trans())</span>
+<span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38142;&#25509;&#21040;softnet_data&#30340;poll_list&#25104;&#21592;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #5FD7FF;">poll_list</span> <span style="color: #FF8C00;">____cacheline_aligned_in_smp</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">NAPI&#39537;&#21160;&#31243;&#24207;&#38656;&#35201;&#25552;&#20379;pool&#26041;&#27861;&#65292;&#29992;&#26469;&#36718;&#35810;&#25509;&#21475;&#12290;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">poll</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">quota</span>);
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">quota</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35835;&#21462;&#25968;&#25454;&#21253;&#30340;&#37197;&#39069;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">weight</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20837;&#36719;&#20013;&#26029;&#20013;&#65292;&#21333;&#20010;&#32593;&#32476;&#35774;&#22791;&#35835;&#21462;&#25968;&#25454;&#21253;&#30340;&#37197;&#39069;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">last_rx</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19978;&#27425;&#25509;&#25910;&#25968;&#25454;&#21253;&#30340;&#26102;&#38388;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">dev_addr</span>[MAX_ADDR_LEN];
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">broadcast</span>[MAX_ADDR_LEN];
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Cache line mostly used on queue transmit path (qdisc)</span>
+<span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;&#38431;&#21015;&#25805;&#20316;&#33258;&#26059;&#32034;</span><span style="color: #8B8878;"> */</span>
+	spinlock_t              <span style="color: #5FD7FF;">queue_lock</span> <span style="color: #FF8C00;">____cacheline_aligned_in_smp</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">Qdisc</span>            *<span style="color: #FF8C00;">qdisc</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#21069;&#20351;&#29992;&#30340;&#25490;&#38431;&#35268;&#21017;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">Qdisc</span>            *<span style="color: #FF8C00;">qdisc_sleeping</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#21069;&#37197;&#32622;&#30340;&#25490;&#38431;&#35268;&#21017;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">qdisc_list</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#25152;&#26377;&#30340;&#25490;&#38431;&#35268;&#21017;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">tx_queue_len</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#38431;&#21015;&#20801;&#35768;&#30340;&#26368;&#22823;&#25968;&#25454;&#21253;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32463;&#36807;&#36719;&#20998;&#21106;&#30340;GSO&#25968;&#25454;&#21253;&#65292;&#22312;&#36755;&#20986;&#27969;&#37327;&#25511;&#21046;&#36807;&#31243;&#30340;&#36719;&#20013;&#26029;&#20013;&#65292;&#36755;&#20986;&#31532;&#19968;&#20010;&#25968;&#25454;&#21253;&#26102;&#65292;&#21518;&#32493;&#25968;&#25454;&#21253;&#26242;&#26102;&#32531;&#23384;&#21040;&#35813;&#25104;&#21592;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>          *<span style="color: #FF8C00;">gso_skb</span>;
+
+	<span style="color: #5FD7FF;">spinlock_t</span>              <span style="color: #FF8C00;">ingress_lock</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">Qdisc</span>            *<span style="color: #FF8C00;">qdisc_ingress</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20837;&#25968;&#25454;&#21253;&#30340;&#25490;&#38431;&#35268;&#21017;</span>
+
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * One part is mostly used on xmit path (device)</span>
+<span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21457;&#36865;&#25968;&#25454;&#21253;&#33258;&#26059;&#32034;</span><span style="color: #8B8878;"> */</span>
+	spinlock_t              <span style="color: #5FD7FF;">_xmit_lock</span> <span style="color: #FF8C00;">____cacheline_aligned_in_smp</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27491;&#36890;&#36807;&#35813;&#32593;&#32476;&#35774;&#22791;&#21457;&#36865;&#25968;&#25454;&#21253;&#30340;CPU</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">xmit_lock_owner</span>;
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">priv</span>;  <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#31169;&#26377;&#25968;&#25454;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">hard_start_xmit</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+						    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#26368;&#36817;&#19968;&#27425;&#36755;&#20986;&#25968;&#25454;&#21253;&#30340;&#26102;&#38388;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>           <span style="color: #FF8C00;">trans_start</span>;
+
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">watchdog_timeo</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">used by dev_watchdog()</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>       <span style="color: #FF8C00;">watchdog_timer</span>;
+
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * refcnt is a very hot point, so align it on SMP</span>
+<span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#35774;&#22791;&#30340;&#24341;&#29992;&#35745;&#25968;</span><span style="color: #8B8878;"> */</span>
+	atomic_t                <span style="color: #5FD7FF;">refcnt</span> <span style="color: #FF8C00;">____cacheline_aligned_in_smp</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#38142;&#25509;&#21040;net_todo_list &#38142;&#34920;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">todo_list</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;hash&#34920;&#30340;&#20803;&#32032;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">index_hlist</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">register/unregister state machine</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">enum</span> { <span style="color: #FF8C00;">NETREG_UNINITIALIZED</span>=0,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#29366;&#24577;</span>
+	       <span style="color: #FF8C00;">NETREG_REGISTERED</span>,       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23436;&#25104;&#32593;&#32476;&#35774;&#22791;&#30340;&#27880;&#20876;</span><span style="color: #8B8878;">*/</span>
+	       <span style="color: #FF8C00;">NETREG_UNREGISTERING</span>,    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27491;&#22312;&#27880;&#38144;&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
+	       <span style="color: #FF8C00;">NETREG_UNREGISTERED</span>,     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23436;&#25104;&#35774;&#22791;&#30340;&#27880;&#38144;&#65292;&#20294;&#36824;&#26410;&#37322;&#25918;</span><span style="color: #8B8878;">*/</span>
+	       <span style="color: #FF8C00;">NETREG_RELEASED</span>,         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21363;&#23558;&#37322;&#25918;&#32593;&#32476;&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
+	} <span style="color: #FF8C00;">reg_state</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30001;unregister_netdevice()&#35843;&#29992;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">uninit</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Called after last user reference disappears.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">destructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21551;&#29992;&#35774;&#22791;&#26102;&#35843;&#29992;&#30340;&#20989;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">open</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#35774;&#22791;&#26102;&#35843;&#29992;&#30340;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">stop</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">HAVE_NETDEV_POLL</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20197;&#22826;&#32593;&#20026;eth_header()</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">hard_header</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+						<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
+						<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">type</span>,
+						<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">daddr</span>,
+						<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">saddr</span>,
+						<span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">len</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#25968;&#25454;&#21253;&#21069;&#65292;&#37325;&#24314;&#30828;&#20214;&#39318;&#37096;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">rebuild_header</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#35774;&#22791;&#30340;&#32452;&#25773;&#22320;&#22336;&#21015;&#34920;</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">set_multicast_list</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20462;&#25913;&#30828;&#20214;&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">set_mac_address</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
+						   <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">addr</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ioctl&#21151;&#33021;&#25509;&#21475;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">do_ioctl</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
+					    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ifreq</span> *<span style="color: #FF8C00;">ifr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20462;&#25913;&#35774;&#22791;&#30340;&#37197;&#32622;&#25509;&#21475;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">set_config</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
+					      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ifmap</span> *<span style="color: #FF8C00;">map</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;ARP&#26597;&#35810;&#32467;&#26500;&#22635;&#20805;hh_cache&#32467;&#26500;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">hard_header_cache</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>,
+						     <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span> *<span style="color: #FF8C00;">hh</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;hh_cache&#32467;&#26500;&#30340;&#30446;&#30340;&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">header_cache_update</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hh_cache</span> *<span style="color: #FF8C00;">hh</span>,
+						       <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
+						       <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *  <span style="color: #FF8C00;">haddr</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">change_mtu</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">new_mtu</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25968;&#25454;&#21253;&#22312;&#25351;&#23450;&#26102;&#38388;&#20869;&#20256;&#36755;&#22833;&#36133;&#65292;&#35843;&#29992;&#35813;&#25509;&#21475;</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">tx_timeout</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;skb&#33719;&#21462;&#28304;mac&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">hard_header_parse</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+						     <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">haddr</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">neigh_setup</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;&#30340;netpoll&#20449;&#24687;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">netpoll_info</span>     *<span style="color: #FF8C00;">npinfo</span>;
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">poll_controller</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26725;&#25509;&#30456;&#20851;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_bridge_port</span>  *<span style="color: #FF8C00;">br_port</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sys&#25991;&#20214;&#31995;&#32479;&#20013; class/net/name &#39033;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">class_device</span>     <span style="color: #FF8C00;">class_dev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">attribute_group</span>  *<span style="color: #FF8C00;">sysfs_groups</span>[3];
+};
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>__LINK_STATE_XOFF 由于热插拔网络设备、缓存不够、网络设备硬件错误或者关闭禁止硬件，而关闭排队功能。</li>
+<li>__LINK_STATE_START 网络设备处于激活状态。</li>
+<li>__LINK_STATE_PRESENT 系统处于待机时，需要挂起各个设备，同时记录设备待机前的状态，表示网络设备对系统是可用的。  此标志用来记录待机前的设备状态，是的系统恢复时判断是否需要启动设备。</li>
+<li>__LINK_STATE_SCHED 标识网络驱动的数据发送是否在流量控制的调度中。</li>
+<li>__LINK_STATE_NOCARRIER 标识网络设备是否处于可传递状态，当网络设备不能传递数据时被设置。（网线拔出）</li>
+<li>__LINK_STATE_RX_SCHED 标识正在轮询接收数据包，此状态下即使有新中断产生，也不会调度软中断。</li>
+<li>__LINK_STATE_LINKWATCH_PENDING 网络设备的连接状态发生改变，正处理改变事件的过程中。</li>
+<li>__LINK_STATE_DORMANT</li>
+<li>__LINK_STATE_QDISC_RUNNING 进行流量控制，处于调度队列的过程中。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgbecd0d9" class="outline-3">
+<h3 id="orgbecd0d9"><span class="section-number-3">3.2</span> 网络设备结构的关联</h3>
+<div class="outline-text-3" id="text-3-2">
+
+<div class="figure">
+<p><img src="image/netmod-netdev/net-device-in-device.png" alt="net-device-in-device.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>net_device结构与in_device结构的关系</p>
+</div>
+
+<p>
+ipv4相关的配置信息存放在 in_device结构中，net_device的ip_ptr指向in_device结构的实例。
+</p>
+
+
+
+
+<div class="figure">
+<p><img src="image/netmod-netdev/net-dev-list.png" alt="net-dev-list.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>已注册设备全局链表</p>
+</div>
+<ul class="org-ul">
+<li>调用alloc_netdev()分配net_device结构时，传递所需私有数据的长度，可以紧邻net_device分配。</li>
+<li>驱动程序也可以自己分配私有数据。</li>
+<li>dev_base和net_device的next指针指向net_device结构的开始，而非内存块的开始。</li>
+</ul>
+
+
+
+<div class="figure">
+<p><img src="image/netmod-netdev/netdev-hash.png" alt="netdev-hash.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>基于设备名和设备ID的hash表</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga2bd415" class="outline-3">
+<h3 id="orga2bd415"><span class="section-number-3">3.3</span> 相关函数</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #87D700;">dev_get_by_name</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>);
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #87D700;">dev_get_by_index</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ifindex</span>);
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #87D700;">dev_getfirstbyhwtype</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">type</span>);
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #87D700;">dev_getbyhwaddr</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">type</span>, <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">ha</span>);
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcbbfb0b" class="outline-2">
+<h2 id="orgcbbfb0b"><span class="section-number-2">4</span> 网络设备的注册</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org5cb7dba" class="outline-3">
+<h3 id="org5cb7dba"><span class="section-number-3">4.1</span> 注册时机</h3>
+<div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li>加载网络设备驱动程序</li>
+<li>插入可插拔网络设备</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org29b609c" class="outline-3">
+<h3 id="org29b609c"><span class="section-number-3">4.2</span> 分配net_device结构</h3>
+<div class="outline-text-3" id="text-4-2">
+</div>
+<div id="outline-container-org502d0da" class="outline-4">
+<h4 id="org502d0da"><span class="section-number-4">4.2.1</span> alloc_netdev()</h4>
+<div class="outline-text-4" id="text-4-2-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #87D700;">alloc_netdev</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sizeof_priv</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>,
+		<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">setup</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *))
+{
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">p</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">alloc_size</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ensure 32-byte alignment of both the device and private area</span><span style="color: #8B8878;"> */</span>
+	alloc_size = (<span style="color: #FF1493;">sizeof</span>(*dev) + NETDEV_ALIGN_CONST) &amp; ~NETDEV_ALIGN_CONST;
+	alloc_size += sizeof_priv + NETDEV_ALIGN_CONST;
+	p = kzalloc(alloc_size, GFP_KERNEL);
+	dev = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *)
+		(((<span style="color: #5FD7FF;">long</span>)p + NETDEV_ALIGN_CONST) &amp; ~NETDEV_ALIGN_CONST);
+	dev-&gt;padded = (<span style="color: #5FD7FF;">char</span> *)dev - (<span style="color: #5FD7FF;">char</span> *)p;
+
+	<span style="color: #FF1493;">if</span> (sizeof_priv)
+		dev-&gt;priv = netdev_priv(dev);
+	setup(dev);
+	strcpy(dev-&gt;name, name);
+	<span style="color: #FF1493;">return</span> dev;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga3155c6" class="outline-4">
+<h4 id="orga3155c6"><span class="section-number-4">4.2.2</span> alloc_etherdev()</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+alloc_netdev()的封装函数
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #87D700;">alloc_etherdev</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sizeof_priv</span>)
+{
+	<span style="color: #FF1493;">return</span> alloc_netdev(sizeof_priv, <span style="color: #CDC673;">"eth%d"</span>, ether_setup);
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeea4f3c" class="outline-4">
+<h4 id="orgeea4f3c"><span class="section-number-4">4.2.3</span> ether_setup()</h4>
+<div class="outline-text-4" id="text-4-2-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ether_setup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	dev-&gt;change_mtu         = eth_change_mtu;
+	dev-&gt;hard_header        = eth_header;
+	dev-&gt;rebuild_header     = eth_rebuild_header;
+	dev-&gt;set_mac_address    = eth_mac_addr;
+	dev-&gt;hard_header_cache  = eth_header_cache;
+	dev-&gt;header_cache_update= eth_header_cache_update;
+	dev-&gt;hard_header_parse  = eth_header_parse;
+	dev-&gt;type               = ARPHRD_ETHER;
+	dev-&gt;hard_header_len    = ETH_HLEN;
+	dev-&gt;mtu                = ETH_DATA_LEN;
+	dev-&gt;addr_len           = ETH_ALEN;
+	dev-&gt;tx_queue_len       = 1000; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Ethernet wants good queues</span><span style="color: #8B8878;"> */</span>
+	dev-&gt;flags              = IFF_BROADCAST|IFF_MULTICAST;
+	memset(dev-&gt;broadcast, 0xFF, ETH_ALEN);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org606efaf" class="outline-3">
+<h3 id="org606efaf"><span class="section-number-3">4.3</span> 网络设备注册过程</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+以e1000网络驱动程序为例：
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/netmod-netdev/e1000-probe.png" alt="e1000-probe.png" />
+</p>
+</div>
+
+<p>
+register_netdev 是 register_netdevice()的封装函数。
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>register_netdev</label><pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">register_netdev</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	rtnl_lock();
+	<span style="color: #FF1493;">if</span> (strchr(dev-&gt;name, <span style="color: #CDC673;">'%'</span>)) {
+		err = dev_alloc_name(dev, dev-&gt;name);
+		<span style="color: #FF1493;">if</span> (err &lt; 0)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+	err = register_netdevice(dev);
+<span style="color: #AF87FF;">out</span>:
+	rtnl_unlock();
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="plantuml/netmod-netdev/reg-netdevice.png" alt="reg-netdevice.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5c2e59c" class="outline-3">
+<h3 id="org5c2e59c"><span class="section-number-3">4.4</span> 注册设备的状态迁移</h3>
+<div class="outline-text-3" id="text-4-4">
+
+<div class="figure">
+<p><img src="image/netmod-netdev/netdev-reg-stat.png" alt="netdev-reg-stat.png" />
+</p>
+<p><span class="figure-number">Figure 7: </span>网络设备注册状态</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge807cd5" class="outline-3">
+<h3 id="orge807cd5"><span class="section-number-3">4.5</span> 设备注册状态通知</h3>
+<div class="outline-text-3" id="text-4-5">
+</div>
+<div id="outline-container-org8f04d5e" class="outline-4">
+<h4 id="org8f04d5e"><span class="section-number-4">4.5.1</span> netdev_chain通知链</h4>
+<div class="outline-text-4" id="text-4-5-1">
+<p>
+通过 register_netdevice_notifier() 函数注册网络设备事件的通知链。
+</p>
+
+<p>
+注意：注册到通知链时，register_netdevice_notifier() 会将以前的 NETDEV_REGISTER 和 NETDEV_UP 通知重发给系统中当前注册的模块。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org51d535d" class="outline-4">
+<h4 id="org51d535d"><span class="section-number-4">4.5.2</span> netlink通知</h4>
+<div class="outline-text-4" id="text-4-5-2">
+<p>
+当设备状态或配置改变时，通知被发送到 RTMPGRP_LINE 组播组中。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org83f7e71" class="outline-3">
+<h3 id="org83f7e71"><span class="section-number-3">4.6</span> 引用计数</h3>
+<div class="outline-text-3" id="text-4-6">
+<p>
+注册时，引用计数初始化为1。
+</p>
+
+<p>
+dev_hole()
+</p>
+
+<p>
+dev_put()
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8a988d7" class="outline-2">
+<h2 id="org8a988d7"><span class="section-number-2">5</span> 网络设备注销</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org0154e54" class="outline-3">
+<h3 id="org0154e54"><span class="section-number-3">5.1</span> 注销时机</h3>
+<div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li>卸载网络设备驱动程序</li>
+<li>移除网络热插拔设备</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfe9ba1d" class="outline-3">
+<h3 id="orgfe9ba1d"><span class="section-number-3">5.2</span> 注销过程</h3>
+<div class="outline-text-3" id="text-5-2">
+</div>
+<div id="outline-container-org40dec33" class="outline-4">
+<h4 id="org40dec33"><span class="section-number-4">5.2.1</span> unregister_netdevice()</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<p>
+unregister_netdevice()函数用来完成注销过程。
+</p>
+
+<p>
+以e1000为例：
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/netmod-netdev/e1000-remove.png" alt="e1000-remove.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge642caf" class="outline-4">
+<h4 id="orge642caf"><span class="section-number-4">5.2.2</span> netdev_run_todo()</h4>
+<div class="outline-text-4" id="text-5-2-2">
+<p>
+unregister_netdevice()完成工作后，调用 net_set_todo() 将完成注销的 net_device 结构的实例加入到 net_todo_list 中，此链表包含了已经注销结束的设备。
+</p>
+
+<p>
+net_run_todo() 函数处理net_todo_list链表的设备，用于继续处理相关的注销操作。
+</p>
+
+
+<div class="figure">
+<p><img src="plantuml/netmod-netdev/netdev-run-todo.png" alt="netdev-run-todo.png" />
+</p>
+</div>
+
+
+
+
+<div class="figure">
+<p><img src="image/netmod-netdev/netdev-wait-allrefs.png" alt="netdev-wait-allrefs.png" />
+</p>
+<p><span class="figure-number">Figure 10: </span>netdev_wait_allrefs()</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcd194de" class="outline-3">
+<h3 id="orgcd194de"><span class="section-number-3">5.3</span> 启用网络设备</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+设备注册后就可以使用，需要在用户空间使能之后才可以收发数据。例如通过 ifconfig eth0 up命令激活。
+</p>
+
+<p>
+dev_open函数用来激活设备，并发送 NETDEV_UP 事件到通知链。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">dev_open</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ret</span> = 0;
+	<span style="color: #FF1493;">if</span> (dev-&gt;flags &amp; IFF_UP)
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#25346;&#36215;&#65292;&#21017;&#19981;&#33021;&#28608;&#27963;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>netif_device_present(dev))
+		<span style="color: #FF1493;">return</span> -ENODEV;
+	set_bit(__LINK_STATE_START, &amp;dev-&gt;state);
+	<span style="color: #FF1493;">if</span> (dev-&gt;open) {
+		ret = dev-&gt;open(dev);
+		<span style="color: #FF1493;">if</span> (ret)
+			clear_bit(__LINK_STATE_START, &amp;dev-&gt;state);
+	}
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ret) {
+		dev-&gt;flags |= IFF_UP;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#28608;&#27963;&#26631;&#24535;</span>
+		dev_mc_upload(dev); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#32452;&#25773;&#22320;&#22336;&#21015;&#34920;</span>
+		dev_activate(dev); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#27969;&#37327;&#25511;&#21046;&#30340;&#25490;&#38431;&#35268;&#21017;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;NETDEV_UP&#21040;&#36890;&#30693;&#38142;</span>
+		raw_notifier_call_chain(&amp;netdev_chain, NETDEV_UP, dev);
+	}
+	<span style="color: #FF1493;">return</span> ret;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd4c485a" class="outline-3">
+<h3 id="orgd4c485a"><span class="section-number-3">5.4</span> 禁用网络设备</h3>
+<div class="outline-text-3" id="text-5-4">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">dev_close</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(dev-&gt;flags &amp; IFF_UP))
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;NETDEV_GOING_DOWN&#21040;&#36890;&#30693;&#38142;</span>
+	raw_notifier_call_chain(&amp;netdev_chain, NETDEV_GOING_DOWN, dev);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20572;&#27490;&#38431;&#21015;&#35268;&#21017;</span>
+	dev_deactivate(dev);
+	clear_bit(__LINK_STATE_START, &amp;dev-&gt;state);
+	smp_mb__after_clear_bit(); <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Commit netif_running().</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27491;&#22312;&#36718;&#35810;&#25509;&#25910;&#25968;&#25454;&#21253;&#65292;&#21017;&#31561;&#24453;</span>
+	<span style="color: #FF1493;">while</span> (test_bit(__LINK_STATE_RX_SCHED, &amp;dev-&gt;state)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">No hurry.</span><span style="color: #8B8878;"> */</span>
+		msleep(1);
+	}
+
+	<span style="color: #FF1493;">if</span> (dev-&gt;stop)
+		dev-&gt;stop(dev);
+	dev-&gt;flags &amp;= ~IFF_UP;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;NETDEV_DOWN&#21040;&#36890;&#30693;&#38142;</span>
+	raw_notifier_call_chain(&amp;netdev_chain, NETDEV_DOWN, dev);
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc80d28b" class="outline-2">
+<h2 id="orgc80d28b"><span class="section-number-2">6</span> 电源管理</h2>
+<div class="outline-text-2" id="text-6">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pci_driver</span> <span style="color: #FF8C00;">e1000_driver</span> = {
+	.name     = e1000_driver_name,
+	.id_table = e1000_pci_tbl,
+	.probe    = e1000_probe,
+	.remove   = __devexit_p(e1000_remove),
+<span style="color: #FF1493;">#ifdef</span> CONFIG_PM
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Power Managment Hooks</span><span style="color: #8B8878;"> */</span>
+	.suspend  = e1000_suspend,
+	.resume   = e1000_resume,
+<span style="color: #FF1493;">#endif</span>
+	.shutdown = e1000_shutdown,
+	.err_handler = &amp;e1000_err_handler
+};
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>挂起设备调用pci_driver-&gt;suspend</li>
+<li>唤醒设备调用pci_driver-&gt;resume</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgab9c8fc" class="outline-2">
+<h2 id="orgab9c8fc"><span class="section-number-2">7</span> 侦测设备的连接状态</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+网络设备会定时侦测是否处于可传递状态，如果发生变化调用 netif_carrier_on 和 netif_carrier_off 来通知内核。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">netif_carrier_on</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">if</span> (test_and_clear_bit(__LINK_STATE_NOCARRIER, &amp;dev-&gt;state))
+		linkwatch_fire_event(dev);
+	<span style="color: #FF1493;">if</span> (netif_running(dev))
+		__netdev_watchdog_up(dev);
+}
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">netif_carrier_off</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>test_and_set_bit(__LINK_STATE_NOCARRIER, &amp;dev-&gt;state))
+		linkwatch_fire_event(dev);
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>linkwatch_fire_event()用于将新事件加入队列。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/netmod-netdev/linkwatch-fire-event.png" alt="linkwatch-fire-event.png" />
+</p>
+<p><span class="figure-number">Figure 11: </span>linkwatch_fire_event()流程</p>
+</div>
+
+<ol class="org-ol">
+<li>linkwatch_event() 是 linkwatch_work工作队列的例程。</li>
+</ol>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">linkwatch_event</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">work_struct</span> *<span style="color: #FF8C00;">dummy</span>)
+{
+	linkwatch_nextevent = jiffies + HZ;
+	<span style="color: #87D700;">clear_bit</span>(LW_RUNNING, &amp;linkwatch_flags);
+	<span style="color: #87D700;">rtnl_lock</span>();
+	<span style="color: #87D700;">linkwatch_run_queue</span>();
+	<span style="color: #87D700;">rtnl_unlock</span>();
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>linkwatch_run_queue() 函数遍历所有连接状态改变事件。</li>
+</ol>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">linkwatch_run_queue</span>(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">head</span>, *<span style="color: #FF8C00;">n</span>, *<span style="color: #FF8C00;">next</span>;
+	spin_lock_irq(&amp;lweventlist_lock);
+	list_replace_init(&amp;lweventlist, &amp;head);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#20986;&#38142;&#34920;&#21040;&#20020;&#26102;&#30340;head</span>
+	spin_unlock_irq(&amp;lweventlist_lock);
+
+	list_for_each_safe(n, next, &amp;head) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#22788;&#29702;&#38142;&#34920;&#30340;&#20107;&#20214;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">lw_event</span> *<span style="color: #FF8C00;">event</span> = list_entry(n, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">lw_event</span>, list);
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = event-&gt;dev;
+
+		<span style="color: #FF1493;">if</span> (event == &amp;singleevent) {
+			clear_bit(LW_SE_USED, &amp;linkwatch_flags);
+		} <span style="color: #FF1493;">else</span> {
+			kfree(event);
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28165;&#38500;__LINK_STATE_LINKWATCH_PENDING&#65292;&#34920;&#31034;&#21448;&#21487;&#20197;&#25509;&#25910;&#36830;&#25509;&#29366;&#24577;&#25913;&#21464;&#20107;&#20214;&#20102;</span>
+		clear_bit(__LINK_STATE_LINKWATCH_PENDING, &amp;dev-&gt;state);
+
+		rfc2863_policy(dev);
+		<span style="color: #FF1493;">if</span> (dev-&gt;flags &amp; IFF_UP) {
+			<span style="color: #FF1493;">if</span> (netif_carrier_ok(dev)) {
+				WARN_ON(dev-&gt;qdisc_sleeping == &amp;noop_qdisc);
+				dev_activate(dev);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28608;&#27963;&#25490;&#38431;&#35268;&#21017;</span>
+			} <span style="color: #FF1493;">else</span>
+				dev_deactivate(dev);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#25490;&#38431;&#35268;&#21017;</span>
+
+			netdev_state_change(dev);
+		}
+		dev_put(dev);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#24341;&#29992;</span>
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8c3df67" class="outline-2">
+<h2 id="org8c3df67"><span class="section-number-2">8</span> 配置设备</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-orgf27dbc9" class="outline-3">
+<h3 id="orgf27dbc9"><span class="section-number-3">8.1</span> ethtool</h3>
+<div class="outline-text-3" id="text-8-1">
+
+<div class="figure">
+<p><img src="image/netmod-netdev/ioctl-api.png" alt="ioctl-api.png" />
+</p>
+<p><span class="figure-number">Figure 12: </span>配置设备的ioctl接口</p>
+</div>
+
+<p>
+ethtool 工具最终调用dev-&gt;ethtool_ops 操作接口。
+</p>
+
+<p>
+对于不支持 ethool 的驱动，会尝试调用 dev-&gt;do_ioctl() 进行处理。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org76ad979" class="outline-2">
+<h2 id="org76ad979"><span class="section-number-2">9</span> 虚拟网络设备</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+虚拟网络设备是建立在一个或多个真实设备之上的抽象，其对应关系可以一对一、多对一、一对多。
+</p>
+
+
+<div class="figure">
+<p><img src="image/netmod-netdev/vdev-pdev.png" alt="vdev-pdev.png" />
+</p>
+<p><span class="figure-number">Figure 13: </span>虚拟设备和物理设备的关系</p>
+</div>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> 虚拟网络设备类型</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">虚拟网络设备类型</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Bonding</td>
+<td class="org-left">虚拟设备捆绑多个物理设备，将其视为一个设备使用</td>
+</tr>
+
+<tr>
+<td class="org-left">802.1Q</td>
+<td class="org-left">VLAN，可以用于定义虚拟局域网</td>
+</tr>
+
+<tr>
+<td class="org-left">Bridging</td>
+<td class="org-left">桥虚拟设备</td>
+</tr>
+
+<tr>
+<td class="org-left">Tunnel interfaces</td>
+<td class="org-left">用于实现 IP-over-IP隧道或者通用路由封装（GRE）协议</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-12-31 Fri 22:55</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

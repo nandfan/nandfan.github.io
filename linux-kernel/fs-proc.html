@@ -1,0 +1,1044 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-12-25 Sat 12:21 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PROC文件系统</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+	displayAlign: "center",
+	displayIndent: "0em",
+
+	"HTML-CSS": { scale: 100,
+			linebreaks: { automatic: "false" },
+			webFont: "TeX"
+		       },
+	SVG: {scale: 100,
+	      linebreaks: { automatic: "false" },
+	      font: "TeX"},
+	NativeMML: {scale: 100},
+	TeX: { equationNumbers: {autoNumber: "AMS"},
+	       MultLineWidth: "85%",
+	       TagSide: "right",
+	       TagIndent: ".8em"
+	     }
+});
+</script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">PROC文件系统</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org580d7f7">1. /proc的内容</a>
+<ul>
+<li><a href="#org62e2175">1.1. 特定于进程的数据</a></li>
+<li><a href="#org7c84369">1.2. 一般性的系统信息</a></li>
+<li><a href="#org3dc33c6">1.3. 网络信息</a></li>
+<li><a href="#org94725ef">1.4. 系统控制参数</a></li>
+</ul>
+</li>
+<li><a href="#orgbfd81bf">2. 数据结构</a>
+<ul>
+<li><a href="#orgb50829a">2.1. proc数据项的表示</a></li>
+<li><a href="#org874eb89">2.2. proc inode</a></li>
+</ul>
+</li>
+<li><a href="#orgc375cc3">3. 初始化</a></li>
+<li><a href="#orgf9cc42f">4. proc文件系统的装载</a></li>
+<li><a href="#org8e3c4d7">5. 管理/proc数据项</a>
+<ul>
+<li><a href="#org2d2dc98">5.1. 数据项的创建和注册</a></li>
+<li><a href="#org708a3ca">5.2. 查找proc数据项</a></li>
+</ul>
+</li>
+<li><a href="#org06bb846">6. 读取和写入信息</a></li>
+<li><a href="#orgb491fe8">7. 进程相关信息</a></li>
+<li><a href="#org683579b">8. 系统控制机制</a>
+<ul>
+<li><a href="#org5314b4e">8.1. sysctl</a></li>
+<li><a href="#org559c7ee">8.2. 数据结构</a></li>
+<li><a href="#org36e4a48">8.3. 静态sysctl表</a></li>
+<li><a href="#orgc526ad3">8.4. 注册sysctl</a></li>
+<li><a href="#org0585dec">8.5. /proc/sys文件操作</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+简介： 内核可以通过 <b>proc文件系统</b> 生成与系统的状态和配置有关的信息，用户和系统程序可以从普通文件读取这些信息，而无需专门的工具与内核通信。此外还可以通过向 proc 文件系统的文件写入字符串，来向内核发送数据。
+</p>
+
+<div id="outline-container-org580d7f7" class="outline-2">
+<h2 id="org580d7f7"><span class="section-number-2">1</span> /proc的内容</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+目录的内容可以分为以下几类：
+</p>
+<ul class="org-ul">
+<li>内存管理；</li>
+<li>系统进程的特征数据；</li>
+<li>文件系统；</li>
+<li>设备驱动程序；</li>
+<li>系统总线；</li>
+<li>电源管理；</li>
+<li>终端；</li>
+<li>系统控制参数。</li>
+</ul>
+</div>
+
+<div id="outline-container-org62e2175" class="outline-3">
+<h3 id="org62e2175"><span class="section-number-3">1.1</span> 特定于进程的数据</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+/proc目录中有很多用进程PID命名的文件夹，文件夹中的文件包含了相应进程的数据。
+</p>
+
+<dl class="org-dl">
+<dt>environ</dt><dd>进程的环境变量</dd>
+<dt>maps</dt><dd>以文本形式列出了进程本身和进程使用库的内存映射。</dd>
+<dt>status</dt><dd>包含了有关进程状态的一般信息。UID/GID、内存分配、进程能力、各个信号掩码的状态等等。</dd>
+<dt>stat和statm</dt><dd>以一连串数字的形式提供了进程及其内存消耗的更多状态信息。</dd>
+<dt>fd子目录</dt><dd>包含文件打开的文件描述符，目录中的文件都是符号链接，指向文件描述符对应的文件位置。</dd>
+<dt>cwd</dt><dd>进程的当前工作目录。</dd>
+<dt>exe</dt><dd>进程的二进制代码文件路径。</dd>
+<dt>root</dt><dd>进程的根目录。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org7c84369" class="outline-3">
+<h3 id="org7c84369"><span class="section-number-3">1.2</span> 一般性的系统信息</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+/proc目录中还有一些文件，包含了一般性的系统信息。
+</p>
+
+<dl class="org-dl">
+<dt>iomem</dt><dd><p>
+提供了用来和设备通信的内存地址的有关信息。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">sudo cat  /proc/iomem
+00000000-00000fff : Reserved
+00001000-0009ffff : System RAM
+000a0000-000fffff : Reserved
+  000a0000-000bffff : PCI Bus 0000:00
+  000c0000-000dffff : PCI Bus 0000:00
+    000c0000-000cffff : Video ROM
+  000f0000-000fffff : System ROM
+00100000-09e01fff : System RAM
+09e02000-09ffffff : Reserved
+0a000000-0a1fffff : System RAM
+0a200000-0a20bfff : ACPI Non-volatile Storage
+0a20c000-0affffff : System RAM
+0b000000-0b01ffff : Reserved
+0b020000-d76aafff : System RAM
+d76ab000-d76effff : Reserved
+d76f0000-d9e86fff : System RAM
+d9e87000-d9e87fff : Reserved
+d9e88000-db53ffff : System RAM
+......
+</pre>
+</div></dd>
+<dt>ioports</dt><dd><p>
+提供了用来和设备通信端口的有关信息。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo cat /proc/ioports
+0000-03af : PCI Bus 0000:00
+  0000-001f : dma1
+  0020-0021 : pic1
+  0040-0043 : timer0
+  0050-0053 : timer1
+  0060-0060 : keyboard
+  0061-0061 : PNP0800:00
+  0064-0064 : keyboard
+  0070-0071 : rtc0
+  0080-008f : dma page reg
+  00a0-00a1 : pic2
+  00c0-00df : dma2
+  00f0-00ff : fpu
+03b0-03df : PCI Bus 0000:00
+03e0-0cf7 : PCI Bus 0000:00
+  03f8-03ff : serial
+  040b-040b : pnp 00:07
+  04d0-04d1 : pnp 00:07
+  04d6-04d6 : pnp 00:07
+  0800-089f : pnp 00:07
+    0800-0803 : ACPI PM1a_EVT_BLK
+    0804-0805 : ACPI PM1a_CNT_BLK
+    0808-080b : ACPI PM_TMR
+    0810-0815 : ACPI CPU throttle
+    0820-0827 : ACPI GPE0_BLK
+......
+</pre>
+</div></dd>
+<dt>buddyinfo</dt><dd>伙伴系统的分配情况。</dd>
+<dt>slabinfo</dt><dd>slab分配器的使用情况。</dd>
+<dt>meminfo</dt><dd>给出了一般性的内存使用情况，分为高端内存、低端内存、空闲内存、已分配区域、共享区域、交换和回写内存，等等。</dd>
+<dt>vmstat</dt><dd>内存管理的其他特征信息，包括在内存管理的各个子系统中的内存页的数目。</dd>
+<dt>kallsyms</dt><dd>用于支持内核代码调试，给出了内核全局变量和函数在内存中的地址。</dd>
+<dt>kcore</dt><dd>是一个动态的内核文件，也用于支持内核代码调试。给出了运行中内核的的所有数据，即主内存中的全部内容。该文件类似用户进程的coredump文件，可以用调试器调试该文件，来查看系统的当前状态信息。</dd>
+<dt>interrupts</dt><dd>保存了系统操作期间引发中断的信息。包括中断数目、中断号、相关的设备名称和驱动程序等。</dd>
+<dt>loadavg</dt><dd>给出了系统过去60秒、5分钟、15分钟的平均系统负荷。</dd>
+<dt>uptime</dt><dd>给出了系统运行时间。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org3dc33c6" class="outline-3">
+<h3 id="org3dc33c6"><span class="section-number-3">1.3</span> 网络信息</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+/proc/net子目录提供了内核的各种网络选项有关的数据。其中保存了各种协议和设备数据。
+</p>
+<dl class="org-dl">
+<dt>tcp和udp</dt><dd>ipv4的tcp和udp的各种统计数据。</dd>
+<dt>tcp6和udp6</dt><dd>ipv6的tcp和udp的各种统计数据。</dd>
+<dt>unix</dt><dd>UNIX套接子统计数据。</dd>
+<dt>arp</dt><dd>用于反向arp解析的arp表。</dd>
+<dt>dev</dt><dd>保存了通过系统网络接口传输的数据量的统计数据（包括环回）。可以用此来检查网络传输的质量，因为其中包含了传输失败和丢弃的数据包，以及冲突的数据。</dd>
+</dl>
+
+<p>
+某些网络驱动程序在/proc/net下提供了额外的子目录，提供了关于硬件的详细信息。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org94725ef" class="outline-3">
+<h3 id="org94725ef"><span class="section-number-3">1.4</span> 系统控制参数</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+用于动态地检查和修改内核行为的系统控制参数。通过sysctl系统调用也能修改这些参数，但是需要的工作量更多，因
+为首先必须写一个程序，来支持通过系统调用接口与内核通信。sysctl机制已经标记为废弃（每次调用sysctl时，内核将输出一个警告信息），计划在未来的某个时候去掉。
+</p>
+
+<p>
+sysctl系统调用实际上是不必要的，因为通过/proc接口对内核数据的操作已经简单到了极点。
+</p>
+
+<p>
+sysctl参数由一个独立的子目录/proc/sys管理，它进一步划分为各种子目录，对应于内核的各个子系统。目录中的文件提供了对应内核子系统的特征数据，这些文件不仅可以读，还可以通过普通文件的操作写入新值，
+</p>
+
+<p>
+proc文件系统是一个虚拟文件系统，通过proc文件系统，可以获取有关内核子系统的信息。sysctl机制与此文件系统密切相关。proc文件系统提供了一种接口，使得可以简cat或者echo等程序来修改内核参数。通常proc文件系统装载在/proc路径（当然也可以装载到其他位置）。
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgbfd81bf" class="outline-2">
+<h2 id="orgbfd81bf"><span class="section-number-2">2</span> 数据结构</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgb50829a" class="outline-3">
+<h3 id="orgb50829a"><span class="section-number-3">2.1</span> proc数据项的表示</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+proc中的每个数据项都由proc_dir_entry的一个实例描述，其定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> {
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">low_ino</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">namelen</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#21517;&#38271;&#24230;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#25991;&#20214;&#21517;</span>
+	<span style="color: #5FD7FF;">mode_t</span> <span style="color: #FF8C00;">mode</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35775;&#38382;&#26435;&#30456;</span>
+	<span style="color: #5FD7FF;">nlink_t</span> <span style="color: #FF8C00;">nlink</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#24405;&#20013;&#23376;&#30446;&#24405;&#21644;&#31526;&#21495;&#38142;&#25509;&#30340;&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">uid_t</span> <span style="color: #FF8C00;">uid</span>;
+	<span style="color: #5FD7FF;">gid_t</span> <span style="color: #FF8C00;">gid</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#25991;&#20214;&#38271;&#24230;&#65288;&#23383;&#33410;&#65289;&#65292;&#30001;&#20110; proc &#25968;&#25454;&#39033;&#26159;&#21160;&#24577;&#29983;&#25104;&#30340;&#65292;&#25152;&#20197;&#25991;&#20214;&#30340;&#38271;&#24230;&#36890;&#24120;&#26080;&#27861;&#39044;&#20808;&#30693;&#36947;&#12290;</span>
+<span style="color: #8B8878;">         &#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#35813;&#20540;&#20026;0&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">loff_t</span> <span style="color: #FF8C00;">size</span>;
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> *<span style="color: #FF8C00;">proc_iops</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">inode&#25805;&#20316;&#20989;&#25968;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> *<span style="color: #FF8C00;">proc_fops</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#25805;&#20316;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">get_info_t</span> *<span style="color: #FF8C00;">get_info</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20989;&#25968;&#25351;&#38024;&#65292;&#25351;&#21521;&#30456;&#20851;&#23376;&#31995;&#32479;&#20013;&#36820;&#22238;&#25152;&#38656;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">next&#29992;&#20110;&#36830;&#25509;&#30446;&#24405;&#19979;&#30340;&#25968;&#25454;&#39033;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">parent&#25351;&#21521;&#29238;&#30446;&#24405;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">subdir&#25351;&#21521;&#30446;&#24405;&#20013;&#30340;&#31532;&#19968;&#20010;&#23376;&#25968;&#25454;&#39033;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">next</span>, *<span style="color: #FF8C00;">parent</span>, *<span style="color: #FF8C00;">subdir</span>;
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>;
+	<span style="color: #5FD7FF;">read_proc_t</span> *<span style="color: #FF8C00;">read_proc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#20869;&#26680;&#35835;&#21462;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">write_proc_t</span> *<span style="color: #FF8C00;">write_proc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21521;&#20869;&#26680;&#20889;&#20837;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
+	<span style="color: #5FD7FF;">atomic_t</span> <span style="color: #FF8C00;">count</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23454;&#29992;&#35745;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">pde_users</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">number of callers into module in progress</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">spinlock_t</span> <span style="color: #FF8C00;">pde_unload_lock</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">proc_fops checks and pde_users bumps</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">completion</span> *<span style="color: #FF8C00;">pde_unload_completion</span>;
+	<span style="color: #5FD7FF;">shadow_proc_t</span> *<span style="color: #FF8C00;">shadow_proc</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org874eb89" class="outline-3">
+<h3 id="org874eb89"><span class="section-number-3">2.2</span> proc inode</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+proc_inode结构用来支持以面向inode的方式来查看proc文件系统的数据项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">proc_op</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#33719;&#24471;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">proc_get_link</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">path</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#22312;&#34394;&#25311;&#25991;&#20214;&#31995;&#32479;&#20013;&#24314;&#31435;&#38142;&#25509;&#65292;&#25351;&#21521;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#25968;&#25454;</span>
+	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">proc_show</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">seq_file</span> *<span style="color: #FF8C00;">m</span>,
+			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>,
+			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">task</span>);
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#31243;&#30340;pid&#23454;&#20363;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;&#24212;&#20110;/proc/&lt;pic&gt;/fd/&#20013;&#30340;&#26576;&#20010;&#25991;&#20214;&#25551;&#36848;&#31526;</span>
+	<span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">proc_op</span> <span style="color: #FF8C00;">op</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#20851;&#32852;&#21040;proc&#25968;&#25454;&#39033;&#30340;proc_dir_entry&#23454;&#20363;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">pde</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> <span style="color: #FF8C00;">vfs_inode</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">inode&#23454;&#20363;</span>
+};
+</pre>
+</div>
+
+<p>
+proc_inode结构用于将特定于proc的数据与VFS层的inode数据进行关联。
+</p>
+
+<p>
+如果inode（vfs_inode）结构实例关联到了proc文件系统，则可以通过container_of机制来获得proc_inode。定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span> *<span style="color: #87D700;">PROC_I</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>)
+{
+	<span style="color: #FF1493;">return</span> container_of(inode, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span>, vfs_inode);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc375cc3" class="outline-2">
+<h2 id="orgc375cc3"><span class="section-number-2">3</span> 初始化</h2>
+<div class="outline-text-2" id="text-3">
+
+<div class="figure">
+<p><img src="./plantuml/filesystem/proc_init.png" alt="proc_init.png" />
+</p>
+</div>
+
+<p>
+proc_mkdir函数会注册一个新的子目录，并返回对应的proc_dir_entry实例。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf9cc42f" class="outline-2">
+<h2 id="orgf9cc42f"><span class="section-number-2">4</span> proc文件系统的装载</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+从用户空间的角度来看，/proc的装载几乎与非虚拟文件系统类似。唯一的区别是，将一个适宜的关键字（通常是proc或none）指定为数据源，而不使用设备文件：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">mount -t proc proc /proc</span>
+</pre>
+</div>
+
+<p>
+内核添加文件系统时，会扫描一个链表(file_system)，以查找和该文件系统相关联的file_system_type实例。proc文件系统的结构如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> <span style="color: #FF8C00;">proc_fs_type</span> = {
+	.name           = <span style="color: #CDC673;">"proc"</span>,
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">proc&#25991;&#20214;&#31995;&#32479;&#30340;&#36229;&#32423;&#22359;&#30340;&#22635;&#20805;&#20989;&#25968;</span>
+	.get_sb         = proc_get_sb,
+	.kill_sb        = proc_kill_sb,
+};
+</pre>
+</div>
+
+<p>
+proc_get_sb 借助 proc_fill_super 来填充一个 super_block 的新实例。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">proc_fill_super</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_block</span> *<span style="color: #FF8C00;">s</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> * <span style="color: #FF8C00;">root_inode</span>;
+
+	s-&gt;s_flags |= MS_NODIRATIME | MS_NOSUID | MS_NOEXEC;
+	s-&gt;s_blocksize = 1024; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22359;&#38271;&#24230;&#24635;&#20026;1024</span>
+	s-&gt;s_blocksize_bits = 10; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">2^10 = 1024</span>
+	s-&gt;s_magic = PROC_SUPER_MAGIC; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">proc&#25991;&#20214;&#31995;&#32479;&#39764;&#25968;</span>
+	s-&gt;s_op = &amp;proc_sops;
+	s-&gt;s_time_gran = 1;
+
+	de_get(&amp;proc_root);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#26681;&#30446;&#24405;&#21019;&#24314;inode</span>
+	root_inode = proc_get_inode(s, PROC_ROOT_INO, &amp;proc_root);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>root_inode)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_no_root</span>;
+	root_inode-&gt;i_uid = 0;
+	root_inode-&gt;i_gid = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36716;&#25442;&#20026;dentry&#65292;&#24182;&#21152;&#20837;&#21040;&#36229;&#32423;&#22359;</span>
+	s-&gt;s_root = d_alloc_root(root_inode);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>s-&gt;s_root)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_no_root</span>;
+	<span style="color: #FF1493;">return</span> 0;
+}
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> <span style="color: #FF8C00;">proc_root</span> = {
+	.low_ino        = PROC_ROOT_INO,
+	.namelen        = 5,
+	.name           = <span style="color: #CDC673;">"/proc"</span>,
+	.mode           = S_IFDIR | S_IRUGO | S_IXUGO,
+	.nlink          = 2,
+	.count          = ATOMIC_INIT(1),
+	.proc_iops      = &amp;proc_root_inode_operations,
+	.proc_fops      = &amp;proc_root_operations,
+	.parent         = &amp;proc_root,
+};
+</pre>
+</div>
+
+
+<p>
+proc_sops定义了超级块的各个操作函数：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_operations</span> <span style="color: #FF8C00;">proc_sops</span> = {
+	.alloc_inode    = proc_alloc_inode,
+	.destroy_inode  = proc_destroy_inode,
+	.read_inode     = proc_read_inode,
+	.drop_inode     = generic_delete_inode,
+	.delete_inode   = proc_delete_inode,
+	.statfs         = simple_statfs,
+	.remount_fs     = proc_remount,
+};
+</pre>
+</div>
+
+
+<p>
+proc 文件系统中，根inode不同于与其他inode的，它不仅包含“普通”的文件和目录，还管理着特定于进程的PID目录，其中包含了各个系统进程的详细信息。因此，根inode有自身的inode操作和文件操作，定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_root_operations</span> = {
+	.read    = generic_read_dir,
+	.readdir         = proc_root_readdir,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_root_inode_operations</span> = {
+	.lookup = proc_root_lookup,
+	.getattr        = proc_root_getattr,
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8e3c4d7" class="outline-2">
+<h2 id="org8e3c4d7"><span class="section-number-2">5</span> 管理/proc数据项</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org2d2dc98" class="outline-3">
+<h3 id="org2d2dc98"><span class="section-number-3">5.1</span> 数据项的创建和注册</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+数据项分两个步骤添加到proc文件系统，首先创建一个proc_dir_entry的一个实例，并填充所有需要的信息。然后调用proc_register将其注册到proc的数据结构，使得能够在文件系统中看到该数据项。
+</p>
+
+<p>
+内核为此提供了辅助函数，最常用的是create_proc_entry：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #87D700;">create_proc_entry</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>, <span style="color: #5FD7FF;">mode_t</span> <span style="color: #FF8C00;">mode</span>,
+					 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">parent</span>);
+</pre>
+</div>
+
+<p>
+<b><i>create_proc_entry函数只填充了 proc_dir_entry 结构的一些必要的成员。因此必须对产生的结构作一些手工校正。</i></b>
+</p>
+
+
+<p>
+proc_register 用于将数据项注册到 proc 文件系统：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">proc_register</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> * <span style="color: #FF8C00;">dir</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> * <span style="color: #FF8C00;">dp</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29983;&#25104;&#19968;&#20010;&#21807;&#19968;&#30340; proc &#20869;&#37096;&#32534;&#21495;</span>
+	i = get_inode_number();
+	dp-&gt;low_ino = i;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#65288;&#20026;&#31354;&#26102;&#65289; &#26681;&#25454;&#25991;&#20214;&#31867;&#22411;&#65292;&#21021;&#22987;&#21270;file_operations &#21644; inode_operations &#32467;&#26500;&#23454;&#20363;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (S_ISDIR(dp-&gt;mode)) {
+		<span style="color: #FF1493;">if</span> (dp-&gt;proc_iops == <span style="color: #AF87FF;">NULL</span>) {
+			dp-&gt;proc_fops = &amp;proc_dir_operations;
+			dp-&gt;proc_iops = &amp;proc_dir_inode_operations;
+		}
+		dir-&gt;nlink++;
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (S_ISLNK(dp-&gt;mode)) {
+		<span style="color: #FF1493;">if</span> (dp-&gt;proc_iops == <span style="color: #AF87FF;">NULL</span>)
+			dp-&gt;proc_iops = &amp;proc_link_inode_operations;
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (S_ISREG(dp-&gt;mode)) {
+		<span style="color: #FF1493;">if</span> (dp-&gt;proc_fops == <span style="color: #AF87FF;">NULL</span>)
+			dp-&gt;proc_fops = &amp;proc_file_operations;
+		<span style="color: #FF1493;">if</span> (dp-&gt;proc_iops == <span style="color: #AF87FF;">NULL</span>)
+			dp-&gt;proc_iops = &amp;proc_file_inode_operations;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24314;&#31435;&#23618;&#27425;&#32467;&#26500;&#20851;&#31995;</span>
+	dp-&gt;next = dir-&gt;subdir;
+	dp-&gt;parent = dir;
+	dir-&gt;subdir = dp;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org708a3ca" class="outline-3">
+<h3 id="org708a3ca"><span class="section-number-3">5.2</span> 查找proc数据项</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+用户空间应用程序访问proc文件时，就像是访问常规文件系统中的普通文件一样。搜索proc数据项时所经由的代码路径，与VFS例程是相同。VFS查找过程最终调用inode_operations的lookup函数指针，根据文件名的各个路径分量，来确定文件名所对应的inode。
+</p>
+
+<p>
+对proc数据项的搜索从proc文件系统的装载点开始，通常是/proc。在proc文件系统根目录的file_operations（proc_dir_ops字段）实例中，其lookup指针指向了proc_root_lookup函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">proc_root_lookup
+	proc_lookup
+	proc_pid_lookup
+</pre>
+</div>
+
+<p>
+此例程会区分两部分不同类型的proc数据项。数据项有可能是特定于进程的目录中的文件（/proc/&lt;pid&gt;/），也有可能是驱动或者子系统动态注册的文件。内核首先调用proc_lookup查找常规数据项，如果没找到，调用proc_pid_lookup查找特定与进程的文件。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org06bb846" class="outline-2">
+<h2 id="org06bb846"><span class="section-number-2">6</span> 读取和写入信息</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+内核使用保存在proc_file_operations中的操作来读写常规proc数据项的内容。该结构中的函数指针，所指向的目标函数如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_file_operations</span> = {
+	.llseek         = proc_file_lseek,
+	.read           = proc_file_read,
+	.write          = proc_file_write,
+};
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>proc_file_read 的实现
+<ul class="org-ul">
+<li>分配一个内核内存页面，产生的数据将填充到页面中；</li>
+<li>调用一个特定于文件的函数，向内核内存页面填充数据；</li>
+<li>数据从内核空间复制到用户空间。</li>
+</ul></li>
+
+<li>proc_file_write 的实现</li>
+</ol>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">ssize_t</span>
+<span style="color: #87D700;">proc_file_write</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *buffer,
+		<span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">count</span>, <span style="color: #5FD7FF;">loff_t</span> *<span style="color: #FF8C00;">ppos</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span> = file-&gt;f_path.dentry-&gt;d_inode;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> * <span style="color: #FF8C00;">dp</span>;
+
+	dp = PDE(inode);
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>dp-&gt;write_proc)
+		<span style="color: #FF1493;">return</span> -EIO;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">FIXME: does this routine need ppos?  probably...</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">return</span> dp-&gt;write_proc(file, buffer, count, dp-&gt;data);
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb491fe8" class="outline-2">
+<h2 id="orgb491fe8"><span class="section-number-2">7</span> 进程相关信息</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+proc文件系统最初目的是输出系统进程相关的详细信息。
+</p>
+
+<p>
+proc_pid_lookup 负责打开 /proc/&lt;pid&gt; 中特定于PID的文件，此函数会创建一个inode作为第一个对象，用于后续特定于PID的操作。
+</p>
+
+<div class="figure">
+<p><img src="plantuml/filesystem/proc-pic-lookup.png" alt="proc-pic-lookup.png" />
+</p>
+</div>
+
+
+<p>
+在特定于PID的目录 /proc/pid 中处理一个文件（或目录）时，使用该目录的inode操作来完成。内核使用静态定义的 proc_tgid_base_inode_operations 结构作为PID inode的 inode_operations 实例，结构定义如下：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_tgid_base_inode_operations</span> = {
+	.lookup         = proc_tgid_base_lookup,
+	.getattr        = pid_getattr,
+	.setattr        = proc_setattr,
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org683579b" class="outline-2">
+<h2 id="org683579b"><span class="section-number-2">8</span> 系统控制机制</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-org5314b4e" class="outline-3">
+<h3 id="org5314b4e"><span class="section-number-3">8.1</span> sysctl</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+sysctl使用打包为符号常数的整数来表示路径分量。
+</p>
+
+<p>
+内核提供的基本类别：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">enum</span> {
+	<span style="color: #FF8C00;">CTL_KERN</span>=1,             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20869;&#26680;&#33258;&#36523;&#30456;&#20851;&#20449;&#24687;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF8C00;">CTL_VM</span>=2,               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20869;&#23384;&#31649;&#29702;&#20449;&#24687;&#21644;&#21442;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_NET</span>=3,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32593;&#32476;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_PROC</span>=4,             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36827;&#31243;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_FS</span>=5,               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25991;&#20214;&#31995;&#32479;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_DEBUG</span>=6,    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#35797;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_DEV</span>=7,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_BUS</span>=8,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24635;&#32447;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_ABI</span>=9,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20108;&#36827;&#21046;&#20223;&#30495;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF8C00;">CTL_CPU</span>=10,             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">CPU&#30456;&#20851;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #FF8C00;">CTL_DEV</span>=7,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22806;&#35774;&#30456;&#20851;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+};
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="dot/filesystem/sysctl-layer.png" alt="sysctl-layer.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org559c7ee" class="outline-3">
+<h3 id="org559c7ee"><span class="section-number-3">8.2</span> 数据结构</h3>
+<div class="outline-text-3" id="text-8-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span>
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ctl_name</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20108;&#36827;&#21046;ID&#65292;&#35813;&#23618;&#27425;&#19978;&#21807;&#19968;</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">procname</span>;
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">maxlen</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;sysctl&#33021;&#22815;&#25509;&#25910;&#25110;&#36755;&#20986;&#30340;&#25968;&#25454;&#30340;&#26368;&#22823;&#38271;&#24230;&#65288;&#25353;&#23383;&#33410;&#35745;&#31639;&#65289;</span>
+	<span style="color: #5FD7FF;">mode_t</span> <span style="color: #FF8C00;">mode</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35775;&#38382;&#26435;&#38480;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> *<span style="color: #FF8C00;">child</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#25968;&#32452;&#65292;&#20195;&#34920;&#24403;&#21069;&#25968;&#25454;&#39033;&#30340;&#23376;&#33410;&#28857;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> *<span style="color: #FF8C00;">parent</span>;
+	<span style="color: #5FD7FF;">proc_handler</span> *<span style="color: #FF8C00;">proc_handler</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Callback for text formatting</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">ctl_handler</span> *<span style="color: #FF8C00;">strategy</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20869;&#26680;&#29992;&#26469;&#35835;&#20889;sysctl&#30340;&#20540;</span>
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">extra1</span>;
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">extra2</span>;
+};
+</pre>
+</div>
+
+<p>
+内核提供了 ctl_table_header 数据结构，使得能够将几个sysctl表维护在一个链表中。该结构的第一个成员是一个sysctl表，接下来是一个链表元素，用于链表的管理：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table_header</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> *<span style="color: #FF8C00;">ctl_table</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;sysctl&#39033;&#30340;&#25968;&#32452;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">ctl_entry</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#31649;&#29702;&#38142;&#34920;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">used</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">completion</span> *<span style="color: #FF8C00;">unregistering</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org36e4a48" class="outline-3">
+<h3 id="org36e4a48"><span class="section-number-3">8.3</span> 静态sysctl表</h3>
+<div class="outline-text-3" id="text-8-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> <span style="color: #FF8C00;">root_table</span>[] = {
+	{
+		.ctl_name       = CTL_KERN,
+		.procname       = <span style="color: #CDC673;">"kernel"</span>,
+		.mode           = 0555,
+		.child          = kern_table,
+	},
+	{
+		.ctl_name       = CTL_VM,
+		.procname       = <span style="color: #CDC673;">"vm"</span>,
+		.mode           = 0555,
+		.child          = vm_table,
+	},
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET
+	{
+		.ctl_name       = CTL_NET,
+		.procname       = <span style="color: #CDC673;">"net"</span>,
+		.mode           = 0555,
+		.child          = net_table,
+	},
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+	{
+		.ctl_name       = CTL_DEV,
+		.procname       = <span style="color: #CDC673;">"dev"</span>,
+		.mode           = 0555,
+		.child          = dev_table,
+	},
+	{ .ctl_name = 0 }
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc526ad3" class="outline-3">
+<h3 id="orgc526ad3"><span class="section-number-3">8.4</span> 注册sysctl</h3>
+<div class="outline-text-3" id="text-8-4">
+<p>
+register_sysctl_table 用于注册sysctl表， unregister_sysctl_table 用于删除sysctl表。
+</p>
+
+<p>
+register_sysctl_table 函数由几个步骤组成。首先，创建一个新的 ctl_table_header 实例，并与目标sysctl表关联起来。然后，将 ctl_table_header 添加到现存sysctl层次结构的链表中。
+</p>
+
+<p>
+辅助函数 sysctl_check_table 用于检查确认新的数据项包含了适当的信息。
+</p>
+
+<p>
+注册sysctl项，不会自动地创建将sysctl项关联到 proc 数据项的 inode 实例，大多数sysctl从来都不通过 proc 使用，与 proc 文件的关联是动态创建的。在 proc 文件系统初始化时，只创建了与sysctl相关的目录 /proc/sys ：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">proc_sys_init</span>(<span style="color: #5FD7FF;">void</span>)
+{
+	proc_sys_root = proc_mkdir(<span style="color: #CDC673;">"sys"</span>, <span style="color: #AF87FF;">NULL</span>);
+	proc_sys_root-&gt;proc_iops = &amp;proc_sys_inode_operations;
+	proc_sys_root-&gt;proc_fops = &amp;proc_sys_file_operations;
+	proc_sys_root-&gt;nlink = 0;
+	<span style="color: #FF1493;">return</span> 0;
+}
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_sys_inode_operations</span> = {
+	.lookup         = proc_sys_lookup,
+	.permission         = proc_sys_permission,
+	.setattr            = proc_sys_setattr,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_sys_file_operations</span> = {
+	.read           = proc_sys_read,
+	.write          = proc_sys_write,
+	.readdir            = proc_sys_readdir,
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0585dec" class="outline-3">
+<h3 id="org0585dec"><span class="section-number-3">8.5</span> /proc/sys文件操作</h3>
+<div class="outline-text-3" id="text-8-5">
+<p>
+proc_sys_read 和 proc_sys_write 的实现非常相似。两者都需要执行下面3个简单步骤。
+</p>
+<ul class="org-ul">
+<li>do_proc_sys_lookup 查找与 /proc/sys 中文件关联的sysctl表项。</li>
+<li>sysctl_perm 执行权限检查。 proc_sys_read 需要读权限， proc_sys_write 需要写权限。</li>
+<li>调用sysctl表项中存储的 proc 处理程序来完成操作。</li>
+</ul>
+
+<p>
+在 ctl_table 定义时，为 proc_handler 指派了一个函数指针。 因为各种sysctl散布到几个标准的类别中（依据其参数和返回值），通常会使用内核为此提供的标准实现，而不使用特定的函数实现。下列函数使用得最频繁：
+</p>
+<ul class="org-ul">
+<li>proc_dointvec 从/向内核读/写整数值（值的准确数目由 table-&gt;maxlen/sizeof(unsignedint) 指定）。如果 maxlen 等于 sizeof(unsigned int) ，那么只读写一个整数（而不是一个整数数组）。</li>
+<li>proc_dointvec_minmax 的工作方式与 proc_dointvec 相同，但它会确保每个值都在由 table-&gt;extra1 和 table-&gt;extra2 指定的范围内（前者为下限，后者为上限）。所有超出该范围的值都被忽略。</li>
+<li>proc_doulongvec_minmax 的作用相同，但使用的值类型为 unsigned long ，而不是 int 。</li>
+<li>proc_dointvec_jiffies 读取一个整数表。这些值都转换为jiffies。一个几乎相同的变体是proc_dointvec_ms ，其中的值都解释为毫秒。</li>
+<li>proc_dostring 在内核和用户空间之间传输字符串，可以提供双向传输。超出sysctl项内部缓冲区长度的字符串将自动截断。在数据复制到用户空间时，将自动地附加一个回车（ \n ），这样在信息输出（例如，使用 cat ）后将增加一个换行。</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-12-25 Sat 12:21</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

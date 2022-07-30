@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2021-12-31 Fri 22:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>网络编程</title>
@@ -40,7 +40,7 @@
   }
   pre.src {
     position: relative;
-    overflow: auto;
+    overflow: visible;
     padding-top: 1.2em;
   }
   pre.src:before {
@@ -52,7 +52,7 @@
     padding: 3px;
     border: 1px solid black;
   }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
+  pre.src:hover:before { display: inline;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
@@ -195,26 +195,50 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
 </script>
 </head>
 <body>
@@ -239,6 +263,11 @@
 </li>
 <li><a href="#org2990a1f">3. 顺序数据包套接字</a></li>
 <li><a href="#orga17b685">4. SCTP以及DCCP传输层协议</a></li>
+<li><a href="#orgca66711">5. 问题</a>
+<ul>
+<li><a href="#org567212e">5.1. 网卡的ip改变后，tcp连接如何处理</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -247,37 +276,37 @@
 <h2 id="org0bdab33"><span class="section-number-2">1</span> Socket函数</h2>
 <div class="outline-text-2" id="text-1">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/types.h&gt;</span>          <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">See NOTES </span><span style="color: #8B8878;">*/</span>
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/types.h&gt;</span>          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">See NOTES</span><span style="color: #8B8878;"> */</span>
 <span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/socket.h&gt;</span>
 
-<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #87D700; font-weight: bold;">socket</span>(<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">domain</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">type</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">protocol</span>);
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">socket</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">domain</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>);
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #CDC673; font-weight: bold; font-style: italic;">/**</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * enum sock_type - Socket types</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@SOCK_STREAM</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: stream (connection) socket</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@SOCK_DGRAM</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: datagram (conn.less) socket</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@SOCK_RAW</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: raw socket</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@SOCK_RDM</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: reliably-delivered message</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@SOCK_SEQPACKET</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: sequential packet socket</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@SOCK_DCCP</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: Datagram Congestion Control Protocol socket</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * </span><span style="color: #AF87FF; font-weight: bold; font-style: italic;">@SOCK_PACKET</span><span style="color: #CDC673; font-weight: bold; font-style: italic;">: linux specific way of getting packets at the dev level.</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> *                For writing rarp and other similar things on the user level.</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> *</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * When adding some new socket type please</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * grep ARCH_HAS_SOCKET_TYPE include/asm-* /socket.h, at least MIPS</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> * overrides this enum for binary compat reasons.</span>
-<span style="color: #CDC673; font-weight: bold; font-style: italic;"> */</span>
-<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF; font-weight: bold;">sock_type</span> {
-	<span style="color: #FF8C00; font-weight: bold;">SOCK_STREAM</span>     = 1,
-	<span style="color: #FF8C00; font-weight: bold;">SOCK_DGRAM</span>      = 2,
-	<span style="color: #FF8C00; font-weight: bold;">SOCK_RAW</span>        = 3,
-	<span style="color: #FF8C00; font-weight: bold;">SOCK_RDM</span>        = 4,
-	<span style="color: #FF8C00; font-weight: bold;">SOCK_SEQPACKET</span>  = 5,
-	<span style="color: #FF8C00; font-weight: bold;">SOCK_DCCP</span>       = 6,
-	<span style="color: #FF8C00; font-weight: bold;">SOCK_PACKET</span>     = 10,
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> * enum sock_type - Socket types</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@SOCK_STREAM</span><span style="color: #CDC673;">: stream (connection) socket</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@SOCK_DGRAM</span><span style="color: #CDC673;">: datagram (conn.less) socket</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@SOCK_RAW</span><span style="color: #CDC673;">: raw socket</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@SOCK_RDM</span><span style="color: #CDC673;">: reliably-delivered message</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@SOCK_SEQPACKET</span><span style="color: #CDC673;">: sequential packet socket</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@SOCK_DCCP</span><span style="color: #CDC673;">: Datagram Congestion Control Protocol socket</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@SOCK_PACKET</span><span style="color: #CDC673;">: linux specific way of getting packets at the dev level.</span>
+<span style="color: #CDC673;"> *                For writing rarp and other similar things on the user level.</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> * When adding some new socket type please</span>
+<span style="color: #CDC673;"> * grep ARCH_HAS_SOCKET_TYPE include/asm-* /socket.h, at least MIPS</span>
+<span style="color: #CDC673;"> * overrides this enum for binary compat reasons.</span>
+<span style="color: #CDC673;"> */</span>
+<span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">sock_type</span> {
+	<span style="color: #FF8C00;">SOCK_STREAM</span>     = 1,
+	<span style="color: #FF8C00;">SOCK_DGRAM</span>      = 2,
+	<span style="color: #FF8C00;">SOCK_RAW</span>        = 3,
+	<span style="color: #FF8C00;">SOCK_RDM</span>        = 4,
+	<span style="color: #FF8C00;">SOCK_SEQPACKET</span>  = 5,
+	<span style="color: #FF8C00;">SOCK_DCCP</span>       = 6,
+	<span style="color: #FF8C00;">SOCK_PACKET</span>     = 10,
 };
 </pre>
 </div>
@@ -419,52 +448,52 @@
 <h2 id="org034baee"><span class="section-number-2">2</span> sendmsg和recvmsg的高级用法</h2>
 <div class="outline-text-2" id="text-2">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">glibc&#24211;&#20013;&#30340;&#23450;&#20041; </span><span style="color: #8B8878;">*/</span>
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">glibc&#24211;&#20013;&#30340;&#23450;&#20041;</span><span style="color: #8B8878;"> */</span>
 
-<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#29992;&#26469;&#23384;&#20648;&#36741;&#21161;&#25968;&#25454;&#23545;&#35937;&#30340;&#32467;&#26500; </span><span style="color: #8B8878;">*/</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">cmsghdr</span>
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#26469;&#23384;&#20648;&#36741;&#21161;&#25968;&#25454;&#23545;&#35937;&#30340;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cmsghdr</span>
 {
-	<span style="color: #5FD7FF; font-weight: bold;">socklen_t</span> <span style="color: #FF8C00; font-weight: bold;">cmsg_len</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">cmsg_data&#30340;&#25968;&#25454;&#38271;&#24230;&#21152;cmsghdr&#32467;&#26500;&#30340;&#38271;&#24230; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">cmsg_level</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#21407;&#22987;&#21327;&#35758; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">cmsg_type</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25351;&#23450;&#21327;&#35758;&#31867;&#22411;  </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">socklen_t</span> <span style="color: #FF8C00;">cmsg_len</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">cmsg_data&#30340;&#25968;&#25454;&#38271;&#24230;&#21152;cmsghdr&#32467;&#26500;&#30340;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmsg_level</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21407;&#22987;&#21327;&#35758;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmsg_type</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#21327;&#35758;&#31867;&#22411;</span><span style="color: #8B8878;">  */</span>
 };
 
-<span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Structure for scatter/gather I/O.  </span><span style="color: #8B8878;">*/</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">iovec</span>
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Structure for scatter/gather I/O.</span><span style="color: #8B8878;">  */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span>
 {
-	<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">iov_base</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25968;&#25454;&#30340;&#36215;&#22987;&#22320;&#22336;  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">size_t</span> <span style="color: #FF8C00; font-weight: bold;">iov_len</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25968;&#25454;&#38271;&#24230;  </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">iov_base</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25968;&#25454;&#30340;&#36215;&#22987;&#22320;&#22336;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">iov_len</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25968;&#25454;&#38271;&#24230;</span><span style="color: #8B8878;">  */</span>
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">msghdr</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span>
 {
-	<span style="color: #5FD7FF; font-weight: bold;">void</span>            *<span style="color: #FF8C00; font-weight: bold;">msg_name</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25351;&#21521;&#19968;&#20010;&#22871;&#25509;&#23383;&#30340;&#22320;&#22336;&#32467;&#26500; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">int</span>                 <span style="color: #FF8C00; font-weight: bold;">msg_namelen</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">msg_name&#25351;&#21521;&#30340;&#22320;&#22336;&#32467;&#26500;&#22823;&#23567; </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span>            *<span style="color: #FF8C00;">msg_name</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#22871;&#25509;&#23383;&#30340;&#22320;&#22336;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                 <span style="color: #FF8C00;">msg_namelen</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">msg_name&#25351;&#21521;&#30340;&#22320;&#22336;&#32467;&#26500;&#22823;&#23567;</span><span style="color: #8B8878;"> */</span>
 
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">iovec</span> *<span style="color: #FF8C00; font-weight: bold;">msg_iov</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25351;&#23450;&#36755;&#20837;&#32531;&#20914;&#21306;&#25110;&#32773;&#36755;&#20986;&#32531;&#20914;&#21306;&#30340;&#25968;&#32452; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">msg_iovlen</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#36755;&#20837;&#25110;&#36755;&#20986;&#32531;&#20914;&#21306;&#30340;&#25968;&#32452;&#38271;&#24230;  </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> *<span style="color: #FF8C00;">msg_iov</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#23450;&#36755;&#20837;&#32531;&#20914;&#21306;&#25110;&#32773;&#36755;&#20986;&#32531;&#20914;&#21306;&#30340;&#25968;&#32452;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">msg_iovlen</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36755;&#20837;&#25110;&#36755;&#20986;&#32531;&#20914;&#21306;&#30340;&#25968;&#32452;&#38271;&#24230;</span><span style="color: #8B8878;">  */</span>
 
-	<span style="color: #5FD7FF; font-weight: bold;">void</span> *<span style="color: #FF8C00; font-weight: bold;">msg_control</span>;              <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#36741;&#21161;&#25968;&#25454;&#30340;&#22320;&#22336; </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF; font-weight: bold;">socklen_t</span> <span style="color: #FF8C00; font-weight: bold;">msg_controllen</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#36741;&#21161;&#25968;&#25454;&#30340;&#38271;&#24230;  </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">msg_control</span>;              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36741;&#21161;&#25968;&#25454;&#30340;&#22320;&#22336;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">socklen_t</span> <span style="color: #FF8C00;">msg_controllen</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36741;&#21161;&#25968;&#25454;&#30340;&#38271;&#24230;</span><span style="color: #8B8878;">  */</span>
 
-	<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">msg_flags</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">&#25509;&#21463;&#28040;&#24687;&#30340;flag  </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">msg_flags</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#21463;&#28040;&#24687;&#30340;flag</span><span style="color: #8B8878;">  */</span>
 };
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Bits in the FLAGS argument to `send', `recv', et al.  </span><span style="color: #8B8878;">*/</span>
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Bits in the FLAGS argument to `send', `recv', et al.</span><span style="color: #8B8878;">  */</span>
 <span style="color: #FF1493;">enum</span>
 {
-	<span style="color: #FF8C00; font-weight: bold;">MSG_OOB</span>         = 0x01, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Process out-of-band data.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_PEEK</span>                = 0x02, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Peek at incoming messages.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_DONTROUTE</span>   = 0x04, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Don't use local routing.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_EOR</span>         = 0x08, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Data completes record.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_TRUNC</span>               = 0x10, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Data discarded before delivery.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_CTRUNC</span>              = 0x20, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Control data lost before delivery.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_WAITALL</span>             = 0x40, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Wait for full request or error.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_DONTWAIT</span>    = 0x80, <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">This message should be nonblocking.  </span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00; font-weight: bold;">MSG_NOSIGNAL</span>    = 0x0400        <span style="color: #8B8878;">/* </span><span style="color: #8B8878; font-style: italic;">Do not generate SIGPIPE on EPIPE.  </span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF8C00;">MSG_OOB</span>         = 0x01, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Process out-of-band data.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_PEEK</span>                = 0x02, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Peek at incoming messages.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_DONTROUTE</span>   = 0x04, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Don't use local routing.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_EOR</span>         = 0x08, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Data completes record.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_TRUNC</span>               = 0x10, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Data discarded before delivery.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_CTRUNC</span>              = 0x20, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Control data lost before delivery.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_WAITALL</span>             = 0x40, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Wait for full request or error.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_DONTWAIT</span>    = 0x80, <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This message should be nonblocking.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF8C00;">MSG_NOSIGNAL</span>    = 0x0400        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Do not generate SIGPIPE on EPIPE.</span><span style="color: #8B8878;">  */</span>
 };
 
 </pre>
@@ -473,8 +502,8 @@
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/types.h&gt;</span>
 <span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/socket.h&gt;</span>
-<span style="color: #5FD7FF; font-weight: bold;">ssize_t</span> <span style="color: #87D700; font-weight: bold;">sendmsg</span>(<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">sockfd</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">msghdr</span> *<span style="color: #FF8C00; font-weight: bold;">msg</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">flags</span>);
-<span style="color: #5FD7FF; font-weight: bold;">ssize_t</span> <span style="color: #87D700; font-weight: bold;">recvmsg</span>(<span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">sockfd</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF; font-weight: bold;">msghdr</span> *<span style="color: #FF8C00; font-weight: bold;">msg</span>, <span style="color: #5FD7FF; font-weight: bold;">int</span> <span style="color: #FF8C00; font-weight: bold;">flags</span>);
+<span style="color: #5FD7FF;">ssize_t</span> <span style="color: #87D700;">sendmsg</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sockfd</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+<span style="color: #5FD7FF;">ssize_t</span> <span style="color: #87D700;">recvmsg</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">sockfd</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
 </pre>
 </div>
 </div>
@@ -530,12 +559,29 @@
 </dl>
 </div>
 </div>
+
+
+
+<div id="outline-container-orgca66711" class="outline-2">
+<h2 id="orgca66711"><span class="section-number-2">5</span> 问题</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org567212e" class="outline-3">
+<h3 id="org567212e"><span class="section-number-3">5.1</span> 网卡的ip改变后，tcp连接如何处理</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+<a href="https://serverfault.com/questions/61956/tcp-sessions-and-ip-changes?newreg=d644dc5f61f043ac85b6db980f8c6582">https://serverfault.com/questions/61956/tcp-sessions-and-ip-changes?newreg=d644dc5f61f043ac85b6db980f8c6582</a>
+<a href="https://stackoverflow.com/questions/60366126/what-happens-to-tcp-socket-when-ip-address-changes">https://stackoverflow.com/questions/60366126/what-happens-to-tcp-socket-when-ip-address-changes</a>
+</p>
+</div>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2021-12-31 Fri 22:55</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

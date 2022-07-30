@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-07-30 Sat 13:15 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LVS(Linux Virtual Server)</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">LVS(Linux Virtual Server)</h1>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#24230;&#31639;&#27861;&#27880;&#20876;&#20989;&#25968;</span>
+<span style="color: #87D700;">EXPORT_SYMBOL</span>(register_ip_vs_scheduler);
+
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#24230;&#31639;&#27861;&#38142;&#34920;&#22836;</span>
+<span style="color: #FF1493;">static</span> <span style="color: #87D700;">LIST_HEAD</span>(ip_vs_schedulers);
+
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_sh_scheduler</span> =
+{
+        .name =                 <span style="color: #CDC673;">"sh"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list  =              LIST_HEAD_INIT(ip_vs_sh_scheduler.n_list),
+        .init_service =         ip_vs_sh_init_svc,
+        .done_service =         ip_vs_sh_done_svc,
+        .add_dest =             ip_vs_sh_dest_changed,
+        .del_dest =             ip_vs_sh_dest_changed,
+        .upd_dest =             ip_vs_sh_dest_changed,
+        .schedule =             ip_vs_sh_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_dh_scheduler</span> =
+{
+        .name =                 <span style="color: #CDC673;">"dh"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_dh_scheduler.n_list),
+        .init_service =         ip_vs_dh_init_svc,
+        .done_service =         ip_vs_dh_done_svc,
+        .add_dest =             ip_vs_dh_dest_changed,
+        .del_dest =             ip_vs_dh_dest_changed,
+        .schedule =             ip_vs_dh_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_fo_scheduler</span> = {
+        .name =                 <span style="color: #CDC673;">"fo"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_fo_scheduler.n_list),
+        .schedule =             ip_vs_fo_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pernet_operations</span> <span style="color: #FF8C00;">ip_vs_lblc_ops</span> = {
+        .init = __ip_vs_lblc_init,
+        .exit = __ip_vs_lblc_exit,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pernet_operations</span> <span style="color: #FF8C00;">ip_vs_lblcr_ops</span> = {
+        .init = __ip_vs_lblcr_init,
+        .exit = __ip_vs_lblcr_exit,
+};
+
+
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_lc_scheduler</span> = {
+        .name =                 <span style="color: #CDC673;">"lc"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_lc_scheduler.n_list),
+        .schedule =             ip_vs_lc_schedule,
+};
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_wlc_scheduler</span> =
+{
+        .name =                 <span style="color: #CDC673;">"wlc"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_wlc_scheduler.n_list),
+        .schedule =             ip_vs_wlc_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_mh_scheduler</span> = {
+        .name =                 <span style="color: #CDC673;">"mh"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list  =              LIST_HEAD_INIT(ip_vs_mh_scheduler.n_list),
+        .init_service =         ip_vs_mh_init_svc,
+        .done_service =         ip_vs_mh_done_svc,
+        .add_dest =             ip_vs_mh_dest_changed,
+        .del_dest =             ip_vs_mh_dest_changed,
+        .upd_dest =             ip_vs_mh_dest_changed,
+        .schedule =             ip_vs_mh_schedule,
+};
+
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_nq_scheduler</span> =
+{
+        .name =                 <span style="color: #CDC673;">"nq"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_nq_scheduler.n_list),
+        .schedule =             ip_vs_nq_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_ovf_scheduler</span> = {
+        .name =                 <span style="color: #CDC673;">"ovf"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_ovf_scheduler.n_list),
+        .schedule =             ip_vs_ovf_schedule,
+};
+
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_rr_scheduler</span> = {
+        .name =                 <span style="color: #CDC673;">"rr"</span>,                   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">name</span><span style="color: #8B8878;"> */</span>
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_rr_scheduler.n_list),
+        .init_service =         ip_vs_rr_init_svc,
+        .add_dest =             <span style="color: #AF87FF;">NULL</span>,
+        .del_dest =             ip_vs_rr_del_dest,
+        .schedule =             ip_vs_rr_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_wrr_scheduler</span> = {
+        .name =                 <span style="color: #CDC673;">"wrr"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_wrr_scheduler.n_list),
+        .init_service =         ip_vs_wrr_init_svc,
+        .done_service =         ip_vs_wrr_done_svc,
+        .add_dest =             ip_vs_wrr_dest_changed,
+        .del_dest =             ip_vs_wrr_dest_changed,
+        .upd_dest =             ip_vs_wrr_dest_changed,
+        .schedule =             ip_vs_wrr_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_sed_scheduler</span> =
+{
+        .name =                 <span style="color: #CDC673;">"sed"</span>,
+        .refcnt =               ATOMIC_INIT(0),
+        .module =               THIS_MODULE,
+        .n_list =               LIST_HEAD_INIT(ip_vs_sed_scheduler.n_list),
+        .schedule =             ip_vs_sed_schedule,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_scheduler</span> <span style="color: #FF8C00;">ip_vs_twos_scheduler</span> = {
+        .name = <span style="color: #CDC673;">"twos"</span>,
+        .refcnt = ATOMIC_INIT(0),
+        .module = THIS_MODULE,
+        .n_list = LIST_HEAD_INIT(ip_vs_twos_scheduler.n_list),
+        .schedule = ip_vs_twos_schedule,
+};
+
+
+register_ip_vs_scheduler(&amp;ip_vs_dh_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_fo_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_lblc_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_lblcr_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_lc_scheduler) ;
+register_ip_vs_scheduler(&amp;ip_vs_mh_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_nq_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_ovf_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_rr_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_sed_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_sh_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_twos_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_wlc_scheduler);
+register_ip_vs_scheduler(&amp;ip_vs_wrr_scheduler);
+</pre>
+</div>
+
+
+
+<div class="figure">
+<p><img src="./dot/lvs/ip-vs-sched.png" alt="ip-vs-sched.png" />
+</p>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;&#27880;&#20876;&#20989;&#25968;</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__used</span> __init register_ip_vs_protocol(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_vs_protocol</span> *<span style="color: #FF8C00;">pp</span>);
+
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27880;&#20876;ipvs&#25903;&#25345;&#30340;&#21327;&#35758;</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_VS_PROTO_TCP
+        REGISTER_PROTOCOL(&amp;ip_vs_protocol_tcp);
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_VS_PROTO_UDP
+        REGISTER_PROTOCOL(&amp;ip_vs_protocol_udp);
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_VS_PROTO_SCTP
+        REGISTER_PROTOCOL(&amp;ip_vs_protocol_sctp);
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_VS_PROTO_AH
+        REGISTER_PROTOCOL(&amp;ip_vs_protocol_ah);
+<span style="color: #FF1493;">#endif</span>
+<span style="color: #FF1493;">#ifdef</span> CONFIG_IP_VS_PROTO_ESP
+        REGISTER_PROTOCOL(&amp;ip_vs_protocol_esp);
+<span style="color: #FF1493;">#endif</span>
+</pre>
+</div>
+
+
+
+<div class="figure">
+<p><img src="./dot/lvs/ipvs-protocol.png" alt="ipvs-protocol.png" />
+</p>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-07-30 Sat 13:15</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

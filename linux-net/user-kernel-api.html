@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2021-12-31 Fri 22:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用户空间和内核的接口</title>
@@ -40,7 +40,7 @@
   }
   pre.src {
     position: relative;
-    overflow: auto;
+    overflow: visible;
     padding-top: 1.2em;
   }
   pre.src:before {
@@ -52,7 +52,7 @@
     padding: 3px;
     border: 1px solid black;
   }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
+  pre.src:hover:before { display: inline;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
@@ -195,26 +195,50 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
 </script>
 </head>
 <body>
@@ -224,7 +248,15 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgc9ccf83">1. 虚拟文件系统接口</a></li>
+<li><a href="#orgc9ccf83">1. 虚拟文件系统接口</a>
+<ul>
+<li><a href="#org7cbdb20">1.1. procfs</a></li>
+<li><a href="#org5d02939">1.2. sysctl</a></li>
+<li><a href="#orgcf2f22a">1.3. sysfs(sys文件系统)</a></li>
+</ul>
+</li>
+<li><a href="#orgcc11854">2. ioctl系统调用</a></li>
+<li><a href="#org2a87aca">3. netlink套接字</a></li>
 </ul>
 </div>
 </div>
@@ -242,13 +274,166 @@
 sysfs
 </p>
 </div>
+
+
+<div id="outline-container-org7cbdb20" class="outline-3">
+<h3 id="org7cbdb20"><span class="section-number-3">1.1</span> procfs</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+网络代码注册的文件一般位于/proc/net目录下，
+</p>
+
+<p>
+创建文件调用  proc_create_net(name, mode, parent, ops, state_size)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ip_mr_vif &#25991;&#20214;&#30340;&#23454;&#38469;&#25805;&#20316;&#20989;&#25968;</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">seq_operations</span> <span style="color: #FF8C00;">ipmr_vif_seq_ops</span> = {
+	.start = ipmr_vif_seq_start,
+	.next  = mr_vif_seq_next,
+	.stop  = ipmr_vif_seq_stop,
+	.show  = ipmr_vif_seq_show,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__net_init</span> ipmr_net_init(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span> *<span style="color: #FF8C00;">net</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#21517;&#20026; &#8220;ip_mr_vif&#8221;, &#25991;&#20214;&#30340;&#25805;&#20316;&#20989;&#25968;&#21477;&#26564; ipmr_vif_seq_ops</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>proc_create_net(<span style="color: #CDC673;">"ip_mr_vif"</span>, 0, net-&gt;proc_net, &amp;ipmr_vif_seq_ops,
+				<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">mr_vif_iter</span>))) {
+	}
+}
+
+
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">net &#25991;&#20214;&#30340;&#22788;&#29702;&#20989;&#25968;</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_ops</span> <span style="color: #FF8C00;">proc_net_seq_ops</span> = {
+	.proc_open      = seq_open_net,
+	.proc_read      = seq_read,
+	.proc_write     = proc_simple_write,
+	.proc_lseek     = seq_lseek,
+	.proc_release   = seq_release_net,
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #87D700;">proc_create_net_data</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>, <span style="color: #5FD7FF;">umode_t</span> <span style="color: #FF8C00;">mode</span>,
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">parent</span>, <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">seq_operations</span> *<span style="color: #FF8C00;">ops</span>,
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">state_size</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">p</span>;
+
+	p = proc_create_reg(name, mode, &amp;parent, data);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>p)
+		<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+	pde_force_lookup(p);
+	p-&gt;proc_ops = &amp;proc_net_seq_ops;
+	p-&gt;seq_ops = ops;
+	p-&gt;state_size = state_size;
+	<span style="color: #FF1493;">return</span> proc_register(parent, p);
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org5d02939" class="outline-3">
+<h3 id="org5d02939"><span class="section-number-3">1.2</span> sysctl</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+sysctl允许用户读取和修改内核参数，那么如何访问sysctl导出的变量呢：
+</p>
+
+<ol class="org-ol">
+<li>通过sysctl系统调用。</li>
+<li>procfs文件系统在/proc/sys目录下包含了sysctl导出的变量列表。</li>
+</ol>
+
+<p>
+procps包中提供的sysctl命令可以配置sysctl导出的内核参数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcf2f22a" class="outline-3">
+<h3 id="orgcf2f22a"><span class="section-number-3">1.3</span> sysfs(sys文件系统)</h3>
+</div>
+</div>
+
+<div id="outline-container-orgcc11854" class="outline-2">
+<h2 id="orgcc11854"><span class="section-number-2">2</span> ioctl系统调用</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+ioctl可以操作一个文件，它用于实现特殊的文件操作，这些操作在标准的文件系统调用中没有提供。ioctl可以操作套接字描述副，net-tools工具包就是通过ioctl系统调用和内核进行交互。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org2a87aca" class="outline-2">
+<h2 id="org2a87aca"><span class="section-number-2">3</span> netlink套接字</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+netlink是网络应用程序和内核通讯最新的、最常用的接口，IPROUTE2包中的大部分命令都使用此此接口。
+</p>
+
+<p>
+netlink使用比较简单，通过套接字标准的API来打开、关闭、发送或者接受消息。
+</p>
+
+<p>
+如何创建netlink套接字呢：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #87D700;">socket</span>(PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
+</pre>
+</div>
+
+<p>
+内核中定义了多种协议，每一种都被协议栈中的一个或者一组内核组件使用，上述代码中的NETLINK_ROUTE协议会被多个模块使用，如路由和邻居协议，而NETLINK_FIREWALL则用于防火墙模块。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_ROUTE</span>           0       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Routing/device hook</span><span style="color: #8B8878;">                          */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_UNUSED</span>          1       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Unused number</span><span style="color: #8B8878;">                                */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_USERSOCK</span>        2       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Reserved for user mode socket protocols</span><span style="color: #8B8878;">      */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_FIREWALL</span>        3       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Unused number, formerly ip_queue</span><span style="color: #8B8878;">             */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_SOCK_DIAG</span>       4       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">socket monitoring</span><span style="color: #8B8878;">                            */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_NFLOG</span>           5       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">netfilter/iptables ULOG</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_XFRM</span>            6       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ipsec</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_SELINUX</span>         7       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">SELinux event notifications</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_ISCSI</span>           8       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Open-iSCSI</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_AUDIT</span>           9       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">auditing</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_FIB_LOOKUP</span>      10
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_CONNECTOR</span>       11
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_NETFILTER</span>       12      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">netfilter subsystem</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_IP6_FW</span>          13
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_DNRTMSG</span>         14      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">DECnet routing messages</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_KOBJECT_UEVENT</span>  15      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Kernel messages to userspace</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_GENERIC</span>         16
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">leave room for NETLINK_DM (DM Events)</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_SCSITRANSPORT</span>   18      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">SCSI Transports</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_ECRYPTFS</span>        19
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_RDMA</span>            20
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_CRYPTO</span>          21      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Crypto layer</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">NETLINK_SMC</span>             22      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">SMC monitoring</span><span style="color: #8B8878;"> */</span>
+</pre>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2021-12-31 Fri 22:55</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

@@ -1,0 +1,1579 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-07-30 Sat 12:59 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>分段卸载</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">分段卸载</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orga821b54">1. 报文格式</a>
+<ul>
+<li><a href="#org79b9018">1.1. 以太网帧格式</a></li>
+<li><a href="#orgcc9eb6b">1.2. IP数据报</a></li>
+<li><a href="#org824adbb">1.3. TCP</a></li>
+<li><a href="#org1f2c7df">1.4. UDP</a></li>
+</ul>
+</li>
+<li><a href="#orgd28fa7d">2. IP分片</a></li>
+<li><a href="#org288baaa">3. TCP分段卸载 TSO</a>
+<ul>
+<li><a href="#orgff6bf12">3.1. TCP数据段的发送</a>
+<ul>
+<li><a href="#org9afa033">3.1.1. 文件描述符关联到传输控制块</a></li>
+<li><a href="#orgc690b50">3.1.2. 系统调用过程</a></li>
+<li><a href="#org9e62f80">3.1.3. 发送过程</a></li>
+</ul>
+</li>
+<li><a href="#orga613ec7">3.2. 未启用TSO</a></li>
+<li><a href="#orga119883">3.3. 启用TSO</a></li>
+<li><a href="#org9f0f1bc">3.4. 验证</a></li>
+<li><a href="#orge26334a">3.5. 如何配置tso</a></li>
+</ul>
+</li>
+<li><a href="#org5297f26">4. UDP分片卸载 UFO</a></li>
+<li><a href="#orgeee1dc7">5. 通用分段卸载 GSO</a>
+<ul>
+<li><a href="#org8c2caba">5.1. TCP GSO</a></li>
+<li><a href="#org302a1e0">5.2. UDP GSO</a>
+<ul>
+<li><a href="#org96e13c8">5.2.1. UDP和TCP的区别</a></li>
+<li><a href="#org3d6a190">5.2.2. UDP分段过程</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org3ff6f67">6. 通用接收卸载 GRO</a>
+<ul>
+<li><a href="#orgfa6f0bc">6.1. 开启/关闭 GRO</a></li>
+<li><a href="#org5f23ce6">6.2. TCP GRO</a></li>
+<li><a href="#org5b19aba">6.3. UDP GRO</a>
+<ul>
+<li><a href="#orgbb9aa4a">6.3.1. 原理说明</a></li>
+<li><a href="#org4b3dc0b">6.3.2. 验证测试</a></li>
+<li><a href="#orgc36a47a">6.3.3. 代码示例</a></li>
+<li><a href="#org5417388">6.3.4. 抓包示例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">分段卸载技术</th>
+<th scope="col" class="org-left">缩写</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">TCP Segmentation Offload</td>
+<td class="org-left">TSO</td>
+<td class="org-left">TCP分段卸载</td>
+</tr>
+
+<tr>
+<td class="org-left">UDP Fragmentation Offload</td>
+<td class="org-left">UFO</td>
+<td class="org-left">UDP分片卸载</td>
+</tr>
+
+<tr>
+<td class="org-left">Generic Segmentation Offload</td>
+<td class="org-left">GSO</td>
+<td class="org-left">通用分段卸载</td>
+</tr>
+
+<tr>
+<td class="org-left">Generic Receive Offload</td>
+<td class="org-left">GRO</td>
+<td class="org-left">通用接收卸载</td>
+</tr>
+</tbody>
+</table>
+
+<div id="outline-container-orga821b54" class="outline-2">
+<h2 id="orga821b54"><span class="section-number-2">1</span> 报文格式</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org79b9018" class="outline-3">
+<h3 id="org79b9018"><span class="section-number-3">1.1</span> 以太网帧格式</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<div class="figure">
+<p><img src="image/segmentation-offloads/EtherentII-format.png" alt="EtherentII-format.png" />
+</p>
+</div>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" frame="border" border="1" rules="all">
+<thead align="left">
+<tr>
+<th class="cellrowborder" valign="top" width="8.333333333333332%" id="mcps1.2.1.3.1.4.1.1">字段</th>
+
+<th class="cellrowborder" valign="top" width="12%" id="mcps1.2.1.3.1.4.1.2">长度</th>
+
+<th class="cellrowborder" valign="top" width="79.66666666666667%" id="mcps1.2.1.3.1.4.1.3">含义</th>
+
+</tr>
+
+</thead>
+<tbody>
+<tr>
+<td class="cellrowborder" valign="top" width="8.333333333333332%" headers="mcps1.2.1.3.1.4.1.1 ">DMAC</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.1.4.1.2 ">6字节</td>
+
+<td class="cellrowborder" valign="top" width="79.66666666666667%" headers="mcps1.2.1.3.1.4.1.3 ">目的MAC地址，IPV4为6字节，该字段确定帧的接收者。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="8.333333333333332%" headers="mcps1.2.1.3.1.4.1.1 ">SMAC</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.1.4.1.2 ">6字节</td>
+
+<td class="cellrowborder" valign="top" width="79.66666666666667%" headers="mcps1.2.1.3.1.4.1.3 ">源MAC地址，IPV4为6字节，该字段标识发送帧的工作站。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="8.333333333333332%" headers="mcps1.2.1.3.1.4.1.1 ">Type</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.1.4.1.2 ">2字节</td>
+
+<td class="cellrowborder" valign="top" width="79.66666666666667%" headers="mcps1.2.1.3.1.4.1.3 ">协议类型。例如IPv4、IPv6等。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="8.333333333333332%" headers="mcps1.2.1.3.1.4.1.1 ">Data</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.1.4.1.2 ">变长</td>
+
+<td class="cellrowborder" valign="top" width="79.66666666666667%" headers="mcps1.2.1.3.1.4.1.3 "><p>数据字段的最小长度必须为46字节以保证帧长至少为64字节，这意味着传输一字节信息也必须使用46字节的数据字段。</p>
+<p>如果填入该字段的信息少于46字节，该字段的其余部分也必须进行填充。数据字段的最大长度为1500字节。</p>
+</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="8.333333333333332%" headers="mcps1.2.1.3.1.4.1.1 ">CRC</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.1.4.1.2 ">4字节</td>
+
+<td class="cellrowborder" valign="top" width="79.66666666666667%" headers="mcps1.2.1.3.1.4.1.3 ">用于帧内后续字节差错的循环冗余检验（也称为FCS或帧检验序列）。</td>
+
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcc9eb6b" class="outline-3">
+<h3 id="orgcc9eb6b"><span class="section-number-3">1.2</span> IP数据报</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<div class="figure">
+<p><img src="image/segmentation-offloads/IP-format.png" alt="IP-format.png" />
+</p>
+</div>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" frame="border" border="1" rules="all"><caption><b>表1 </b>IP头字段解释</caption>
+<thead align="left">
+<tr>
+<th class="cellrowborder" valign="top" width="12%" id="mcps1.2.1.3.2.4.1.1">字段</th>
+
+<th class="cellrowborder" valign="top" width="12%" id="mcps1.2.1.3.2.4.1.2">长度</th>
+
+<th class="cellrowborder" valign="top" width="75.99999999999999%" id="mcps1.2.1.3.2.4.1.3">含义</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Version</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">4比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 "><ul><li>4：表示为IPV4；</li><li>6：表示为IPV6。</li></ul>
+</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">IHL</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">4比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">首部长度，如果不带Option字段，则为20，最长为60，该值限制了记录路由选项。以4字节为一个单位。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Type of Service</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">8比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">服务类型。只有在有QoS差分服务要求时这个字段才起作用。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Total Length</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">总长度，整个IP数据报的长度，包括首部和数据之和，单位为字节，最长65535，总长度必须不超过最大传输单元MTU。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Identification</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">标识，主机每发一个报文，加1，分片重组时会用到该字段。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Flags</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">3比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">标志位：<div class="fignone"><span class="figcap"><b>图2 </b>IP Flag字段格式</span>
+
+<br><span><img src="image/segmentation-offloads/IP-format-flag.png"></span></div>
+<ul><li>Bit 0: 保留位，必须为0。</li><li>Bit 1: DF（Don't Fragment），能否分片位，0表示可以分片，1表示不能分片。</li><li>Bit 2: MF（More Fragment），表示是否该报文为最后一片，0表示最后一片，1代表后面还有。</li></ul>
+</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Fragment Offset</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">12比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">片偏移：分片重组时会用到该字段。表示较长的分组在分片后，某片在原分组中的相对位置。以8个字节为偏移单位。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Time to Live</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">8比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">生存时间：可经过的最多路由数，即数据包在网络中可通过的路由器数的最大值。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Protocol</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">8比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 "><p>协议：下一层协议。指出此数据包携带的数据使用何种协议，以便目的主机的IP层将数据部分上交给哪个进程处理。</p>
+</td>
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Header Checksum</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">首部检验和，只检验数据包的首部，不检验数据部分。这里不采用CRC检验码，而采用简单的计算方法。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Source Address</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">32比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">源IP地址。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Destination Address</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">32比特</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">目的IP地址。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Options</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">选项字段，用来支持排错，测量以及安全等措施，内容丰富（请参见下表）。选项字段长度可变，从1字节到40字节不等，取决于所选项的功能。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.1 ">Padding</td>
+
+<td class="cellrowborder" valign="top" width="12%" headers="mcps1.2.1.3.2.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="75.99999999999999%" headers="mcps1.2.1.3.2.4.1.3 ">填充字段，全填0。</td>
+
+</tr>
+
+</tbody>
+
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org824adbb" class="outline-3">
+<h3 id="org824adbb"><span class="section-number-3">1.3</span> TCP</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<div class="figure">
+<p><img src="image/segmentation-offloads/tcp-format.png" alt="tcp-format.png" />
+</p>
+</div>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" frame="border" border="1" rules="all">
+<thead align="left">
+<tr>
+<th class="cellrowborder" valign="top" width="15.050167224080266%" id="mcps1.2.1.3.1.4.1.1">字段</th>
+
+<th class="cellrowborder" valign="top" width="18.06020066889632%" id="mcps1.2.1.3.1.4.1.2">长度</th>
+
+<th class="cellrowborder" valign="top" width="66.88963210702342%" id="mcps1.2.1.3.1.4.1.3">含义</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Source Port</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">源端口，标识哪个应用程序发送。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Destination Port</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">目的端口，标识哪个应用程序接收。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Sequence Number</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">32比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">序号字段。TCP链接中传输的数据流中每个字节都编上一个序号。序号字段的值指的是本报文段所发送的数据的第一个字节的序号。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Acknowledgment Number</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">32比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">确认号，是期望收到对方的下一个报文段的数据的第1个字节的序号，即上次已成功接收到的数据字节序号加1。只有ACK标识为1，此字段有效。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Data Offset</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">4比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">数据偏移，即首部长度，指出TCP报文段的数据起始处距离TCP报文段的起始处有多远，以32比特（4字节）为计算单位。最多有60字节的首部，若无选项字段，正常为20字节。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Reserved</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">6比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">保留，必须填0。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">URG</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">紧急指针有效标识。它告诉系统此报文段中有紧急数据，应尽快传送（相当于高优先级的数据）。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">ACK</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">确认序号有效标识。只有当ACK=1时确认号字段才有效。当ACK=0时，确认号无效。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">PSH</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">标识接收方应该尽快将这个报文段交给应用层。接收到PSH = 1的TCP报文段，应尽快的交付接收应用进程，而不再等待整个缓存都填满了后再向上交付。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">RST</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">重建连接标识。当RST=1时，表明TCP连接中出现严重错误（如由于主机崩溃或其他原因），必须释放连接，然后再重新建立连接。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">SYN</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">同步序号标识，用来发起一个连接。SYN=1表示这是一个连接请求或连接接受请求。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">FIN</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">1比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">发端完成发送任务标识。用来释放一个连接。FIN=1表明此报文段的发送端的数据已经发送完毕，并要求释放连接。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Window</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">窗口：TCP的流量控制，窗口起始于确认序号字段指明的值，这个值是接收端正期望接收的字节数。窗口最大为65535字节。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Checksum</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">校验字段，包括TCP首部和TCP数据，是一个强制性的字段，一定是由发端计算和存储，并由收端进行验证。在计算检验和时，要在TCP报文段的前面加上12字节的伪首部。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Urgent Pointer</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">16比特</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">紧急指针，只有当URG标志置1时紧急指针才有效。TCP的紧急方式是发送端向另一端发送紧急数据的一种方式。紧急指针指出在本报文段中紧急数据共有多少个字节（紧急数据放在本报文段数据的最前面）。</td>
+
+</tr>
+
+<tr>
+
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Options</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">选项字段。TCP协议最初只规定了一种选项，即最长报文段长度（数据字段加上TCP首部），又称为MSS。MSS告诉对方TCP“我的缓存所能接收的报文段的数据字段的最大长度是MSS个字节”。<p>新的RFC规定有以下几种选型：选项表结束，无操作，最大报文段长度，窗口扩大因子，时间戳。</p>
+<ul><li>窗口扩大因子：3字节，其中一个字节表示偏移值S。新的窗口值等于TCP首部中的窗口位数增大到（16+S），相当于把窗口值向左移动S位后获得实际的窗口大小。</li><li>时间戳：10字节，其中最主要的字段是时间戳值（4字节）和时间戳回送应答字段（4字节）。</li><li>选项确认选项：</li></ul>
+</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">Padding</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">填充字段，用来补位，使整个首部长度是4字节的整数倍。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.050167224080266%" headers="mcps1.2.1.3.1.4.1.1 ">data</td>
+
+<td class="cellrowborder" valign="top" width="18.06020066889632%" headers="mcps1.2.1.3.1.4.1.2 ">可变</td>
+
+<td class="cellrowborder" valign="top" width="66.88963210702342%" headers="mcps1.2.1.3.1.4.1.3 ">TCP负载。</td>
+
+</tr>
+
+</tbody>
+
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1f2c7df" class="outline-3">
+<h3 id="org1f2c7df"><span class="section-number-3">1.4</span> UDP</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<div class="figure">
+<p><img src="image/segmentation-offloads/udp-format.png" alt="udp-format.png" />
+</p>
+</div>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" frame="border" border="1" rules="all">
+<thead align="left">
+<tr>
+<th class="cellrowborder" valign="top" width="15.254237288135593%" id="mcps1.2.1.3.1.4.1.1">字段</th>
+
+<th class="cellrowborder" valign="top" width="15.254237288135593%" id="mcps1.2.1.3.1.4.1.2">长度</th>
+
+<th class="cellrowborder" valign="top" width="69.49152542372882%" id="mcps1.2.1.3.1.4.1.3">描述</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+<tr>
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.1 ">Source Port</td>
+
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.2 ">2字节</td>
+
+<td class="cellrowborder" valign="top" width="69.49152542372882%" headers="mcps1.2.1.3.1.4.1.3 ">标识哪个应用程序发送（发送进程）。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.1 ">Destination  Port</td>
+
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.2 ">2字节</td>
+
+<td class="cellrowborder" valign="top" width="69.49152542372882%" headers="mcps1.2.1.3.1.4.1.3 ">标识哪个应用程序接收（接收进程）。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.1 ">Length</td>
+
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.2 ">2字节</td>
+
+<td class="cellrowborder" valign="top" width="69.49152542372882%" headers="mcps1.2.1.3.1.4.1.3 ">UDP首部加上UDP数据的字节数，最小为8。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.1 ">Checksum</td>
+
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.2 ">2字节</td>
+
+<td class="cellrowborder" valign="top" width="69.49152542372882%" headers="mcps1.2.1.3.1.4.1.3 ">覆盖UDP首部和UDP数据，是可选的。</td>
+
+</tr>
+
+<tr>
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.1 ">data octets</td>
+
+<td class="cellrowborder" valign="top" width="15.254237288135593%" headers="mcps1.2.1.3.1.4.1.2 ">变长</td>
+
+<td class="cellrowborder" valign="top" width="69.49152542372882%" headers="mcps1.2.1.3.1.4.1.3 ">UDP负载，可选的。</td>
+
+</tr>
+
+</tbody>
+
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd28fa7d" class="outline-2">
+<h2 id="orgd28fa7d"><span class="section-number-2">2</span> IP分片</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+如果IP数据报长度超出最大传输单元MTU，并且允许分片时，就需要进行IP分片处理。 以太网MTU为1500B，通常UDP协议发送的数据报容易导致IP分片，而TCP协议通常不会产生分片。
+</p>
+
+<p>
+一个传输层数据包在IP分片后，如果在传输过程中，一个或者若干个IP分片丢失，会导致接收端无法进行分片重组，进而丢弃已接收的其他分片，而发送端则需要重新发送整个数包。
+</p>
+
+<p>
+TCP在发送应用层数据时，会将数据按照MSS进行拆分，以避免IP分片。
+</p>
+
+<p>
+UDP要避免IP分片，则一般需要在应用层进行控制，每次发送的数据包不超过 MTU-sizeof(udp header)-sizeof(ip header)，在以太网中则为  1500-20-8=1472 （不包含IP选项）。
+</p>
+
+<p>
+IP数据报分片后，独立选择路由，在所有分片达到目的主机后，目的主机IP层会先将其组装为完整的IP数据报，再交给传输层处理。
+</p>
+
+<p>
+分片过程需要将网络层的有效负载根据MTU分为一个一个的片段，对每个分片设置IP首部，更新IP校验和。
+</p>
+
+
+<p>
+现在假设有一个payload长度为4452字节的UDP数据包：
+</p>
+
+
+<div class="figure">
+<p><img src="./ditaa/segmentation-offloads/ip-frag.png" alt="ip-frag.png" />
+</p>
+</div>
+
+
+<ul class="org-ul">
+<li>分片格式</li>
+</ul>
+
+<div class="figure">
+<p><img src="image/segmentation-offloads/udp-fragmented.png" alt="udp-fragmented.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org288baaa" class="outline-2">
+<h2 id="org288baaa"><span class="section-number-2">3</span> TCP分段卸载 TSO</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+当网络设备支持TSO时，可以将TCP的单个帧分割为多个帧，数据的payload大小通过 skb_shinfo(skb)-&gt;gso_size 来指定。
+</p>
+
+<p>
+网卡开启TSO之后，TCP的发送方将数据拆分为MSS整数倍大小的数据块，然后将大块的数据分段直接交给网络设备处理，这种情况下，操作系统需要创建和处理的数据包数量更少，性能会有较大的提高。
+</p>
+</div>
+
+
+<div id="outline-container-orgff6bf12" class="outline-3">
+<h3 id="orgff6bf12"><span class="section-number-3">3.1</span> TCP数据段的发送</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+首先大概了解一下TCP数据的发送过程，tcp的传输层发送接口是 tcp_sendmsg() 函数。
+</p>
+</div>
+
+<div id="outline-container-org9afa033" class="outline-4">
+<h4 id="org9afa033"><span class="section-number-4">3.1.1</span> 文件描述符关联到传输控制块</h4>
+<div class="outline-text-4" id="text-3-1-1">
+
+<div class="figure">
+<p><img src="ditaa/segmentation-offloads/socket.png" alt="socket.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> <span style="color: #FF8C00;">tcp_prot</span> = {
+        .name                   = <span style="color: #CDC673;">"TCP"</span>,
+        .owner                  = THIS_MODULE,
+        .close                  = tcp_close,
+        .pre_connect            = tcp_v4_pre_connect,
+        .connect                  = tcp_v4_connect,
+        .disconnect             = tcp_disconnect,
+        .accept                 = inet_csk_accept,
+        .ioctl                  = tcp_ioctl,
+        .init                   = tcp_v4_init_sock,
+        .destroy                  = tcp_v4_destroy_sock,
+        .shutdown                 = tcp_shutdown,
+        .setsockopt             = tcp_setsockopt,
+        .getsockopt             = tcp_getsockopt,
+        .bpf_bypass_getsockopt  = tcp_bpf_bypass_getsockopt,
+        .keepalive              = tcp_set_keepalive,
+        .recvmsg                  = tcp_recvmsg,
+        .sendmsg                  = tcp_sendmsg,
+        .sendpage                 = tcp_sendpage,
+        .backlog_rcv            = tcp_v4_do_rcv,
+        .release_cb             = tcp_release_cb,
+        .hash                   = inet_hash,
+        .unhash                 = inet_unhash,
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc690b50" class="outline-4">
+<h4 id="orgc690b50"><span class="section-number-4">3.1.2</span> 系统调用过程</h4>
+<div class="outline-text-4" id="text-3-1-2">
+
+<div class="figure">
+<p><img src="ditaa/segmentation-offloads/tcp-sendmsg-call.png" alt="tcp-sendmsg-call.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9e62f80" class="outline-4">
+<h4 id="org9e62f80"><span class="section-number-4">3.1.3</span> 发送过程</h4>
+<div class="outline-text-4" id="text-3-1-3">
+
+<div class="figure">
+<p><img src="ditaa/segmentation-offloads/skb-list.png" alt="skb-list.png" />
+</p>
+</div>
+
+
+<p>
+发送过程：
+</p>
+<ul class="org-ul">
+<li>获取可以发送到网卡的最大段长度;</li>
+<li>查看发送队列的最后一个SKB是否有有空间，有则继续填充数据。</li>
+<li>如果没有空间，则分配新的SKB，并拷贝用户空间数据到SKB。</li>
+<li>传输层和网络层的首部、选项、校验和等的处理。</li>
+<li>在提交给网络设备之前判断是否需要进行软分段，需要则进行软分段。</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga613ec7" class="outline-3">
+<h3 id="orga613ec7"><span class="section-number-3">3.2</span> 未启用TSO</h3>
+<div class="outline-text-3" id="text-3-2">
+<ul class="org-ul">
+<li>数据发送过程</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="ditaa/segmentation-offloads/tso-off-sending.png" alt="tso-off-sending.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga119883" class="outline-3">
+<h3 id="orga119883"><span class="section-number-3">3.3</span> 启用TSO</h3>
+<div class="outline-text-3" id="text-3-3">
+<ul class="org-ul">
+<li>数据发送过程</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="ditaa/segmentation-offloads/tso-on-sending.png" alt="tso-on-sending.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9f0f1bc" class="outline-3">
+<h3 id="org9f0f1bc"><span class="section-number-3">3.4</span> 验证</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+利用 bpftrace 跟踪发送到网卡的SKB长度，下面的例子是访问一个2GB的文件时，统计发送的SKB长度区间。由于使用的虚拟机，其虚拟网卡（virtio_netdev）的发送接口使用的 start_xmit 函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bpftrace">#<span style="color: #CDC673; font-weight: bold;">!</span> /usr/bin/bpftrace
+
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;linux/skbuff.h&gt;</span>
+
+<span style="color: #AF87FF;">BEGIN</span>
+{
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;start_xmit&#21457;&#36865;&#30340;SKB&#38271;&#24230;&#22823;&#23567;&#65292;Ctrl-C&#32467;&#26463;.\n"</span>);
+}
+
+<span style="color: #AF87FF;">kprobe</span>:start_xmit
+{
+        <span style="color: #FF8C00;">$skb</span> = ((<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *)<span style="color: #FF1493;">arg0</span>);
+        <span style="color: #FF8C00;">@skb_len</span> = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$skb</span>-&gt;len);
+}
+</pre>
+</div>
+
+<p>
+关闭tso时，MSS为1460，所以发送的SKB长度应当在 1024 ～ 2048 之间。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo ./start_xmit.bt
+Attaching 2 probes...
+&#36319;&#36394;start_xmit&#21457;&#36865;&#30340;SKB&#38271;&#24230;&#22823;&#23567;&#65292;Ctrl-C&#32467;&#26463;.
+^C
+
+@skb_len:
+[64, 128)              7 |                                                    |
+[128, 256)             4 |                                                    |
+[256, 512)           983 |                                                    |
+[512, 1K)            258 |                                                    |
+[1K, 2K)         1482805 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+</pre>
+</div>
+
+<p>
+开启tso时，最大可以发送 65535 - ip头长度 - tcp头长度，所以SKB长度会在 32K ～ 64K 之间。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">sudo ./start_xmit.bt
+Attaching 2 probes...
+&#36319;&#36394;start_xmit&#21457;&#36865;&#30340;SKB&#38271;&#24230;&#22823;&#23567;&#65292;Ctrl-C&#32467;&#26463;.
+^C
+
+@skb_len:
+[64, 128)              3 |                                                    |
+[128, 256)             1 |                                                    |
+[256, 512)             0 |                                                    |
+[512, 1K)              0 |                                                    |
+[1K, 2K)               4 |                                                    |
+[2K, 4K)               1 |                                                    |
+[4K, 8K)               9 |                                                    |
+[8K, 16K)             11 |                                                    |
+[16K, 32K)            31 |                                                    |
+[32K, 64K)         32950 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge26334a" class="outline-3">
+<h3 id="orge26334a"><span class="section-number-3">3.5</span> 如何配置tso</h3>
+<div class="outline-text-3" id="text-3-5">
+<ul class="org-ul">
+<li>查看网卡特性</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">$ ethtool -k eth0
+
+Features for eth0:
+rx-checksumming: on
+tx-checksumming: on
+        tx-checksum-ipv4: off [fixed]
+        tx-checksum-ip-generic: on
+        tx-checksum-ipv6: off [fixed]
+        tx-checksum-fcoe-crc: on [fixed]
+        tx-checksum-sctp: on
+scatter-gather: on
+        tx-scatter-gather: on
+        tx-scatter-gather-fraglist: off [fixed]
+tcp-segmentation-offload: on
+        tx-tcp-segmentation: on
+        tx-tcp-ecn-segmentation: off [fixed]
+        tx-tcp-mangleid-segmentation: on
+        tx-tcp6-segmentation: on
+udp-fragmentation-offload: off [fixed]
+generic-segmentation-offload: off
+generic-receive-offload: on
+......
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>开启/关闭 TSO</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">$ ethtool -K eth0 tso on/off
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5297f26" class="outline-2">
+<h2 id="org5297f26"><span class="section-number-2">4</span> UDP分片卸载 UFO</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+UDP分片卸载允许设备将过大的UDP数据报拆分为多个IPv4分片。 单个IPv4数据报被分片后，具有相同的 ID。
+</p>
+
+<p>
+现在UFO已经弃用，现代内核已经不再生成UFO数据包。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgeee1dc7" class="outline-2">
+<h2 id="orgeee1dc7"><span class="section-number-2">5</span> 通用分段卸载 GSO</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+GSO是一个纯软件实现的分段卸载，用于不支持硬件分段卸载的情况。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ ethtool -k eth0 gso on/off
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8c2caba" class="outline-3">
+<h3 id="org8c2caba"><span class="section-number-3">5.1</span> TCP GSO</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+和TSO功能相同，只是用软件的形式来实现TSO功能。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org302a1e0" class="outline-3">
+<h3 id="org302a1e0"><span class="section-number-3">5.2</span> UDP GSO</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+UDP的GSO功能需要应用层配合使用，应用层首先需要通过 <b>setsockopt()</b> 接口设置分段大小，设置分段的选项为 <b>UDP_SEGMENT</b> ：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">val</span> = segment_len;
+<span style="color: #87D700;">setsockopt</span>(fdt, SOL_UDP, UDP_SEGMENT, &amp;val, <span style="color: #FF1493;">sizeof</span>(val));
+</pre>
+</div>
+
+
+<p>
+也可以通过 <b>struct cmsghdr</b> 消息来指定分段的大小：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">{
+        <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">control</span>[CMSG_SPACE(<span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">uint16_t</span>))] = {0};
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #FF8C00;">msg</span> = {0};
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> <span style="color: #FF8C00;">iov</span> = {0};
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cmsghdr</span> *<span style="color: #FF8C00;">cm</span>;
+
+        iov.iov_base = buf;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#24453;&#21457;&#36865;&#30340;&#25968;&#25454;</span>
+        iov.iov_len = len;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#21457;&#36865;&#25968;&#25454;&#30340;&#38271;&#24230;</span>
+        msg.msg_iov = &amp;iov;
+        msg.msg_iovlen = 1;
+
+        msg.msg_name = addr;
+        msg.msg_namelen = alen;
+
+        msg.msg_control = control;
+        msg.msg_controllen = <span style="color: #FF1493;">sizeof</span>(control);
+
+        cm = CMSG_FIRSTHDR(&amp;msg);
+        cm-&gt;cmsg_level = SOL_UDP;
+        cm-&gt;cmsg_type = UDP_SEGMENT; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#25511;&#21046;&#28040;&#24687;&#31867;&#22411;&#65292;UDP_SEGMENT&#34920;&#31034;&#37197;&#32622;&#20998;&#27573;&#22823;&#23567;</span>
+        cm-&gt;cmsg_len = CMSG_LEN(<span style="color: #FF1493;">sizeof</span>(uint16_t)); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25511;&#21046;&#28040;&#24687;&#30340;&#20540;&#38271;&#24230;</span>
+        *((<span style="color: #5FD7FF;">uint16_t</span> *) CMSG_DATA(cm)) = gso_len;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#27573;&#22823;&#23567;</span>
+        sendmsg();  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;</span>
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org96e13c8" class="outline-4">
+<h4 id="org96e13c8"><span class="section-number-4">5.2.1</span> UDP和TCP的区别</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<p>
+为何TCP不需要应用层的参与，而UDP需要呢？
+</p>
+
+<p>
+UDP是无连接的，发送过程中，保证不了先后顺序，每个数据报只能通过udp header获取payload的长度，如果将不同长度的payload合并，那么在分段之后，原始payload的之间的边界就会丢失。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">
+&#25105;&#20204;&#20551;&#35774;MSS&#26159; 10bytes&#12290;
+
+1. &#29616;&#22312;&#26377;&#19977;&#20010;&#25968;&#25454;&#27573;a&#12289;b&#12289;c&#35201;&#21457;&#36865;&#65292;&#25968;&#25454;&#38271;&#24230;&#20998;&#21035;&#26159;7bytes&#12289;5bytes&#65292;10bytes&#65292;&#36890;&#24120;&#24773;&#20917;&#19979;&#65292;
+   &#25105;&#20204;&#20250;&#23545;&#19977;&#20010;&#25968;&#25454;&#27573;&#20998;&#21035;&#35843;&#29992;sendmsg&#21457;&#36865;&#65292;&#25110;&#32773;&#36890;&#36807;sendmmsg&#19968;&#27425;&#24615;&#21457;&#36865;&#12290;
+
+                 7          5         10
+              +-------+  +-----+  +----------+
+              |aaaaaaa|  |bbbbb|  |cccccccccc|
+              +-------+  +-----+  +----------+
+
+2. &#22914;&#26524;&#24212;&#29992;&#23618;&#19981;&#25351;&#23450;&#20998;&#27573;&#38271;&#24230;&#65292;&#30452;&#25509;&#23558;&#25968;&#25454;&#21512;&#24182;&#36827;&#34892;&#21457;&#36865;&#12290;&#21327;&#35758;&#26632;&#30452;&#25509;&#36827;&#34892;&#21512;&#24182;&#65292;&#21512;&#24182;&#21518;&#30340;&#25968;&#25454;&#22914;&#19979;&#65292;&#27492;&#26102;&#25968;&#25454;&#25253;&#36793;&#30028;&#24050;&#32463;&#20002;&#22833;&#12290;
+
+                          22
+              +-------+-----+----------+
+              |aaaaaaa|bbbbb|cccccccccc|
+              +-------+-----+----------+
+
+
+3. &#32463;&#36807;GSO&#20998;&#27573;&#21518;&#30340;&#25968;&#25454;&#25253;&#22914;&#19979;&#12290;
+
+                   10            10        2
+              +----------+  +----------+  +--+
+              |aaaaaaabbb|  |bbcccccccc|  |cc|
+              +----------+  +----------+  +--+
+
+
+4. &#20043;&#21518;&#36890;&#36807;&#32593;&#21345;&#20256;&#36755;&#65292;&#22312;&#32593;&#32476;&#19978;&#20256;&#36755;&#26102;&#65292;&#25968;&#25454;&#25253;&#30340;&#20808;&#21518;&#39034;&#24207;&#21487;&#33021;&#21457;&#29983;&#21464;&#21270;&#65292;&#20551;&#22914;&#25509;&#25910;&#21040;&#30340;&#25968;&#25454;&#25253;&#30340;&#39034;&#24207;&#22914;&#19979;&#12290;
+
+               2         10            10
+              +--+  +----------+  +----------+
+              |cc|  |bbcccccccc|  |aaaaaaabbb|
+              +--+  +----------+  +----------+
+
+5. &#22914;&#26524;&#36890;&#36807;GRO&#21512;&#24182;&#65292;&#21017;&#21464;&#20026;&#20197;&#19979;&#26684;&#24335;&#12290;
+
+                        22
+              +----------------------+
+              |ccbbccccccccaaaaaaabbb|
+              +----------------------+
+
+&#27492;&#26102;&#65292;&#25968;&#25454;&#26684;&#24335;&#24050;&#32463;&#23436;&#20840;&#21464;&#20102;&#12290;
+
+</pre>
+</div>
+
+
+<p>
+基于以上假设，我们知道，UDP不能自主进行分段，应用层必须指定分段大小，之后，按固定的分段大小对数据进行分段。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3d6a190" class="outline-4">
+<h4 id="org3d6a190"><span class="section-number-4">5.2.2</span> UDP分段过程</h4>
+<div class="outline-text-4" id="text-5-2-2">
+
+<div class="figure">
+<p><img src="plantuml/segmentation-offloads/udp-gso.png" alt="udp-gso.png" />
+</p>
+</div>
+
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>linux内核提交UDP GSO的commit</label><pre class="src src-fundamental">commit ee80d1ebe5ba7f4bd74959c873119175a4fc08d3
+Author: Willem de Bruijn <a href="mailto:willemb%40google.com">&lt;willemb@google.com&gt;</a>
+Date:   Thu Apr 26 13:42:16 2018 -0400
+
+    udp: add udp gso
+
+    Implement generic segmentation offload support for udp datagrams. A
+    follow-up patch adds support to the protocol stack to generate such
+    packets.
+
+    UDP GSO is not UFO. UFO fragments a single large datagram. GSO splits
+    a large payload into a number of discrete UDP datagrams.
+
+    The implementation adds a GSO type SKB_UDP_GSO_L4 to differentiate it
+    from UFO (SKB_UDP_GSO).
+
+    IPPROTO_UDPLITE is excluded, as that protocol has no gso handler
+    registered.
+
+    [ Export __udp_gso_segment for ipv6. -DaveM ]
+
+    Signed-off-by: Willem de Bruijn <a href="mailto:willemb%40google.com">&lt;willemb@google.com&gt;</a>
+    Signed-off-by: David S. Miller <a href="mailto:davem%40davemloft.net">&lt;davem@davemloft.net&gt;</a>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3ff6f67" class="outline-2">
+<h2 id="org3ff6f67"><span class="section-number-2">6</span> 通用接收卸载 GRO</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+GRO是用来将网卡收到的多个数据包合并为一个大的数据段，提升协议栈处理性能。
+</p>
+</div>
+
+<div id="outline-container-orgfa6f0bc" class="outline-3">
+<h3 id="orgfa6f0bc"><span class="section-number-3">6.1</span> 开启/关闭 GRO</h3>
+<div class="outline-text-3" id="text-6-1">
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">ethtool -k eth0 gro on/off</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5f23ce6" class="outline-3">
+<h3 id="org5f23ce6"><span class="section-number-3">6.2</span> TCP GRO</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+对于TCP来说，GRO选项开启后，就会进行数据的合并，无需应用层改动。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5b19aba" class="outline-3">
+<h3 id="org5b19aba"><span class="section-number-3">6.3</span> UDP GRO</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+UDP不能随意合并，由于数据报本身没有顺序，如果将不同大小的数据合并后，应用层无法得知原始数据报的内容，并且也无法区分合并前的数据报。 长度相同的udp段合并后，通过控制消息通知到应用层，告知分段大小及数量。
+</p>
+
+<p>
+UDP如果要使用GRO功能，需要通过配置socket的UDP_GRO选项来开启GRO功能。
+</p>
+
+<p>
+<i><code>udp拼接时，仅当udp包具有相同大小时，才会进行合并，并告诉应用层udp数据包的长度信息。</code></i>
+</p>
+</div>
+
+<div id="outline-container-orgbb9aa4a" class="outline-4">
+<h4 id="orgbb9aa4a"><span class="section-number-4">6.3.1</span> 原理说明</h4>
+<div class="outline-text-4" id="text-6-3-1">
+
+<div class="figure">
+<p><img src="plantuml/segmentation-offloads/call-statck.png" alt="call-statck.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4b3dc0b" class="outline-4">
+<h4 id="org4b3dc0b"><span class="section-number-4">6.3.2</span> 验证测试</h4>
+<div class="outline-text-4" id="text-6-3-2">
+<p>
+linux内核源码中附带了两个测试工具，用来测试udpgso性能。
+</p>
+<ul class="org-ul">
+<li>linux/tools/testing/selftests/net/udpgso_bench_rx.c</li>
+<li>linux/tools/testing/selftests/net/udpgso_bench_tx.c</li>
+</ul>
+
+<p>
+1 启动接收端
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ udpgso_bench_rx -p 6666 -S 1000 -G -4 -r  <span style="color: #8B8878;"># </span><span style="color: #8B8878;">&#31471;&#21475;6666 &#20998;&#27573;&#22823;&#23567;1000  ipv4</span>
+</pre>
+</div>
+
+<p>
+2 统计udp_gro_receive函数调用栈次数
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">stackcount-bpfcc 'udp_gro_receive'</span>
+Tracing 1 functions for <span style="color: #CDC673;">"udp_gro_receive"</span>... Hit Ctrl-C to end.
+
+</pre>
+</div>
+
+<p>
+3 启动发送端，指定数据大小20000，分段大小1000。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ udpgso_bench_tx -p 6666  -S 1000 -D 192.168.75.100 -4  -s 20000 -l1 -c -M 1
+</pre>
+</div>
+
+<p>
+4 停止第二步的调用栈统计。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">stackcount-bpfcc 'udp_gro_receive'</span>
+Tracing 1 functions for <span style="color: #CDC673;">"udp_gro_receive"</span>... Hit Ctrl-C to end.
+^C
+  b<span style="color: #CDC673;">'udp_gro_receive'</span>
+  b<span style="color: #CDC673;">'udp4_gro_receive'</span>
+  b<span style="color: #CDC673;">'inet_gro_receive'</span>
+  b<span style="color: #CDC673;">'dev_gro_receive'</span>
+  b<span style="color: #CDC673;">'napi_gro_receive'</span>
+  b<span style="color: #CDC673;">'virtnet_poll'</span>
+  b<span style="color: #CDC673;">'net_rx_action'</span>
+  b<span style="color: #CDC673;">'__softirqentry_text_start'</span>
+  b<span style="color: #CDC673;">'asm_call_on_stack'</span>
+  b<span style="color: #CDC673;">'do_softirq_own_stack'</span>
+  b<span style="color: #CDC673;">'irq_exit_rcu'</span>
+  b<span style="color: #CDC673;">'common_interrupt'</span>
+  b<span style="color: #CDC673;">'asm_common_interrupt'</span>
+  b<span style="color: #CDC673;">'native_safe_halt'</span>
+  b<span style="color: #CDC673;">'default_idle'</span>
+  b<span style="color: #CDC673;">'default_idle_call'</span>
+  b<span style="color: #CDC673;">'do_idle'</span>
+  b<span style="color: #CDC673;">'cpu_startup_entry'</span>
+  b<span style="color: #CDC673;">'secondary_startup_64_no_verify'</span>
+    20  <span style="color: #8B8878;"># </span><span style="color: #8B8878;">&#34920;&#31034;&#35813;&#35843;&#29992;&#26632;&#25191;&#34892;&#20102;20&#27425;</span>
+
+Detaching...
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc36a47a" class="outline-4">
+<h4 id="orgc36a47a"><span class="section-number-4">6.3.3</span> 代码示例</h4>
+<div class="outline-text-4" id="text-6-3-3">
+<ul class="org-ul">
+<li>开启GRO选项</li>
+</ul>
+
+<p>
+首先需要通过setsockopt系统调用，打开该套接字的 UDP_GRO 特性。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">val</span> = 1;
+<span style="color: #87D700;">setsockopt</span>(fd, IPPROTO_UDP, UDP_GRO, &amp;val, <span style="color: #FF1493;">sizeof</span>(val))
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li>GRO的数据接收处理</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">recv_msg</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">buf</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">gso_size</span>)
+{
+        <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">control</span>[CMSG_SPACE(<span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">uint16_t</span>))] = {0};
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #FF8C00;">msg</span> = {0};
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> <span style="color: #FF8C00;">iov</span> = {0};
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cmsghdr</span> *<span style="color: #FF8C00;">cmsg</span>;
+        <span style="color: #5FD7FF;">uint16_t</span> *<span style="color: #FF8C00;">gsosizeptr</span>;
+        <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ret</span>;
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#25509;&#25910;&#25968;&#25454;&#32531;&#20914;&#21306;&#21644;&#38271;&#24230;</span>
+        iov.iov_base = buf;
+        iov.iov_len = len;
+
+        msg.msg_iov = &amp;iov;
+        msg.msg_iovlen = 1;
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#29992;&#20110;&#25509;&#25910;&#25511;&#21046;&#28040;&#24687;&#30340;&#20869;&#23384;&#31354;&#38388;</span>
+        msg.msg_control = control;
+        msg.msg_controllen = <span style="color: #FF1493;">sizeof</span>(control);
+
+        *gso_size = -1;
+        ret = recvmsg(fd, &amp;msg, MSG_TRUNC | MSG_DONTWAIT);
+        <span style="color: #FF1493;">if</span> (ret != -1) {
+                <span style="color: #FF1493;">for</span> (cmsg = CMSG_FIRSTHDR(&amp;msg); cmsg != <span style="color: #AF87FF;">NULL</span>;
+                     cmsg = CMSG_NXTHDR(&amp;msg, cmsg)) {
+                        <span style="color: #FF1493;">if</span> (cmsg-&gt;cmsg_level == SOL_UDP
+                            &amp;&amp; cmsg-&gt;cmsg_type == UDP_GRO) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#26597;&#26159;&#21542;&#26159;GRO&#21512;&#24182;&#21518;&#30340;&#25968;&#25454;&#21253;</span>
+                                gsosizeptr = (<span style="color: #5FD7FF;">uint16_t</span> *) CMSG_DATA(cmsg);
+                                *gso_size = *gsosizeptr;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#21512;&#24182;&#21069;&#30340;&#25968;&#25454;&#20998;&#27573;&#22823;&#23567;</span>
+                                <span style="color: #FF1493;">break</span>;
+                        }
+                }
+        }
+        <span style="color: #FF1493;">return</span> ret;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5417388" class="outline-4">
+<h4 id="org5417388"><span class="section-number-4">6.3.4</span> 抓包示例</h4>
+<div class="outline-text-4" id="text-6-3-4">
+<p>
+发送端发送数据包payload长度为20001，指定分段长度是1000，所以在收到数据包时，应当是 20(长度为1000)+1(长度为1)=21 个数据包。
+</p>
+
+
+<ul class="org-ul">
+<li>当关闭GRO时，数据包是原始数据包，没有进行合并。</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="image/segmentation-offloads/udp-gro-off.png" alt="udp-gro-off.png" />
+</p>
+<p><span class="figure-number">Figure 14: </span>UDP关闭GRO</p>
+</div>
+
+
+<ul class="org-ul">
+<li>开启GRO时，数据包被合并。</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="image/segmentation-offloads/udp-gro.png" alt="udp-gro.png" />
+</p>
+<p><span class="figure-number">Figure 15: </span>UDP开启GRO</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-07-30 Sat 12:59</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

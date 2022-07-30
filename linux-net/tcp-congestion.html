@@ -1,0 +1,2221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-04-25 Mon 22:45 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TCP拥塞控制实现</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">TCP拥塞控制实现</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgf5c5b1d">1. 拥塞控制引擎</a></li>
+<li><a href="#org6036873">2. 拥塞控制状态机</a>
+<ul>
+<li><a href="#org2d8cff6">2.1. Open状态</a></li>
+<li><a href="#orgb809b48">2.2. Disorder状态</a></li>
+<li><a href="#org210f455">2.3. CWR状态</a></li>
+<li><a href="#org90125b9">2.4. Recovery状态</a></li>
+<li><a href="#orgf8e8c6e">2.5. Loss状态</a></li>
+</ul>
+</li>
+<li><a href="#org37f01d3">3. 拥塞窗口调整撤销</a>
+<ul>
+<li><a href="#org4e1ef1f">3.1. 撤销拥塞窗口的检测</a></li>
+<li><a href="#orgf3f346d">3.2. tcp_undo_cwr()</a></li>
+<li><a href="#org520fd2a">3.3. 从Disorder拥塞状态撤销</a></li>
+<li><a href="#orge6b0bbe">3.4. 从Recovery状态撤销</a></li>
+<li><a href="#org23fe89d">3.5. 从Recovery拥塞状态撤销</a></li>
+<li><a href="#org6f8cb68">3.6. 从Loss拥塞状态撤销</a></li>
+</ul>
+</li>
+<li><a href="#org048ea29">4. 显式拥塞通知</a>
+<ul>
+<li><a href="#orgabf1ca7">4.1. IP对ECN的支持</a></li>
+<li><a href="#org5d00af5">4.2. TCP对ECN的支持</a></li>
+</ul>
+</li>
+<li><a href="#org8c9c0dd">5. 拥塞控制状态的处理及转换</a>
+<ul>
+<li><a href="#org05e85ca">5.1. 拥塞控制状态的处理：tcp_fastretrans_alert()</a>
+<ul>
+<li><a href="#orga218aec">5.1.1. tcp_check_sack_reneging()</a></li>
+<li><a href="#org4b6253f">5.1.2. tcp_mark_head_lost()</a></li>
+<li><a href="#org3431447">5.1.3. tcp_sync_left_out()</a></li>
+<li><a href="#org5f4943d">5.1.4. tcp_moderate_cwnd()</a></li>
+<li><a href="#org1d5a93f">5.1.5. tcp_complete_cwr()</a></li>
+<li><a href="#orgf7b1824">5.1.6. tcp_time_to_recover()</a></li>
+<li><a href="#org5355e97">5.1.7. tcp_update_scoreboard()</a></li>
+</ul>
+</li>
+<li><a href="#org5470b60">5.2. 拥塞避免</a></li>
+</ul>
+</li>
+<li><a href="#orgbb34cc2">6. 拥塞窗口的检测：tcp_cwnd_test()</a></li>
+<li><a href="#org8716f94">7. F-RTO算法</a>
+<ul>
+<li><a href="#org66ba2f6">7.1. 进入F-RTO算法处理阶段</a>
+<ul>
+<li><a href="#orgc48fd87">7.1.1. 判断是否可以使用F-RTO算法进行处理</a></li>
+<li><a href="#org392b758">7.1.2. 确定是否可以使用F-RTO算法进行发送超时处理：tcp_use_frto()</a></li>
+<li><a href="#org61c16c1">7.1.3. tcp_enter_frto()</a></li>
+</ul>
+</li>
+<li><a href="#org06978bb">7.2. 进行F-RTO算法的处理</a>
+<ul>
+<li><a href="#orgaea3c1c">7.2.1. tcp_process_frto()</a></li>
+<li><a href="#org53d13fa">7.2.2. tcp_enter_frto_loss()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org83eaf58">8. 拥塞窗口的检验</a>
+<ul>
+<li><a href="#org175b4da">8.1. tcp_event_data_sent()</a></li>
+<li><a href="#orgd4ed2a6">8.2. tcp_cwnd_validate()</a>
+<ul>
+<li><a href="#orgc57b8b3">8.2.1. tcp_cwnd_application_limited()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org3d35bab">9. 支持多拥塞控制算法的机制</a>
+<ul>
+<li><a href="#org95e7e86">9.1. 接口</a></li>
+<li><a href="#org2f0d289">9.2. 注册拥塞控制算法：tcp_register_congestion_control()</a></li>
+<li><a href="#org5af7c02">9.3. 注销拥塞控制算法：tcp_unregister_congestion_control()</a></li>
+<li><a href="#org9139e7c">9.4. 选取某种拥塞控制算法：tcp_set_congestion_control()</a></li>
+<li><a href="#orge1349c0">9.5. Linux支持的拥塞控制算法</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgf5c5b1d" class="outline-2">
+<h2 id="orgf5c5b1d"><span class="section-number-2">1</span> 拥塞控制引擎</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Linux符合TCP拥塞控制的规范，但是在实现时采用了不同的方法。
+</p>
+
+<p>
+Linux通过比较拥塞窗口以及SND.NXT和SND.UNA的差值来确定但前有多少仍在网络中传输并且没有被确认的段。 然后通过比较拥塞窗口和这些传输中的段数量，来确定可以发送多少段。 Linux跟踪这些传输中的满负荷（full-sized）的段数量，而在TCP规范和其他实现中是比较cwnd和一传输字节数。如果发送小片的段，这两种不同实现的结果是：如果是以字节为单位的拥塞窗口，它在拥塞窗口中的每个满负荷的段允许多个小TCP段被发送到网络中。但另一方面，Linux在拥塞窗口中的每个段只允许发送一个包，不考虑包的大小。因此，对于多个小片段构成的有效载荷，Linux采用的方法与以字节为单位的方法相比是比较保守的。
+</p>
+
+<p>
+Linux的TCP发送方支持以NewReno恢复和SACK恢复这两种算法来确定正在传送段的数目是，使用同一组概念和函数。 使用SACK选项时，发送方既可以遵循提前确认（FACK）方法，把SACK块之间的空隙最为丢失段，也可以根据IETF[3]对目前的工作采取较保守的相似做法。后一种选择中，为确认的段被认为是正在网络中传输。作为所有恢复方法的基础。Linux的TCP都使用如下公式来确定正在网络中传输的段数：
+</p>
+<ul class="org-ul">
+<li>left_out &lt;= sacked_out + lost_out</li>
+<li>in_flight &lt;= packets_out - left_out + retrans_out</li>
+</ul>
+<p>
+在上述公式中，packets_out是SND.UNA之后最初被传输段的序号，sacked_out是SACK选项确认的段数，lost_out是网络中丢失段数的估值，retrans_out是重传的段数。 一般根据选择恢复方法来确定丢失的段数，例如，当FACK使用时，认为最后的SACK块和最后已确认段之间的未确认段已丢失。
+</p>
+
+<p>
+在没有启用SACK选项时，TCP依靠每个接收到的DACK对sacked_out进行累计。这和TCP拥塞控制规范一致，其结果表现类似于向前传输的NewReno算法。Linux选择的设计不要求任意调节拥塞窗口，而cwnd保存在快速恢复过程中，表示允许网络中传送的段数目的有效值。
+</p>
+
+<p>
+用以追踪正在传输、已确认、丢失或者重传包数目的计数器，需要一些附加数据结构。Linux发送方在记分牌中保存每个正在发送段的状态，在此标记段的已知状态。段可以被标记为正在传送、已确认、已重传或者丢失。也有可能是这些状态的组合（例如已丢失++重传，这种情况下发送方希望得到一个重传的确认）。使用该信息，Linux发送方知道哪些段需要重传，当一个新确认到达时怎样调节用以确定正在传送的计数器。记分牌在确定一个段是否已经被错误的假设为丢失时也扮演着重要角色，例如因为包的重排序。
+</p>
+
+<p>
+记分牌标记和用于确定正在传送变量的计数器必须在任何时间都处于一致状态。
+</p>
+
+<p>
+NewReno恢复中，当发送方进入快速恢复，第一个未确认的段被标记为丢失，这符合IETF拥塞控制规范的快速重传。更进一步，当局部ACK不是确认在快速恢复开始时到达的所有数据时，第一个未确认的段被标记为丢失，这导致下一个未确认段的重传。？？？？
+</p>
+
+<p>
+当启用SACK时，可能同时有超过一个段被标记为丢失。使用保守方法，TCP发送方不把已被确认的数据块之间的空隙计入丢失，但如果启用了FACK，则SACK数据块之间的空隙会被发送方标记为丢失，并是适时调整丢失计数器。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org6036873" class="outline-2">
+<h2 id="org6036873"><span class="section-number-2">2</span> 拥塞控制状态机</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+当确认到达时，TCP发送发由一种确定发送方行为的状态机来管理。拥塞控制状态机如下图：
+</p>
+
+
+<div class="figure">
+<p><img src="image/tcp-congestion/congestion-sm.png" alt="congestion-sm.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>拥塞控制状态机</p>
+</div>
+
+<p>
+TCP在下面所提到的任何一个状态中，都避免现实调用传输一个包，例如，关于快速重传。当前的拥塞控制状态决定如何调节拥塞窗口、发送方是否将未确认数据段认作丢失。根据当前所处的状态处理完一个新到的确认后，正在传送的数据小于cwnd时，TCP发送方可以传送数据段。发送方重传先前标记为丢失且还未重传的数据段，如果没有丢失段等待重传则发送新的数据段。
+</p>
+
+<p>
+有时会出现正在发送的包数量突然减少几个段的情况。例如，一个重传段以及其后继向前传输可能以单个累计ACK来确认。这些情况可能导致网络中传输数据的突增，除非考虑了TCP发送方的执行。TCP发送方限制拥塞窗口来避免这种突增，允许一个新到ACK最多发送三个段。以为突增避免或许会使拥塞窗口减小到低于慢启动阈值，几个段被一个ACK确认后，发送方可能进入慢启动。
+</p>
+
+<p>
+当一个TCP建立连接后，许多TCP变量需要初始化为固定值。然而，为了在连接一开始提高通信效率，TCP发送方的慢启动阈值保存在它的目的路由缓存中，用于估计RTO。如果在该目的的路由缓存中发现另一个到相同目标IP地址的连接已经建立，那么该缓存值可以用来为新的TCP连接获取适当的初始值。如果发送方和接收端之间的网络条件由于某种原因发生改变，目的路由缓存中的值会立即过期并老化。
+</p>
+</div>
+
+
+<div id="outline-container-org2d8cff6" class="outline-3">
+<h3 id="org2d8cff6"><span class="section-number-3">2.1</span> Open状态</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Open状态是常态，在这种情况下TCP发送方通过优化后的快速路径来处理接收ACK。当一个确认到达时，发送方根据拥塞窗口是小于还是大于慢启动阈值，按慢启动或者拥塞避免来增大拥塞窗口。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb809b48" class="outline-3">
+<h3 id="orgb809b48"><span class="section-number-3">2.2</span> Disorder状态</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+当发送方检测到DACK（重复确认）或者SACK（选择性确认）时，将转变为Disorder（无序）状态。在该状态下拥塞窗口不做调整，而是每个新到的段出发一个新数据段的发送。因此，TCP发送方遵循包守恒原则，该原则规定一个新包只有在一个老的包离开网络后才发送。在实践中该规定的表现类似与IETF的传输提议，允许当拥塞窗口较小或是上个传输窗口中有大量的数据段丢失时，使用快速重传以更有效的恢复。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org210f455" class="outline-3">
+<h3 id="org210f455"><span class="section-number-3">2.3</span> CWR状态</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+TCP发送方可能从显式拥塞通知、ICMP源端抑制（ICMP source quench）或是本地设备接收到拥塞通知。当接收到一个拥塞通知时，发送方并不立刻减小拥塞窗口，而是每隔一个新到的ACK减小一个段知道窗口的大小减半为止。发送方在减小拥塞窗口大小的过程中不会有明显的重传，这就处于CWR（拥塞窗口减小）状态。CWR状态可以被下面提到的Recovery或者Loss状态中断。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Set slow start threshold and cwnd not falling to slow start</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_enter_cwr</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;CWR&#21518;&#19981;&#38656;&#35201;&#25317;&#22622;&#31383;&#21475;&#25764;&#38144;&#20102;&#65292;&#22240;&#27492;&#38656;&#35201;&#28165;&#38500;&#25317;&#22622;&#25511;&#21046;&#30340;&#24930;&#21551;&#21160;&#38408;&#20540;&#30340;&#26087;&#20540;&#12290;</span>
+	tp-&gt;prior_ssthresh = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;CWR&#21644;Disorder&#21518;&#65292;&#19981;&#38656;&#35201;&#32047;&#35745;bytes_acked&#20102;</span>
+	tp-&gt;bytes_acked = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;Open&#25110;Disorder&#29366;&#24577;&#25165;&#33021;&#36801;&#31227;&#21040;CWR&#29366;&#24577;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (inet_csk(sk)-&gt;icsk_ca_state &lt; TCP_CA_CWR) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;CWR&#29366;&#24577;&#21518;&#19981;&#20801;&#35768;&#20877;&#36827;&#34892;&#25317;&#22622;&#31383;&#21475;&#25764;&#38144;&#20102;</span>
+		tp-&gt;undo_marker = 0;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#19981;&#21516;&#30340;&#25317;&#22622;&#31639;&#27861;&#37325;&#26032;&#35774;&#32622;&#25317;&#22622;&#24930;&#21551;&#21160;&#38408;&#20540;&#65292;&#21516;&#26102;&#24494;&#35843;&#25317;&#22622;&#31383;&#21475;&#22823;&#23567;&#24182;&#28165;&#38646;snd_cwnd_cnt</span>
+		tp-&gt;snd_ssthresh = inet_csk(sk)-&gt;icsk_ca_ops-&gt;ssthresh(sk);
+		tp-&gt;snd_cwnd = min(tp-&gt;snd_cwnd,
+				   tcp_packets_in_flight(tp) + 1U);
+		tp-&gt;snd_cwnd_cnt = 0;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#25317;&#22622;&#26102;&#30340;SND.NXT</span>
+		tp-&gt;high_seq = tp-&gt;snd_nxt;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#26368;&#21518;&#19968;&#27425;&#35843;&#25972;&#25317;&#22622;&#31383;&#21475;&#30340;&#26102;&#38388;</span>
+		tp-&gt;snd_cwnd_stamp = tcp_time_stamp;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;TCP_ECN_QUEUE_CWR&#26631;&#24535;&#65292;&#26631;&#35782;&#30001;&#20110;&#25910;&#21040;&#26174;&#24335;&#25317;&#22622;&#36890;&#30693;&#32780;&#36827;&#20837;&#25317;&#22622;&#29366;&#24577;</span>
+		TCP_ECN_queue_cwr(tp);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#24403;&#21069;&#25317;&#22622;&#29366;&#24577;&#20026;CWR</span>
+		tcp_set_ca_state(sk, TCP_CA_CWR);
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org90125b9" class="outline-3">
+<h3 id="org90125b9"><span class="section-number-3">2.4</span> Recovery状态</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+在足够多的连续重复ACK到达后，发送方重传第一个没有被确认的段，进入Recovery（恢复）状态。默认情况下，进入Recovery状态的条件是三个连续的重复ACK，TCP拥塞控制规范也是这么推荐的。在Recovery状态期间，拥塞窗口的大小每隔一个新到的确认减少一个段，和CWR状态类似。这种窗口减小过程终止于拥塞窗口大小等于ssthresh，即进入Recovery状态时窗口大小的一半。拥塞窗口在恢复状态期间 <b>不会增大</b> ，发送方重传那些被标记为丢失的段，或者根据包守恒原则在新数据上标记向前传输。发送方保持Recovery状态直到所有进入Recovery状态时正在发送的数据段都成功的被确认，之后该发送方恢复Open状态。重传超时有可能中断Recovery状态。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf8e8c6e" class="outline-3">
+<h3 id="orgf8e8c6e"><span class="section-number-3">2.5</span> Loss状态</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+当一个RTO到期，发送方进入Loss状态。多有正在发送的数据段标记为丢失，拥塞窗口设置为一个段，发送方因此按慢启动算法增大拥塞窗口。Loss和Recovery状态的一个主要区别是：在Loss状态，拥塞窗口在发送方重置为一个段后增大，而Recovery状态下拥塞窗口只能被减小。Loss状态不能被其他的状态中断，因此，发送方只能在所有Loss开始时正在传输的数据都成功得到确认后，才能退到Open状态。例如，快速重传不能在Loss状态期间被触发，这个和NewReno规范一致。
+</p>
+
+<p>
+当一个RTO超时，或者接收到的ACK确认已经被先前的SACK确认过，则意味着我们记录的SACK信息不能反映接收方的实际状态，此时都会进入Loss状态，参见超时重传定时器例程和tcp_check_sack_reneging()。
+</p>
+
+<p>
+调用tcp_enter_loss()会进入Loss状态。其中参数how如果不为0，则在设置丢失标志时会清除重传段的SACK标志，否则会保持SACK标志。并且可以通过判断ACK是否确认了先前已经被SACK确认的段检测，检测接收方是否删除了保存到失序队列中的段。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Enter Loss state. If "how" is not zero, forget all SACK information</span>
+<span style="color: #8B8878;"> * and reset tags completely, otherwise preserve SACKs. If receiver</span>
+<span style="color: #8B8878;"> * dropped its ofo queue, we will know this due to reneging detection.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_enter_loss</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>)
+{
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cnt</span> = 0;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Reduce ssthresh if it has not yet been made inside this window.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#21018;&#36827;&#20837;Loss&#29366;&#24577;&#65292;&#21017;&#38656;&#35201;&#35774;&#32622;&#21457;&#36865;&#25317;&#22622;&#31383;&#21475;&#30340;&#38408;&#20540;&#65292;&#21516;&#26102;&#22312;&#35774;&#32622;&#38408;&#20540;&#21069;&#20445;&#23384;&#24403;&#21069;&#30340;&#38408;&#20540;&#65292;</span>
+<span style="color: #8B8878;">        &#20197;&#20415;&#22312;&#25317;&#22622;&#31383;&#21475;&#35843;&#25972;&#25764;&#38144;&#26102;&#20351;&#29992;&#12290;&#20877;&#21457;&#36865;CA_EVENT_LOSS&#25317;&#22622;&#26102;&#38388;&#32473;&#20855;&#20307;&#25317;&#22622;&#31639;&#27861;&#27169;&#22359;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state &lt;= TCP_CA_Disorder || tp-&gt;snd_una == tp-&gt;high_seq ||
+	    (icsk-&gt;icsk_ca_state == TCP_CA_Loss &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>icsk-&gt;icsk_retransmits)) {
+		tp-&gt;prior_ssthresh = tcp_current_ssthresh(sk);
+		tp-&gt;snd_ssthresh = icsk-&gt;icsk_ca_ops-&gt;ssthresh(sk);
+		tcp_ca_event(sk, CA_EVENT_LOSS);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;Loss&#29366;&#24577;&#65292;&#23558;&#25317;&#22622;&#31383;&#21475;&#35774;&#32622;&#20026;1&#20010;&#27573;&#22823;&#23567;</span>
+	tp-&gt;snd_cwnd       = 1;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;&#20110;&#35843;&#25972;&#20102;&#25317;&#22622;&#31383;&#21475;&#22823;&#23567;&#65292;&#20063;&#38656;&#35201;&#23545;snd_cwnd_cnt&#36827;&#34892;&#28165;&#38646;&#65292;&#21516;&#26102;&#35760;&#24405;&#26368;&#21518;&#19968;&#27425;&#26816;&#39564;&#25317;&#22622;&#31383;&#21475;&#30340;&#26102;&#38388; snd_cwnd_stamp</span>
+	tp-&gt;snd_cwnd_cnt   = 0;
+	tp-&gt;snd_cwnd_stamp = tcp_time_stamp;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;&#20110;&#36827;&#20837;&#20102;Loss&#29366;&#24577;&#65292;&#23545;bytes_acked&#36827;&#34892;&#28165;&#38646;&#65292;&#21516;&#26102;&#38656;&#35201;&#23545;&#26377;&#20851;&#37325;&#20256;&#30340;&#21464;&#37327;&#36827;&#34892;&#28165;&#38646;&#12290;</span>
+	tp-&gt;bytes_acked = 0;
+	tcp_clear_retrans(tp);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Push undo marker, if it was plain RTO and nothing</span>
+<span style="color: #8B8878;">         * was retransmitted.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>how) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#19981;&#28165;&#26970;SACK&#26631;&#35760;&#65292;&#21017;&#38656;&#35201;&#35760;&#24405;SND.UMA&#65292;&#20197;&#20415;&#22312;&#21512;&#36866;&#30340;&#26102;&#20505;&#33021;&#22815;&#36827;&#34892;&#25317;&#22622;&#31383;&#21475;&#30340;&#35843;&#25972;&#25764;&#38144;&#25805;&#20316;&#12290;</span>
+		tp-&gt;undo_marker = tp-&gt;snd_una;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#21457;&#36865;&#38431;&#21015;</span>
+	sk_stream_for_retrans_queue(skb, sk) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#27573;&#20013;GSO&#20998;&#27573;&#30340;&#25968;&#37327;&#65292;&#29992;&#20110;&#32047;&#35745;fackets_out</span>
+		cnt += tcp_skb_pcount(skb);
+		<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#22914;&#26524;&#37325;&#20256;&#38431;&#21015;&#20013;&#27573;&#30340;&#35760;&#20998;&#29260;&#24050;&#32463;&#26377;&#37325;&#20256;&#26631;&#24535;&#65292;&#21017;&#28165;&#38500;&#25317;&#22622;&#31383;&#21475;&#35843;&#25972;&#25764;&#38144;&#26631;&#35760;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (TCP_SKB_CB(skb)-&gt;sacked&amp;TCPCB_RETRANS)
+			tp-&gt;undo_marker = 0;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#37325;&#20256;&#38431;&#21015;&#20013;&#27573;&#35760;&#20998;&#29260;&#21435;&#25481;&#37325;&#20256;&#21644;&#20002;&#22833;&#26631;&#35760;</span>
+		TCP_SKB_CB(skb)-&gt;sacked &amp;= (~TCPCB_TAGBITS)|TCPCB_SACKED_ACKED;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#37325;&#20256;&#38431;&#21015;&#20013;&#27573;&#35760;&#20998;&#29260;&#27809;&#26377;SACK&#26631;&#24535;&#25110;&#32773;&#38656;&#35201;&#28165;&#38500;SACK&#26631;&#24535;&#65292;&#21017;&#28165;&#38500;SACK&#26631;&#24535;&#30340;&#21516;&#26102;</span>
+<span style="color: #8B8878;">                &#28155;&#21152;&#19978;LOST&#26631;&#35760;&#65292;&#21516;&#26102;&#32479;&#35745;&#20002;&#22833;&#27573;&#30340;&#25968;&#37327;&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(TCP_SKB_CB(skb)-&gt;sacked&amp;TCPCB_SACKED_ACKED) || how) {
+			TCP_SKB_CB(skb)-&gt;sacked &amp;= ~TCPCB_SACKED_ACKED;
+			TCP_SKB_CB(skb)-&gt;sacked |= TCPCB_LOST;
+			tp-&gt;lost_out += tcp_skb_pcount(skb);
+		} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21542;&#21017;&#26356;&#26032;SACK&#30830;&#35748;&#30340;&#25968;&#37327;&#21644;facket_out</span>
+			tp-&gt;sacked_out += tcp_skb_pcount(skb);
+			tp-&gt;fackets_out = cnt;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21047;&#26032;&#27809;&#26377;&#30830;&#35748;&#30340;TCP&#27573;&#30340;&#25968;&#37327;left_out</span>
+	tcp_sync_left_out(tp);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35774;&#32622;reordering</span>
+	tp-&gt;reordering = min_t(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>, tp-&gt;reordering,
+					     sysctl_tcp_reordering);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#24403;&#21069;&#30340;&#25317;&#22622;&#29366;&#24577;&#20026;Loss</span>
+	tcp_set_ca_state(sk, TCP_CA_Loss);
+	tp-&gt;high_seq = tp-&gt;snd_nxt; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#25317;&#22622;&#21457;&#29983;&#26102;&#30340;SND.NXT</span>
+	TCP_ECN_queue_cwr(tp); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;ecn_flags,&#34920;&#31034;&#21457;&#36865;&#26041;&#36827;&#20837;&#25317;&#22622;&#29366;&#24577;&#12290;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28165;&#38500;&#26377;&#20851;&#37325;&#20256;&#30340;&#35760;&#24518;&#21464;&#37327;</span>
+	clear_all_retrans_hints(tp);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org37f01d3" class="outline-2">
+<h2 id="org37f01d3"><span class="section-number-2">3</span> 拥塞窗口调整撤销</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+由于当前在因特网上所应用的机制不支持显式丢包信息给TCP发送方，因此在追踪丢失的包时需要推测。例如，重新排序对TCP发送方来说通常是个问题，因为它不能分清缺失的ACK是因为包丢失还是包由于延迟稍后到达。然而，TCP发送方能够探测不必要的拥塞窗口调节，对拥塞控制参数做修正。为此，进入Recovery或Loss状态时，TCP发送方存储ssthresh调节之前的旧值。
+</p>
+
+<p>
+延迟段可能会由于虚假重传超时或者包重排序而触发不必要的重传。TCP发送方主要有两种方法来探测其是否不必要的重传了包。 第一，重复SACK（D-SACK）可以通知接收方，新到的段是已经接收过的。如果所有在最近一次恢复期间重传的段都被D-SACK确认了，发送方就知道恢复期被不必要的触发了。第二，TCP发送方可以使用附在每个TCP首部的时间戳选项来探测不必要的重传。当使用该选项时，TCP接收方回显触发确认的发送方的数据段时间戳，允许TCP发送方确定ACK是被原始的还是重传的段触发。Eifel算法使用类似方法来探测假重传。
+</p>
+
+<p>
+当使用TCP时间戳探测到一个不必要的重传时，撤销拥塞窗口调整的逻辑是比较简单的。如果发送方处于Loss状态，即在一个不必要被触发的RTO之后正在重传，移除记分牌中所有段的LOSS标记，从而使发送方继续发送新数据，而不再重传。此外，cwnd设置为当前值和（ssthresh*2）的最大值，ssthresh设置为之前存储的值。因为在探测到包丢失时，ssthresh被设置为正在传送段数目的一半，当进入Loss状态时，则继续进行拥塞避免。
+</p>
+
+<p>
+当发送方处于Recovery状态时，也能使用TCP时间戳来探测不必要的重传。这种情况下Recovery状态正常结束，只是拥塞窗口增加到其当前值和（ssthresh*2）的最大值，ssthresh设置为之前存储的值。此外，当一个不必要重传的局部ACK到达时，发送方并不为下一个还未被确认的段标记丢失，而是可能按照当前的记分牌标记继续传输新数据。
+</p>
+
+<p>
+为了使用D-SACK来撤销拥塞窗口参数，TCP发送方跟踪在恢复拥塞控制参数之前必须被声明为没必要的重传的数目。发送方在探测一个D-SACK块时，可恢复重传数减一。如果D-SACK块最终确认了在最近窗口中的每个不必要的重传，重传计数器因为D-SACK降至0,发送方增大拥塞窗口，回复最新一次对ssthresh的修改。
+</p>
+
+<p>
+当处理不必要的重传时，TCP发送方在变量reordering中维持一个度量来保存在网络中测量观察到的重新排序阈值。该变量在连接完成后也存储到目标路由缓存中。当发送方在Recovery状态期间通过TCP时间戳或D-SACK探测到不必要的重传，或者当接到确认是SACK序号空隙中的一个未确认段时，reordering被更新。在这些情况下reordering设置为最高确认段和当前确认段之间的段数目，换句话说，符合在网络中探测到的段重排序的最大间隔。此外，如果当探测到重排序时正在使用FACK,发送方转而使用SACK的保守变量，这不至于在网络重排序时，太过激进。
+</p>
+</div>
+
+<div id="outline-container-org4e1ef1f" class="outline-3">
+<h3 id="org4e1ef1f"><span class="section-number-3">3.1</span> 撤销拥塞窗口的检测</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+在进行拥塞窗口调整撤销前，必须先用tcp_may_und()检测是否能够撤销。
+</p>
+
+<p>
+检测条件：
+</p>
+<ul class="org-ul">
+<li>正在使用F-RTO算法进行发送超时处理，或进入Recovery进行重传，或进入Loss开始慢启动。</li>
+<li>没有可撤销的重传段数，或者没有重传或者重传之后还没有接收到对方的确认。</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_may_undo</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	<span style="color: #FF1493;">return</span> tp-&gt;undo_marker &amp;&amp;
+		(<span style="color: #CDC673; font-weight: bold;">!</span>tp-&gt;undo_retrans || tcp_packet_delayed(tp));
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf3f346d" class="outline-3">
+<h3 id="orgf3f346d"><span class="section-number-3">3.2</span> tcp_undo_cwr()</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+该函数用来撤销“缩小拥塞窗口”，是拥塞窗口撤销调整时的通用函数，他被tcp_try_undo_dsack()、tcp_try_undo_recovery()、tcp_try_undo_loss()、tcp_undo_partial()调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_undo_cwr</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+			<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">undo</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#25764;&#38144;&#30340;&#24930;&#21551;&#21160;&#38408;&#20540;</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+
+	<span style="color: #FF1493;">if</span> (tp-&gt;prior_ssthresh) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#23384;&#20445;&#23384;&#20102;&#26087;&#30340;&#24930;&#21551;&#21160;&#38408;&#20540;</span>
+		<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#23384;&#22312;undo_cwnd&#25509;&#21475;&#65292;&#35843;&#29992; undo_cwnd&#25509;&#21475;&#35774;&#32622;&#25317;&#22622;&#31383;&#21475;&#22823;&#23567;</span>
+		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_ops-&gt;undo_cwnd)
+			tp-&gt;snd_cwnd = icsk-&gt;icsk_ca_ops-&gt;undo_cwnd(sk);
+		<span style="color: #FF1493;">else</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21542;&#21017;&#22312;&#24403;&#21069;&#30340;&#25317;&#22622;&#31383;&#21475;&#21644;&#24930;&#21551;&#21160;&#38408;&#20540;&#30340;2&#20493;&#20043;&#38388;&#21462;&#26368;&#22823;&#20540;&#20316;&#20026;&#24403;&#21069;&#25317;&#22622;&#31383;&#21475;&#22823;&#23567;</span>
+			tp-&gt;snd_cwnd = max(tp-&gt;snd_cwnd, tp-&gt;snd_ssthresh&lt;&lt;1);
+
+		<span style="color: #FF1493;">if</span> (undo &amp;&amp; tp-&gt;prior_ssthresh &gt; tp-&gt;snd_ssthresh) {
+			tp-&gt;snd_ssthresh = tp-&gt;prior_ssthresh;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25764;&#38144;&#24930;&#21551;&#21160;&#38408;&#20540;</span>
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#28040;TCP_ECN_DEMAND_CWR&#26631;&#24535;</span>
+			TCP_ECN_withdraw_cwr(tp);
+		}
+	} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;&#26087;&#30340;&#24930;&#21551;&#21160;&#38408;&#20540;&#65292;&#21017;&#23558;&#24403;&#21069;&#25317;&#22622;&#31383;&#21475;&#21644;&#24930;&#21551;&#21160;&#38408;&#20540;&#20043;&#38388;&#30340;&#26368;&#22823;&#20540;&#26368;&#20026;&#24403;&#21069;&#30340;&#25317;&#22622;&#31383;&#21475;&#12290;</span>
+		tp-&gt;snd_cwnd = max(tp-&gt;snd_cwnd, tp-&gt;snd_ssthresh);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;&#25317;&#22622;&#31383;&#21475;&#36827;&#34892;&#24494;&#35843;&#65292;&#21462;&#25317;&#22622;&#31383;&#21475;&#22823;&#23567;&#21644;&#24050;&#32463;&#21457;&#36865;&#20294;&#26410;&#30830;&#35748;&#27573;&#25968;&#37327;&#21152;3&#20043;&#38388;&#30340;&#26368;&#23567;&#20540;&#24403;&#20316;&#24403;&#21069;&#25317;&#22622;&#31383;&#21475;&#12290;</span>
+	tcp_moderate_cwnd(tp);
+	tp-&gt;snd_cwnd_stamp = tcp_time_stamp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26102;&#38388;&#25139;</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">There is something screwy going on with the retrans hints after</span>
+<span style="color: #8B8878;">           an undo</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31165;&#30044;&#26377;&#20851;&#37325;&#20256;&#30340;&#35760;&#24518;&#21464;&#37327;</span>
+	clear_all_retrans_hints(tp);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org520fd2a" class="outline-3">
+<h3 id="org520fd2a"><span class="section-number-3">3.3</span> 从Disorder拥塞状态撤销</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+在Discoder拥塞状态，如果D-SACK确认了所有重传的的段，则会调用tcp_undo_cwr()函数进行拥塞窗口的撤销。
+</p>
+
+<p>
+先通过undo_marker和undo_retrans来检测是否可以进行撤销操作，然后调用tcp_undo_cwr()进行撤销操作，完成后复位undo_marker标志。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge6b0bbe" class="outline-3">
+<h3 id="orge6b0bbe"><span class="section-number-3">3.4</span> 从Recovery状态撤销</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+在Recovery拥塞状态，如果ACK确认了部分重传的段，则会调用tcp_try_undo_partial()函数进行拥塞窗口的撤销，参数acked是此次确认了段的数目。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Undo during fast recovery after partial ACK.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_try_undo_partial</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>,
+				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">acked</span>)
+{
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Partial ACK arrived. Force Hoe's retransmit.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">failed</span> = IsReno(tp) || tp-&gt;fackets_out&gt;tp-&gt;reordering;
+
+	<span style="color: #FF1493;">if</span> (tcp_may_undo(tp)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Plain luck! Hole if filled with delayed</span>
+<span style="color: #8B8878;">                 * packet, rather than with a retransmit.</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (tp-&gt;retrans_out == 0)
+			tp-&gt;retrans_stamp = 0;
+
+		tcp_update_reordering(sk, tcp_fackets_out(tp) + acked, 1);
+
+		DBGUNDO(sk, tp, <span style="color: #CDC673;">"Hoe"</span>);
+		tcp_undo_cwr(sk, 0);
+		NET_INC_STATS_BH(LINUX_MIB_TCPPARTIALUNDO);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">So... Do not make Hoe's retransmit yet.</span>
+<span style="color: #8B8878;">                 * If the first packet was delayed, the rest</span>
+<span style="color: #8B8878;">                 * ones are most probably delayed as well.</span>
+<span style="color: #8B8878;">                 */</span>
+		failed = 0;
+	}
+	<span style="color: #FF1493;">return</span> failed;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org23fe89d" class="outline-3">
+<h3 id="org23fe89d"><span class="section-number-3">3.5</span> 从Recovery拥塞状态撤销</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+一下代码尝试从Loss或Recovery状态撤销。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">People celebrate: "We love our President!"</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_try_undo_recovery</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#21487;&#20197;&#36827;&#34892;&#25764;&#38144;&#65292;&#21017;&#24674;&#22797;&#25317;&#22622;&#31383;&#21475;&#21644;&#25317;&#22622;&#25511;&#21046;&#26102;&#24930;&#21551;&#21160;&#30340;&#38408;&#20540;&#65292;&#23436;&#25104;&#25764;&#38144;&#21518;&#22797;&#20301;&#25764;&#38144;&#26631;&#24535;</span>
+	<span style="color: #FF1493;">if</span> (tcp_may_undo(tp)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Happy end! We did not retransmit anything</span>
+<span style="color: #8B8878;">                 * or our original transmission succeeded.</span>
+<span style="color: #8B8878;">                 */</span>
+		DBGUNDO(sk, tp, inet_csk(sk)-&gt;icsk_ca_state == TCP_CA_Loss ? <span style="color: #CDC673;">"loss"</span> : <span style="color: #CDC673;">"retrans"</span>);
+		tcp_undo_cwr(sk, 1);
+		<span style="color: #FF1493;">if</span> (inet_csk(sk)-&gt;icsk_ca_state == TCP_CA_Loss)
+			NET_INC_STATS_BH(LINUX_MIB_TCPLOSSUNDO);
+		<span style="color: #FF1493;">else</span>
+			NET_INC_STATS_BH(LINUX_MIB_TCPFULLUNDO);
+		tp-&gt;undo_marker = 0;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#19981;&#25903;&#25345;SACK&#65292;&#21017;&#38656;&#35201;&#38450;&#27490;&#34394;&#20551;&#30340;&#24555;&#36895;&#37325;&#20256;&#65292;&#19981;&#33021;&#31435;&#21363;&#25764;&#38144;&#21040;Open&#29366;&#24577;&#65292;&#21482;&#23545;&#25317;&#22622;&#31383;&#21475;&#36827;&#34892;&#24494;&#35843;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (tp-&gt;snd_una == tp-&gt;high_seq &amp;&amp; IsReno(tp)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Hold old state until something *above* high_seq</span>
+<span style="color: #8B8878;">                 * is ACKed. For Reno it is MUST to prevent false</span>
+<span style="color: #8B8878;">                 * fast retransmits (RFC2582). SACK TCP is safe.</span><span style="color: #8B8878;"> */</span>
+		tcp_moderate_cwnd(tp);
+		<span style="color: #FF1493;">return</span> 1;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#25903;&#25345;SACK,&#21017;&#25764;&#38144;&#21040;Open&#29366;&#24577;</span>
+	tcp_set_ca_state(sk, TCP_CA_Open);
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6f8cb68" class="outline-3">
+<h3 id="org6f8cb68"><span class="section-number-3">3.6</span> 从Loss拥塞状态撤销</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+以下代码用于在接收到新的确认时，尝试从Loss状态进入Open状态。返回值返回1，表示撤销成功，返回0，表示撤销失败。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Undo during loss recovery after partial ACK.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_try_undo_loss</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27979;&#35797;&#26159;&#21542;&#21487;&#20197;&#20174;Loss&#29366;&#24577;&#25764;&#38144;</span>
+	<span style="color: #FF1493;">if</span> (tcp_may_undo(tp)) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+		sk_stream_for_retrans_queue(skb, sk) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#21487;&#20197;&#25764;&#38144;&#65292;&#21017;&#28165;&#38500;&#37325;&#20256;&#38431;&#21015;&#20013;&#27573;&#30340;&#35760;&#20998;&#29260;&#19978;&#30340;LOST&#26631;&#24535;</span>
+			TCP_SKB_CB(skb)-&gt;sacked &amp;= ~TCPCB_LOST;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28165;&#26970;&#25152;&#26377;&#19982;&#25317;&#22622;&#25511;&#21046;&#30456;&#20851;&#30340;&#19968;&#32452;hint</span>
+		clear_all_retrans_hints(tp);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35745;&#31639;lost_out &#21644; left_out&#65292;&#25764;&#38144;&#8220;&#32553;&#23567;&#25317;&#22622;&#31383;&#21475;&#8221;&#65292;&#28165;&#38500;&#25317;&#22622;&#31383;&#21475;&#35843;&#25972;&#25764;&#38144;&#26631;&#35760;&#12290;</span>
+		DBGUNDO(sk, tp, <span style="color: #CDC673;">"partial loss"</span>);
+		tp-&gt;lost_out = 0;
+		tp-&gt;left_out = tp-&gt;sacked_out;
+		tcp_undo_cwr(sk, 1);
+		NET_INC_STATS_BH(LINUX_MIB_TCPLOSSUNDO);
+		inet_csk(sk)-&gt;icsk_retransmits = 0;
+		tp-&gt;undo_marker = 0;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IsReno(tp)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#19981;&#25903;&#25345;SACK,&#21017;&#36827;&#20837;Open&#29366;&#24577;&#12290;</span>
+			tcp_set_ca_state(sk, TCP_CA_Open);
+		<span style="color: #FF1493;">return</span> 1;
+	}
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org048ea29" class="outline-2">
+<h2 id="org048ea29"><span class="section-number-2">4</span> 显式拥塞通知</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+为了处理网络中的拥塞，出现了第二种避免隐式测量的技术，称为显式拥塞通知，路由器在出现拥塞时通知TCP。当TCP段传递时，路由器使用IP首部中的一对比特位来记录拥塞。这样，当TCP段到达后，接收方知道报文段是否在某个位置经历过拥塞。然而需要了解拥塞发生情况的是发送方，而非接收方。因此，接收方使用下一个ACK通知发送方有拥塞发生，然后，发送方做出响应，缩小自己的拥塞窗口。
+</p>
+
+<p>
+ECN(显式拥塞通知)使用IP首部的两个比特位，以便让路由器记录拥塞状态，并使用TCP首部中的两个位（取自保留位），以便让发送方和接收方的TCP层相互通信。接收方使用其中一个TCP首部的比特位将拥塞信息送回发送方;发送方使用另一个比特位将自己收到的拥塞通知的信息通知接收方。IP首部中的两个比特位是使用的服务类型字段中的比特位。路由器可以选择设置其中任何一个比特位，表示拥塞已经发生（使用两个比特是为了让该机制更加稳健）。
+</p>
+
+<p>
+当前TCP实现将TCP端结点之间的中间网络视为一个不透明的“黑盒”。TCP段进入和流出这个盒子，有些时候进入盒子的包被丢失了。TCP假设包的丢失和大程度上是因为路由器的拥塞，也即是路由器用来容纳进入包的缓冲区已经被填满了，这样路由器会“静默”的丢弃接下来进入的包。
+</p>
+
+<p>
+尽管TCP可以检测到TCP包的丢失并且进行重传，但是从TCP处理过程、重传过程和吞吐率下降这些方面看，这个重传过程会耗费较多的网络资源。
+</p>
+
+<p>
+当一个发送方检测到一个包丢失时，可以进行快速重传，或者因包的重传计时器超时而重传。接收到拥塞通知后，该TCP端可以减小发送窗口（在等待响应之前可以发送的包数量），进行慢启动和拥塞避免算法。这可以迅速的降低发送方速率，一边减轻路由器压力。而发送方会逐渐将发送窗口恢复到拥塞发生前的大小。
+</p>
+</div>
+
+<div id="outline-container-orgabf1ca7" class="outline-3">
+<h3 id="orgabf1ca7"><span class="section-number-3">4.1</span> IP对ECN的支持</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+IP和TCP使用首部中的未使用字段来支持ECN。
+</p>
+
+<p>
+在网络层中，一个发送主机必须能够表明自身可以进行ECN，路由器在转发时必须能够表明它正在经历拥塞。
+</p>
+
+<p>
+在传输层(TCP)，TCP端必须对发送方表明自身是可以进行ECN操作的。接收端必须能够通知发送方它接收到了一个来自路由器的拥塞通告。发送方必须能够通知接收端它收到了来自接收端的通告，并且已经降低了发送速率。
+</p>
+
+<p>
+IP首部中的8位服务类型域（TOS）原先在RFC791中被定义为表明包的发送优先级、时延、吞吐量、可靠性和消耗等特征。在RFC2474中被重新定义为包含一个6位的区分服务码点（DSCP）和两个未用的位。DSCP值表明一个在路由器上配置的和队列相关联的发送优先级。IP对ECN的支持拥到了TOS域中剩下的这两位：
+</p>
+
+
+<div class="figure">
+<p><img src="image/tcp-congestion/IP-ECN.png" alt="IP-ECN.png" />
+</p>
+</div>
+
+<p>
+在RFC2474中TOS域未使用的两位在RFC3168中被定义为ECN域：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">ECN域</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">00</td>
+<td class="org-left">发送主机不支持ECN</td>
+</tr>
+
+<tr>
+<td class="org-right">01或者10</td>
+<td class="org-left">发送主机支持ECN</td>
+</tr>
+
+<tr>
+<td class="org-right">11</td>
+<td class="org-left">路由器正在经历拥塞</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+一个支持ECN的主机发送数据包时将ECN设置为 01 或者 10。对于支持ECN的主机发送的包，如果路径上的路由器支持ECN并且经历拥塞，它将ECN域设置为11。如果该数值已经被设置为11，那么下有路径上的路由器不会修改该值。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5d00af5" class="outline-3">
+<h3 id="org5d00af5"><span class="section-number-3">4.2</span> TCP对ECN的支持</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+当一个IP包的ECN域被路由器设置为11时，接收端得到通知：路径上发生了拥塞。ECN使用TCP首部来告知发送方网络正在经历拥塞，并且告知接收端-发送端已经收到了接收端发来的拥塞通告，已经降低了发送速率。
+</p>
+
+<p>
+TCP对ECN的支持使用TCP中预先定义的保留位。ECN定义两个新的标志：
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">+-------------+-+-+-+-+-+-+-+-+
+|             |C|E|U|A|P|R|S|F|
+|  Reserved   |R|C|R|C|S|S|Y|I|
+|             |W|E|G|K|H|T|N|N|
++-------------+-+-+-+-+-+-+-+-+
+</pre>
+</div>
+<p>
+两个新标志意义如下：
+</p>
+<ul class="org-ul">
+<li>ECE，ECN响应标志被用来在TCP三次握手时表明一个TCP端是支持ECN功能的，并且表明接收到的TCP段的IP首部的ECN被设置为11,参见RFC793。</li>
+<li>CWR，拥塞窗口减少标志由发送主机设置，用来表明它接收到了设置ECE标志的TCP段。</li>
+</ul>
+
+<p>
+当两个支持ECN的TCP端进行TCP连接时，它们交换SYN、SYN+ACK和ACK段。对于支持ECN的TCP端来说，SYN段的ECE和CWR标志都被设置了，SYN的ACK只设置ECE标志。
+</p>
+
+<p>
+一个支持ECN的TCP主机在支持ECN的TCP连接上发送设置了IP首部为10或者01的TCP段。支持ECN的路由器在经历拥塞时设置IP首部的ECN域为11。当一个TCP接收端发送针对收到一个设置ECN位为11的TCP段的响应时，它设置TCP首部中的ECE，并且在接下来的ACK中也做同样的设置。
+</p>
+
+<p>
+当发送主机接收到设置了ECE标志的ACK时，就认为发生丢包，开始减少发送窗口，运行慢启动过程和拥塞避免算法。在下一个数据包中，发送者设置CWR标志。在接收到新的设置CWR标志的包时，接收者停止在接下来的ACK中设置ECE标志。
+</p>
+
+<p>
+以下是一个支持ECN的TCP端点之间的一个TCP连接的示例：
+</p>
+<p>
+<img src="image/tcp-congestion/ecn-route.png" alt="ecn-route.png" />
+A发送数据给B。A首先一次性发送5个包。包2通过一个支持ECN拥塞的路由器转发，将IP首部的ECN位设置为11。当B接收到这个包，他发送设置了ECE标志的ACK。当A收到第一个设置了ECE的ACK后，降低发送速率，并且在下一个包6时设置其CWR标志。通过接收包6，A接下来取消对ACK包设置ECE标志，参见RFC3168。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8c9c0dd" class="outline-2">
+<h2 id="org8c9c0dd"><span class="section-number-2">5</span> 拥塞控制状态的处理及转换</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+tcp_ack()处理接收到的段时，会检测ACK。如果接收的ACK是不明确的或拥塞状态在Open状态，则进行拥塞状态机的状态迁移。如果ACK确认了新的段且拥塞窗口可以更新，则进行拥塞避免，更新拥塞窗口。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This routine deals with incoming acks, but not outgoing ones.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_ack</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flag</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #FF1493;">if</span> (tcp_ack_is_dubious(sk, flag)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Advance CWND, if state allows this.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> ((flag &amp; FLAG_DATA_ACKED) &amp;&amp; tcp_may_raise_cwnd(sk, flag))
+			tcp_cong_avoid(sk, ack,  seq_rtt, prior_in_flight, 0);
+		tcp_fastretrans_alert(sk, prior_snd_una, prior_packets, flag);
+	} <span style="color: #FF1493;">else</span> {
+		<span style="color: #FF1493;">if</span> ((flag &amp; FLAG_DATA_ACKED))
+			tcp_cong_avoid(sk, ack, seq_rtt, prior_in_flight, 1);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+}
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org05e85ca" class="outline-3">
+<h3 id="org05e85ca"><span class="section-number-3">5.1</span> 拥塞控制状态的处理：tcp_fastretrans_alert()</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+该函数进行拥塞控制的处理，包括处理显式拥塞通知，判断SACK是否虚假，拥塞时记录的SND.NXT被确认时进行撤销，以及当前的状态处理等。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Process an event, which can update packets-in-flight not trivially.</span>
+<span style="color: #8B8878;"> * Main goal of this function is to calculate new estimate for left_out,</span>
+<span style="color: #8B8878;"> * taking into account both packets sitting in receiver's buffer and</span>
+<span style="color: #8B8878;"> * packets lost by network.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * Besides that it does CWND reduction, when packet loss is detected</span>
+<span style="color: #8B8878;"> * and changes state of machine.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * It does _not_ decide what to send, it is made in function</span>
+<span style="color: #8B8878;"> * tcp_xmit_retransmit_queue().</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span>
+<span style="color: #87D700;">tcp_fastretrans_alert</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">prior_snd_una</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#22788;&#29702;ACK&#20043;&#21069;&#65292;&#22312;&#36755;&#20986;&#30340;&#27573;&#20013;&#65292;&#26368;&#26089;&#19968;&#20010;&#26410;&#30830;&#35748;&#27573;&#30340;&#24207;&#21495;</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">prior_packets</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#25317;&#22622;&#25511;&#21046;&#29366;&#24577;&#36716;&#25442;&#20043;&#21069;&#65292;&#20174;&#21457;&#36865;&#38431;&#21015;&#21457;&#20986;&#32780;&#26410;&#24471;&#21040;&#30830;&#35748;&#30340;TCP&#27573;&#25968;&#30446;</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flag</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">is_dupack</span> = (tp-&gt;snd_una == prior_snd_una &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(flag&amp;FLAG_NOT_DUP));
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#20808;&#26681;&#25454;&#24403;&#21069;&#21457;&#20986;&#20294;&#26410;&#24471;&#21040;&#30830;&#35748;&#30340;TCP&#27573;&#25968;&#30446;&#26469;&#30699;&#27491;sacked_out&#21644;fackets_out&#12290;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Some technical things:</span>
+<span style="color: #8B8878;">         * 1. Reno does not count dupacks (sacked_out) automatically.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tp-&gt;packets_out)
+		tp-&gt;sacked_out = 0;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">2. SACK counts snd_fack in packets inaccurately.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (tp-&gt;sacked_out == 0)
+		tp-&gt;fackets_out = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#25910;&#21040;&#26174;&#24335;&#25317;&#22622;&#36890;&#30693;&#65292;&#21017;&#31105;&#29992;&#25317;&#22622;&#31383;&#21475;&#25764;&#38144;&#65292;&#24182;&#24320;&#22987;&#20943;&#23567;&#25317;&#22622;&#31383;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Now state machine starts.</span>
+<span style="color: #8B8878;">         * A. ECE, hence prohibit cwnd undoing, the reduction is required.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (flag&amp;FLAG_ECE)
+		tp-&gt;prior_ssthresh = 0;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#25509;&#25910;&#30340;ACK&#25351;&#21521;&#24050;&#35760;&#24405;&#30340;SACK,&#35828;&#26126;&#25105;&#20204;&#35760;&#24405;&#30340;SACK&#24182;&#27809;&#26377;&#21453;&#24212;&#25509;&#25910;&#26041;&#30340;&#30495;&#23454;&#29366;&#24577;&#65292;&#20063;&#23601;&#26159;&#35828;</span>
+<span style="color: #8B8878;">        &#25509;&#25910;&#26041;&#29616;&#22312;&#24050;&#32463;&#22788;&#20110;&#20005;&#37325;&#25317;&#22622;&#30340;&#29366;&#24577;&#25110;&#32773;&#22788;&#29702;&#19978;&#26377;BUG,&#25152;&#20197;&#25509;&#19979;&#26469;&#25353;&#29031;&#37325;&#20256;&#36229;&#26102;&#30340;&#26041;&#24335;&#22788;&#29702;&#12290;</span>
+
+<span style="color: #8B8878;">        &#25353;&#29031;&#27491;&#24120;&#30340;&#36923;&#36753;&#65292;&#25509;&#25910;&#30340;ACK&#19981;&#24212;&#35813;&#30452;&#32447;&#24050;&#35760;&#24405;&#30340;SACK,&#32780;&#24212;&#35813;&#30452;&#32447;SACK&#21518;&#38754;&#26410;&#25509;&#25910;&#30340;&#22320;&#26041;&#65292;&#36825;&#35828;&#26126;</span>
+<span style="color: #8B8878;">        &#25509;&#25910;&#26041;&#30001;&#20110;&#25317;&#22622;&#24050;&#32463;&#25226;SACK&#37096;&#20998;&#25509;&#25910;&#30340;&#27573;&#20002;&#24323;&#65292;&#25110;&#32773;&#22788;&#29702;&#26377;BUG,&#22240;&#27492;&#21482;&#33021;&#36827;&#34892;&#37325;&#20256;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">B. In all the states check for reneging SACKs.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (tp-&gt;sacked_out &amp;&amp; tcp_check_sack_reneging(sk))
+		<span style="color: #FF1493;">return</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#36890;&#36807;SACK&#21457;&#29616;&#26377;&#27573;&#20002;&#22833;&#65292;&#21017;&#38656;&#35201;&#20174;&#37325;&#20256;&#38431;&#39318;&#25110;&#19978;&#27425;&#26631;&#35782;&#20002;&#22833;&#27573;&#30340;&#20301;&#32622;&#24320;&#22987;&#65292;&#20026;&#35760;&#20998;&#29260;&#20026;0&#30340;</span>
+<span style="color: #8B8878;">        &#27573;&#28155;&#21152;LOST&#26631;&#35760;&#65292;&#30452;&#21040;&#25152;&#26377;&#34987;&#26631;&#35760;LOST&#30340;&#27573;&#25968;&#36798;&#21040;packets&#25110;&#34987;&#26631;&#35760;&#24207;&#21015;&#21495;&#36229;&#36807;high_seq&#20026;&#27490;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">C. Process data loss notification, provided it is valid.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> ((flag&amp;FLAG_DATA_LOST) &amp;&amp;
+	    before(tp-&gt;snd_una, tp-&gt;high_seq) &amp;&amp;
+	    icsk-&gt;icsk_ca_state != TCP_CA_Open &amp;&amp;
+	    tp-&gt;fackets_out &gt; tp-&gt;reordering) {
+		tcp_mark_head_lost(sk, tp, tp-&gt;fackets_out-tp-&gt;reordering, tp-&gt;high_seq);
+		NET_INC_STATS_BH(LINUX_MIB_TCPLOSS);
+	}
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26356;&#26032;&#24050;&#31163;&#24320;&#20027;&#26426;&#30340;&#32593;&#32476;&#20013;&#20026;&#30830;&#35748;&#30340;TCP&#27573;&#25968;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">D. Synchronize left_out to current state.</span><span style="color: #8B8878;"> */</span>
+	tcp_sync_left_out(tp);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">E. Check state exit conditions. State can be terminated</span>
+<span style="color: #8B8878;">         *    when high_seq is ACKed.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#25317;&#22622;&#29366;&#24577;&#25764;&#38144;</span>
+<span style="color: #8B8878;">        &#26816;&#27979;&#20174;&#25317;&#22622;&#29366;&#24577;&#36820;&#22238;&#30340;&#26465;&#20214;&#65292;&#24403;high_seq&#34987;&#30830;&#35748;&#26102;&#65292;&#32467;&#26463;&#25317;&#22622;&#29366;&#24577;&#65292;&#36827;&#20837;Open&#29366;&#24577;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#24403;&#21069;&#22788;&#20110;Open&#29366;&#24577;&#26102;&#65292;&#28165;&#38500;&#19978;&#27425;&#37325;&#20256;&#38454;&#27573;&#31532;&#19968;&#20010;&#37325;&#20256;&#27573;&#30340;&#21457;&#36865;&#26102;&#38388;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Open) {
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sysctl_tcp_frto)
+			BUG_TRAP(tp-&gt;retrans_out == 0);
+		tp-&gt;retrans_stamp = 0;
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>before(tp-&gt;snd_una, tp-&gt;high_seq)) {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#25317;&#22622;&#26102;&#35760;&#24405;&#30340;SND.NXT&#34987;&#30830;&#35748;&#26102;&#65292;&#25317;&#22622;&#29366;&#20917;&#24050;&#32463;&#22909;&#36716;&#65292;&#27492;&#26102;&#22914;&#26524;&#25317;&#22622;&#29366;&#24577;&#19981;&#22788;Open&#29366;&#24577;&#65292;</span>
+<span style="color: #8B8878;">        &#21017;&#26681;&#25454;&#24773;&#20917;&#32467;&#26463;&#24403;&#21069;&#30340;&#29366;&#24577;&#22238;&#21040;Open&#29366;&#24577;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF1493;">switch</span> (icsk-&gt;icsk_ca_state) {
+		<span style="color: #FF1493;">case</span> TCP_CA_Loss: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23581;&#35797;&#20174;Loss&#29366;&#24577;&#25764;&#38144;&#21040;Open&#29366;&#24577;&#12290;&#22914;&#26524;&#25104;&#21151;&#25764;&#38144;&#21040;Open,&#21017;&#36824;&#38656;&#32487;&#32493;&#22788;&#29702;Open&#29366;&#24577;</span>
+			icsk-&gt;icsk_retransmits = 0;
+			<span style="color: #FF1493;">if</span> (tcp_try_undo_recovery(sk, tp))
+				<span style="color: #FF1493;">return</span>;
+			<span style="color: #FF1493;">break</span>;
+
+		<span style="color: #FF1493;">case</span> TCP_CA_CWR: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32463;&#36807;&#27492;&#27425;&#30830;&#35748;&#65292;&#22914;&#26524;&#25317;&#22622;&#26102;&#35760;&#24405;&#30340;SND.NXT&#20043;&#21518;&#30340;&#27573;&#37117;&#34987;&#30830;&#35748;&#20102;&#65292;&#21017;&#25317;&#22622;&#31383;&#21475;&#20943;&#23567;&#65292;&#24182;&#25764;&#38144;&#21040;Open&#29366;&#24577;&#12290;</span>
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">CWR is to be held something *above* high_seq</span>
+<span style="color: #8B8878;">                         * is ACKed for CWR bit to reach receiver.</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (tp-&gt;snd_una != tp-&gt;high_seq) {
+				tcp_complete_cwr(sk);
+				tcp_set_ca_state(sk, TCP_CA_Open);
+			}
+			<span style="color: #FF1493;">break</span>;
+
+		<span style="color: #FF1493;">case</span> TCP_CA_Disorder: <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#24403;&#25317;&#22622;&#26102;&#35760;&#24405;&#30340;SND.NXT&#34987;&#30830;&#35748;&#65292;&#24182;&#19988;&#24403;&#21069;&#30340;&#29366;&#24577;&#20026;Discoder&#30340;</span>
+<span style="color: #8B8878;">                &#24773;&#20917;&#12290;&#22914;&#26524;D-SACK&#30830;&#35748;&#20102;&#25152;&#26377;&#37325;&#20256;&#30340;&#27573;&#65292;&#22240;&#27492;&#35201;&#25764;&#38144;&#25317;&#22622;&#31383;&#21475;&#12290;&#22914;&#26524;&#21551;&#29992;&#20102;NewReno&#25110;&#25317;&#22622;</span>
+<span style="color: #8B8878;">                &#26102;&#35760;&#24405;&#30340;SND.NXT&#20043;&#21518;&#30340;&#27573;&#37117;&#34987;&#30830;&#35748;&#20102;&#65292;&#21017;&#35201;&#24674;&#22797;&#21040;Open&#29366;&#24577;&#12290;</span><span style="color: #8B8878;"> */</span>
+			tcp_try_undo_dsack(sk, tp);
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tp-&gt;undo_marker ||
+			    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">For SACK case do not Open to allow to undo</span>
+<span style="color: #8B8878;">                             * catching for all duplicate ACKs.</span><span style="color: #8B8878;"> */</span>
+			    IsReno(tp) || tp-&gt;snd_una != tp-&gt;high_seq) {
+				tp-&gt;undo_marker = 0;
+				tcp_set_ca_state(sk, TCP_CA_Open);
+			}
+			<span style="color: #FF1493;">break</span>;
+
+		<span style="color: #FF1493;">case</span> TCP_CA_Recovery: <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#21551;&#29992;&#20102;NewReno&#65292;&#21017;&#22797;&#20301;&#30456;&#20851;SACK&#30340;&#25968;&#25454;&#12290;&#24182;&#19988;&#23581;&#35797;&#20174;</span>
+<span style="color: #8B8878;">                Recovery&#29366;&#24577;&#25764;&#38144;&#65292;&#22914;&#26524;&#25764;&#38144;&#25104;&#21151;&#65292;&#21017;&#32467;&#26463;&#25317;&#22622;&#31383;&#21475;&#20943;&#23567;&#12290;</span><span style="color: #8B8878;">*/</span>
+			<span style="color: #FF1493;">if</span> (IsReno(tp))
+				tcp_reset_reno_sack(tp);
+			<span style="color: #FF1493;">if</span> (tcp_try_undo_recovery(sk, tp))
+				<span style="color: #FF1493;">return</span>;
+			tcp_complete_cwr(sk);
+			<span style="color: #FF1493;">break</span>;
+		}
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">F. Process state.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">switch</span> (icsk-&gt;icsk_ca_state) {
+	<span style="color: #FF1493;">case</span> TCP_CA_Recovery:
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#27573;&#34987;&#30830;&#35748;&#65292;&#22914;&#26524;&#26410;&#21551;&#29992;SACK&#24182;&#25509;&#25910;&#21040;&#30340;&#26159;&#37325;&#22797;ACK,&#21017;&#35760;&#24405;&#25509;&#25910;&#21040;&#30340;&#37325;&#22797;ACK&#30340;&#25968;&#37327;</span>
+		<span style="color: #FF1493;">if</span> (prior_snd_una == tp-&gt;snd_una) {
+			<span style="color: #FF1493;">if</span> (IsReno(tp) &amp;&amp; is_dupack)
+				tcp_add_reno_sack(sk);
+		} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#26377;&#27573;&#34987;&#30830;&#35748;&#65292;&#35745;&#31639;&#34987;&#30830;&#35748;&#27573;&#30340;&#25968;&#37327;&#65292;&#22312;&#26410;&#21551;&#29992;SACK&#26102;&#65292;&#38656;&#35201;&#26356;&#26032;&#25509;&#25910;&#21040;&#37325;&#22797;ACK</span>
+<span style="color: #8B8878;">                &#25968;&#37327;&#12290;&#21516;&#26102;&#22914;&#26524;ACK&#30830;&#35748;&#20102;&#37096;&#20998;&#37325;&#20256;&#30340;&#27573;&#65292;&#21017;&#20250;&#35843;&#29992;tcp_try_undo_partial()&#36827;&#34892;&#25317;&#22622;&#31383;&#21475;&#30340;&#25764;&#38144;&#12290;</span><span style="color: #8B8878;">*/</span>
+			<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">acked</span> = prior_packets - tp-&gt;packets_out;
+			<span style="color: #FF1493;">if</span> (IsReno(tp))
+				tcp_remove_reno_sacks(sk, tp, acked);
+			is_dupack = tcp_try_undo_partial(sk, tp, acked);
+		}
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> TCP_CA_Loss:
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Loss&#29366;&#24577;&#19979;&#30830;&#35748;&#20102;&#26032;&#30340;&#27573;&#65292;&#22914;&#26524;&#21487;&#20197;&#65292;&#21017;&#23581;&#35797;&#25764;&#38144;&#21040;Open&#29366;&#24577;&#12290;&#22914;&#26524;&#19981;&#33021;&#21040;Open&#29366;&#24577;&#65292;&#21017;&#20808;&#24494;&#35843;</span>
+<span style="color: #8B8878;">        &#25317;&#22622;&#31383;&#21475;&#65292;&#28982;&#21518;&#24320;&#22987;&#37325;&#20256;&#37027;&#20123;&#26631;&#35760;&#20002;&#22833;&#30340;&#27573;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF1493;">if</span> (flag&amp;FLAG_DATA_ACKED)
+			icsk-&gt;icsk_retransmits = 0;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tcp_try_undo_loss(sk, tp)) {
+			tcp_moderate_cwnd(tp);
+			tcp_xmit_retransmit_queue(sk);
+			<span style="color: #FF1493;">return</span>;
+		}
+		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state != TCP_CA_Open)
+			<span style="color: #FF1493;">return</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Loss is undone; fall through to processing in Open state.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">default</span>:  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">Discoder&#29366;&#24577;&#21040;Recovery&#29366;&#24577;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#19981;&#25903;&#25345;SACK&#30340;&#24773;&#20917;&#19979;&#65292;&#26377;&#26032;&#30340;&#27573;&#34987;&#30830;&#35748;&#65292;&#21017;&#22797;&#20301;&#25509;&#25910;&#21040;&#37325;&#22797;&#30830;&#35748;&#30340;&#27425;&#25968;&#65292;&#26410;&#30830;&#35748;&#30340;TCP&#27573;&#25968;&#23601;&#26159;&#30830;&#23450;&#20002;&#22833;&#30340;&#27573;&#25968;&#12290;</span>
+		<span style="color: #FF1493;">if</span> (IsReno(tp)) {
+			<span style="color: #FF1493;">if</span> (tp-&gt;snd_una != prior_snd_una)
+				tcp_reset_reno_sack(tp);
+			<span style="color: #FF1493;">if</span> (is_dupack)
+				tcp_add_reno_sack(sk);
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#22788;&#20110;Discoder&#29366;&#24577;&#65292;&#19988;D-SACK&#30830;&#35748;&#20102;&#25152;&#26377;&#37325;&#20256;&#30340;&#27573;&#65292;&#21017;&#38656;&#35201;&#23581;&#35797;&#25764;&#38144;&#8220;&#32553;&#23567;&#25317;&#22622;&#31383;&#21475;&#8221;</span>
+		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Disorder)
+			tcp_try_undo_dsack(sk, tp);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#23450;&#33021;&#21542;&#31163;&#24320;Disorder&#36716;&#35813;&#65292;&#32780;&#36827;&#20837;Recovery&#29366;&#24577;&#12290;&#22914;&#26524;&#19981;&#36827;&#20837;Recovery&#29366;&#24577;&#65292;&#21017;&#36824;&#38656;&#23581;&#35797;&#26159;&#21542;&#33021;&#22815;&#36827;&#20837;Open&#29366;&#24577;</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tcp_time_to_recover(sk, tp)) {
+			tcp_try_to_open(sk, tp, flag);
+			<span style="color: #FF1493;">return</span>;
+		}
+		<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#30830;&#23450;&#21487;&#20197;&#20174;Discoder&#29366;&#24577;&#36827;&#20837;Recovery&#29366;&#24577;&#21518;&#65292;&#38656;&#35201;&#20808;&#26816;&#27979;&#26159;&#21542;&#30001;PMTU&#25506;&#27979;&#22833;&#36133;&#36896;&#25104;&#30340;&#12290;</span>
+<span style="color: #8B8878;">                &#22914;&#26524;&#26159;&#65292;&#21017;&#19981;&#20943;&#23567;&#25317;&#22622;&#31383;&#21475;&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">MTU probe failure: don't reduce cwnd</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state &lt; TCP_CA_CWR &amp;&amp;
+		    icsk-&gt;icsk_mtup.probe_size &amp;&amp;
+		    tp-&gt;snd_una == tp-&gt;mtu_probe.probe_seq_start) {
+			tcp_mtup_probe_failed(sk);
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Restores the reduction we did in tcp_mtup_probe()</span><span style="color: #8B8878;"> */</span>
+			tp-&gt;snd_cwnd++;
+			tcp_simple_retransmit(sk);
+			<span style="color: #FF1493;">return</span>;
+		}
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Otherwise enter Recovery state</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#26159;&#21542;&#21551;&#29992;&#20102;SACK&#26469;&#36827;&#34892;&#19981;&#21516;&#30340;&#32479;&#35745;</span>
+		<span style="color: #FF1493;">if</span> (IsReno(tp))
+			NET_INC_STATS_BH(LINUX_MIB_TCPRENORECOVERY);
+		<span style="color: #FF1493;">else</span>
+			NET_INC_STATS_BH(LINUX_MIB_TCPSACKRECOVERY);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;Recovery&#29366;&#24577;&#21069;&#65292;&#35201;&#20445;&#23384;&#37027;&#20123;&#29992;&#20110;&#24674;&#22797;&#30340;&#30456;&#20851;&#25968;&#25454;</span>
+		tp-&gt;high_seq = tp-&gt;snd_nxt;
+		tp-&gt;prior_ssthresh = 0;
+		tp-&gt;undo_marker = tp-&gt;snd_una;
+		tp-&gt;undo_retrans = tp-&gt;retrans_out;
+		<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#30001;Recovery&#29366;&#24577;&#36827;&#20837;Recovery&#29366;&#24577;&#65292;&#21017;&#20808;&#20445;&#23384;&#24403;&#21069;&#30340;&#24930;&#21551;&#21160;&#38408;&#20540;&#65292;&#28982;&#21518;&#26681;&#25454;&#19981;&#21516;&#30340;&#31639;&#27861;</span>
+<span style="color: #8B8878;">                &#35774;&#32622;&#24403;&#21069;&#30340;&#24930;&#21551;&#21160;&#38408;&#20540;&#12290;&#22914;&#26524;&#26159;NewReno&#31639;&#27861;&#65292;&#21017;&#36827;&#34892;&#32463;&#20856;&#31639;&#27861;&#65292;&#23558;snd_ssthresh&#35774;&#32622;&#20026;</span>
+<span style="color: #8B8878;">                tp-&gt;snd_cwnd&#30340;&#19968;&#21322;&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state &lt; TCP_CA_CWR) {
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(flag&amp;FLAG_ECE))
+				tp-&gt;prior_ssthresh = tcp_current_ssthresh(sk);
+			tp-&gt;snd_ssthresh = icsk-&gt;icsk_ca_ops-&gt;ssthresh(sk);
+			TCP_ECN_queue_cwr(tp);
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28165;&#38500;bytes_acked&#21644;snd_cwnd_cnt&#21518;&#65292;&#36827;&#20837;Recovery&#29366;&#24577;&#12290;</span>
+		tp-&gt;bytes_acked = 0;
+		tp-&gt;snd_cwnd_cnt = 0;
+		tcp_set_ca_state(sk, TCP_CA_Recovery);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#25509;&#25910;&#21040;&#37325;&#22797;ACK&#25110;&#32773;&#37325;&#20256;&#38431;&#39318;&#30340;&#27573;&#20256;&#36755;&#36229;&#26102;&#65292;&#21017;&#35201;&#20026;&#30830;&#23450;&#20002;&#22833;&#30340;&#27573;&#26356;&#26032;&#35760;&#20998;&#29260;</span>
+	<span style="color: #FF1493;">if</span> (is_dupack || tcp_head_timedout(sk, tp))
+		tcp_update_scoreboard(sk, tp);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;CWR&#21644;Recovery&#29366;&#24577;&#65292;&#25317;&#22622;&#31383;&#21475;&#27599;&#38548;&#19968;&#20010;&#26032;&#21040;&#30340;&#30830;&#35748;&#20943;&#23569;&#19968;&#20010;&#27573;&#65292;&#21363;&#27599;&#25910;&#21040;2&#20010;&#30830;&#35748;&#23558;&#25317;&#22622;&#31383;&#21475;&#20943;1,&#30452;&#21040;&#25317;&#22622;&#31383;&#21475;&#22823;&#23567;&#31561;&#20110;&#25317;&#22622;&#31383;&#21475;&#38408;&#20540;&#20026;&#27490;&#12290;</span>
+	tcp_cwnd_down(sk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#20256;&#36755;&#37325;&#20256;&#38431;&#21015;&#20013;&#30340;&#26631;&#35760;&#20026;LOST&#30340;&#27573;&#65292;&#21516;&#26102;&#37325;&#32622;RTO&#23450;&#26102;&#22120;&#12290;</span>
+	tcp_xmit_retransmit_queue(sk);
+}
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orga218aec" class="outline-4">
+<h4 id="orga218aec"><span class="section-number-4">5.1.1</span> tcp_check_sack_reneging()</h4>
+<div class="outline-text-4" id="text-5-1-1">
+<p>
+如果接收到的ACK确认的是已经先前通过SACK确认的段，则意味着我们记录的SACK信息不能反映接收方的实际状态。接收路径上很可能有拥塞控制发生，此时便进入Loss状态，处理方式跟超时重传类似。通常情况下，接收方已经删除了保存到失序队列中的段。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_check_sack_reneging</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If ACK arrived pointing to a remembered SACK,</span>
+<span style="color: #8B8878;">         * it means that our remembered SACKs do not reflect</span>
+<span style="color: #8B8878;">         * real state of receiver i.e.</span>
+<span style="color: #8B8878;">         * receiver _host_ is heavily congested (or buggy).</span>
+<span style="color: #8B8878;">         * Do processing similar to RTO timeout.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> ((skb = skb_peek(&amp;sk-&gt;sk_write_queue)) != <span style="color: #AF87FF;">NULL</span> &amp;&amp;
+	    (TCP_SKB_CB(skb)-&gt;sacked &amp; TCPCB_SACKED_ACKED)) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+		NET_INC_STATS_BH(LINUX_MIB_TCPSACKRENEGING);
+
+		tcp_enter_loss(sk, 1);
+		icsk-&gt;icsk_retransmits++;
+		tcp_retransmit_skb(sk, skb_peek(&amp;sk-&gt;sk_write_queue));
+		inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS,
+					  icsk-&gt;icsk_rto, TCP_RTO_MAX);
+		<span style="color: #FF1493;">return</span> 1;
+	}
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4b6253f" class="outline-4">
+<h4 id="org4b6253f"><span class="section-number-4">5.1.2</span> tcp_mark_head_lost()</h4>
+<div class="outline-text-4" id="text-5-1-2">
+<p>
+从重传队首或上次标记丢失段的位置开始，为记分牌为0的段添加LOST标记，直到所有被标记LOST的段数达到packets或被标记序列号超过high_seq位置。标记过程中还要记录但前LOST标记到的位置和数量，如果用于标记重传位置超越了LOST的位置，则需要清楚retransmit_skb_hint。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Mark head of queue up as lost.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_mark_head_lost</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>,
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">packets</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21487;&#20197;&#28155;&#21152;LOST&#26631;&#35760;&#30340;&#27573;&#25968;&#30340;&#19978;&#38480;</span>
+<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">high_seq</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21487;&#20197;&#28155;&#21152;LOST&#26631;&#35760;&#30340;&#27573;&#24207;&#21495;&#30340;&#26368;&#22823;&#20540;</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cnt</span>;
+
+	BUG_TRAP(packets &lt;= tp-&gt;packets_out);
+	<span style="color: #FF1493;">if</span> (tp-&gt;lost_skb_hint) {
+		skb = tp-&gt;lost_skb_hint;
+		cnt = tp-&gt;lost_cnt_hint;
+	} <span style="color: #FF1493;">else</span> {
+		skb = sk-&gt;sk_write_queue.next;
+		cnt = 0;
+	}
+
+	sk_stream_for_retrans_queue_from(skb, sk) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">TODO: do this better</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">this is not the most efficient way to do this...</span><span style="color: #8B8878;"> */</span>
+		tp-&gt;lost_skb_hint = skb;
+		tp-&gt;lost_cnt_hint = cnt;
+		cnt += tcp_skb_pcount(skb);
+		<span style="color: #FF1493;">if</span> (cnt &gt; packets || after(TCP_SKB_CB(skb)-&gt;end_seq, high_seq))
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(TCP_SKB_CB(skb)-&gt;sacked&amp;TCPCB_TAGBITS)) {
+			TCP_SKB_CB(skb)-&gt;sacked |= TCPCB_LOST;
+			tp-&gt;lost_out += tcp_skb_pcount(skb);
+
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">clear xmit_retransmit_queue hints</span>
+<span style="color: #8B8878;">                         *  if this is beyond hint</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span>(tp-&gt;retransmit_skb_hint != <span style="color: #AF87FF;">NULL</span> &amp;&amp;
+			   before(TCP_SKB_CB(skb)-&gt;seq,
+				  TCP_SKB_CB(tp-&gt;retransmit_skb_hint)-&gt;seq)) {
+
+				tp-&gt;retransmit_skb_hint = <span style="color: #AF87FF;">NULL</span>;
+			}
+		}
+	}
+	tcp_sync_left_out(tp);
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3431447" class="outline-4">
+<h4 id="org3431447"><span class="section-number-4">5.1.3</span> tcp_sync_left_out()</h4>
+<div class="outline-text-4" id="text-5-1-3">
+<p>
+用于计算已离开主机的在网络中还未被确认的段数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_sync_left_out</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	<span style="color: #FF1493;">if</span> (tp-&gt;rx_opt.sack_ok &amp;&amp;
+	    (tp-&gt;sacked_out &gt;= tp-&gt;packets_out - tp-&gt;lost_out))
+		tp-&gt;sacked_out = tp-&gt;packets_out - tp-&gt;lost_out;
+	tp-&gt;left_out = tp-&gt;sacked_out + tp-&gt;lost_out;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5f4943d" class="outline-4">
+<h4 id="org5f4943d"><span class="section-number-4">5.1.4</span> tcp_moderate_cwnd()</h4>
+<div class="outline-text-4" id="text-5-1-4">
+<p>
+对拥塞窗口进行微调，再取拥塞窗口大小和已发送但未确认段数量加3之间的最小值作为当前拥塞窗口。并记录最近一次调整拥塞窗口的时间。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">CWND moderation, preventing bursts due to too big ACKs</span>
+<span style="color: #8B8878;"> * in dubious situations.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_moderate_cwnd</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	tp-&gt;snd_cwnd = min(tp-&gt;snd_cwnd,
+			   tcp_packets_in_flight(tp)+tcp_max_burst(tp));
+	tp-&gt;snd_cwnd_stamp = tcp_time_stamp;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1d5a93f" class="outline-4">
+<h4 id="org1d5a93f"><span class="section-number-4">5.1.5</span> tcp_complete_cwr()</h4>
+<div class="outline-text-4" id="text-5-1-5">
+<p>
+结束拥塞窗口减小，将拥塞窗口更新为拥塞窗口与慢启动的阈值之间的较小值，记录最近一次调整拥塞窗口的时间，并发送CA_EVENT_COMPLETE_CWR给当前拥塞算法。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_complete_cwr</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	tp-&gt;snd_cwnd = min(tp-&gt;snd_cwnd, tp-&gt;snd_ssthresh);
+	tp-&gt;snd_cwnd_stamp = tcp_time_stamp;
+	tcp_ca_event(sk, CA_EVENT_COMPLETE_CWR);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf7b1824" class="outline-4">
+<h4 id="orgf7b1824"><span class="section-number-4">5.1.6</span> tcp_time_to_recover()</h4>
+<div class="outline-text-4" id="text-5-1-6">
+<p>
+用于检测能否进入快速恢复状态。对于NewReno来说，连续接收到3个重复确认，便会进入Recovery状态，进行恢复。实现中，还需要更复杂的判断。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Linux NewReno/SACK/FACK/ECN state machine.</span>
+<span style="color: #8B8878;"> * --------------------------------------</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * "Open"       Normal state, no dubious events, fast path.</span>
+<span style="color: #8B8878;"> * "Disorder"   In all the respects it is "Open",</span>
+<span style="color: #8B8878;"> *              but requires a bit more attention. It is entered when</span>
+<span style="color: #8B8878;"> *              we see some SACKs or dupacks. It is split of "Open"</span>
+<span style="color: #8B8878;"> *              mainly to move some processing from fast path to slow one.</span>
+<span style="color: #8B8878;"> * "CWR"        CWND was reduced due to some Congestion Notification event.</span>
+<span style="color: #8B8878;"> *              It can be ECN, ICMP source quench, local device congestion.</span>
+<span style="color: #8B8878;"> * "Recovery"   CWND was reduced, we are fast-retransmitting.</span>
+<span style="color: #8B8878;"> * "Loss"       CWND was reduced due to RTO timeout or SACK reneging.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * tcp_fastretrans_alert() is entered:</span>
+<span style="color: #8B8878;"> * - each incoming ACK, if state is not "Open"</span>
+<span style="color: #8B8878;"> * - when arrived ACK is unusual, namely:</span>
+<span style="color: #8B8878;"> *      * SACK</span>
+<span style="color: #8B8878;"> *      * Duplicate ACK.</span>
+<span style="color: #8B8878;"> *      * ECN ECE.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * Counting packets in flight is pretty simple.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      in_flight = packets_out - left_out + retrans_out</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      packets_out is SND.NXT-SND.UNA counted in packets.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      retrans_out is number of retransmitted segments.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      left_out is number of segments left network, but not ACKed yet.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *              left_out = sacked_out + lost_out</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *     sacked_out: Packets, which arrived to receiver out of order</span>
+<span style="color: #8B8878;"> *                 and hence not ACKed. With SACKs this number is simply</span>
+<span style="color: #8B8878;"> *                 amount of SACKed data. Even without SACKs</span>
+<span style="color: #8B8878;"> *                 it is easy to give pretty reliable estimate of this number,</span>
+<span style="color: #8B8878;"> *                 counting duplicate ACKs.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *       lost_out: Packets lost by network. TCP has no explicit</span>
+<span style="color: #8B8878;"> *                 "loss notification" feedback from network (for now).</span>
+<span style="color: #8B8878;"> *                 It means that this number can be only _guessed_.</span>
+<span style="color: #8B8878;"> *                 Actually, it is the heuristics to predict lossage that</span>
+<span style="color: #8B8878;"> *                 distinguishes different algorithms.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      F.e. after RTO, when all the queue is considered as lost,</span>
+<span style="color: #8B8878;"> *      lost_out = packets_out and in_flight = retrans_out.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *              Essentially, we have now two algorithms counting</span>
+<span style="color: #8B8878;"> *              lost packets.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *              FACK: It is the simplest heuristics. As soon as we decided</span>
+<span style="color: #8B8878;"> *              that something is lost, we decide that _all_ not SACKed</span>
+<span style="color: #8B8878;"> *              packets until the most forward SACK are lost. I.e.</span>
+<span style="color: #8B8878;"> *              lost_out = fackets_out - sacked_out and left_out = fackets_out.</span>
+<span style="color: #8B8878;"> *              It is absolutely correct estimate, if network does not reorder</span>
+<span style="color: #8B8878;"> *              packets. And it loses any connection to reality when reordering</span>
+<span style="color: #8B8878;"> *              takes place. We use FACK by default until reordering</span>
+<span style="color: #8B8878;"> *              is suspected on the path to this destination.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *              NewReno: when Recovery is entered, we assume that one segment</span>
+<span style="color: #8B8878;"> *              is lost (classic Reno). While we are in Recovery and</span>
+<span style="color: #8B8878;"> *              a partial ACK arrives, we assume that one more packet</span>
+<span style="color: #8B8878;"> *              is lost (NewReno). This heuristics are the same in NewReno</span>
+<span style="color: #8B8878;"> *              and SACK.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *  Imagine, that's all! Forget about all this shamanism about CWND inflation</span>
+<span style="color: #8B8878;"> *  deflation etc. CWND is real congestion window, never inflated, changes</span>
+<span style="color: #8B8878;"> *  only according to classic VJ rules.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * Really tricky (and requiring careful tuning) part of algorithm</span>
+<span style="color: #8B8878;"> * is hidden in functions tcp_time_to_recover() and tcp_xmit_retransmit_queue().</span>
+<span style="color: #8B8878;"> * The first determines the moment _when_ we should reduce CWND and,</span>
+<span style="color: #8B8878;"> * hence, slow down forward transmission. In fact, it determines the moment</span>
+<span style="color: #8B8878;"> * when we decide that hole is caused by loss, rather than by a reorder.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * tcp_xmit_retransmit_queue() decides, _what_ we should retransmit to fill</span>
+<span style="color: #8B8878;"> * holes, caused by lost packets.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * And the most logically complicated part of algorithm is undo</span>
+<span style="color: #8B8878;"> * heuristics. We detect false retransmits due to both too early</span>
+<span style="color: #8B8878;"> * fast retransmit (reordering) and underestimated RTO, analyzing</span>
+<span style="color: #8B8878;"> * timestamps and D-SACKs. When we detect that some segments were</span>
+<span style="color: #8B8878;"> * retransmitted by mistake and CWND reduction was wrong, we undo</span>
+<span style="color: #8B8878;"> * window reduction and abort recovery phase. This logic is hidden</span>
+<span style="color: #8B8878;"> * inside several functions named tcp_try_undo_&lt;something&gt;.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This function decides, when we should leave Disordered state</span>
+<span style="color: #8B8878;"> * and enter Recovery phase, reducing congestion window.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * Main question: may we further continue forward transmission</span>
+<span style="color: #8B8878;"> * with the same cwnd?</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_time_to_recover</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">packets_out</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#36807;&#31243;&#20013;&#23384;&#22312;&#20002;&#22833;&#27573;&#65292;&#21017;&#21487;&#20197;&#36827;&#20837;Recovery&#29366;&#24577;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Trick#1: The loss is proven.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (tp-&gt;lost_out)
+		<span style="color: #FF1493;">return</span> 1;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#22914;&#26524;&#19981;&#25903;&#25345;SACK,tcp_fackets_out()&#36820;&#22238;sacked_out+1&#65292;&#24403;&#36229;&#36807;reordering&#26102;&#65292;&#21017;&#36820;&#22238;1,&#34920;&#31034;&#21487;&#20197;&#36827;&#20837;Recovery&#29366;&#24577;&#12290;</span>
+<span style="color: #8B8878;">        &#22914;&#26524;&#25903;&#25345;SACK&#65292;tcp_fackets_out()&#36820;&#22238;fackets_out,&#24403;&#36229;&#36807;reordering&#26102;&#65292;&#21017;&#36820;&#22238;1,&#34920;&#31034;&#21487;&#20197;&#36827;&#20837;Recovery&#29366;&#24577;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Not-A-Trick#2 : Classic rule...</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (tcp_fackets_out(tp) &gt; tp-&gt;reordering)
+		<span style="color: #FF1493;">return</span> 1;
+
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#37325;&#20256;&#38431;&#21015;&#38431;&#39318;&#30340;&#27573;&#21457;&#36865;&#36229;&#26102;&#65292;&#21487;&#20197;&#35302;&#21457;&#20174;&#32780;&#36827;&#20837;Recovery&#29366;&#24577;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Trick#3 : when we use RFC2988 timer restart, fast</span>
+<span style="color: #8B8878;">         * retransmit can be triggered by timeout of queue head.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (tcp_head_timedout(sk, tp))
+		<span style="color: #FF1493;">return</span> 1;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#24403;&#21069;&#26410;&#30830;&#35748;&#30340;&#27573;&#36739;&#23569;&#65292;&#19988;&#36890;&#36807;SACK&#30830;&#35748;&#30340;&#27573;&#36229;&#36807;&#26410;&#30830;&#35748;&#30340;&#19968;&#21322;&#65292;&#21516;&#26102;&#24403;&#21069;&#27809;&#26377;&#27573;&#38656;&#35201;&#21363;&#20351;&#36755;&#20986;&#65292;&#21017;&#21487;&#20197;&#36827;&#20837;Recovery&#29366;&#24577;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Trick#4: It is still not OK... But will it be useful to delay</span>
+<span style="color: #8B8878;">         * recovery more?</span>
+<span style="color: #8B8878;">         */</span>
+	packets_out = tp-&gt;packets_out;
+	<span style="color: #FF1493;">if</span> (packets_out &lt;= tp-&gt;reordering &amp;&amp;
+	    tp-&gt;sacked_out &gt;= max_t(__u32, packets_out/2, sysctl_tcp_reordering) &amp;&amp;
+	    <span style="color: #CDC673; font-weight: bold;">!</span>tcp_may_send_now(sk, tp)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">We have nothing to send. This connection is limited</span>
+<span style="color: #8B8878;">                 * either by receiver window or by application.</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">return</span> 1;
+	}
+
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5355e97" class="outline-4">
+<h4 id="org5355e97"><span class="section-number-4">5.1.7</span> tcp_update_scoreboard()</h4>
+<div class="outline-text-4" id="text-5-1-7">
+<p>
+为确定丢失的段更新记分牌，在拥塞控制状态的处理过程中，如果确认接收到重复ACK或者重传队首的段传送超时的时候被调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Account newly detected lost packet(s)</span><span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_update_scoreboard</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#37325;&#20256;&#38431;&#21015;&#19978;&#30340;&#27573;&#28155;&#21152;LOST&#26631;&#35760;</span>
+	<span style="color: #FF1493;">if</span> (IsFack(tp)) {
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">lost</span> = tp-&gt;fackets_out - tp-&gt;reordering;
+		<span style="color: #FF1493;">if</span> (lost &lt;= 0)
+			lost = 1;
+		tcp_mark_head_lost(sk, tp, lost, tp-&gt;high_seq);
+	} <span style="color: #FF1493;">else</span> {
+		tcp_mark_head_lost(sk, tp, 1, tp-&gt;high_seq);
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">New heuristics: it is possible only after we switched</span>
+<span style="color: #8B8878;">         * to restart timer each time when something is ACKed.</span>
+<span style="color: #8B8878;">         * Hence, we can detect timed out packets during fast</span>
+<span style="color: #8B8878;">         * retransmit without falling to slow start.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#21551;&#29992;&#20102;SACK&#65292;&#24182;&#19988;&#37325;&#20256;&#38431;&#21015;&#38431;&#39318;&#30340;&#27573;&#24050;&#32463;&#37325;&#20256;&#36229;&#26102;&#65292;&#21017;&#20174;&#38431;&#39318;&#25110;&#19978;&#27425;&#26356;&#26032;&#35760;&#20998;&#29260;&#35760;&#24405;&#30340;</span>
+<span style="color: #8B8878;">        &#20301;&#32622;&#24320;&#22987;&#22788;&#29702;&#12290;&#22788;&#29702;&#37027;&#20123;&#20256;&#36755;&#36229;&#26102;&#19988;&#35760;&#20998;&#29260;&#20026;&#31354;&#30340;&#27573;&#65292;&#28155;&#21152;LOST&#26631;&#35760;&#65292;&#26356;&#26032;lost_out&#12290;&#22914;&#26524;&#29992;&#20110;</span>
+<span style="color: #8B8878;">        &#26631;&#35760;&#37325;&#20256;&#20301;&#32622;&#36229;&#36234;&#20102;LOST&#30340;&#20301;&#32622;&#65292;&#21017;&#38656;&#35201;&#28165;&#26970;retransmit_skb_hint&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>IsReno(tp) &amp;&amp; tcp_head_timedout(sk, tp)) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+
+		skb = tp-&gt;scoreboard_skb_hint ? tp-&gt;scoreboard_skb_hint
+			: sk-&gt;sk_write_queue.next;
+
+		sk_stream_for_retrans_queue_from(skb, sk) {
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tcp_skb_timedout(sk, skb))
+				<span style="color: #FF1493;">break</span>;
+
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(TCP_SKB_CB(skb)-&gt;sacked&amp;TCPCB_TAGBITS)) {
+				TCP_SKB_CB(skb)-&gt;sacked |= TCPCB_LOST;
+				tp-&gt;lost_out += tcp_skb_pcount(skb);
+
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">clear xmit_retrans hint</span><span style="color: #8B8878;"> */</span>
+				<span style="color: #FF1493;">if</span> (tp-&gt;retransmit_skb_hint &amp;&amp;
+				    before(TCP_SKB_CB(skb)-&gt;seq,
+					   TCP_SKB_CB(tp-&gt;retransmit_skb_hint)-&gt;seq))
+
+					tp-&gt;retransmit_skb_hint = <span style="color: #AF87FF;">NULL</span>;
+			}
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#27492;&#27425;&#26356;&#26032;&#35760;&#20998;&#29260;&#30340;&#20301;&#32622;&#65292;&#19979;&#27425;&#26356;&#26032;&#35760;&#20998;&#29260;&#20174;&#27492;&#27425;&#35760;&#24405;&#30340;&#20301;&#32622;&#24320;&#22987;&#12290;</span>
+		tp-&gt;scoreboard_skb_hint = skb;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#24050;&#31163;&#24320;&#20027;&#26426;&#30340;&#36824;&#22312;&#32593;&#32476;&#20013;&#30340;&#20026;&#30830;&#35748;&#30340;&#27573;&#25968;&#12290;</span>
+		tcp_sync_left_out(tp);
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5470b60" class="outline-3">
+<h3 id="org5470b60"><span class="section-number-3">5.2</span> 拥塞避免</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+在拥塞避免模式下，通过调用当前的拥塞控制算法重新计算拥塞窗口。对于NewReno算法，如果拥塞窗口小于慢启动阈值，则进行慢启动，否则进行拥塞避免算法。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_cong_avoid</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">ack</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#21040;&#30340;TCP&#27573;&#39318;&#37096;&#20013;&#30340;&#30830;&#35748;&#24207;&#21495;</span>
+<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">rtt</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27492;&#27425;&#35745;&#31639;&#21040;&#30340;&#24448;&#36820;&#26102;&#38388;</span>
+<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">in_flight</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27491;&#22312;&#32593;&#32476;&#20013;&#20256;&#36755;&#30340;&#27573;&#25968;</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">good</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;ACK&#26159;&#21542;&#26126;&#30830;</span>
+{
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+	icsk-&gt;icsk_ca_ops-&gt;cong_avoid(sk, ack, rtt, in_flight, good);
+	tcp_sk(sk)-&gt;snd_cwnd_stamp = tcp_time_stamp;
+}
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbb34cc2" class="outline-2">
+<h2 id="orgbb34cc2"><span class="section-number-2">6</span> 拥塞窗口的检测：tcp_cwnd_test()</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+当TCP发送方输出时，先判断目前是否可以立即发送。如果可以，则获取当前拥塞窗口的未使用量，用来判断拥塞窗口是否还有配额用来发送。
+</p>
+
+<p>
+tcp_cwnd_test()函数就是根据当前的拥塞窗口和网络中正在传输的段得到现在可以发送段的数目。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Can at least one segment of SKB be sent right now, according to the</span>
+<span style="color: #8B8878;"> * congestion window rules?  If so, return how many segments are allowed.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_cwnd_test</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">in_flight</span>, <span style="color: #FF8C00;">cwnd</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#24403;&#21069;&#21457;&#36865;&#30340;&#27573;&#23384;&#22312;FIN&#26631;&#24535;&#65292;&#21017;&#21482;&#33021;&#36755;&#20986;&#19968;&#20010;&#65292;&#22240;&#20026;&#25509;&#30528;&#24320;&#22987;&#26029;&#24320;&#36830;&#25509;&#65292;&#19981;&#33021;&#33021;&#22312;&#21457;&#36865;&#29992;&#25143;&#25968;&#25454;&#20102;&#12290;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Don't be strict about the congestion window for the final FIN.</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF1493;">if</span> (TCP_SKB_CB(skb)-&gt;flags &amp; TCPCB_FLAG_FIN)
+		<span style="color: #FF1493;">return</span> 1;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#25317;&#22622;&#31383;&#21475;&#22823;&#20110;&#27491;&#22312;&#32593;&#32476;&#20013;&#20256;&#36755;&#30340;&#27573;&#25968;&#65292;&#21017;&#27492;&#27425;&#21487;&#20197;&#36755;&#20986;&#30340;&#27573;&#25968;&#20026;&#23427;&#20204;&#20043;&#38388;&#30340;&#24046;&#20540;&#65292;&#21542;&#21017;&#20026;0</span>
+	in_flight = tcp_packets_in_flight(tp);
+	cwnd = tp-&gt;snd_cwnd;
+	<span style="color: #FF1493;">if</span> (in_flight &lt; cwnd)
+		<span style="color: #FF1493;">return</span> (cwnd - in_flight);
+
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8716f94" class="outline-2">
+<h2 id="org8716f94"><span class="section-number-2">7</span> F-RTO算法</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+有时重传定时器可能是虚假的，这会引起未丢失段的不必要重传。在虚假重传超时发生后，发送方接收到的是一个迟到的确认，会在RTO恢复期间出发一个不必要的整个窗口的重传。而且，在虚假重传超时后，通常TCP发送方处于慢启动阶段，在此期间每次接收到迟到的确认时，就使拥塞窗口增加1。这样在一个往返时间内，大量的数据段拥入到网络，从而违背了“数据包守恒”原则。
+</p>
+
+<p>
+当RTO到期后，F-RTO发送方跟通常一样，重传第一个未确认段。不同于通常操作的是，对于第一个超时后的到达的确认（假设该确认在窗口之前），他开始发送新的、当前未发送过的数据。如果在超时后到达的第二个确认在窗口之前（比如，未被重传的数据），F-RTO发送方宣布超时是虚假的，并且退出RTO恢复。然而，如果两个确认的任意一个是重复ACK，就没有明显的证据表明超时是虚假超时。因此，此时F-RTO发送方采用传统的慢启动策略，重传未确认段。采用SACK增强版本的F-RTO算法，在RTO重传后收到重复ACK时，仍然可以检测出虚假超时。
+</p>
+</div>
+
+<div id="outline-container-org66ba2f6" class="outline-3">
+<h3 id="org66ba2f6"><span class="section-number-3">7.1</span> 进入F-RTO算法处理阶段</h3>
+<div class="outline-text-3" id="text-7-1">
+</div>
+<div id="outline-container-orgc48fd87" class="outline-4">
+<h4 id="orgc48fd87"><span class="section-number-4">7.1.1</span> 判断是否可以使用F-RTO算法进行处理</h4>
+<div class="outline-text-4" id="text-7-1-1">
+<p>
+当TCP段传送超时后，会引起段的重传，在重传定时器的处理过程中会判断是否可以使用F-RTO算法。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      The TCP retransmit timer.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_retransmit_timer</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #FF1493;">if</span> (tcp_use_frto(sk)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#21487;&#20197;&#65292;&#20351;&#29992;F-RTO&#31639;&#27861;&#22788;&#29702;</span>
+		tcp_enter_frto(sk);
+	} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21542;&#21017;&#36827;&#20837;&#24120;&#35268;&#30340;RTO&#24930;&#21551;&#21160;&#37325;&#20256;&#24674;&#22797;&#38454;&#27573;</span>
+		tcp_enter_loss(sk, 0);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org392b758" class="outline-4">
+<h4 id="org392b758"><span class="section-number-4">7.1.2</span> 确定是否可以使用F-RTO算法进行发送超时处理：tcp_use_frto()</h4>
+<div class="outline-text-4" id="text-7-1-2">
+<p>
+判断条件：
+</p>
+<ul class="org-ul">
+<li>系统参数tcp_frto设置为非0，表示启用F-RTO算法</li>
+<li>TCP发送方有足够的未发送数据，即发送队列不为空</li>
+<li>待发送的段完全在发送窗口内</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_use_frto</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">F-RTO must be activated in sysctl and there must be some</span>
+<span style="color: #8B8878;">         * unsent new data, and the advertised window should allow</span>
+<span style="color: #8B8878;">         * sending it.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">return</span> (sysctl_tcp_frto &amp;&amp; sk-&gt;sk_send_head &amp;&amp;
+		<span style="color: #CDC673; font-weight: bold;">!</span>after(TCP_SKB_CB(sk-&gt;sk_send_head)-&gt;end_seq,
+		       tp-&gt;snd_una + tp-&gt;snd_wnd));
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org61c16c1" class="outline-4">
+<h4 id="org61c16c1"><span class="section-number-4">7.1.3</span> tcp_enter_frto()</h4>
+<div class="outline-text-4" id="text-7-1-3">
+<p>
+启用F-RTO后，虽然传送超时，但尚未进入Loss状态。相反，在传送两个段之后根据接收到的ACK来确认数据是否丢失。如果超时是虚假的，则应该接收到新的ACK。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RTO occurred, but do not yet enter loss state. Instead, transmit two new</span>
+<span style="color: #8B8878;"> * segments to see from the next ACKs whether any data was really missing.</span>
+<span style="color: #8B8878;"> * If the RTO was spurious, new ACKs should arrive.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_enter_frto</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#20026;1,&#34920;&#31034;&#21018;&#36827;&#20837;F-RTO&#22788;&#29702;&#38454;&#27573;</span>
+	tp-&gt;frto_counter = 1;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36827;&#20837;F-RTO&#22788;&#29702;&#38454;&#27573;&#65292;&#22914;&#26524;&#24403;&#21069;&#32593;&#32476;&#27604;&#36739;&#36890;&#24120;&#65292;&#21017;&#20445;&#23384;&#24403;&#21069;&#30340;&#24930;&#21551;&#21160;&#19982;&#20043;&#65292;&#24182;&#36890;&#30693;CA_EVENT_FRTO&#20107;&#20214;</span>
+<span style="color: #8B8878;">        &#32473;&#24403;&#21069;&#30340;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state &lt;= TCP_CA_Disorder ||
+	    tp-&gt;snd_una == tp-&gt;high_seq ||
+	    (icsk-&gt;icsk_ca_state == TCP_CA_Loss &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>icsk-&gt;icsk_retransmits)) {
+		tp-&gt;prior_ssthresh = tcp_current_ssthresh(sk);
+		tp-&gt;snd_ssthresh = icsk-&gt;icsk_ca_ops-&gt;ssthresh(sk);
+		tcp_ca_event(sk, CA_EVENT_FRTO);
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Have to clear retransmission markers here to keep the bookkeeping</span>
+<span style="color: #8B8878;">         * in shape, even though we are not yet in Loss state.</span>
+<span style="color: #8B8878;">         * If something was really lost, it is eventually caught up</span>
+<span style="color: #8B8878;">         * in tcp_enter_frto_loss.</span>
+<span style="color: #8B8878;">         */</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;F-RTO&#22788;&#29702;&#38454;&#27573;&#65292;&#20294;&#26159;&#27809;&#26377;&#36827;&#20837;Loss&#29366;&#24577;&#65292;&#24517;&#39035;&#28165;&#38500;&#19982;&#37325;&#20256;&#30456;&#20851;&#30340;&#25968;&#25454;&#21644;&#26631;&#35760;&#65292;&#21516;&#26102;&#35760;&#24405;&#24403;&#21069;&#30340;SND.UNA&#20197;&#20415;&#29992;&#20110;&#24674;&#22797;&#12290;</span>
+	tp-&gt;retrans_out = 0;
+	tp-&gt;undo_marker = tp-&gt;snd_una;
+	tp-&gt;undo_retrans = 0;
+
+	sk_stream_for_retrans_queue(skb, sk) {
+		TCP_SKB_CB(skb)-&gt;sacked &amp;= ~TCPCB_RETRANS;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21047;&#26032;&#27809;&#26377;&#30830;&#35748;&#30340;TCP&#27573;&#30340;&#25968;&#37327;left_out</span>
+	tcp_sync_left_out(tp);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">F-RTO&#22788;&#29702;&#38454;&#27573;&#23454;&#38469;&#19978;&#36824;&#22788;&#20110;Open&#29366;&#24577;</span>
+	tcp_set_ca_state(sk, TCP_CA_Open);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#36827;&#20837;F-RTO&#22788;&#29702;&#38454;&#27573;&#26102;&#30340;SND.NXT</span>
+	tp-&gt;frto_highmark = tp-&gt;snd_nxt;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org06978bb" class="outline-3">
+<h3 id="org06978bb"><span class="section-number-3">7.2</span> 进行F-RTO算法的处理</h3>
+<div class="outline-text-3" id="text-7-2">
+<p>
+发送方接收到ACK之后，在处理ACK时会检测是否处于F-RTO处理阶段。如果是，则调用tcp_process_frto()进行F-RTO阶段的处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This routine deals with incoming acks, but not outgoing ones.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_ack</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flag</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">prior_snd_una</span> = tp-&gt;snd_una;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #FF1493;">if</span> (tp-&gt;frto_counter)
+		tcp_process_frto(sk, prior_snd_una);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgaea3c1c" class="outline-4">
+<h4 id="orgaea3c1c"><span class="section-number-4">7.2.1</span> tcp_process_frto()</h4>
+<div class="outline-text-4" id="text-7-2-1">
+<p>
+用于处理在接收到ACK后，启用F-RTO的情况，主要确认段是否真的丢失，以及传送超时是不是虚假的。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_process_frto</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">prior_snd_una</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#21040;ACK&#21518;&#65292;&#21047;&#26032;&#27809;&#26377;&#30830;&#35748;&#30340;TCP&#27573;&#30340;&#25968;&#37327;left_out</span>
+	tcp_sync_left_out(tp);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;F-RTO&#22788;&#29702;&#38454;&#27573;&#21518;&#65292;&#22914;&#26524;&#25910;&#21040;&#37325;&#22797;&#30340;ACK,&#21017;&#35828;&#26126;&#37325;&#20256;&#36229;&#26102;&#26159;&#30495;&#23454;&#30340;&#65292;&#38656;&#35201;&#36827;&#20837;&#25317;&#22622;&#24674;&#22797;&#38454;&#27573;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (tp-&gt;snd_una == prior_snd_una ||
+	    <span style="color: #CDC673; font-weight: bold;">!</span>before(tp-&gt;snd_una, tp-&gt;frto_highmark)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RTO was caused by loss, start retransmitting in</span>
+<span style="color: #8B8878;">                 * go-back-N slow start</span>
+<span style="color: #8B8878;">                 */</span>
+		tcp_enter_frto_loss(sk);
+		<span style="color: #FF1493;">return</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#25509;&#25910;&#21040;&#31532;&#19968;&#20010;&#26377;&#25928;&#30340;ACK,&#21017;&#37325;&#26032;&#35774;&#32622;&#25317;&#22622;&#31383;&#21475;&#65292;&#30830;&#20445;&#21487;&#20197;&#22312;F-RTO&#22788;&#29702;&#38454;&#27573;&#22312;&#36755;&#20986;&#20004;&#20010;TCP&#27573;</span>
+	<span style="color: #FF1493;">if</span> (tp-&gt;frto_counter == 1) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">First ACK after RTO advances the window: allow two new</span>
+<span style="color: #8B8878;">                 * segments out.</span>
+<span style="color: #8B8878;">                 */</span>
+		tp-&gt;snd_cwnd = tcp_packets_in_flight(tp) + 2;
+	} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#25509;&#25910;&#21040;&#31532;&#20108;&#20010;&#26377;&#25928;&#30340;ACK&#65292;&#21017;&#38656;&#35201;&#36827;&#19968;&#27493;&#35843;&#25972;&#25317;&#22622;&#31383;&#21475;</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Also the second ACK after RTO advances the window.</span>
+<span style="color: #8B8878;">                 * The RTO was likely spurious. Reduce cwnd and continue</span>
+<span style="color: #8B8878;">                 * in congestion avoidance</span>
+<span style="color: #8B8878;">                 */</span>
+		tp-&gt;snd_cwnd = min(tp-&gt;snd_cwnd, tp-&gt;snd_ssthresh);
+		tcp_moderate_cwnd(tp);
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">F-RTO affects on two new ACKs following RTO.</span>
+<span style="color: #8B8878;">         * At latest on third ACK the TCP behavior is back to normal.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;F-RTO&#22788;&#29702;&#38454;&#27573;&#21518;&#65292;&#22914;&#26524;&#33021;&#36830;&#32493;&#25910;&#21040;&#20004;&#20010;&#23545;&#26032;&#25968;&#25454;&#30830;&#35748;&#30340;ACK,&#21017;&#35828;&#26126;&#37325;&#20256;&#36229;&#26102;&#26159;&#34394;&#20551;&#30340;&#65292;&#22240;&#27492;&#36864;&#20986;RTO&#24674;&#22797;&#12290;</span>
+	tp-&gt;frto_counter = (tp-&gt;frto_counter + 1) % 3;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org53d13fa" class="outline-4">
+<h4 id="org53d13fa"><span class="section-number-4">7.2.2</span> tcp_enter_frto_loss()</h4>
+<div class="outline-text-4" id="text-7-2-2">
+<p>
+在F-RTO处理阶段，如果发现传送超时确实是由于网络拥塞引起的，则会调用tcp_enter_frto_loss()进入拥塞恢复阶段，开始慢启动流程。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Enter Loss state after F-RTO was applied. Dupack arrived after RTO,</span>
+<span style="color: #8B8878;"> * which indicates that we should follow the traditional RTO recovery,</span>
+<span style="color: #8B8878;"> * i.e. mark everything lost and do go-back-N retransmission.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_enter_frto_loss</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cnt</span> = 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;Loss&#29366;&#24577;&#21518;&#65292;&#38656;&#35201;&#37325;&#26032;&#32479;&#35745;&#30456;&#20851;SACK&#12289;&#20002;&#22833;&#31561;&#25968;&#25454;&#65292;&#22240;&#27492;&#20808;&#36827;&#34892;&#28165;&#38500;</span>
+	tp-&gt;sacked_out = 0;
+	tp-&gt;lost_out = 0;
+	tp-&gt;fackets_out = 0;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#36941;&#21382;&#37325;&#20256;&#38431;&#21015;&#65292;&#37325;&#26032;&#26631;&#35760;LOST&#26631;&#24535;&#12290;&#25509;&#25910;&#26041;&#24050;&#32463;&#25509;&#25910;&#21040;&#30340;&#37027;&#20123;&#23384;&#22312;SACKED_ACKED&#26631;&#24535;&#30340;&#19981;&#29992;&#20462;&#25913;&#65292;</span>
+<span style="color: #8B8878;">        &#32780;&#20854;&#20182;&#30340;&#21017;&#28155;&#21152;LOST&#26631;&#35760;&#65292;&#31561;&#24453;&#37325;&#20256;&#12290;&#21516;&#26102;&#37325;&#26032;&#32479;&#35745;lost_out&#12289;sacked_out&#21644;fackets_out&#31561;&#20449;&#24687;&#65292;</span>
+<span style="color: #8B8878;">        &#20043;&#21518;&#20877;&#21047;&#26032;&#27809;&#26377;&#30830;&#35748;&#30340;TCP&#27573;&#30340;&#25968;&#37327;left_out</span><span style="color: #8B8878;">*/</span>
+	sk_stream_for_retrans_queue(skb, sk) {
+		cnt += tcp_skb_pcount(skb);
+		TCP_SKB_CB(skb)-&gt;sacked &amp;= ~TCPCB_LOST;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(TCP_SKB_CB(skb)-&gt;sacked&amp;TCPCB_SACKED_ACKED)) {
+
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Do not mark those segments lost that were</span>
+<span style="color: #8B8878;">                         * forward transmitted after RTO</span>
+<span style="color: #8B8878;">                         */</span>
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>after(TCP_SKB_CB(skb)-&gt;end_seq,
+				   tp-&gt;frto_highmark)) {
+				TCP_SKB_CB(skb)-&gt;sacked |= TCPCB_LOST;
+				tp-&gt;lost_out += tcp_skb_pcount(skb);
+			}
+		} <span style="color: #FF1493;">else</span> {
+			tp-&gt;sacked_out += tcp_skb_pcount(skb);
+			tp-&gt;fackets_out = cnt;
+		}
+	}
+	tcp_sync_left_out(tp); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21047;&#26032;&#27809;&#26377;&#30830;&#35748;&#30340;TCP&#27573;&#30340;&#25968;&#37327;left_out</span>
+
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#35201;&#36827;&#20837;Loss&#29366;&#24577;&#65292;&#38656;&#35201;&#37325;&#26032;&#35774;&#32622;&#25317;&#22622;&#31383;&#21475;&#31561;&#12290;&#23436;&#25104;&#21518;&#36827;&#20837;Loss&#29366;&#24577;&#65292;&#24320;&#22987;&#24930;&#21551;&#21160;&#65292;&#26368;&#21518;&#28165;&#38500;</span>
+<span style="color: #8B8878;">        &#19982;&#25317;&#22622;&#25511;&#21046;&#30456;&#20851;&#30340;&#29992;&#20110;&#26242;&#23384;&#20301;&#32622;&#30340;&#20449;&#24687;</span><span style="color: #8B8878;">*/</span>
+	tp-&gt;snd_cwnd = tp-&gt;frto_counter + tcp_packets_in_flight(tp)+1;
+	tp-&gt;snd_cwnd_cnt = 0;
+	tp-&gt;snd_cwnd_stamp = tcp_time_stamp;
+	tp-&gt;undo_marker = 0;
+	tp-&gt;frto_counter = 0;
+
+	tp-&gt;reordering = min_t(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>, tp-&gt;reordering,
+					     sysctl_tcp_reordering);
+	tcp_set_ca_state(sk, TCP_CA_Loss);
+	tp-&gt;high_seq = tp-&gt;frto_highmark;
+	TCP_ECN_queue_cwr(tp);
+
+	clear_all_retrans_hints(tp);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org83eaf58" class="outline-2">
+<h2 id="org83eaf58"><span class="section-number-2">8</span> 拥塞窗口的检验</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+当发送端由于应用程序限制时间太长从而会导致拥塞窗口的无效。发送端在网络限制期间，由于拥塞窗口总是重复验证有效，因此输出数据没有丢失。当TCP发送端被网络限制，只有接收到ACK后，才会再输出数据。与之相反，发送端在被应用程序限制期间，用来估计拥塞窗口的带宽随着时间推移，其准确性大大降低。因此，当TCP发送端成功输出发送队列上的段后，如果有必要，就会进行拥塞窗口的检验。
+</p>
+</div>
+
+<div id="outline-container-org175b4da" class="outline-3">
+<h3 id="org175b4da"><span class="section-number-3">8.1</span> tcp_event_data_sent()</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+发送方在输出段时，如果发送出去的段有负载，则会检测拥塞窗口闲置时间是否超时。如果超时，则使拥塞窗口失效，并重新计算拥塞窗口，参见tcp_retransmit_skb()。然后记录发送TCP时间，根据最近接收段的时间确定本端掩饰确认是否进入pingpong模式。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_event_data_sent</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>,
+				<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">now</span> = tcp_time_stamp;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#21551;&#29992;&#20102;tcp_slow_start_after_idle&#65292;&#21017;&#22312;&#25317;&#22622;&#31383;&#21475;&#38386;&#32622;&#26102;&#38388;&#36229;&#36807;&#20102;RTO&#21518;&#65292;&#26159;&#25317;&#22622;&#31383;&#21475;&#26159;&#23567;&#65292;&#24182;&#37325;&#26032;&#35745;&#31639;&#25317;&#22622;&#31383;&#21475;</span>
+	<span style="color: #FF1493;">if</span> (sysctl_tcp_slow_start_after_idle &amp;&amp;
+	    (<span style="color: #CDC673; font-weight: bold;">!</span>tp-&gt;packets_out &amp;&amp; (s32)(now - tp-&gt;lsndtime) &gt; icsk-&gt;icsk_rto))
+		tcp_cwnd_restart(sk, __sk_dst_get(sk));
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#21457;&#36865;TCP&#30340;&#26102;&#38388;</span>
+	tp-&gt;lsndtime = now;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If it is a reply for ato after last received</span>
+<span style="color: #8B8878;">         * packet, enter pingpong mode.</span>
+<span style="color: #8B8878;">         *///</span><span style="color: #8B8878;">&#26681;&#25454;&#26368;&#36817;&#25509;&#25910;&#27573;&#30340;&#26102;&#38388;&#30830;&#23450;&#26412;&#31471;&#25513;&#39280;&#30830;&#35748;&#26159;&#21542;&#36827;&#20837;pingpong&#27169;&#24335;</span>
+	<span style="color: #FF1493;">if</span> ((<span style="color: #5FD7FF;">u32</span>)(now - icsk-&gt;icsk_ack.lrcvtime) &lt; icsk-&gt;icsk_ack.ato)
+		icsk-&gt;icsk_ack.pingpong = 1;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd4ed2a6" class="outline-3">
+<h3 id="orgd4ed2a6"><span class="section-number-3">8.2</span> tcp_cwnd_validate()</h3>
+<div class="outline-text-3" id="text-8-2">
+<p>
+由于应用程序的限制，拥塞窗口校验算法如下：  在发送方成功发送一个段后，会检查从发送队列发出而未得到确认段数是否填满了拥塞窗口。如果填满了，则说明发送方是收到了网络限制，把snd_cwnd_stamp的值设置为当前的时钟，snd_cwnd_used被设置为0。如果未填满并且发送队列为空时，则说明发送方是受到了应用程序的限制。此时，如果未得到确认的段数大于snd_cwnd_used，则snd_cwnd_used更新为未得到确认的段数。然后检测当前与最近一次检测拥塞窗口的时间是否超过了重传超时时间。如果是，且拥塞状态为Open，则将拥塞窗口减小为 (snd_cwnd + snd_cwnd_used)/2 ，把snd_cwnd_stamp设置为当前时钟，snd_cwnd_used设置为0。
+</p>
+
+<p>
+在tcp_write_xmit()和tcp_push_one()中，当成功输出TCP段之后，便会调用tcp_cwnd_validate(), 进行拥塞窗口的检验。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Congestion window validation. (RFC2861)</span><span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_cwnd_validate</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>)
+{
+	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">packets_out</span> = tp-&gt;packets_out;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#21457;&#36865;&#38431;&#21015;&#21457;&#20986;&#32780;&#26410;&#24471;&#21040;&#30830;&#35748;&#30340;tcp&#27573;&#25968;&#30446;&#22823;&#20110;&#25317;&#22622;&#31383;&#21475;&#65292;&#21017;&#35828;&#26126;&#21457;&#36865;&#26041;&#25910;&#21040;&#32593;&#32476;&#38480;&#21046;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (packets_out &gt;= tp-&gt;snd_cwnd) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Network is feed fully.</span><span style="color: #8B8878;"> */</span>
+		tp-&gt;snd_cwnd_used = 0;
+		tp-&gt;snd_cwnd_stamp = tcp_time_stamp;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">snc_cwnd_used&#28165;&#38646;&#65292;&#24182;&#26356;&#26032;&#26368;&#36817;&#19968;&#27425;&#26816;&#39564;&#25317;&#22622;&#31383;&#21475;&#30340;&#26102;&#38388;</span>
+	} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21542;&#21017;&#21487;&#33021;&#26159;&#25910;&#21040;&#24212;&#29992;&#31243;&#24207;&#30340;&#38480;&#21046;</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Network starves.</span><span style="color: #8B8878;"> *///</span><span style="color: #8B8878;">&#39318;&#20808;&#26356;&#26032; snd_cwnd_used</span>
+		<span style="color: #FF1493;">if</span> (tp-&gt;packets_out &gt; tp-&gt;snd_cwnd_used)
+			tp-&gt;snd_cwnd_used = tp-&gt;packets_out;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21028;&#26029;&#24403;&#21069;&#19982;&#26368;&#36817;&#19968;&#27425;&#26816;&#27979;&#25317;&#22622;&#31383;&#21475;&#30340;&#26102;&#38388;&#26159;&#21542;&#36229;&#36807;&#37325;&#20256;&#36229;&#26102;&#26102;&#38388;</span>
+		<span style="color: #FF1493;">if</span> ((s32)(tcp_time_stamp - tp-&gt;snd_cwnd_stamp) &gt;= inet_csk(sk)-&gt;icsk_rto)
+			tcp_cwnd_application_limited(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#39564;&#24182;&#35843;&#25972;&#25317;&#22622;&#31383;&#21475;&#12290;</span>
+	}
+}
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgc57b8b3" class="outline-4">
+<h4 id="orgc57b8b3"><span class="section-number-4">8.2.1</span> tcp_cwnd_application_limited()</h4>
+<div class="outline-text-4" id="text-8-2-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RFC2861, slow part. Adjust cwnd, after it was not full during one rto.</span>
+<span style="color: #8B8878;"> * As additional protections, we do not touch cwnd in retransmission phases,</span>
+<span style="color: #8B8878;"> * and if application hit its sndbuf limit recently.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_cwnd_application_limited</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #8B8878;">// </span><span style="color: #8B8878;">&#22914;&#26524;&#24403;&#21069;&#25317;&#22622;&#29366;&#24577;&#20026;Open,&#19988;&#22871;&#25509;&#21475;&#30340;&#21457;&#36865;&#38431;&#21015;&#26410;&#28385;&#65292;&#21017;&#35828;&#26126;&#24212;&#29992;&#31243;&#24207;&#25110;&#32773;&#23545;&#26041;&#25509;&#25910;&#31383;&#21475;&#36827;&#34892;&#20102;&#38480;&#21046;&#65292;&#38656;&#35201;&#26816;&#39564;&#25317;&#22622;&#31383;&#21475;</span>
+	<span style="color: #FF1493;">if</span> (inet_csk(sk)-&gt;icsk_ca_state == TCP_CA_Open &amp;&amp;
+	    sk-&gt;sk_socket &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>test_bit(SOCK_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags)) {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Limited by application or receiver window.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">init_win</span> = tcp_init_cwnd(tp, __sk_dst_get(sk)); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25317;&#22622;&#31383;&#21475;&#21021;&#22987;&#20540;</span>
+		<span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">win_used</span> = max(tp-&gt;snd_cwnd_used, init_win);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#25317;&#22622;&#31383;&#21475;&#21021;&#22987;&#20540;&#21644;snd_cwnd_used&#30340;&#26368;&#22823;&#20540;</span>
+		<span style="color: #FF1493;">if</span> (win_used &lt; tp-&gt;snd_cwnd) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#24930;&#21551;&#21160;&#38408;&#20540;&#21644;&#25317;&#22622;&#31383;&#21475;</span>
+			tp-&gt;snd_ssthresh = tcp_current_ssthresh(sk);
+			tp-&gt;snd_cwnd = (tp-&gt;snd_cwnd + win_used) &gt;&gt; 1;
+		}
+		tp-&gt;snd_cwnd_used = 0;
+	}
+	tp-&gt;snd_cwnd_stamp = tcp_time_stamp;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3d35bab" class="outline-2">
+<h2 id="org3d35bab"><span class="section-number-2">9</span> 支持多拥塞控制算法的机制</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-org95e7e86" class="outline-3">
+<h3 id="org95e7e86"><span class="section-number-3">9.1</span> 接口</h3>
+<div class="outline-text-3" id="text-9-1">
+<p>
+tcp_congestion_ops结构提供了支持多种拥塞控制算法的机制。拥塞控制算法只要为tcp_congestion_ops结构实现一个实例，并且实现其中的部分接口。例如，必须实现ssthresh()和cong_avoid()，其他接口则可选。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Interface for adding new TCP congestion control handlers</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCP_CA_NAME_MAX</span> 16
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCP_CA_MAX</span>      128
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCP_CA_BUF_MAX</span>  (TCP_CA_NAME_MAX*TCP_CA_MAX)
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_congestion_ops</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38142;&#25509;&#27880;&#20876;&#21040;&#31995;&#32479;&#20013;&#30340;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">list</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#26159;&#21542;&#34987;&#38480;&#21046;&#65292;&#20026;1&#26102;&#25165;&#20801;&#35768;&#20351;&#29992;&#12290;&#24517;&#39035;&#23558;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;&#21517;&#31216;&#28155;&#21152;&#21040; /proc/sys/net/ipv4/tcp_congestion_control</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">non_restricted</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25317;&#22622;&#31639;&#27861;&#30340;&#21021;&#22987;&#21270;&#20989;&#25968;&#65292;&#36873;&#20013;&#31639;&#27861;&#26102;&#34987;&#35843;&#29992;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">initialize private data (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">init</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#22871;&#25509;&#21475;&#65292;&#25110;&#32773;&#20256;&#36755;&#25511;&#21046;&#22359;&#36873;&#25321;&#20102;&#21478;&#19968;&#31181;&#31639;&#27861;&#26102;&#65292;&#20250;&#35843;&#29992;&#35813;&#25509;&#21475;&#36827;&#34892;&#28165;&#29702;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">cleanup private data  (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">release</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#30149;&#25151;&#20250;&#24930;&#21551;&#21160;&#38408;&#20540;&#30340;&#25509;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">return slow start threshold (required)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span> (*<span style="color: #87D700;">ssthresh</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#24182;&#36820;&#22238;&#25317;&#22622;&#31383;&#21475;&#26368;&#23567;&#20540;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">lower bound for congestion window (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span> (*<span style="color: #87D700;">min_cwnd</span>)(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#25317;&#22622;&#36991;&#20813;&#27169;&#24335;&#19979;&#37325;&#26032;&#35745;&#31639;&#25317;&#22622;&#31383;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">do new cwnd calculation (required)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">cong_avoid</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">ack</span>,
+			   <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">rtt</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">in_flight</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">good_ack</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23454;&#29616;&#21508;&#33258;&#31639;&#27861;&#20013;&#30340;&#24448;&#36820;&#26102;&#38388;&#37319;&#26679;&#65292;&#27809;&#25509;&#25910;&#21040;&#19968;&#20010;ACK,&#37329;&#20250;&#35843;&#29992;&#27492;&#25509;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">round trip time sample per acked packet (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">rtt_sample</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">usrtt</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25913;&#21464;&#25317;&#22622;&#25511;&#21046;&#29366;&#24577;&#21069;&#65292;&#35843;&#29992;&#35813;&#25509;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">call before changing ca_state (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">set_state</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">u8</span> <span style="color: #FF8C00;">new_state</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#36890;&#30693;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;&#20869;&#37096;&#20107;&#20214;&#30340;&#25509;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">call when cwnd event occurs (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">cwnd_event</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">enum</span> <span style="color: #5FD7FF;">tcp_ca_event</span> <span style="color: #FF8C00;">ev</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#25764;&#38144;&#8220;&#32553;&#23567;&#25317;&#22622;&#31383;&#21475;&#8221;&#26102;&#35843;&#29992;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">new value of cwnd after loss (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>  (*<span style="color: #87D700;">undo_cwnd</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#26041;&#25509;&#25910;&#21040;ACK&#21518;&#65292;&#26377;&#27573;&#34987;&#30830;&#35748;&#26102;&#35843;&#29992;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">hook for packet ack accounting (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">pkts_acked</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">num_acked</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25552;&#20379;&#32473;inet_diag&#30340;&#33719;&#21462;&#20449;&#24687;&#30340;&#25509;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">get info for inet_diag (optional)</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">get_info</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">ext</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31639;&#27861;&#21517;&#31216;</span>
+	<span style="color: #5FD7FF;">char</span>            <span style="color: #FF8C00;">name</span>[TCP_CA_NAME_MAX];
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2f0d289" class="outline-3">
+<h3 id="org2f0d289"><span class="section-number-3">9.2</span> 注册拥塞控制算法：tcp_register_congestion_control()</h3>
+<div class="outline-text-3" id="text-9-2">
+<p>
+tcp_register_congestion_control()将一个新的拥塞控制算法添加到tcp_congestion_ops 链表中。
+</p>
+
+<p>
+在关于tcp_congestion_ops结构的说明中已经知道，ssthresh和cong_avoid成员必须实现，因此注册函数主要是为了测试即将注册的拥塞控制算法是否定义了这两个函数，如果有一个没有定义，就返回错误吗EINVAL。
+</p>
+
+<p>
+通过调用tcp_ca_find()检查参数是否为待注册的拥塞控制算法名称，来检测tcp_congestion_ops结构链表中是否已经包含该算法，如果是则返回错误吗EEXIST，否则将该算法添加到链表末尾。在进行上述操作期间，需要锁定该链表。
+</p>
+
+<p>
+Reno算法tcp_reno的注册在tcp_init()中被调用，除此之外的其他拥塞控制算法都包含在 module_init 函数中，例如bictcp_register()、cubictcp_register()。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5af7c02" class="outline-3">
+<h3 id="org5af7c02"><span class="section-number-3">9.3</span> 注销拥塞控制算法：tcp_unregister_congestion_control()</h3>
+<div class="outline-text-3" id="text-9-3">
+<p>
+该函数用来在tcp_congestion_ops链表中移除一种拥塞控制算法，将在模块中的remove()中被调用。模块会有一个引用计数ref来确保所有使用该算法的socket都已经关闭后才能调用该函数。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9139e7c" class="outline-3">
+<h3 id="org9139e7c"><span class="section-number-3">9.4</span> 选取某种拥塞控制算法：tcp_set_congestion_control()</h3>
+<div class="outline-text-3" id="text-9-4">
+<p>
+拥塞控制算法是特定于套接字的，可以通过以套接字选项 TCP_CONGESTION 为参数调用do_tcp_setsockopt()来切换。当前的拥塞控制算法的tcp_congestion_ops记录在inet_connection_sock.icsk_ca_ops。
+</p>
+
+<p>
+通过修改inet_connection_sock的icsk_ca_ops字段为socket切换拥塞控制算法。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Change congestion control for socket</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_set_congestion_control</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_congestion_ops</span> *<span style="color: #FF8C00;">ca</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = 0;
+
+	rcu_read_lock();
+	ca = tcp_ca_find(name); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#21517;&#31216;&#65292;&#22312;tcp_cong_list&#38142;&#34920;&#20013;&#33719;&#21462;&#23545;&#24212;&#30340;tcp_congestion_ops&#32467;&#26500;&#12290;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">no change asking for existing value</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (ca == icsk-&gt;icsk_ca_ops) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#21644;&#24403;&#21069;&#30456;&#21516;&#65292;&#21017;&#36820;&#22238;&#12290;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+<span style="color: #FF1493;">#ifdef</span> CONFIG_KMOD
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">not found attempt to autoload module</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ca &amp;&amp; capable(CAP_SYS_MODULE)) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27809;&#33719;&#21462;&#21040;&#65292;&#21017;&#21152;&#36733;&#27169;&#22359;&#65292;&#21152;&#36733;&#21518;&#20877;&#27425;&#26597;&#25214;&#12290;</span>
+		rcu_read_unlock();
+		request_module(<span style="color: #CDC673;">"tcp_%s"</span>, name);
+		rcu_read_lock();
+		ca = tcp_ca_find(name);
+	}
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ca)   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#23384;&#22312;&#65292;&#30452;&#25509;&#36820;&#22238;</span>
+		err = -ENOENT;
+
+	<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(ca-&gt;non_restricted || capable(CAP_NET_ADMIN))) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31639;&#27861;&#21463;&#38480;&#26102;&#24517;&#39035;&#20855;&#22791;CAP_NET_ADMIN&#26435;&#38480;</span>
+		err = -EPERM;
+
+	<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>try_module_get(ca-&gt;owner)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26080;&#27861;&#33719;&#21462;&#35813;&#31639;&#27861;&#27169;&#22359;</span>
+		err = -EBUSY;
+
+	<span style="color: #FF1493;">else</span> {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;&#24403;&#21069;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;&#30340;tcp_congestion_ops&#32467;&#26500;&#20570;&#19968;&#20123;&#28165;&#29702;&#24037;&#20316;</span>
+		tcp_cleanup_congestion_control(sk);
+		icsk-&gt;icsk_ca_ops = ca; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26367;&#25442;&#24403;&#21069;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;</span>
+		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_ops-&gt;init) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25191;&#34892;&#21021;&#22987;&#21270;&#25805;&#20316;</span>
+			icsk-&gt;icsk_ca_ops-&gt;init(sk);
+	}
+ <span style="color: #AF87FF;">out</span>:
+	rcu_read_unlock();
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge1349c0" class="outline-3">
+<h3 id="orge1349c0"><span class="section-number-3">9.5</span> Linux支持的拥塞控制算法</h3>
+<div class="outline-text-3" id="text-9-5">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">各种TCP拥塞控制算法的实现</th>
+<th scope="col" class="org-left">文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">bictcp</td>
+<td class="org-left">net/ipv4/tcp_bic.c</td>
+</tr>
+
+<tr>
+<td class="org-left">cubictcp</td>
+<td class="org-left">net/ipv4/tcp_cubic.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_highspedd</td>
+<td class="org-left">net/ipv4/tcp_highspeed.c</td>
+</tr>
+
+<tr>
+<td class="org-left">htcp</td>
+<td class="org-left">net/ipv4/tcp_htcp.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_hybla</td>
+<td class="org-left">net/ipv4/tcp_hybla.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_lp</td>
+<td class="org-left">net/ipv4/tcp_lp.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_scalable</td>
+<td class="org-left">net/ipv4/tcp_scalable.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_vegas</td>
+<td class="org-left">net/ipv4/tcp_vegas.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_veno</td>
+<td class="org-left">net/ipv4/tcp_veno.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_westwood</td>
+<td class="org-left">net/ipv4/tcp_westwood.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_bbr</td>
+<td class="org-left">net/ipv4/tcp_bbr.c</td>
+</tr>
+
+<tr>
+<td class="org-left">tcp_yeah</td>
+<td class="org-left">net/ipv4/tcp_yeah.c</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-04-25 Mon 22:45</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

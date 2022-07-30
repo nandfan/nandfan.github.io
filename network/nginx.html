@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-09-05 Sun 16:30 -->
+<!-- 2022-05-03 Tue 21:23 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Nginx</title>
@@ -40,7 +40,7 @@
   }
   pre.src {
     position: relative;
-    overflow: auto;
+    overflow: visible;
     padding-top: 1.2em;
   }
   pre.src:before {
@@ -52,7 +52,7 @@
     padding: 3px;
     border: 1px solid black;
   }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
+  pre.src:hover:before { display: inline;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
@@ -195,26 +195,50 @@
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
 <script type="text/javascript">
-// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
 </script>
 </head>
 <body>
@@ -256,9 +280,17 @@
 <li><a href="#org0e92fc7">3.2.3. 添加流程</a></li>
 </ul>
 </li>
+<li><a href="#org1a32dae">3.3. chain buf</a></li>
 </ul>
 </li>
 <li><a href="#org7b72b30">4. 正则使用</a></li>
+<li><a href="#org0a90b18">5. REUSEPORT</a></li>
+<li><a href="#org69f4bb2">6. UPSTREAM</a>
+<ul>
+<li><a href="#org5e4ae85">6.1. non buffer</a></li>
+<li><a href="#org22813ef">6.2. buffering</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -267,11 +299,11 @@
 </p>
 
 <div id="outline-container-org74a6113" class="outline-2">
-<h2 id="org74a6113"><span class="section-number-2">1.</span> nginx http</h2>
+<h2 id="org74a6113"><span class="section-number-2">1</span> nginx http</h2>
 <div class="outline-text-2" id="text-1">
 </div>
 <div id="outline-container-org65b749e" class="outline-3">
-<h3 id="org65b749e"><span class="section-number-3">1.1.</span> http模块结构</h3>
+<h3 id="org65b749e"><span class="section-number-3">1.1</span> http模块结构</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> {
@@ -300,7 +332,7 @@
 </div>
 </div>
 <div id="outline-container-orge388d91" class="outline-3">
-<h3 id="orge388d91"><span class="section-number-3">1.2.</span> 处理阶段</h3>
+<h3 id="orge388d91"><span class="section-number-3">1.2</span> 处理阶段</h3>
 <div class="outline-text-3" id="text-1-2">
 <dl class="org-dl">
 <dt>NGX_HTTP_POST_READ_PHASE</dt><dd>在接收到完整的http头部后处理</dd>
@@ -319,7 +351,7 @@
 </div>
 
 <div id="outline-container-org6669dde" class="outline-3">
-<h3 id="org6669dde"><span class="section-number-3">1.3.</span> NGX_HTTP_CONTENT_PHASE的两种介入方式</h3>
+<h3 id="org6669dde"><span class="section-number-3">1.3</span> NGX_HTTP_CONTENT_PHASE的两种介入方式</h3>
 <div class="outline-text-3" id="text-1-3">
 <ol class="org-ol">
 <li><p>
@@ -367,10 +399,10 @@
 </div>
 
 <div id="outline-container-orgc72b819" class="outline-3">
-<h3 id="orgc72b819"><span class="section-number-3">1.4.</span> 初始化</h3>
+<h3 id="orgc72b819"><span class="section-number-3">1.4</span> 初始化</h3>
 <div class="outline-text-3" id="text-1-4">
 
-<div id="org46ad6d0" class="figure">
+<div class="figure">
 <p><img src="./plantuml/nginx/http_block.png" alt="http_block.png" />
 </p>
 </div>
@@ -379,15 +411,15 @@
 
 
 <div id="outline-container-org3f6bb1d" class="outline-3">
-<h3 id="org3f6bb1d"><span class="section-number-3">1.5.</span> header filter和body filter</h3>
+<h3 id="org3f6bb1d"><span class="section-number-3">1.5</span> header filter和body filter</h3>
 </div>
 
 
 <div id="outline-container-orgad9ae82" class="outline-3">
-<h3 id="orgad9ae82"><span class="section-number-3">1.6.</span> 连接处理过程</h3>
+<h3 id="orgad9ae82"><span class="section-number-3">1.6</span> 连接处理过程</h3>
 <div class="outline-text-3" id="text-1-6">
 
-<div id="org5ed6115" class="figure">
+<div class="figure">
 <p><img src="plantuml/nginx/connect-proc.png" alt="connect-proc.png" />
 </p>
 </div>
@@ -395,7 +427,7 @@
 </div>
 
 <div id="outline-container-org6a60ae4" class="outline-3">
-<h3 id="org6a60ae4"><span class="section-number-3">1.7.</span> 阶段处理</h3>
+<h3 id="org6a60ae4"><span class="section-number-3">1.7</span> 阶段处理</h3>
 <div class="outline-text-3" id="text-1-7">
 <p>
 checker方法整理：
@@ -413,7 +445,7 @@ checker方法整理：
 </ul>
 
 
-<div id="org33a49bc" class="figure">
+<div class="figure">
 <p><img src="plantuml/nginx/phase-proc.png" alt="phase-proc.png" />
 </p>
 </div>
@@ -421,17 +453,17 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org1ed6854" class="outline-3">
-<h3 id="org1ed6854"><span class="section-number-3">1.8.</span> 反向代理请求处理</h3>
+<h3 id="org1ed6854"><span class="section-number-3">1.8</span> 反向代理请求处理</h3>
 <div class="outline-text-3" id="text-1-8">
 
-<div id="org4d4bb92" class="figure">
+<div class="figure">
 <p><img src="plantuml/nginx/proxy.png" alt="proxy.png" />
 </p>
 </div>
 
 
 
-<div id="orgc005feb" class="figure">
+<div class="figure">
 <p><img src="plantuml/nginx/proxy-resp.png" alt="proxy-resp.png" />
 </p>
 </div>
@@ -440,14 +472,14 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org374de2a" class="outline-2">
-<h2 id="org374de2a"><span class="section-number-2">2.</span> nginx epoll</h2>
+<h2 id="org374de2a"><span class="section-number-2">2</span> nginx epoll</h2>
 <div class="outline-text-2" id="text-2">
 </div>
 <div id="outline-container-org2d5895e" class="outline-3">
-<h3 id="org2d5895e"><span class="section-number-3">2.1.</span> epoll处理事件</h3>
+<h3 id="org2d5895e"><span class="section-number-3">2.1</span> epoll处理事件</h3>
 <div class="outline-text-3" id="text-2-1">
 
-<div id="org4d96627" class="figure">
+<div class="figure">
 <p><img src="plantuml/nginx/epoll-event.png" alt="epoll-event.png" />
 </p>
 </div>
@@ -456,15 +488,15 @@ checker方法整理：
 </div>
 
 <div id="outline-container-orgbe3c421" class="outline-2">
-<h2 id="orgbe3c421"><span class="section-number-2">3.</span> 数据结构</h2>
+<h2 id="orgbe3c421"><span class="section-number-2">3</span> 数据结构</h2>
 <div class="outline-text-2" id="text-3">
 </div>
 <div id="outline-container-org2fc49bd" class="outline-3">
-<h3 id="org2fc49bd"><span class="section-number-3">3.1.</span> 内存池</h3>
+<h3 id="org2fc49bd"><span class="section-number-3">3.1</span> 内存池</h3>
 <div class="outline-text-3" id="text-3-1">
 </div>
 <div id="outline-container-org438dc71" class="outline-4">
-<h4 id="org438dc71"><span class="section-number-4">3.1.1.</span> 结构关系</h4>
+<h4 id="org438dc71"><span class="section-number-4">3.1.1</span> 结构关系</h4>
 <div class="outline-text-4" id="text-3-1-1">
 <div class="org-src-container">
 <pre class="src src-c">
@@ -496,7 +528,7 @@ checker方法整理：
 </div>
 
 
-<div id="orgcb02ae7" class="figure">
+<div class="figure">
 <p><img src="dot/nginx/pool.png" alt="pool.png" />
 </p>
 </div>
@@ -504,7 +536,7 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org070d357" class="outline-4">
-<h4 id="org070d357"><span class="section-number-4">3.1.2.</span> 接口</h4>
+<h4 id="org070d357"><span class="section-number-4">3.1.2</span> 接口</h4>
 <div class="outline-text-4" id="text-3-1-2">
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #5FD7FF;">ngx_pool_t</span> *<span style="color: #87D700;">ngx_create_pool</span>(<span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">ngx_log_t</span> *<span style="color: #FF8C00;">log</span>);
@@ -524,20 +556,20 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org37bb5e9" class="outline-3">
-<h3 id="org37bb5e9"><span class="section-number-3">3.2.</span> hash</h3>
+<h3 id="org37bb5e9"><span class="section-number-3">3.2</span> hash</h3>
 <div class="outline-text-3" id="text-3-2">
 </div>
 <div id="outline-container-org3905105" class="outline-4">
-<h4 id="org3905105"><span class="section-number-4">3.2.1.</span> 数据结构关系</h4>
+<h4 id="org3905105"><span class="section-number-4">3.2.1</span> 数据结构关系</h4>
 <div class="outline-text-4" id="text-3-2-1">
 
-<div id="org465f0f8" class="figure">
+<div class="figure">
 <p><img src="./dot/nginx/hash_st.png" alt="hash_st.png" />
 </p>
 </div>
 
 
-<div id="org999af96" class="figure">
+<div class="figure">
 <p><img src="./dot/nginx/hash_relation.png" alt="hash_relation.png" />
 </p>
 </div>
@@ -552,14 +584,14 @@ checker方法整理：
 
 
 
-<div id="orgbbfc2ed" class="figure">
+<div class="figure">
 <p><img src="./dot/nginx/wc_hash_relation.png" alt="wc_hash_relation.png" />
 </p>
 </div>
 
 
 
-<div id="org8f22f0a" class="figure">
+<div class="figure">
 <p><img src="./dot/nginx/hash_wc_key_relation.png" alt="hash_wc_key_relation.png" />
 </p>
 </div>
@@ -567,14 +599,14 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org6327dfc" class="outline-4">
-<h4 id="org6327dfc"><span class="section-number-4">3.2.2.</span> 初始化流程</h4>
+<h4 id="org6327dfc"><span class="section-number-4">3.2.2</span> 初始化流程</h4>
 <div class="outline-text-4" id="text-3-2-2">
 <ul class="org-ul">
 <li>精确匹配正则初始化</li>
 </ul>
 
 
-<div id="orgfee7021" class="figure">
+<div class="figure">
 <p><img src="./plantuml/nginx/hash_init.png" alt="hash_init.png" />
 </p>
 </div>
@@ -613,7 +645,7 @@ checker方法整理：
 </ul>
 
 
-<div id="org70fc5f8" class="figure">
+<div class="figure">
 <p><img src="./dot/nginx/wc_hash_init.png" alt="wc_hash_init.png" />
 </p>
 </div>
@@ -621,27 +653,114 @@ checker方法整理：
 </div>
 
 <div id="outline-container-org0e92fc7" class="outline-4">
-<h4 id="org0e92fc7"><span class="section-number-4">3.2.3.</span> 添加流程</h4>
+<h4 id="org0e92fc7"><span class="section-number-4">3.2.3</span> 添加流程</h4>
 <div class="outline-text-4" id="text-3-2-3">
 
-<div id="org300f9e2" class="figure">
+<div class="figure">
 <p><img src="./plantuml/nginx/wc_hash_add.png" alt="wc_hash_add.png" />
 </p>
 </div>
 </div>
 </div>
 </div>
+
+<div id="outline-container-org1a32dae" class="outline-3">
+<h3 id="org1a32dae"><span class="section-number-3">3.3</span> chain buf</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ngx_chain_s</span> {
+    <span style="color: #5FD7FF;">ngx_buf_t</span>    *<span style="color: #FF8C00;">buf</span>;
+    <span style="color: #5FD7FF;">ngx_chain_t</span>  *<span style="color: #FF8C00;">next</span>;
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ngx_buf_s</span> {
+    <span style="color: #5FD7FF;">u_char</span>          *<span style="color: #FF8C00;">pos</span>;
+    <span style="color: #5FD7FF;">u_char</span>          *<span style="color: #FF8C00;">last</span>;
+    <span style="color: #5FD7FF;">off_t</span>            <span style="color: #FF8C00;">file_pos</span>;
+    <span style="color: #5FD7FF;">off_t</span>            <span style="color: #FF8C00;">file_last</span>;
+
+    <span style="color: #5FD7FF;">u_char</span>          *<span style="color: #FF8C00;">start</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">start of buffer</span><span style="color: #8B8878;"> */</span>
+    <span style="color: #5FD7FF;">u_char</span>          *<span style="color: #FF8C00;">end</span>;           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">end of buffer</span><span style="color: #8B8878;"> */</span>
+    <span style="color: #5FD7FF;">ngx_buf_tag_t</span>    <span style="color: #FF8C00;">tag</span>;
+    <span style="color: #5FD7FF;">ngx_file_t</span>      *<span style="color: #FF8C00;">file</span>;
+    <span style="color: #5FD7FF;">ngx_buf_t</span>       *<span style="color: #FF8C00;">shadow</span>;
+
+
+    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">the buf's content could be changed</span><span style="color: #8B8878;"> */</span>
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">temporary</span>:1;
+
+    <span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">     * the buf's content is in a memory cache or in a read only memory</span>
+<span style="color: #8B8878;">     * and must not be changed</span>
+<span style="color: #8B8878;">     */</span>
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">memory</span>:1;
+
+    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">the buf's content is mmap()ed and must not be changed</span><span style="color: #8B8878;"> */</span>
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">mmap</span>:1;
+
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">recycled</span>:1;
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">in_file</span>:1;
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">flush</span>:1;
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">sync</span>:1;
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">last_buf</span>:1;
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">last_in_chain</span>:1;
+
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">last_shadow</span>:1;
+    <span style="color: #5FD7FF;">unsigned</span>         <span style="color: #FF8C00;">temp_file</span>:1;
+
+    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">STUB</span><span style="color: #8B8878;"> */</span> <span style="color: #5FD7FF;">int</span>   <span style="color: #FF8C00;">num</span>;
+};
+
+</pre>
+</div>
+</div>
+</div>
 </div>
 
 <div id="outline-container-org7b72b30" class="outline-2">
-<h2 id="org7b72b30"><span class="section-number-2">4.</span> 正则使用</h2>
+<h2 id="org7b72b30"><span class="section-number-2">4</span> 正则使用</h2>
+</div>
+
+<div id="outline-container-org0a90b18" class="outline-2">
+<h2 id="org0a90b18"><span class="section-number-2">5</span> REUSEPORT</h2>
+</div>
+
+<div id="outline-container-org69f4bb2" class="outline-2">
+<h2 id="org69f4bb2"><span class="section-number-2">6</span> UPSTREAM</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org5e4ae85" class="outline-3">
+<h3 id="org5e4ae85"><span class="section-number-3">6.1</span> non buffer</h3>
+<div class="outline-text-3" id="text-6-1">
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span>
+<span style="color: #87D700;">ngx_http_upstream_process_non_buffered_downstream</span>(<span style="color: #5FD7FF;">ngx_http_request_t</span> *<span style="color: #FF8C00;">r</span>)
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span>
+<span style="color: #87D700;">ngx_http_upstream_process_non_buffered_upstream</span>(<span style="color: #5FD7FF;">ngx_http_request_t</span> *<span style="color: #FF8C00;">r</span>,
+    <span style="color: #5FD7FF;">ngx_http_upstream_t</span> *<span style="color: #FF8C00;">u</span>)
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span>
+<span style="color: #87D700;">ngx_http_upstream_process_non_buffered_request</span>(<span style="color: #5FD7FF;">ngx_http_request_t</span> *<span style="color: #FF8C00;">r</span>,<span style="color: #5FD7FF;">ngx_uint_t</span> <span style="color: #FF8C00;">do_write</span>)
+
+<span style="color: #5FD7FF;">ngx_int_t</span> <span style="color: #87D700;">ngx_http_upstream_non_buffered_filter</span>(<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>, <span style="color: #5FD7FF;">ssize_t</span> <span style="color: #FF8C00;">bytes</span>)
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org22813ef" class="outline-3">
+<h3 id="org22813ef"><span class="section-number-3">6.2</span> buffering</h3>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-09-05 Sun 16:30</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2022-05-03 Tue 21:23</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

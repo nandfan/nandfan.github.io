@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2021-12-31 Fri 22:55 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>网络诊断工具</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">网络诊断工具</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgfcefcc5">1. iputils</a>
+<ul>
+<li><a href="#org9968311">1.1. ping</a></li>
+<li><a href="#orgcbea120">1.2. arping</a></li>
+<li><a href="#orgfc5f5d5">1.3. rdisc</a></li>
+<li><a href="#org7f5f2e2">1.4. tracepath</a></li>
+<li><a href="#orgb5b6857">1.5. clockdiff</a></li>
+<li><a href="#orge52642a">1.6. tftpd</a></li>
+<li><a href="#org34836a9">1.7. rarpd</a></li>
+</ul>
+</li>
+<li><a href="#org054013a">2. net-tools</a>
+<ul>
+<li><a href="#orgd44bbc5">2.1. ifconfig</a></li>
+<li><a href="#org2575668">2.2. route</a></li>
+<li><a href="#orgfb8661f">2.3. netstat</a></li>
+<li><a href="#org4e6adc1">2.4. arp</a></li>
+<li><a href="#org7957502">2.5. hostname</a></li>
+<li><a href="#org713b79c">2.6. nameif</a></li>
+<li><a href="#org9e01cf7">2.7. plipconfig</a></li>
+<li><a href="#orge9d6e49">2.8. rarp</a></li>
+<li><a href="#org0bb1bbd">2.9. slattach</a></li>
+<li><a href="#orgf3e70eb">2.10. ipmaddr</a></li>
+<li><a href="#org791e375">2.11. iptunnel</a></li>
+<li><a href="#org6565e00">2.12. mii-tool</a></li>
+</ul>
+</li>
+<li><a href="#orga023b84">3. iproute2</a>
+<ul>
+<li><a href="#orgb587b1a">3.1. ip</a>
+<ul>
+<li><a href="#org01de8d8">3.1.1. ip link</a></li>
+<li><a href="#orgd8a9249">3.1.2. ip addr</a></li>
+<li><a href="#org07cdac1">3.1.3. ip route</a></li>
+<li><a href="#orga81e990">3.1.4. ip netns</a></li>
+</ul>
+</li>
+<li><a href="#org255b221">3.2. tc</a></li>
+<li><a href="#org4d67a86">3.3. ss</a></li>
+<li><a href="#orge65f999">3.4. nstat</a></li>
+<li><a href="#org1207661">3.5. ifstat</a></li>
+<li><a href="#orgf82cd0a">3.6. rtacct</a></li>
+<li><a href="#orge9bb67d">3.7. arpd</a></li>
+<li><a href="#org3c40d17">3.8. lnstat</a></li>
+<li><a href="#org9dd5965">3.9. maketable</a></li>
+<li><a href="#org9e20048">3.10. normal</a></li>
+<li><a href="#org0062baa">3.11. pareto</a></li>
+<li><a href="#org2db20c3">3.12. paretonormal</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgfcefcc5" class="outline-2">
+<h2 id="orgfcefcc5"><span class="section-number-2">1</span> iputils</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org9968311" class="outline-3">
+<h3 id="org9968311"><span class="section-number-3">1.1</span> ping</h3>
+</div>
+<div id="outline-container-orgcbea120" class="outline-3">
+<h3 id="orgcbea120"><span class="section-number-3">1.2</span> arping</h3>
+</div>
+<div id="outline-container-orgfc5f5d5" class="outline-3">
+<h3 id="orgfc5f5d5"><span class="section-number-3">1.3</span> rdisc</h3>
+</div>
+<div id="outline-container-org7f5f2e2" class="outline-3">
+<h3 id="org7f5f2e2"><span class="section-number-3">1.4</span> tracepath</h3>
+</div>
+<div id="outline-container-orgb5b6857" class="outline-3">
+<h3 id="orgb5b6857"><span class="section-number-3">1.5</span> clockdiff</h3>
+</div>
+<div id="outline-container-orge52642a" class="outline-3">
+<h3 id="orge52642a"><span class="section-number-3">1.6</span> tftpd</h3>
+</div>
+<div id="outline-container-org34836a9" class="outline-3">
+<h3 id="org34836a9"><span class="section-number-3">1.7</span> rarpd</h3>
+</div>
+</div>
+
+<div id="outline-container-org054013a" class="outline-2">
+<h2 id="org054013a"><span class="section-number-2">2</span> net-tools</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgd44bbc5" class="outline-3">
+<h3 id="orgd44bbc5"><span class="section-number-3">2.1</span> ifconfig</h3>
+</div>
+<div id="outline-container-org2575668" class="outline-3">
+<h3 id="org2575668"><span class="section-number-3">2.2</span> route</h3>
+</div>
+<div id="outline-container-orgfb8661f" class="outline-3">
+<h3 id="orgfb8661f"><span class="section-number-3">2.3</span> netstat</h3>
+</div>
+<div id="outline-container-org4e6adc1" class="outline-3">
+<h3 id="org4e6adc1"><span class="section-number-3">2.4</span> arp</h3>
+</div>
+<div id="outline-container-org7957502" class="outline-3">
+<h3 id="org7957502"><span class="section-number-3">2.5</span> hostname</h3>
+</div>
+<div id="outline-container-org713b79c" class="outline-3">
+<h3 id="org713b79c"><span class="section-number-3">2.6</span> nameif</h3>
+</div>
+<div id="outline-container-org9e01cf7" class="outline-3">
+<h3 id="org9e01cf7"><span class="section-number-3">2.7</span> plipconfig</h3>
+</div>
+<div id="outline-container-orge9d6e49" class="outline-3">
+<h3 id="orge9d6e49"><span class="section-number-3">2.8</span> rarp</h3>
+</div>
+<div id="outline-container-org0bb1bbd" class="outline-3">
+<h3 id="org0bb1bbd"><span class="section-number-3">2.9</span> slattach</h3>
+</div>
+<div id="outline-container-orgf3e70eb" class="outline-3">
+<h3 id="orgf3e70eb"><span class="section-number-3">2.10</span> ipmaddr</h3>
+</div>
+<div id="outline-container-org791e375" class="outline-3">
+<h3 id="org791e375"><span class="section-number-3">2.11</span> iptunnel</h3>
+</div>
+<div id="outline-container-org6565e00" class="outline-3">
+<h3 id="org6565e00"><span class="section-number-3">2.12</span> mii-tool</h3>
+</div>
+</div>
+
+<div id="outline-container-orga023b84" class="outline-2">
+<h2 id="orga023b84"><span class="section-number-2">3</span> iproute2</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgb587b1a" class="outline-3">
+<h3 id="orgb587b1a"><span class="section-number-3">3.1</span> ip</h3>
+<div class="outline-text-3" id="text-3-1">
+</div>
+<div id="outline-container-org01de8d8" class="outline-4">
+<h4 id="org01de8d8"><span class="section-number-4">3.1.1</span> ip link</h4>
+</div>
+<div id="outline-container-orgd8a9249" class="outline-4">
+<h4 id="orgd8a9249"><span class="section-number-4">3.1.2</span> ip addr</h4>
+</div>
+<div id="outline-container-org07cdac1" class="outline-4">
+<h4 id="org07cdac1"><span class="section-number-4">3.1.3</span> ip route</h4>
+</div>
+
+
+
+<div id="outline-container-orga81e990" class="outline-4">
+<h4 id="orga81e990"><span class="section-number-4">3.1.4</span> ip netns</h4>
+</div>
+</div>
+
+<div id="outline-container-org255b221" class="outline-3">
+<h3 id="org255b221"><span class="section-number-3">3.2</span> tc</h3>
+</div>
+<div id="outline-container-org4d67a86" class="outline-3">
+<h3 id="org4d67a86"><span class="section-number-3">3.3</span> ss</h3>
+</div>
+<div id="outline-container-orge65f999" class="outline-3">
+<h3 id="orge65f999"><span class="section-number-3">3.4</span> nstat</h3>
+</div>
+<div id="outline-container-org1207661" class="outline-3">
+<h3 id="org1207661"><span class="section-number-3">3.5</span> ifstat</h3>
+</div>
+<div id="outline-container-orgf82cd0a" class="outline-3">
+<h3 id="orgf82cd0a"><span class="section-number-3">3.6</span> rtacct</h3>
+</div>
+<div id="outline-container-orge9bb67d" class="outline-3">
+<h3 id="orge9bb67d"><span class="section-number-3">3.7</span> arpd</h3>
+</div>
+<div id="outline-container-org3c40d17" class="outline-3">
+<h3 id="org3c40d17"><span class="section-number-3">3.8</span> lnstat</h3>
+</div>
+<div id="outline-container-org9dd5965" class="outline-3">
+<h3 id="org9dd5965"><span class="section-number-3">3.9</span> maketable</h3>
+</div>
+<div id="outline-container-org9e20048" class="outline-3">
+<h3 id="org9e20048"><span class="section-number-3">3.10</span> normal</h3>
+</div>
+<div id="outline-container-org0062baa" class="outline-3">
+<h3 id="org0062baa"><span class="section-number-3">3.11</span> pareto</h3>
+</div>
+<div id="outline-container-org2db20c3" class="outline-3">
+<h3 id="org2db20c3"><span class="section-number-3">3.12</span> paretonormal</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2021-12-31 Fri 22:55</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

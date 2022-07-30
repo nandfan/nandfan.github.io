@@ -1,0 +1,1155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-01-22 Sat 22:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>路由策略</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">路由策略</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orge2fe4dd">1. 路由策略组织结构</a>
+<ul>
+<li><a href="#org316e1da">1.1. fib_rules_ops结构</a></li>
+<li><a href="#org888bab5">1.2. fib_rule结构</a></li>
+<li><a href="#org372efbe">1.3. fib4_rule 结构</a></li>
+</ul>
+</li>
+<li><a href="#org216e33e">2. 三个默认路由策略</a></li>
+<li><a href="#org2e2f3d9">3. IPv4协议族的 fib_rules_ops 结构实例</a>
+<ul>
+<li><a href="#orgcd2533e">3.1. fib4_rule_action()</a></li>
+<li><a href="#orgcfaae36">3.2. fib4_rule_match()</a></li>
+<li><a href="#orgfa83c82">3.3. fib4_rule_configure()</a></li>
+<li><a href="#org254fa2d">3.4. fib4_rule_compare()</a></li>
+<li><a href="#orgd937cad">3.5. fib4_rule_fill()</a></li>
+<li><a href="#org424ad96">3.6. fib4_rule_default_pref()</a></li>
+</ul>
+</li>
+<li><a href="#org007465b">4. netlink接口</a>
+<ul>
+<li><a href="#org4debb02">4.1. netlink路由策略消息结构</a></li>
+<li><a href="#orga4dc440">4.2. fib_nl_newrule()</a></li>
+<li><a href="#org4bc8bc8">4.3. fib_nl_delrule()</a></li>
+</ul>
+</li>
+<li><a href="#org13821c9">5. 网络设备状态改变的影响</a></li>
+<li><a href="#org1ca9ccb">6. 策略路由的查找</a></li>
+</ul>
+</div>
+</div>
+<p>
+路由策略数据库的规则用于控制选择路由的算法，因特网上采用的路由算法一般基于数据报的目的地址。  在实际的应用中，不只是需要通过数据报的目的地址选择路由，还需要通过其他域（源地址、IP协议、传输层端口甚至数据报负载），这就称为策略路由。
+</p>
+
+<p>
+在这种情况下，就需要使用路由策略数据库（routing policy database&#x2013;RPDB）来代替传统的路由表，其可以匹配的域包括： 数据报源地址、目的地址、服务类型、输入网络接口等。
+</p>
+
+<p>
+另外可以依赖 iptables 通过fwmark为某些数据报做标记，如此就能够根据ip协议和传输层端口来匹配策略路由。
+</p>
+
+<p>
+每个路由策略有一个选择符（selector）和一个操作（action）组成。系统按照顺序搜索路由策略数据库，将选择符和{源地址、目的地址、输入接口、服务类型、fwmark}等关键字进行匹配，匹配成功则执行action定义的操作。 操作如果失败，则停止搜索路由策略；如果操作成功，则继续查询路由策略数据库。
+</p>
+
+<div id="outline-container-orge2fe4dd" class="outline-2">
+<h2 id="orge2fe4dd"><span class="section-number-2">1</span> 路由策略组织结构</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Linux支持多种协议族，其中ipv4、ipv6以及Decnet协议都支持策略路由。系统中将不同协议组的路由策略入口 fib_rules_ops 实例都用 fib_rule_register() 注册到 rules_ops 链表，通过协议族标识符family区分，同一个协议族的路由策略挂接在对应协议族的 fib_rules_ops 实例的 rule_list 上。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib-policy/fib-policy-st.png" alt="fib-policy-st.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>路由策略结构图</p>
+</div>
+</div>
+
+<div id="outline-container-org316e1da" class="outline-3">
+<h3 id="org316e1da"><span class="section-number-3">1.1</span> fib_rules_ops结构</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+fib_rules_ops结构用于支持多种协议族的路由策略，每个协议族都会实现该结构的实例。
+</p>
+
+<p>
+IPv4中，fib_rules_ops结构是 fib4_rules_ops，路由策略结构是 fib4_rule，所有fib4_rule结构挂姐在 fib4_rule_ops 的 rules_list 链表上。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rules_ops</span>
+{
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">family</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;&#26063;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">list</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#25346;&#25509;&#21040; rules_ops &#38142;&#34920;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">rule_size</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#21327;&#35758;&#26063;&#36335;&#30001;&#31574;&#30053;&#32467;&#26500;&#30340;&#22823;&#23567;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#31574;&#30053;&#26597;&#25214;&#23545;&#24212;&#30340;&#36335;&#30001;&#39033;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">action</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *,
+					  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *, <span style="color: #5FD7FF;">int</span>,
+					  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_lookup_arg</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;flowi &#36827;&#34892;&#31574;&#30053;&#30340;&#27604;&#36739;&#65292;&#29992;&#20110;&#26681;&#25454;&#28304;&#22320;&#22336;&#12289;&#30446;&#30340;&#22320;&#22336;&#21644;&#26381;&#21153;&#31867;&#22411;&#26597;&#25214;&#31574;&#30053;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">match</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *,
+					 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *, <span style="color: #5FD7FF;">int</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#26032;&#31574;&#30053;&#26102;&#65292;&#23545;&#31574;&#30053;&#20013;&#30456;&#24212;&#30340;&#25104;&#21592;&#36827;&#34892;&#36171;&#20540;&#21644;&#35774;&#32622;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">configure</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *,
+					     <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *,
+					     <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span> *,
+					     <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *,
+					     <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span> **);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#26465;&#20214;&#36827;&#34892;&#31574;&#30053;&#30340;&#27604;&#36739;&#65292;&#29992;&#20110;&#26681;&#25454;&#26465;&#20214;&#26597;&#25214;&#31574;&#30053;&#65292;&#22312;&#21024;&#38500;&#31574;&#30053;&#26102;&#35843;&#29992;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">compare</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *,
+					   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *,
+					   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span> **);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24212;&#29992;&#31243;&#24207;&#33719;&#21462;&#20855;&#20307;&#31574;&#30053;&#20449;&#24687;&#26102;&#65292;&#29992;&#20110;&#22635;&#20805;&#23545;&#24212;&#30340;&#20449;&#24687;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">fill</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *,
+					<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span> *,
+					<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#28155;&#21152;&#26032;&#36335;&#30001;&#31574;&#30053;&#26102;&#65292;&#22914;&#26524;&#27809;&#26377;&#35774;&#32622;&#20248;&#20808;&#32423;&#65292;&#21017;&#36890;&#36807;&#35813;&#25509;&#21475;&#33719;&#21462;&#40664;&#35748;&#20248;&#20808;&#32423;</span>
+	<span style="color: #5FD7FF;">u32</span>                     (*<span style="color: #87D700;">default_pref</span>)(<span style="color: #5FD7FF;">void</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#28155;&#21152;&#25110;&#32773;&#21024;&#38500;&#31574;&#30053;&#21518;&#65292;&#38656;&#35201;&#32452;&#25773;&#21516;&#24535;&#21152;&#20837;nlgroup&#26631;&#35782;&#32452;&#30340;&#36827;&#31243;&#65292;&#22240;&#27492;&#38656;&#35201;&#26500;&#36896;SKB&#65292;&#27492;&#25509;&#21475;&#29992;&#20110;&#35745;&#31639;payload&#38271;&#24230;&#12290;</span>
+	<span style="color: #5FD7FF;">size_t</span>          (*<span style="color: #87D700;">nlmsg_payload</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#28155;&#21152;&#25110;&#21024;&#38500;&#31574;&#30053;&#21518;&#65292;&#38656;&#35201;&#32452;&#25773;&#36890;&#30693;&#21152;&#20837;nlgroup&#26631;&#35782;&#32452;&#30340;&#36827;&#31243;&#12290;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">nlgroup</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521; nla_policy &#32467;&#26500;&#31867;&#22411;&#30340;&#25968;&#32452;&#65292;&#29992;&#20110;&#23384;&#25918;netlink&#23646;&#24615;&#31867;&#22411;&#21644;&#38271;&#24230;&#30340;&#23545;&#29031;&#34920;&#12290;ipv4&#20013;&#25351;&#21521; fib4_rule_policy &#25968;&#32452;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nla_policy</span>       *<span style="color: #FF8C00;">policy</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#38142;&#25509;&#23646;&#20110;&#35813;&#21327;&#35758;&#26063;&#30340;&#25152;&#26377;&#31574;&#30053;&#32467;&#26500;&#30340;&#21452;&#21521;&#38142;&#34920;&#22836;&#65292; ipv4&#20013;&#25351;&#21521;fib4_rules</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        *<span style="color: #FF8C00;">rules_list</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org888bab5" class="outline-3">
+<h3 id="org888bab5"><span class="section-number-3">1.2</span> fib_rule结构</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+fib_rule结构中定义的是各个协议族都需要用到的策略属性，用于构成具体的协议族策略数据结构。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span>
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#23558;&#19968;&#20010;&#21327;&#35758;&#26063;&#30340;&#25152;&#26377;fib_rule&#32467;&#26500;&#36830;&#25509;&#25104;&#21452;&#21521;&#24490;&#29615;&#38142;&#34920;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">list</span>;
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">refcnt</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31574;&#30053;&#24212;&#29992;&#21040;&#30340;&#32593;&#32476;&#35774;&#22791;&#21517;&#31216;&#21644;&#32034;&#24341;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">ifindex</span>;
+	<span style="color: #5FD7FF;">char</span>            <span style="color: #FF8C00;">ifname</span>[IFNAMSIZ];
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">mark&#26159;&#25968;&#23383;&#26631;&#31614;&#65292;mark_mask&#26159;mark&#30340;&#25513;&#30721;&#65292;&#22312;&#26681;&#25454;flowi&#36827;&#34892;&#31574;&#30053;&#30340;&#27604;&#36739;&#26597;&#25214;&#26102;&#20351;&#29992;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">mark</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">mark_mask</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">pref</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#31574;&#30053;&#30340;&#20248;&#20808;&#32423;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">flags</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#65292;&#24403;&#21069;&#21482;&#20351;&#29992;&#20102;FIB_RULE_PERMANENT,&#26631;&#35782;&#31574;&#30053;&#26159;&#22266;&#23450;&#30340;&#65292;&#19981;&#33021;&#22815;&#21024;&#38500;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">table</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#30001;&#34920;&#26631;&#35782;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">action</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#31574;&#30053;&#26597;&#25214;&#21734;&#23545;&#24212;&#30340;&#36335;&#30001;&#39033;&#26102;&#65292;&#30830;&#23450;&#31574;&#30053;&#34987;&#35775;&#38382;&#30340;&#21160;&#20316;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rcu_head</span> <span style="color: #FF8C00;">rcu</span>;
+};
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">action取值</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">FR_ACT_UNSPEC</td>
+<td class="org-left">禁止访问，返回EACCES错误</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_TO_TBL</td>
+<td class="org-left">该策略允许访问，可以通过该策略查找路由</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_RES1</td>
+<td class="org-left">禁止访问，返回EACCES错误</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_RES2</td>
+<td class="org-left">禁止访问，返回EACCES错误</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_RES3</td>
+<td class="org-left">禁止访问，返回EACCES错误</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_RES4</td>
+<td class="org-left">禁止访问，返回EACCES错误</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_BLACKHOLE</td>
+<td class="org-left">禁止访问，返回EINVAL错误。报文被丢弃</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_UNREACHABLE</td>
+<td class="org-left">禁止访问，返回ENETUNREACH错误。报文被丢弃，并射程主机不可达的ICMP消息</td>
+</tr>
+
+<tr>
+<td class="org-left">FR_ACT_PROHIBIT</td>
+<td class="org-left">禁止访问，返回EACCES错误，报文被丢弃，并生成ICMP报文被过滤的消息</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org372efbe" class="outline-3">
+<h3 id="org372efbe"><span class="section-number-3">1.3</span> fib4_rule 结构</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+fib4_rule结构用于存储IPv4协议族的路由策略，挂接在 fib4_rules_ops 的 rules_list 字段指向的 fib4_rules 链表上。
+</p>
+
+<p>
+通过 <code>ip rule</code> 命令可以配置或者查看路由策略。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span>
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25152;&#26377;&#21327;&#35758;&#26063;&#36890;&#29992;&#32467;&#26500;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> <span style="color: #FF8C00;">common</span>;
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">dst_len</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;IP&#22320;&#22336;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">src_len</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28304;IP&#22320;&#22336;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">u8</span>                      <span style="color: #FF8C00;">tos</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#21305;&#37197;IP&#39318;&#37096;&#30340;TOS&#23383;&#27573;&#12290;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21482;&#26377;&#20174;&#20197;&#65288;src, srcmask&#65289;&#20026;&#65288;IP&#22320;&#22336;&#65292;&#32593;&#32476;&#25513;&#30721;&#65289;&#30340;&#28304;&#32593;&#32476;&#21457;&#36865;&#30340;&#25253;&#25991;&#25165;&#33021;&#34987;&#25509;&#21463;&#12290;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">src</span>;
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">srcmask</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21482;&#33021;&#21521;dst &#21644; dstmask&#32452;&#25104;&#30340; &#30446;&#30340;&#32593;&#32476;&#21457;&#36865;&#25253;&#25991;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">dst</span>;
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">dstmask</span>;
+	<span style="color: #5FD7FF;">u32</span>                     <span style="color: #FF8C00;">tclassid</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#31867;&#26631;&#31614;</span>
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org216e33e" class="outline-2">
+<h2 id="org216e33e"><span class="section-number-2">2</span> 三个默认路由策略</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+如果支持策略路由，则在系统初始化时，IPv4协议族中总会创建三个路由策略，分别是 default_rule、main_rule和local_rule，分别对应于 RT_TABLE_DEFAULT路由表、RT_TABLE_MAIN路由表和 RT_TABLE_LOCAL路由表，其中local_rule被标记为 FIB_RULE_PERMANENT，表示不能删除。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org2e2f3d9" class="outline-2">
+<h2 id="org2e2f3d9"><span class="section-number-2">3</span> IPv4协议族的 fib_rules_ops 结构实例</h2>
+<div class="outline-text-2" id="text-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rules_ops</span> <span style="color: #FF8C00;">fib4_rules_ops</span> = {
+	.family         = AF_INET,
+	.rule_size      = <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span>),
+	.action         = fib4_rule_action,
+	.match          = fib4_rule_match,
+	.configure      = fib4_rule_configure,
+	.compare        = fib4_rule_compare,
+	.fill           = fib4_rule_fill,
+	.default_pref   = fib4_rule_default_pref,
+	.nlmsg_payload  = fib4_rule_nlmsg_payload,
+	.nlgroup        = RTNLGRP_IPV4_RULE,
+	.policy         = fib4_rule_policy,
+	.rules_list     = &amp;fib4_rules,
+	.owner          = THIS_MODULE,
+};
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgcd2533e" class="outline-3">
+<h3 id="orgcd2533e"><span class="section-number-3">3.1</span> fib4_rule_action()</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+fib4_rule_action()的功能是在策略关联的路由表中，根据key查找对应的路由项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib4_rule_action</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#33719;&#21462;&#21040;&#30340;&#36335;&#30001;&#31574;&#30053;</span>
+			    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">flp</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#26597;&#25214;&#36335;&#30001;&#39033;&#30340;&#26465;&#20214;</span>
+			    <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>,
+			    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_lookup_arg</span> *<span style="color: #FF8C00;">arg</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#23384;&#25918;&#21629;&#20013;&#30340;&#36335;&#30001;&#39033;</span>
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = -EAGAIN;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">tbl</span>;
+
+	<span style="color: #FF1493;">switch</span> (rule-&gt;action) {
+	<span style="color: #FF1493;">case</span> FR_ACT_TO_TBL:  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21482;&#26377;&#35813;&#26631;&#35782;&#21487;&#20197;&#32487;&#32493;&#25805;&#20316;&#12290;</span>
+		<span style="color: #FF1493;">break</span>;
+
+	<span style="color: #FF1493;">case</span> FR_ACT_UNREACHABLE:
+		err = -ENETUNREACH;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+
+	<span style="color: #FF1493;">case</span> FR_ACT_PROHIBIT:
+		err = -EACCES;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+
+	<span style="color: #FF1493;">case</span> FR_ACT_BLACKHOLE:
+	<span style="color: #FF1493;">default</span>:
+		err = -EINVAL;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#36335;&#30001;&#34920;ID&#33719;&#21462;&#36335;&#30001;&#34920;&#23454;&#20363;</span>
+	<span style="color: #FF1493;">if</span> ((tbl = fib_get_table(rule-&gt;table)) == <span style="color: #AF87FF;">NULL</span>)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#26597;&#25214;&#36335;&#30001;&#39033;&#30340;key,&#22312;&#33719;&#21462;&#30340;&#36335;&#30001;&#34920;&#20013;&#26597;&#25214;&#36335;&#30001;&#39033;</span>
+	err = tbl-&gt;tb_lookup(tbl, flp, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_result</span> *) arg-&gt;result);
+	<span style="color: #FF1493;">if</span> (err &gt; 0)
+		err = -EAGAIN;
+<span style="color: #AF87FF;">errout</span>:
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcfaae36" class="outline-3">
+<h3 id="orgcfaae36"><span class="section-number-3">3.2</span> fib4_rule_match()</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+该函数用于在查找路由项时，根据源地址、目的地址和服务类型匹配策略。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib4_rule_match</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">fl</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *<span style="color: #FF8C00;">r</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *) rule;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">daddr</span> = fl-&gt;fl4_dst;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span> = fl-&gt;fl4_src;
+
+	<span style="color: #FF1493;">if</span> (((saddr ^ r-&gt;src) &amp; r-&gt;srcmask) ||
+	    ((daddr ^ r-&gt;dst) &amp; r-&gt;dstmask))
+		<span style="color: #FF1493;">return</span> 0;
+
+	<span style="color: #FF1493;">if</span> (r-&gt;tos &amp;&amp; (r-&gt;tos != fl-&gt;fl4_tos))
+		<span style="color: #FF1493;">return</span> 0;
+
+	<span style="color: #FF1493;">return</span> 1;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfa83c82" class="outline-3">
+<h3 id="orgfa83c82"><span class="section-number-3">3.3</span> fib4_rule_configure()</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+该函数用于在添加新策略时，对策略中相应的成员进行赋值和设置。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib4_rule_configure</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#36827;&#34892;&#35774;&#32622;&#30340;&#31574;&#30053;</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span> *<span style="color: #FF8C00;">nlh</span>,
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *<span style="color: #FF8C00;">frh</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#36335;&#30001;&#31574;&#30053;&#28040;&#24687;&#20013;&#30340;&#31574;&#30053;&#39318;&#37096;</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span> **<span style="color: #FF8C00;">tb</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#36335;&#30001;&#31574;&#30053;&#28040;&#24687;&#20013;&#30340;&#21487;&#36873;&#31574;&#30053;&#23646;&#24615;</span>
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = -EINVAL;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *<span style="color: #FF8C00;">rule4</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *) rule;
+
+	<span style="color: #FF1493;">if</span> (frh-&gt;src_len &gt; 32 || frh-&gt;dst_len &gt; 32 ||
+	    (frh-&gt;tos &amp; ~IPTOS_TOS_MASK))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27809;&#26377;&#25351;&#23450;&#23545;&#24212;&#30340;&#36335;&#30001;&#34920;&#65292;&#21017;&#33719;&#21462;&#19968;&#20010;&#31354;&#38386;&#30340;&#36335;&#30001;&#34920;&#19982;&#35813;&#31574;&#30053;&#20851;&#32852;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (rule-&gt;table == RT_TABLE_UNSPEC) {
+		<span style="color: #FF1493;">if</span> (rule-&gt;action == FR_ACT_TO_TBL) {
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_table</span> *<span style="color: #FF8C00;">table</span>;
+
+			table = fib_empty_table();
+			<span style="color: #FF1493;">if</span> (table == <span style="color: #AF87FF;">NULL</span>) {
+				err = -ENOBUFS;
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+			}
+
+			rule-&gt;table = table-&gt;tb_id;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24320;&#22987;&#23545;&#31574;&#30053;&#30340;&#23646;&#24615;&#36171;&#20540;</span>
+	<span style="color: #FF1493;">if</span> (tb[FRA_SRC])
+		rule4-&gt;src = nla_get_be32(tb[FRA_SRC]);
+	<span style="color: #FF1493;">if</span> (tb[FRA_DST])
+		rule4-&gt;dst = nla_get_be32(tb[FRA_DST]);
+	<span style="color: #FF1493;">if</span> (tb[FRA_FLOW])
+		rule4-&gt;tclassid = nla_get_u32(tb[FRA_FLOW]);
+
+	rule4-&gt;src_len = frh-&gt;src_len;
+	rule4-&gt;srcmask = inet_make_mask(rule4-&gt;src_len);
+	rule4-&gt;dst_len = frh-&gt;dst_len;
+	rule4-&gt;dstmask = inet_make_mask(rule4-&gt;dst_len);
+	rule4-&gt;tos = frh-&gt;tos;
+
+	err = 0;
+<span style="color: #AF87FF;">errout</span>:
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org254fa2d" class="outline-3">
+<h3 id="org254fa2d"><span class="section-number-3">3.4</span> fib4_rule_compare()</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+该函数用来在删除策略时，根据条件进行策略的比较和查找。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib4_rule_compare</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *<span style="color: #FF8C00;">frh</span>,
+			     <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span> **<span style="color: #FF8C00;">tb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *<span style="color: #FF8C00;">rule4</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *) rule;
+	<span style="color: #FF1493;">if</span> (frh-&gt;src_len &amp;&amp; (rule4-&gt;src_len != frh-&gt;src_len))
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #FF1493;">if</span> (frh-&gt;dst_len &amp;&amp; (rule4-&gt;dst_len != frh-&gt;dst_len))
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #FF1493;">if</span> (frh-&gt;tos &amp;&amp; (rule4-&gt;tos != frh-&gt;tos))
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #FF1493;">if</span> (tb[FRA_FLOW] &amp;&amp; (rule4-&gt;tclassid != nla_get_u32(tb[FRA_FLOW])))
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #FF1493;">if</span> (tb[FRA_SRC] &amp;&amp; (rule4-&gt;src != nla_get_be32(tb[FRA_SRC])))
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #FF1493;">if</span> (tb[FRA_DST] &amp;&amp; (rule4-&gt;dst != nla_get_be32(tb[FRA_DST])))
+		<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #FF1493;">return</span> 1;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd937cad" class="outline-3">
+<h3 id="orgd937cad"><span class="section-number-3">3.5</span> fib4_rule_fill()</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+当应用程序获取具体的策略信息时，通过该函数来填充返回的信息。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib4_rule_fill</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+			  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span> *<span style="color: #FF8C00;">nlh</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *<span style="color: #FF8C00;">frh</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *<span style="color: #FF8C00;">rule4</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib4_rule</span> *) rule;
+	frh-&gt;family = AF_INET;
+	frh-&gt;dst_len = rule4-&gt;dst_len;
+	frh-&gt;src_len = rule4-&gt;src_len;
+	frh-&gt;tos = rule4-&gt;tos;
+	<span style="color: #FF1493;">if</span> (rule4-&gt;dst_len)
+		NLA_PUT_BE32(skb, FRA_DST, rule4-&gt;dst);
+	<span style="color: #FF1493;">if</span> (rule4-&gt;src_len)
+		NLA_PUT_BE32(skb, FRA_SRC, rule4-&gt;src);
+	<span style="color: #FF1493;">if</span> (rule4-&gt;tclassid)
+		NLA_PUT_U32(skb, FRA_FLOW, rule4-&gt;tclassid);
+	<span style="color: #FF1493;">return</span> 0;
+<span style="color: #AF87FF;">nla_put_failure</span>:
+	<span style="color: #FF1493;">return</span> -ENOBUFS;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org424ad96" class="outline-3">
+<h3 id="org424ad96"><span class="section-number-3">3.6</span> fib4_rule_default_pref()</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+在添加新路由策略时，如果没有设置优先级，则调用该函数获取默认优先级。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">u32</span> <span style="color: #87D700;">fib4_rule_default_pref</span>(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> *<span style="color: #FF8C00;">pos</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>list_empty(&amp;fib4_rules)) {
+		pos = fib4_rules.next;
+		<span style="color: #FF1493;">if</span> (pos-&gt;next != &amp;fib4_rules) {
+			rule = list_entry(pos-&gt;next, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span>, list);
+			<span style="color: #FF1493;">if</span> (rule-&gt;pref)
+				<span style="color: #FF1493;">return</span> rule-&gt;pref - 1;
+		}
+	}
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org007465b" class="outline-2">
+<h2 id="org007465b"><span class="section-number-2">4</span> netlink接口</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Linux的路由策略的操作只提供了 netlink 接口，可通过 IPROUTE2 包的ip命令操作路由策略。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib-policy/rtnetlink.png" alt="rtnetlink.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>rtnetlink接口</p>
+</div>
+</div>
+
+<div id="outline-container-org4debb02" class="outline-3">
+<h3 id="org4debb02"><span class="section-number-3">4.1</span> netlink路由策略消息结构</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+<code>ip rule add/del</code> 命令用来添加或者删除路由策略，配置过程中的通信依靠netlink来实现。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib-policy/fp-nl-msg.png" alt="fp-nl-msg.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>添加和删除路由策略的netlink消息格式</p>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">字段</th>
+<th scope="col" class="org-left">长度</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">family</td>
+<td class="org-left">8位</td>
+<td class="org-left">标识操作的路由表项所属的地址族（AF_INET等）</td>
+</tr>
+
+<tr>
+<td class="org-left">dst_len</td>
+<td class="org-left">8位</td>
+<td class="org-left">目的地址长度</td>
+</tr>
+
+<tr>
+<td class="org-left">src_len</td>
+<td class="org-left">8位</td>
+<td class="org-left">源IP地址长度</td>
+</tr>
+
+<tr>
+<td class="org-left">tos</td>
+<td class="org-left">8位</td>
+<td class="org-left">TOS</td>
+</tr>
+
+<tr>
+<td class="org-left">table</td>
+<td class="org-left">8位</td>
+<td class="org-left">该策略对应的路由表ID</td>
+</tr>
+
+<tr>
+<td class="org-left">action</td>
+<td class="org-left">8位</td>
+<td class="org-left">根据策略查找对应的路由项时，确定被访问的动作</td>
+</tr>
+
+<tr>
+<td class="org-left">flags</td>
+<td class="org-left">32位</td>
+<td class="org-left">当前只是用了FIB_RULE_PERMANENT，标识策略不能被删除</td>
+</tr>
+
+<tr>
+<td class="org-left">Attributes</td>
+<td class="org-left">-</td>
+<td class="org-left">属性，标识配置的各种值</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Attributes取值</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">属性</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">FRA_DST</td>
+<td class="org-left">目的IP地址</td>
+</tr>
+
+<tr>
+<td class="org-left">FRA_SRC</td>
+<td class="org-left">源IP地址</td>
+</tr>
+
+<tr>
+<td class="org-left">FRA_IFNAME</td>
+<td class="org-left">策略应用的输入网络设备名称</td>
+</tr>
+
+<tr>
+<td class="org-left">FRA_PRIORITY</td>
+<td class="org-left">路由策略的优先级</td>
+</tr>
+
+<tr>
+<td class="org-left">FRA_FWMARK</td>
+<td class="org-left">数字标签</td>
+</tr>
+
+<tr>
+<td class="org-left">FRA_FLOW</td>
+<td class="org-left">分类标签</td>
+</tr>
+
+<tr>
+<td class="org-left">FRA_TABLE</td>
+<td class="org-left">扩展策略对应的路由表ID。如果设置，则会替代fib_fule_hdr结构中的table</td>
+</tr>
+
+<tr>
+<td class="org-left">FRA_FWMASK</td>
+<td class="org-left">mark的掩码</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orga4dc440" class="outline-3">
+<h3 id="orga4dc440"><span class="section-number-3">4.2</span> fib_nl_newrule()</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+通过 netlink 添加路由策略时，会调用 fib_nl_newrule()。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_nl_newrule</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span>* <span style="color: #FF8C00;">nlh</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *<span style="color: #FF8C00;">frh</span> = nlmsg_data(nlh);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rules_ops</span> *<span style="color: #FF8C00;">ops</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>, *<span style="color: #FF8C00;">r</span>, *<span style="color: #FF8C00;">last</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span> *<span style="color: #FF8C00;">tb</span>[FRA_MAX+1];
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = -EINVAL;
+	<span style="color: #FF1493;">if</span> (nlh-&gt;nlmsg_len &lt; nlmsg_msg_size(<span style="color: #FF1493;">sizeof</span>(*frh))) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#28040;&#24687;&#38271;&#24230;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	ops = lookup_rules_ops(frh-&gt;family); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#23545;&#24212;&#21327;&#35758;&#26063;&#30340;&#31574;&#30053;&#20837;&#21475;</span>
+	<span style="color: #FF1493;">if</span> (ops == <span style="color: #AF87FF;">NULL</span>) {
+		err = EAFNOSUPPORT;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	}
+	err = nlmsg_parse(nlh, <span style="color: #FF1493;">sizeof</span>(*frh), tb, FRA_MAX, ops-&gt;policy); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35299;&#26512;&#31574;&#30053;&#30340;&#25193;&#23637;&#37096;&#20998;</span>
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+
+	rule = kzalloc(ops-&gt;rule_size, GFP_KERNEL); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#26032;&#36335;&#30001;&#31574;&#30053;</span>
+	<span style="color: #FF1493;">if</span> (rule == <span style="color: #AF87FF;">NULL</span>) {
+		err = -ENOMEM;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	}
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21518;&#32493;&#27969;&#31243;&#23558;&#31574;&#30053;&#39318;&#37096;&#21644;&#25193;&#23637;&#37096;&#20998;&#30340;&#23646;&#24615;&#35774;&#32622;&#21040;&#26032;&#24314;&#30340;&#31574;&#30053;&#20013;&#65292;&#24182;&#28155;&#21152;&#31574;&#30053;</span>
+	<span style="color: #FF1493;">if</span> (tb[FRA_PRIORITY])
+		rule-&gt;pref = nla_get_u32(tb[FRA_PRIORITY]);
+	<span style="color: #FF1493;">if</span> (tb[FRA_IFNAME]) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>;
+		rule-&gt;ifindex = -1;
+		nla_strlcpy(rule-&gt;ifname, tb[FRA_IFNAME], IFNAMSIZ);
+		dev = __dev_get_by_name(rule-&gt;ifname);
+		<span style="color: #FF1493;">if</span> (dev)
+			rule-&gt;ifindex = dev-&gt;ifindex;
+	}
+	<span style="color: #FF1493;">if</span> (tb[FRA_FWMARK]) {
+		rule-&gt;mark = nla_get_u32(tb[FRA_FWMARK]);
+		<span style="color: #FF1493;">if</span> (rule-&gt;mark)
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">compatibility: if the mark value is non-zero all bits</span>
+<span style="color: #8B8878;">                         * are compared unless a mask is explicitly specified.</span>
+<span style="color: #8B8878;">                         */</span>
+			rule-&gt;mark_mask = 0xFFFFFFFF;
+	}
+
+	<span style="color: #FF1493;">if</span> (tb[FRA_FWMASK])
+		rule-&gt;mark_mask = nla_get_u32(tb[FRA_FWMASK]);
+	rule-&gt;action = frh-&gt;action;
+	rule-&gt;flags = frh-&gt;flags;
+	rule-&gt;table = frh_get_table(frh, tb);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>rule-&gt;pref &amp;&amp; ops-&gt;default_pref)
+		rule-&gt;pref = ops-&gt;default_pref();
+	err = ops-&gt;configure(rule, skb, nlh, frh, tb);
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout_free</span>;
+
+	list_for_each_entry(r, ops-&gt;rules_list, list) {
+		<span style="color: #FF1493;">if</span> (r-&gt;pref &gt; rule-&gt;pref)
+			<span style="color: #FF1493;">break</span>;
+		last = r;
+	}
+
+	fib_rule_get(rule);
+
+	<span style="color: #FF1493;">if</span> (last)
+		list_add_rcu(&amp;rule-&gt;list, &amp;last-&gt;list);
+	<span style="color: #FF1493;">else</span>
+		list_add_rcu(&amp;rule-&gt;list, ops-&gt;rules_list);
+
+	notify_rule_change(RTM_NEWRULE, rule, ops, nlh, NETLINK_CB(skb).pid);
+	rules_ops_put(ops);
+	<span style="color: #FF1493;">return</span> 0;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38169;&#35823;&#22788;&#29702;</span>
+<span style="color: #AF87FF;">errout_free</span>:
+	kfree(rule);
+<span style="color: #AF87FF;">errout</span>:
+	rules_ops_put(ops);
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4bc8bc8" class="outline-3">
+<h3 id="org4bc8bc8"><span class="section-number-3">4.3</span> fib_nl_delrule()</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+通过netlink删除路由策略时，调用fib_nl_delrule()处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_nl_delrule</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlmsghdr</span>* <span style="color: #FF8C00;">nlh</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule_hdr</span> *<span style="color: #FF8C00;">frh</span> = nlmsg_data(nlh);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rules_ops</span> *<span style="color: #FF8C00;">ops</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">nlattr</span> *<span style="color: #FF8C00;">tb</span>[FRA_MAX+1];
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = -EINVAL;
+
+	<span style="color: #FF1493;">if</span> (nlh-&gt;nlmsg_len &lt; nlmsg_msg_size(<span style="color: #FF1493;">sizeof</span>(*frh))) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#38271;&#24230;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+
+	ops = lookup_rules_ops(frh-&gt;family); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#23545;&#24212;&#31574;&#30053;&#21327;&#35758;&#26063;&#30340;&#20837;&#21475;</span>
+	<span style="color: #FF1493;">if</span> (ops == <span style="color: #AF87FF;">NULL</span>) {
+		err = EAFNOSUPPORT;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35299;&#26512;&#31574;&#30053;&#30340;&#25193;&#23637;&#37096;&#20998;</span>
+	err = nlmsg_parse(nlh, <span style="color: #FF1493;">sizeof</span>(*frh), tb, FRA_MAX, ops-&gt;policy);
+	<span style="color: #FF1493;">if</span> (err &lt; 0)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#36335;&#30001;&#31574;&#30053;&#65292;&#27604;&#36739;&#23646;&#24615;&#65292;&#21024;&#38500;&#31526;&#21512;&#26465;&#20214;&#30340;&#31574;&#30053;</span>
+	list_for_each_entry(rule, ops-&gt;rules_list, list) {
+		<span style="color: #FF1493;">if</span> (frh-&gt;action &amp;&amp; (frh-&gt;action != rule-&gt;action))
+			<span style="color: #FF1493;">continue</span>;
+
+		<span style="color: #FF1493;">if</span> (frh-&gt;table &amp;&amp; (frh_get_table(frh, tb) != rule-&gt;table))
+			<span style="color: #FF1493;">continue</span>;
+
+		<span style="color: #FF1493;">if</span> (tb[FRA_PRIORITY] &amp;&amp;
+		    (rule-&gt;pref != nla_get_u32(tb[FRA_PRIORITY])))
+			<span style="color: #FF1493;">continue</span>;
+
+		<span style="color: #FF1493;">if</span> (tb[FRA_IFNAME] &amp;&amp;
+		    nla_strcmp(tb[FRA_IFNAME], rule-&gt;ifname))
+			<span style="color: #FF1493;">continue</span>;
+
+		<span style="color: #FF1493;">if</span> (tb[FRA_FWMARK] &amp;&amp;
+		    (rule-&gt;mark != nla_get_u32(tb[FRA_FWMARK])))
+			<span style="color: #FF1493;">continue</span>;
+
+		<span style="color: #FF1493;">if</span> (tb[FRA_FWMASK] &amp;&amp;
+		    (rule-&gt;mark_mask != nla_get_u32(tb[FRA_FWMASK])))
+			<span style="color: #FF1493;">continue</span>;
+
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>ops-&gt;compare(rule, frh, tb))
+			<span style="color: #FF1493;">continue</span>;
+
+		<span style="color: #FF1493;">if</span> (rule-&gt;flags &amp; FIB_RULE_PERMANENT) {
+			err = -EPERM;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">errout</span>;
+		}
+
+		list_del_rcu(&amp;rule-&gt;list);
+		synchronize_rcu();
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;netlink&#36890;&#30693; RTM_DELRULE &#28040;&#24687;</span>
+		notify_rule_change(RTM_DELRULE, rule, ops, nlh,
+				   NETLINK_CB(skb).pid);
+		fib_rule_put(rule);
+		rules_ops_put(ops);
+		<span style="color: #FF1493;">return</span> 0;
+	}
+
+	err = -ENOENT;
+<span style="color: #AF87FF;">errout</span>:
+	rules_ops_put(ops);
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org13821c9" class="outline-2">
+<h2 id="org13821c9"><span class="section-number-2">5</span> 网络设备状态改变的影响</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+一条路由策略可以与一个设备关联。例如，可以为从设备eth0接收且目的地为子网 10.10.1.0/24 的数据流分配一个特定优先级。所以当设备注销时，通过 fib_rules_detach() 将设备IP设置为-1，表示与其相关的所有策略应当被标记为不可用。 当网络设备注册时，如果与该设备存在相关联且禁用的策略，则通过 fib_rules_attach() 来重新使能这些策略。
+</p>
+
+<p>
+初始化策略模块时，会调用 fib_rules_init() 将 fib_rules_notifier 注册到系统中，当网络设备状态发生变化时，会调用 fib_rules_event() 进行处理。接收到 NETDEV_REGISTER 事件后， 会遍历所有策略，与该网络设备状态变化相关联的策略都会被重新安装。 如果接收到 NETDEV_UNREGISTER 事件，也会遍历所有策略，禁用相关的策略。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1ca9ccb" class="outline-2">
+<h2 id="org1ca9ccb"><span class="section-number-2">6</span> 策略路由的查找</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+当使用策略路由时，总是先在路由缓存内查找。如果查找失败，则根据配置策略选择路由表，从路由表中查找路由。
+</p>
+
+
+<div class="figure">
+<p><img src="image/fib-policy/fb-lookup.png" alt="fb-lookup.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>策略路由的查找</p>
+</div>
+
+<p>
+fib_lookup() 并不直接查找路由项，而是先查找策略，如果查找策略命中，才继续查找路由项。
+</p>
+
+<p>
+在支持策略路由时，fib_lookup 会调用策略模块中的 fib_rules_lookup() 。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">fib_rules_lookup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rules_ops</span> *<span style="color: #FF8C00;">ops</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span> *<span style="color: #FF8C00;">fl</span>,
+		     <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_lookup_arg</span> *<span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fib_rule</span> *<span style="color: #FF8C00;">rule</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	rcu_read_lock();
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#26597;&#25214;&#25152;&#26377;&#30340;&#31574;&#30053;</span>
+	list_for_each_entry_rcu(rule, ops-&gt;rules_list, list) {
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>fib_rule_match(rule, ops, fl, flags)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21305;&#37197;&#27599;&#20010;&#31574;&#30053;&#39033;</span>
+			<span style="color: #FF1493;">continue</span>;
+
+		err = ops-&gt;action(rule, fl, flags, arg); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;key&#65292;&#22312;&#31574;&#30053;&#20851;&#32852;&#30340;&#36335;&#30001;&#34920;&#20013;&#26597;&#25214;&#36335;&#30001;&#39033;</span>
+		<span style="color: #FF1493;">if</span> (err != -EAGAIN) {
+			fib_rule_get(rule);
+			arg-&gt;rule = rule;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		}
+	}
+
+	err = -ENETUNREACH;
+<span style="color: #AF87FF;">out</span>:
+	rcu_read_unlock();
+
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-01-22 Sat 22:35</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

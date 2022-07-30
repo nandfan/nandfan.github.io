@@ -1,0 +1,2054 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-04-25 Mon 22:45 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TCP: 传输控制协议</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">TCP: 传输控制协议</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org3d22b9b">1. 系统参数</a></li>
+<li><a href="#org5da368c">2. TCP的inet_protowsw实例</a></li>
+<li><a href="#orgbbf598c">3. TCP的net_protocol结构</a></li>
+<li><a href="#orga98840f">4. TCP传输控制块</a>
+<ul>
+<li><a href="#org9ec14d4">4.1. inet_connection_sock结构</a></li>
+<li><a href="#orgba5df78">4.2. inet_connection_sock_af_ops结构</a></li>
+<li><a href="#org4415d1e">4.3. tcp_sock结构</a></li>
+<li><a href="#orgad96ebc">4.4. tcp_options_received结构</a></li>
+<li><a href="#org7472d09">4.5. tcp_skb_cb结构</a></li>
+</ul>
+</li>
+<li><a href="#orgc9de6b1">5. TCP的proto结构和proto_ops结构的实例</a></li>
+<li><a href="#org9f3283e">6. TCP状态迁移图</a></li>
+<li><a href="#org964548d">7. TCP首部</a></li>
+<li><a href="#orgfc9fc7c">8. TCP校验和</a>
+<ul>
+<li><a href="#org982b5b1">8.1. 输入TCP段的校验和的检测</a></li>
+<li><a href="#org24ca4ee">8.2. 输出TCP段校验和的计算</a></li>
+</ul>
+</li>
+<li><a href="#org1186ee7">9. TCP的初始化</a></li>
+<li><a href="#orga920407">10. TCP传输控制块的管理</a>
+<ul>
+<li><a href="#org23be13d">10.1. inet_hashinfo结构</a></li>
+<li><a href="#org1ea2bee">10.2. 管理除LISTEN状态之外的TCP传输控制块</a></li>
+<li><a href="#orgff581a9">10.3. 管理LISTEN状态的TCP传输控制块</a></li>
+</ul>
+</li>
+<li><a href="#orgbbd9912">11. TCP层的套接口选项</a></li>
+<li><a href="#org576377b">12. TCP的ioctl</a></li>
+<li><a href="#orga46c6c2">13. TCP传输控制块的初始化</a>
+<ul>
+<li><a href="#org1e17392">13.1. TCP的差错处理</a></li>
+</ul>
+</li>
+<li><a href="#orgd4f9f12">14. TCP传输控制块层的缓存管理</a>
+<ul>
+<li><a href="#org14fe924">14.1. 缓存管理算法</a></li>
+<li><a href="#org613306c">14.2. 发送缓存的管理</a></li>
+<li><a href="#org40bb16a">14.3. 接收缓存的管理</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="figure">
+<p><img src="image/tcp-proto/tcp-call.png" alt="tcp-call.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>TCP函数调用关系</p>
+</div>
+
+<div id="outline-container-org3d22b9b" class="outline-2">
+<h2 id="org3d22b9b"><span class="section-number-2">1</span> 系统参数</h2>
+<div class="outline-text-2" id="text-1">
+<dl class="org-dl">
+<dt>sockmaxconn</dt><dd>服务段侦听时，允许每个套接口链接队列长度的最大值。默认值为128。</dd>
+<dt>tcp_abc</dt><dd>标识是否启用ABC，（RFC3465中定义ABC，根据接收到的ACK确认字节数控制拥塞窗口增长的方法）。
+<dl class="org-dl">
+<dt>0 (默认)</dt><dd>禁用ABC,每次接收ACK都增长拥塞窗口</dd>
+<dt>1</dt><dd>累计确认了一个全尺寸的段后在会递增拥塞窗口</dd>
+<dt>2</dt><dd>如果接收方启用了延时确认，累计确认两个全尺寸段后才递增拥塞窗口</dd>
+</dl></dd>
+
+<dt>tcp_abort_on_overflow</dt><dd>当进程太忙而不能接收新的连接时，是否主动向对方发送RST段。默认为0。</dd>
+<dt>tcp_adv_win_scale</dt><dd><p>
+在开启了通过调节接收窗口来进行流量控制的情况下，计算调整接收缓存和接收窗口时，对用来计算接收缓存的参数进行微调。默认值为2。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27492;&#20989;&#25968;&#23545;space&#20540;&#36827;&#34892;&#24494;&#35843;&#12290;</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_win_from_space</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">space</span>)
+{
+	<span style="color: #FF1493;">return</span> sysctl_tcp_adv_win_scale&lt;=0 ?
+		(space&gt;&gt;(-sysctl_tcp_adv_win_scale)) :
+		space - (space&gt;&gt;sysctl_tcp_adv_win_scale);
+}
+</pre>
+</div></dd>
+
+<dt>tcp_app_win</dt><dd>为拥英诚寻缓存保留 max(window/2<sup>tcp_app_win</sup>, mss)大小的窗口。为0时表示不需要缓冲。默认值为31。</dd>
+<dt>tcp_allowed_congestion_control</dt><dd>所有可使用的拥塞控制算法名称的列表。</dd>
+<dt>tcp_available_congestion_control</dt><dd>所有现有已经注册且有效的拥塞控制算法名称的列表。</dd>
+<dt>tcp_congestion_control</dt><dd>为新连接设置的拥塞控制算法。</dd>
+<dt>tcp_base_mss</dt><dd>如果启用路径MTU发现，则用它来作为较小值初始化MSS。默认为512。</dd>
+<dt>tcp_dma_copybreak</dt><dd>启用CONFIG_NET_DMA后，TCP套接口读取数据时启用DMA复制引擎的下限。默认4096B。</dd>
+<dt>tcp_dsack</dt><dd>表示是否支持TCP发送确认段中SACK选项存在D-SACK(duplicate-SACK)。默认值为1（true）。</dd>
+<dt>tcp_ecn</dt><dd>表示是否启用TCP的显式拥塞通知功能。默认为1。</dd>
+<dt>tcp_fack</dt><dd><p>
+标志是否启用FACK拥塞避免与快速重传功能。默认为1。只有启用tcp_sack时有效。
+</p>
+
+<p>
+FACK（提前确认）是基于SACK选项的一种特殊的算法，使用SACk提供的信息在恢复期间对进入网络的数据进行更准确的控制。FACK吧拥塞控制与数据恢复分开，从而获得了对进入网络的数据的更准确的控制。主要思路是吧选择确认的最大序号作为标志，所有以前没有经过选择确认的段都丢失了。
+</p></dd>
+
+<dt>tcp_fin_timeout</dt><dd><p>
+对于本端断开的套接口连接，确定TCP保持在FIN_WAIT_2状态的时间。默认值为60s。
+</p>
+
+<p>
+对端可能会断开链接但一直不终止连接，或者进程不正常结束。需要防止TCP长时间保持在FIN_WAIT_2状态。对于负载很重的Web服务器，会耗费大量内存。
+</p></dd>
+<dt>tcp_frto</dt><dd>是否启用F-RTO。默认值为0。 启用F-RTO，会启用优化后的TCP重传算法。在无线环境中很有效，因为通常是由于无线电干扰而不是由于路由器拥塞而导致随机丢包。</dd>
+<dt>tcp_keepalive_intvl</dt><dd>保活探测消息的发送频率。默认值为75s。</dd>
+<dt>tcp_keepalive_probes</dt><dd>TCP发送保活探测消息以确定连接是否断开的次数。默认值为9次。（只有设置了SO_KEEPALIVE套接口选项后才会发送保活探测消息）</dd>
+<dt>tcp_keepalive_time</dt><dd>在TCP保活打开时，最后一次数据交换到TCP发送第一个保活探测消息的时间，即允许的持续空闲时间，默认值为7200s。</dd>
+<dt>tcp_low_latency</dt><dd>启用时，TCP段的接收在进程的上下文中进行；关闭时，如果用户进程正在读取数据，此时复制数据到用户空间可以在软中断中进行，从而能够提高TCP/IP协议栈的吞吐量。默认为0。（一般情况下该开没有多少意义）</dd>
+<dt>tcp_max_orphans</dt><dd><p>
+系统最多能处理不属于任何进程的TCP套接口（即孤儿套接口）的数量，默认16384。
+</p>
+
+<p>
+假如超过这个数量，则会复位孤儿套接口，并显示警告信息，该限制主要为了抵御简单的DoS攻击。每个孤儿套接口会消耗64KB的内存。
+</p></dd>
+
+<dt>tcp_max_syn_backlog</dt><dd>系统可同时存在未完成三次握手的SYN请求的最大数目。默认值：大于128MB内存为1024，否则为128。</dd>
+<dt>tcp_max_tw_buckets</dt><dd><p>
+可保持在TIME-WAIT状态的套接口的最大数目。默认值为18000。
+</p>
+
+<p>
+如果超过这个数，新迁移到TIME-WAIT状态的套接口将立刻被关闭和释放并打印警告。该限制仅仅是为了防止简单的DoS攻击，不能过分依赖该值。如果网络实际需要大于该值，则应该增加该值。
+</p></dd>
+<dt>tcp_mem</dt><dd>3个整数，分别对应于low、pressure、high，初始值在系统启动时根据系统内存数量计算。
+<dl class="org-dl">
+<dt>low</dt><dd>当TCP使用的内存页面低于该值时，TCP不考虑释放内存，且分配总能成功</dd>
+<dt>pressure</dt><dd>当TCP使用的内存页面数量超过该值时，TCP试图稳定其使用内存，及就会进入告警状态。在告警状态下，分配缓存时会根据参数来决定本次分配是否成功。直到内存消耗低于low值时退出pressure状态</dd>
+<dt>high</dt><dd>对缓冲区可用大小的硬性限制线，一旦已分配的缓冲区总大小超出该值，会根据情况对发送和接收缓存做具体确认。（tcp_out_of_resources()）</dd>
+</dl></dd>
+<dt>tcp_moderate_rcvbuf</dt><dd>是否启动自动调节接收缓冲区大小。默认为1。 启用时，TCP会自动调整接收缓冲区的大小，一次进行流量控制，在满足缓冲区大小不超过系统参数tcp_rmem[2](high)的条件下，提供最大吞吐量。</dd>
+<dt>tcp_mtu_probing</dt><dd>是否启用路径MTU发现。
+<dl class="org-dl">
+<dt>0</dt><dd>禁止</dd>
+<dt>1</dt><dd>通常禁止，但会在探测到ICMP黑洞时启用</dd>
+<dt>2</dt><dd>启用，用tcp_base_mss()初始化MSS。</dd>
+</dl></dd>
+<dt>tcp_no_metrics_save</dt><dd>标识是否在TCP关闭时将连接的相关变量保存到路由缓存中。默认值为0。 通常TCP关闭是会保存相关变量（RTAX_RTT、RTAX_RTTVAR、RTAX_SSTHRESH等）到路由缓存中，用于初始化新建的连接。</dd>
+<dt>tcp_orphan_retries</dt><dd>在确认连接一场，并关闭本端TCP连接之前，最多重试的次数。默认值7次，相当于50s~16min，跟RTO有关系。如果系统是负载较重的Web服务器，则需要降低该值，否则可能消耗大量的资源。</dd>
+<dt>tcp_reordering</dt><dd>在不支持SACK时，为由于连接受到重复确认而进入快速恢复阶段的重复确认数阈值。在支持SACK时，在没有确定丢失包的情况下，是TCP流中可以重排序的数据段数。默认值为3个。如果降低该值，可能会导致网络性能变差。</dd>
+<dt>tcp_retrans_collapse</dt><dd>为兼容一些打印机设置的选项。</dd>
+<dt>tcp_retries1</dt><dd>重传次数超过此值时，可能遇到黑洞，因此要检测PMTU是否有效。并清楚缓存在传输控制块中的目的路由缓存项，在下次重传时会重新进行路由选择。默认为3，根据RTO的值大约在 3s～8min。</dd>
+<dt>tcp_retries2</dt><dd>持续定时器周期性发送TCP段或超时重传时，在确定断开TCP链接之前最多的尝试次数。默认值15次，根据RTO的值，大约在13~30min。 RFC1122规定，该值必须大于100s。</dd>
+<dt>tcp_rfc1337</dt><dd>可以预防在RFC1337中描述的TIME-WAIT assassination hazards问题。默认值为0，内核将丢弃那些发往TIME-WAIT状态TCP套接口的RST段。</dd>
+<dt>tcp_rmem</dt><dd>3个整数。默认为 4096、87380、174760。分别对应min、default、max。
+<dl class="org-dl">
+<dt>min</dt><dd>接收队列中报文数据总长度（sock结构的sk_rmem_alloc）的上限</dd>
+<dt>default</dt><dd>接收缓冲区长度上限的初始值，用来初始化sock结构的成员sk_rcvbuf。</dd>
+<dt>max</dt><dd>接收缓冲区长度上限的最大值，用来调整sock结构的成员sk_rcvbuf。</dd>
+</dl></dd>
+<dt>tcp_sack</dt><dd><p>
+是否启用选择性确认SACKS选项。默认为1。
+</p>
+
+<p>
+SACK可以用来查找特定的丢失的段，一次有助于快速回复状态。同时，启用SACK,接收方可以有选择的应答接收的乱序段，可以帮助发送方确定丢失的段，进而发送方只需发送丢失的段，以提高性能。对于广域网通信来说应当启用该选项。注意开启选项会增加CPU负荷。
+</p></dd>
+<dt>tcp_stdurg</dt><dd>是否使用TCP紧急指针字段中主机请求解释功能。默认值为0。</dd>
+<dt>tcp_slow_start_after_idle</dt><dd><p>
+发送方闲置后，是否启用慢启动算法。
+</p>
+
+<p>
+拥塞窗口控制相应连接在网络中的TCP段数。当发送方长时间无响应或者由于应用闲置导致拥塞窗口无效时，拥塞窗口不能反应网络的当前状况，因此RFC2861为TCP拥塞控制算法提供了一种修正方法。
+</p>
+
+<dl class="org-dl">
+<dt>0</dt><dd>支持RFC2961中的算法，则在闲置期后拥塞窗口超时而失效，闲置期定义为当前RTO估计值</dd>
+<dt>1 默认</dt><dd>不支持RFC2861中的算法，则拥塞窗口不因为闲置而产生超时。</dd>
+</dl></dd>
+<dt>tcp_syn_retries</dt><dd>TCP建立连接时最多尝试发送SYN链接请求的次数。不能大于255，默认5,大约180s。</dd>
+<dt>tcp_synack_retries</dt><dd>被动连接端在放弃连接前，最多发送SYN+ACK段的次数。不能大于255,默认5,大约180s。</dd>
+<dt>tcp_syncookies</dt><dd><p>
+标识是否启用SYN cookies功能。默认值为0。
+</p>
+
+<p>
+在TCP建立连接过程中，服务端在接收到客户端的SYN请求后，需回复SYN+ACK包给客户端，然后客户端在发送ACK包给服务器。通常服务器的初始序列号是按一定的规则计算得到的，或者采用随机数。在SYN coolies中，服务器的初始序列号是通过对客户端的IP地址、客户端端口、服务器IP地址和服务器端口以及其他一些安全数值等进行hash运算并加密后得到的，成为cookie。当服务器遭受SYN攻击使得backlog队列满时，服务器并不拒绝新的SYN请求，而是回复cookie给客户端，如果收到客户端的ACK包，服务器将客户端的ACK序列号减去1得到的值，与上述要素做hash运算，然后看看是否等于该cookie值，如果相等则直接完成三次握手。注意：此时并不用查看此连接是否属于backlog队列。
+</p>
+
+<p>
+注意：该选项千万不能用于那些 <b>没有受到攻击的高负载服务器</b> ，如果在日志中出现synflood消息，但世纪没有受到synflood攻击，而是由于合法用户的连接负载过高的原因，则应调整其他参数来提高服务器性能。参见 tcp_max_syn_backlog、tcp_synack_retries、tcp_abort_on_overflow系统参数。
+</p>
+
+<p>
+syncookie严重违背了TCP协议，不允许使用TCP扩展，可能对某些服务造成严重的性能影响（如SMTP转发），但是对于防御syn-flood攻击很有效。
+</p></dd>
+<dt>tcp_timestamps</dt><dd><p>
+是否启用TCP时间戳选项。默认值为1。
+</p>
+
+<p>
+时间戳可以使连接的两端很方便的测量RTT,同时还可以避免序列号的回绕，因此为了实现更好的性能应该启用该选项。
+</p></dd>
+<dt>tcp_tso_win_divisor</dt><dd><p>
+单个TSO段可消耗拥塞窗口比例。默认值为3。
+</p>
+
+<p>
+该参数只有在网络设备支持GSO特性时才会真正起作用，其值应当大于3。
+</p></dd>
+
+<dt>tcp_tw_recycle</dt><dd>是否快速使套接口从TIME-WAIT状态迁移到CLOSE状态。
+
+<dl class="org-dl">
+<dt>0</dt><dd>套接口在TIME-WAIT状态等待60s</dd>
+<dt>1</dt><dd>能够更快使套接口从TIME-WAIT状态迁移到CLOSE状态，完成套接口的关闭。</dd>
+</dl></dd>
+
+<dt>tcp_tw_reuse</dt><dd>是否允许处于TIME-WAIT状态的套接口使用的端口用于新的TCP套接口。默认值为0。</dd>
+<dt>tcp_window_scaling</dt><dd><p>
+是否起启用TCP窗口扩大因子选项，默认值为1。
+</p>
+
+<p>
+通常TCP允许窗口尺寸为65535B，但对于带宽很高的网络而言这个值可能还是太小，此时如果启用了该选项，可是TCP滑动窗口大小增大数个数量级，从而提高数据传输的能力，参见RFC1323。
+</p></dd>
+<dt>tcp_wmem</dt><dd>3个整数，默认值 4KB,16KB,128KB， 分别对应min, default, max。
+<dl class="org-dl">
+<dt>min</dt><dd>发送队列中段数据总长度（sock结构的sk_wmen_queued）的上限</dd>
+<dt>default</dt><dd>发送缓冲区的长度上限的初始值， 用来初始化sock结构的成员sk_sndbuf</dd>
+<dt>max</dt><dd>发送缓冲区的长度上限的最大值， 用来调整sock结构的成员sk_sndbuf</dd>
+</dl></dd>
+<dt>tcp_workaround_signed_windows</dt><dd>标识在没有启用窗口扩大因子选项时，是否使用初始值不超过32767的TCP窗口，默认值为0（不启用）。 因为有些系统实现的协议站在TCP窗口大于32767时，存在bug,因此可以启用参数来规避这个bug。</dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-org5da368c" class="outline-2">
+<h2 id="org5da368c"><span class="section-number-2">2</span> TCP的inet_protowsw实例</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Upon startup we insert all the elements in inetsw_array[] into</span>
+<span style="color: #8B8878;"> * the linked list inetsw.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span> <span style="color: #FF8C00;">inetsw_array</span>[] =
+{
+	{
+		.type =       SOCK_STREAM, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#31867;&#22411;&#20026;STREAM</span>
+		.protocol =   IPPROTO_TCP, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#21327;&#35758;&#20026;TCP&#21327;&#35758;</span>
+		.prot =       &amp;tcp_prot,   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#20256;&#36755;&#23618;&#25509;&#21475;&#20026;tcp_prot</span>
+		.ops =        &amp;inet_stream_ops, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#23618;&#25509;&#21475;&#20026;inet_stream_ops</span>
+		.capability = -1,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#21019;&#24314;STREAM&#31867;&#22411;&#22871;&#25509;&#21475;&#26080;&#38656;&#36827;&#34892;&#33021;&#21147;&#30340;&#26816;&#39564;</span>
+		.no_check =   0,   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#22987;&#32456;&#38656;&#35201;&#36827;&#34892;&#26657;&#39564;&#21644;&#25805;&#20316;</span>
+		.flags =      INET_PROTOSW_PERMANENT | <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;TCP&#27169;&#22359;&#22312;&#31995;&#32479;&#36816;&#34892;&#36807;&#31243;&#20013;&#19981;&#33021;&#34987;&#26367;&#25442;&#25110;&#21368;&#36733;</span>
+			       INET_PROTOSW_ICSK, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#22871;&#25509;&#21475;&#26159;&#38754;&#21521;&#36830;&#25509;&#30340;&#22871;&#25509;&#21475;&#65292;&#29992;&#20110;&#22312;&#21019;&#24314;&#20256;&#36755;&#25511;&#21046;&#22359;&#26102;&#21021;&#22987;&#21270;is_icsk&#25104;&#21592;&#12290;</span>
+	},
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbbf598c" class="outline-2">
+<h2 id="orgbbf598c"><span class="section-number-2">3</span> TCP的net_protocol结构</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+TCP的net_protocol结构实例是tcp_protocol，由于TCP支持差错处理以及TSO，因此不仅定义了TCP接收函数，还定义了差错处理以及TSO分段处理函数等。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> <span style="color: #FF8C00;">tcp_protocol</span> = {
+	.handler =        tcp_v4_rcv,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#21327;&#35758;&#25509;&#25910;&#22788;&#29702;TCP&#27573;&#30340;&#20989;&#25968;</span>
+	.err_handler =    tcp_v4_err,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#21327;&#35758;&#30340;&#38169;&#35823;&#22788;&#29702;&#20989;&#25968;&#65292;ICMP&#27169;&#22359;&#25509;&#25910;&#21040;&#24046;&#38169;&#25253;&#21518;&#65292;&#22914;&#26524;&#26159;TCP&#21327;&#35758;&#65292;&#21017;&#35843;&#29992;&#35813;&#20989;&#25968;&#12290;</span>
+	.gso_send_check = tcp_v4_gso_send_check,
+	.gso_segment =    tcp_tso_segment,
+	.no_policy =        1,
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga98840f" class="outline-2">
+<h2 id="orga98840f"><span class="section-number-2">4</span> TCP传输控制块</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+TCP传输控制块在TCP整个过程中起着核心作用，包括建立连接、数据的传输、拥塞控制以及连接终止。在TCP连接的整个过程中，会分别使用一下三种类型的TCP传输控制块。
+</p>
+
+<ol class="org-ol">
+<li>tcp_request_sock传输控制块，在建立连接过程中使用，存在的时间是比较短的，可以称之为连接请求块。</li>
+<li>tcp_sock传输控制块，在连接建立之后终止之前使用，TCP状态为ESTABLISHED。</li>
+<li>tcp_timewait_sock传输控制块，在终止连接过程中使用。</li>
+</ol>
+
+<p>
+本节中只描述第二种传输控制块。
+</p>
+</div>
+
+<div id="outline-container-org9ec14d4" class="outline-3">
+<h3 id="org9ec14d4"><span class="section-number-3">4.1</span> inet_connection_sock结构</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+该结构是所有面向连接传输控制块的表示，在inet_sock结构的基础上，增加了有关进行连接、确认和重传等成员。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">inet_sock&#32467;&#26500;&#24517;&#39035;&#25918;&#22312;&#26368;&#21069;&#38754;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span>          <span style="color: #FF8C00;">icsk_inet</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">TCP&#20256;&#36755;&#23618;&#25509;&#25910;&#21040;&#23458;&#25143;&#31471;&#30340;&#36830;&#25509;&#35831;&#27714;&#21518;&#65292;&#20250;&#21019;&#24314;&#19968;&#20010;&#23458;&#25143;&#31471;&#22871;&#25509;&#21475;&#23384;&#25918;&#21040;isk_accept_queue</span>
+<span style="color: #8B8878;">        &#23481;&#22120;&#20013;&#65292;&#31561;&#24453;&#24212;&#29992;&#31243;&#24207;&#35843;&#29992; accept() &#36827;&#34892;&#35835;&#21462;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_sock_queue</span> <span style="color: #FF8C00;">icsk_accept_queue</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#19982;&#20043;&#32465;&#23450;&#30340;&#26412;&#22320;&#31471;&#21475;&#20449;&#24687;&#65292;&#22312;&#32465;&#23450;&#36807;&#31243;&#20013;&#34987;&#35774;&#32622;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_bucket</span>   *<span style="color: #FF8C00;">icsk_bind_hash</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;TCP&#27573;&#22312;&#25351;&#23450;&#26102;&#38388;&#20869;&#27809;&#26377;&#25910;&#21040;ACK&#65292;&#21017;&#35748;&#20026;&#21457;&#36865;&#22833;&#36133;&#65292;&#32780;&#36827;&#34892;&#37325;&#20256;&#30340;&#36229;&#26102;&#26102;&#38388;&#12290;</span>
+<span style="color: #8B8878;">        &#36890;&#24120;&#26159; jiffies+isk_rto &#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>     <span style="color: #FF8C00;">icsk_timeout</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36890;&#36807;icsk_pending&#26469;&#21306;&#20998;&#26159;&#37325;&#20256;&#23450;&#26102;&#22120;&#36824;&#26159;&#25345;&#32493;&#23450;&#26102;&#22120;&#12290;</span>
+<span style="color: #8B8878;">        &#22312;&#36229;&#26102;&#26102;&#38388;&#20869;&#27809;&#26377;&#25509;&#25910;&#21040;&#30456;&#24212;&#30340;ACK&#27573;&#20250;&#21457;&#29983;&#37325;&#20256;&#65292;</span>
+<span style="color: #8B8878;">        &#22312;&#36830;&#25509;&#23545;&#26041;&#36890;&#21578;&#25509;&#25910;&#31383;&#21475;&#20026;0&#26102;&#20250;&#21551;&#21160;&#25345;&#32493;&#23450;&#26102;&#22120;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>         <span style="color: #FF8C00;">icsk_retransmit_timer</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#24310;&#36831;&#21457;&#36865;ACK&#27573;&#30340;&#23450;&#26102;&#22120;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>         <span style="color: #FF8C00;">icsk_delack_timer</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36229;&#26102;&#37325;&#20256;&#30340;&#26102;&#38388;&#65292;&#21021;&#22987;&#20540;&#20026;TCP_TIMEOUT_INIT,&#24403;&#24448;&#36820;&#26102;&#38388;&#36229;&#36807;&#27492;&#20540;&#26102;&#34987;&#35748;&#20026;&#20256;&#36755;&#22833;&#36133;&#12290;</span>
+<span style="color: #8B8878;">        &#38656;&#35201;&#27880;&#24847;&#65306;&#36229;&#26102;&#37325;&#20256;&#26102;&#38388;&#26159;&#26681;&#25454;&#24403;&#21069;&#32593;&#32476;&#30340;&#24773;&#20917;&#21160;&#24577;&#35745;&#31639;&#30340;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__u32</span>             <span style="color: #FF8C00;">icsk_rto</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#21518;&#19968;&#27425;&#26356;&#26032;&#30340;&#36335;&#24452;MTU(PMTU)&#12290;</span>
+	<span style="color: #5FD7FF;">__u32</span>             <span style="color: #FF8C00;">icsk_pmtu_cookie</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_congestion_ops</span> *<span style="color: #FF8C00;">icsk_ca_ops</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">TCP&#30340;&#25805;&#20316;&#25509;&#21475;&#38598;&#65292;&#21253;&#25324;IP&#23618;&#21457;&#36865;&#30340;&#25509;&#21475;&#12289;TCP&#23618;&#30340;setsockopt&#25509;&#21475;&#12290;</span>
+<span style="color: #8B8878;">        &#22312;tcp_v4_init_sock() &#20013;&#34987;&#21021;&#22987;&#21270;&#20026; ipv4_specific</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock_af_ops</span> *<span style="color: #FF8C00;">icsk_af_ops</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;PMTU&#21516;&#27493;&#26412;&#22320;MSS&#20989;&#25968;&#25351;&#38024;&#12290;&#22312;tcp_v4_init_sock() &#20013;&#34987;&#21021;&#22987;&#21270;&#20026;tcp_sync_mss()&#12290;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>      (*<span style="color: #87D700;">icsk_sync_mss</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">pmtu</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25317;&#22622;&#25511;&#21046;&#29366;&#24577;</span>
+	<span style="color: #5FD7FF;">__u8</span>              <span style="color: #FF8C00;">icsk_ca_state</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#36229;&#26102;&#37325;&#20256;&#30340;&#27425;&#25968;</span>
+	<span style="color: #5FD7FF;">__u8</span>              <span style="color: #FF8C00;">icsk_retransmits</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#39044;&#23450;&#30340;&#23450;&#26102;&#22120;&#20107;&#20214;&#65292;&#21482;&#33021;&#26159;ICSK_TIME_RETRANS&#25110;ICSK_TIME_PROBE0&#12290;&#29992;&#26469;&#21306;&#20998;&#27491;&#22312;&#20351;&#29992;&#30340;&#26159;&#37027;&#20010;&#23450;&#26102;&#22120;</span>
+	<span style="color: #5FD7FF;">__u8</span>              <span style="color: #FF8C00;">icsk_pending</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#35745;&#31639;&#25345;&#32493;&#23450;&#26102;&#22120;&#30340;&#19979;&#19968;&#20010;&#35774;&#23450;&#20540;&#30340;&#25351;&#25968;&#36864;&#36991;&#31639;&#27861;&#25351;&#25968;&#65292;&#22312;&#20256;&#36865;&#36229;&#26102;&#26102;&#20250;&#36882;&#22686;&#12290;</span>
+	<span style="color: #5FD7FF;">__u8</span>              <span style="color: #FF8C00;">icsk_backoff</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24314;&#31435;TCP&#36830;&#25509;&#26102;&#26368;&#22810;&#20801;&#35768;&#37325;&#35797;&#21457;&#36865;SYN&#25110;SYN+ACK&#27573;&#30340;&#27425;&#25968;&#12290;</span>
+	<span style="color: #5FD7FF;">__u8</span>              <span style="color: #FF8C00;">icsk_syn_retries</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25345;&#32493;&#23450;&#26102;&#22120;&#25110;&#20445;&#27963;&#23450;&#26102;&#22120;&#21608;&#26399;&#24615;&#21457;&#36865;&#20986;&#21435;&#20294;&#27809;&#34987;&#30830;&#35748;&#30340;TCP&#27573;&#25968;&#30446;&#65292;&#25910;&#21040;ACK&#21518;&#28165;&#38646;</span>
+	<span style="color: #5FD7FF;">__u8</span>              <span style="color: #FF8C00;">icsk_probes_out</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">IP&#39318;&#37096;&#20013;&#36873;&#39033;&#37096;&#20998;&#30340;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">__u16</span>             <span style="color: #FF8C00;">icsk_ext_hdr_len</span>;
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#24403;&#21069;&#38656;&#21457;&#36865;&#30830;&#35748;&#30340;&#32039;&#24613;&#31243;&#24230;&#21644;&#29366;&#24577;&#12290;&#22312;&#25968;&#25454;&#20174;&#20869;&#26680;&#31354;&#38388;&#22797;&#21046;&#21040;&#29992;&#25143;&#31354;&#38388;&#26102;</span>
+<span style="color: #8B8878;">                &#20250;&#26816;&#27979;&#35813;&#29366;&#24577;&#65292;&#22914;&#26524;&#38656;&#35201;&#21017;&#31435;&#21363;&#21457;&#36865;&#30830;&#35748;&#65307;&#22312;&#35745;&#31639;rcv_mss&#26102;&#65292;&#20250;&#26681;&#25454;&#24773;&#20917;&#35843;&#25972;&#27492;&#29366;&#24577;&#12290;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #5FD7FF;">__u8</span>      <span style="color: #FF8C00;">pending</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#22312;&#24555;&#36895;&#21457;&#36865;&#30830;&#35748;&#27169;&#24335;&#20013;&#65292;&#21487;&#20197;&#24555;&#36895;&#21457;&#36865;ACK&#27573;&#30340;&#25968;&#37327;&#12290;</span>
+<span style="color: #8B8878;">                &#19982;pingpong&#19968;&#21516;&#20316;&#20026;&#21028;&#26029;&#26159;&#21542;&#22312;&#24555;&#36895;&#21457;&#36865;&#30830;&#35748;&#27169;&#24335;&#19979;&#30340;&#26465;&#20214;&#65292;&#22914;&#26524;&#35201;&#24310;&#26102;&#21457;&#36865;&#30830;&#35748;&#65292;</span>
+<span style="color: #8B8878;">                &#21017;&#24517;&#39035;&#22312;&#24310;&#26102;&#21457;&#36865;&#30830;&#35748;&#27169;&#24335;&#19979;&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #5FD7FF;">__u8</span>      <span style="color: #FF8C00;">quick</span>;
+		    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#21551;&#29992;&#25110;&#31105;&#29992;&#24555;&#36895;&#30830;&#35748;&#27169;&#24335;</span>
+<span style="color: #8B8878;">                0 &#65306; &#19981;&#24310;&#26102;ACK&#27573;&#30340;&#21457;&#36865;&#65292;&#32780;&#26159;&#36827;&#34892;&#24555;&#36895;&#21457;&#36865;</span>
+<span style="color: #8B8878;">                1 &#65306; &#24310;&#26102;&#21457;&#36865;ACK</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #5FD7FF;">__u8</span>      <span style="color: #FF8C00;">pingpong</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36719;&#20013;&#26029;&#21644;&#29992;&#25143;&#36827;&#31243;&#19981;&#33021;&#21516;&#26102;&#21344;&#26377;&#38145;&#23450;&#22871;&#25509;&#21475;&#65292;&#22914;&#26524;&#22871;&#25509;&#21475;&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;&#65292;&#32780;&#27492;&#26102;</span>
+<span style="color: #8B8878;">                &#24310;&#26102;ACK&#23450;&#26102;&#22120;&#34987;&#35302;&#21457;&#65292;&#27492;&#26102;&#23558;blocked&#35774;&#32622;&#20026;1&#65292;&#31561;&#26377;&#26426;&#20250;&#31435;&#21363;&#21457;&#36865;ACK&#12290;</span><span style="color: #8B8878;">  */</span>
+		<span style="color: #5FD7FF;">__u8</span>      <span style="color: #FF8C00;">blocked</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35745;&#31639;&#24310;&#26102;&#30830;&#35748;&#30340;&#20272;&#35745;&#20540;&#65292;&#22312;&#25509;&#25910;&#21040;TCP&#27573;&#26102;&#20250;&#26681;&#25454;&#26412;&#27425;&#19982;&#19978;&#27425;&#25509;&#25910;&#30340;&#26102;&#38388;&#38388;&#38548;&#26469;&#35843;&#25972;</span>
+<span style="color: #8B8878;">                &#35813;&#20540;&#65292;&#22312;&#35774;&#32622;&#24310;&#26102;&#30830;&#35748;&#23450;&#26102;&#22120;&#26102;&#20063;&#20250;&#26681;&#25454;&#26465;&#20214;&#35774;&#32622;&#35813;&#20540;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #5FD7FF;">__u32</span>     <span style="color: #FF8C00;">ato</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#21069;&#30340;&#24310;&#26102;&#30830;&#35748;&#26102;&#38388;&#65292;&#36229;&#26102;&#21518;&#21457;&#36865;ACK</span>
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeout</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#19968;&#27425;&#25509;&#25910;&#21040;&#25968;&#25454;&#21253;&#30340;&#26102;&#38388;</span>
+		<span style="color: #5FD7FF;">__u32</span>     <span style="color: #FF8C00;">lrcvtime</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#21518;&#19968;&#20010;&#25509;&#25910;&#21040;&#30340;&#27573;&#30340;&#38271;&#24230;&#65292;&#29992;&#26469;&#35745;&#31639;rcv_mss&#12290;</span>
+		<span style="color: #5FD7FF;">__u16</span>     <span style="color: #FF8C00;">last_seg_size</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#25509;&#25910;&#21040;&#27573;&#35745;&#31639;&#20986;&#30340;MSS&#65292;&#20027;&#35201;&#29992;&#26469;&#30830;&#23450;&#26159;&#21542;&#25191;&#34892;&#24310;&#26102;&#30830;&#35748;&#12290;</span>
+		<span style="color: #5FD7FF;">__u16</span>     <span style="color: #FF8C00;">rcv_mss</span>;
+	} <span style="color: #FF8C00;">icsk_ack</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24310;&#26102;&#30830;&#35748;&#25511;&#21046;&#25968;&#25454;&#22359;</span>
+
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #5FD7FF;">int</span>               <span style="color: #FF8C00;">enabled</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#21551;&#29992;&#36335;&#24452;MTU&#21457;&#29616;</span>
+		<span style="color: #5FD7FF;">int</span>               <span style="color: #FF8C00;">search_high</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#24452;MTU&#21457;&#29616;&#21306;&#38388;&#30340;&#19978;&#38480;</span>
+		<span style="color: #5FD7FF;">int</span>               <span style="color: #FF8C00;">search_low</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#24452;MTU&#21457;&#29616;&#21306;&#38388;&#30340;&#19979;&#38480;</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20026;&#24403;&#21069;&#36335;&#24452;MTU&#25506;&#27979;&#27573;&#30340;&#38271;&#24230;&#65292;&#20063;&#29992;&#20110;&#21028;&#26029;&#36335;&#24452;MTU&#25506;&#27979;&#26159;&#21542;&#23436;&#25104;&#65292; &#26080;&#35770;&#25104;&#21151;&#36824;&#26159;&#22833;&#36133;&#65292;</span>
+<span style="color: #8B8878;">                &#36335;&#24452;MTU&#25506;&#27979;&#23436;&#25104;&#21518;&#37117;&#23558;&#21021;&#22987;&#21270;&#20026;0&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #5FD7FF;">int</span>               <span style="color: #FF8C00;">probe_size</span>;
+	} <span style="color: #FF8C00;">icsk_mtup</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36335;&#24452;MTU&#21457;&#29616;&#30340;&#25511;&#21046;&#25968;&#25454;&#22359;&#65292;&#22312;tcp_mtup_init()&#20013;&#34987;&#21021;&#22987;&#21270;&#12290;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#21508;&#31181;&#26377;&#20851;TCP&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;&#30340;&#31169;&#26377;&#21442;&#25968;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>                       <span style="color: #FF8C00;">icsk_ca_priv</span>[16];
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">ICSK_CA_PRIV_SIZE</span>       (16 * <span style="color: #FF1493;">sizeof</span>(u32))
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgba5df78" class="outline-3">
+<h3 id="orgba5df78"><span class="section-number-3">4.2</span> inet_connection_sock_af_ops结构</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+封装了一组与传输层相关的操作集，包括向网络层发送的接口、传输层的setsockopt接口等。TCP中的实例为ipv4_specific。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock_af_ops</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#20256;&#36755;&#23618;&#24819;&#32593;&#32476;&#23618;&#20256;&#36882;&#30340;&#25509;&#21475;&#65292;TCP&#20013;&#35774;&#32622;&#20026;ip_queue_xmit()</span>
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">queue_xmit</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ipfragok</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#20256;&#36755;&#23618;&#39318;&#37096;&#26657;&#39564;&#21644;&#20989;&#25968;&#65292;TCP&#20013;&#21021;&#22987;&#21270;&#20026;TCP_v4_send_check()</span>
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">send_check</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>,
+			      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27492;&#20256;&#36755;&#25511;&#21046;&#22359;&#36824;&#27809;&#26377;&#36335;&#30001;&#32531;&#23384;&#39033;&#65292;TCP&#20013;&#35774;&#32622;&#20026;inet_sk_rebuild_header()&#12290;</span>
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">rebuild_header</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#29702;&#36830;&#25509;&#35831;&#27714;&#25509;&#21475;&#65292;TCP&#20013;&#20026;tcp_v4_conn_request()</span>
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">conn_request</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *(*<span style="color: #87D700;">syn_recv_sock</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_sock</span> *<span style="color: #FF8C00;">req</span>,
+				      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span> *<span style="color: #FF8C00;">dst</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#21551;&#29992;tw_recycle&#30340;&#24773;&#20917;&#19979;&#65292;&#20851;&#38381;&#22871;&#25509;&#21475;&#26102;&#65292;&#35760;&#24405;&#30456;&#20851;&#26102;&#38388;&#25139;&#20449;&#24687;&#21040;&#23545;&#31471;&#20449;&#24687;&#22359;&#31649;&#29702;&#20013;&#12290;</span>
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">remember_stamp</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">IPv4&#20026;IP&#39318;&#37096;&#30340;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">u16</span>         <span style="color: #FF8C00;">net_header_len</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">IP&#22871;&#25509;&#21475;&#22320;&#22336;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">u16</span>         <span style="color: #FF8C00;">sockaddr_len</span>;
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>,
+				  <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>,
+				  <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *optlen);
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">compat_setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>,
+				<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>         (*<span style="color: #87D700;">compat_getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>,
+				<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *optlen);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;IP&#22871;&#25509;&#21475;&#22320;&#22336;&#32467;&#26500;&#20013;&#30340;&#22320;&#22336;&#20449;&#24687;&#22797;&#21046;&#21040;&#20256;&#36755;&#25511;&#21046;&#22359;&#20013;&#65292;TCP&#20013;&#20026;inet_csk_addr2-sockaddr()&#65292;&#23454;&#38469;&#19978;&#35813;&#25509;&#21475;&#24182;&#26410;&#20351;&#29992;&#12290;</span>
+	<span style="color: #5FD7FF;">void</span>    (*<span style="color: #87D700;">addr2sockaddr</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *);
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4415d1e" class="outline-3">
+<h3 id="org4415d1e"><span class="section-number-3">4.3</span> tcp_sock结构</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+tcp_sock结构是TCP协议的控制块，它在inet_connection_sock结构的基础上扩展了滑动窗口协议、拥塞控制算法等一些TCP专有属性。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">inet_connection_sock&#38656;&#35201;&#25918;&#22312;&#26368;&#21069;&#38754;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span>     <span style="color: #FF8C00;">inet_conn</span>;
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">tcp_header_len</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">tcp&#39318;&#37096;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;&#35813;&#22871;&#25509;&#21475;&#21457;&#36865;&#21040;&#32593;&#32476;&#35774;&#22791;&#30340;&#27573;&#38271;&#24230;&#65292;&#22312;&#19981;&#25903;&#25345;TSO&#26102;&#65292;&#31561;&#20110;MSS;</span>
+<span style="color: #8B8878;">        &#32593;&#21345;&#22914;&#26524;&#25903;&#25345;TSO&#19988;&#37319;&#29992;TSO&#21457;&#36865;&#65292;&#21017;&#38656;&#35201;&#37325;&#26032;&#35745;&#31639;&#65292;&#35745;&#31639;&#26041;&#27861;&#21442;&#35265;tcp_current_mss()</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">xmit_size_goal</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#39318;&#37096;&#39044;&#27979;&#26631;&#24535;&#65292;&#20250;&#22312;&#21457;&#36865;&#21644;&#25509;&#25910;SYN&#12289;&#26356;&#26032;&#31383;&#21475;&#25110;&#20854;&#20182;&#24688;&#24403;&#30340;&#26102;&#20505;&#65292;&#35774;&#32622;&#35813;&#26631;&#24535;&#12290;</span>
+<span style="color: #8B8878;">        &#27492;&#26631;&#24535;&#21644;&#26102;&#38388;&#25139;&#20197;&#21450;&#24207;&#21015;&#21495;&#31561;&#65292;&#37117;&#26159;&#21028;&#26029;&#25191;&#34892;&#24555;&#36895;&#36335;&#24452;&#36824;&#26159;&#24930;&#36895;&#36335;&#24452;&#30340;&#26465;&#20214;&#20043;&#19968;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">pred_flags</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31561;&#24453;&#25509;&#25910;&#30340;&#19979;&#19968;&#20010;TCP&#27573;&#30340;&#24207;&#21495;&#65292;&#27599;&#25509;&#25910;&#21040;&#19968;&#20010;TCP&#27573;&#21518;&#37117;&#20250;&#26356;&#26032;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rcv_nxt</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#31561;&#24453;&#21457;&#36865;&#30340;&#19979;&#19968;&#20010;TCP&#27573;&#30340;&#24207;&#21495;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_nxt</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#36755;&#20986;&#30340;&#27573;&#20013;&#65292;&#26368;&#26089;&#19968;&#20010;&#26410;&#30830;&#35748;&#27573;&#30340;&#24207;&#21495;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_una</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26368;&#36817;&#21457;&#36865;&#30340;&#23567;&#21253;&#65288;&#23567;&#20110;MSS&#30340;&#27573;&#65289;&#30340;&#26368;&#21518;&#19968;&#20010;&#23383;&#33410;&#24207;&#21495;&#65292;&#22312;&#25104;&#21151;&#21457;&#36865;&#27573;&#21518;&#65292;</span>
+<span style="color: #8B8878;">        &#22914;&#26524;&#25253;&#25991;&#23567;&#20110;MSS&#65292;&#21363;&#26356;&#26032;&#35813;&#23383;&#27573;&#65292;&#29992;&#26469;&#21028;&#26029;&#26159;&#21542;&#21551;&#29992;nalgle&#31639;&#27861;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_sml</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#19968;&#27425;&#21463;&#21040;ACK&#27573;&#30340;&#26102;&#38388;&#65292;&#29992;&#20110;TCP&#20445;&#27963;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rcv_tstamp</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#19968;&#27425;&#21457;&#36865;&#25968;&#25454;&#21253;&#30340;&#26102;&#38388;&#65292;&#20027;&#35201;&#29992;&#20110;&#25317;&#22622;&#31383;&#21475;&#30340;&#35774;&#32622;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">lsndtime</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#26469;&#25511;&#21046;&#22797;&#21046;&#25968;&#25454;&#21040;&#29992;&#25143;&#36827;&#31243;&#30340;&#25511;&#21046;&#22359;&#65306;</span>
+<span style="color: #8B8878;">        &#21253;&#25324;&#25551;&#36848;&#29992;&#25143;&#31354;&#38388;&#32531;&#23384;&#21450;&#20854;&#38271;&#24230;&#65292;prequeue&#38431;&#21015;&#21450;&#20854;&#21344;&#29992;&#30340;&#20869;&#23384;&#31561;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#27809;&#21551;&#29992;tcp_low_latency,TCP&#27573;&#23558;&#39318;&#20808;&#32531;&#23384;&#21040;&#27492;&#38431;&#21015;&#65292;</span>
+<span style="color: #8B8878;">                &#30452;&#21040;&#36827;&#31243;&#20027;&#21160;&#35835;&#21462;&#26102;&#25165;&#30495;&#27491;&#30340;&#25509;&#25910;&#21040;&#25509;&#25910;&#38431;&#21015;&#20013;&#24182;&#22788;&#29702;&#12290;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">prequeue</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#27809;&#21551;&#29992;tcp_low_latency&#24773;&#20917;&#19979;&#65292;&#24403;&#21069;&#27491;&#22312;&#35835;&#21462;TCP&#27969;&#30340;&#36827;&#31243;&#65292;&#22914;&#26524;&#26159;NULL&#21017;&#34920;&#31034;</span>
+<span style="color: #8B8878;">                &#26242;&#26102;&#27809;&#26377;&#36827;&#31243;&#35835;&#21462;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span>      *<span style="color: #FF8C00;">task</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#27809;&#21551;&#29992;tcp_low_latency&#24773;&#20917;&#19979;&#65292;&#29992;&#26469;&#23384;&#25918;&#25968;&#25454;&#30340;&#29992;&#25143;&#31354;&#38388;&#22320;&#22336;&#65292;&#22312;&#25509;&#25910;&#22788;&#29702;</span>
+<span style="color: #8B8878;">                TCP&#27573;&#26102;&#30452;&#25509;&#22797;&#21046;&#21040;&#29992;&#25143;&#31354;&#38388;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span>    *<span style="color: #FF8C00;">iov</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">prequeue&#38431;&#21015;&#24403;&#21069;&#28040;&#32791;&#30340;&#20869;&#23384;</span>
+		<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">memory</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#25143;&#32531;&#23384;&#20013;&#24403;&#21069;&#21487;&#20197;&#20351;&#29992;&#30340;&#32531;&#23384;&#22823;&#23567;&#65292;&#30001;recv&#31561;&#31995;&#32479;&#35843;&#29992;&#30340;len&#21442;&#25968;&#21021;&#22987;&#21270;</span>
+		<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">len</span>;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_DMA <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32593;&#32476;&#35774;&#22791;DMA&#30456;&#20851;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dma_chan</span> *<span style="color: #FF8C00;">dma_chan</span>;
+		<span style="color: #5FD7FF;">int</span>                      <span style="color: #FF8C00;">wakeup</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dma_pinned_list</span> *<span style="color: #FF8C00;">pinned_list</span>;
+		<span style="color: #5FD7FF;">dma_cookie_t</span>    <span style="color: #FF8C00;">dma_cookie</span>;
+<span style="color: #FF1493;">#endif</span>
+	} <span style="color: #FF8C00;">ucopy</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;&#26356;&#26032;&#21457;&#36865;&#31383;&#21475;&#30340;&#37027;&#20010;ACK&#27573;&#30340;&#24207;&#21495;&#65292;&#29992;&#26469;&#21028;&#26029;&#26159;&#21542;&#38656;&#35201;&#26356;&#26032;&#31383;&#21475;&#12290;&#22914;&#26524;&#21518;&#32493;&#25910;&#21040;</span>
+<span style="color: #8B8878;">        &#30340;ACK&#27573;&#30340;&#24207;&#21495;&#22823;&#20110;snd_wl1&#65292;&#21017;&#38656;&#35201;&#26356;&#26032;&#31383;&#21475;&#65292;&#21542;&#21017;&#26080;&#38656;&#26356;&#26032;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_wl1</span>;
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_wnd</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#25910;&#26041;&#25552;&#20379;&#30340;&#25509;&#25910;&#31383;&#21475;&#22823;&#23567;&#65292;&#21363;&#21457;&#36865;&#26041;&#21457;&#36865;&#30340;&#31383;&#21475;&#22823;&#23567;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">max_window</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#25910;&#26041;&#36890;&#21578;&#36807;&#30340;&#26368;&#22823;&#25509;&#25910;&#31383;&#21475;&#20540;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">mss_cache</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21457;&#36865;&#26041;&#24403;&#21069;&#26377;&#25928;&#30340;MSS</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#28369;&#21160;&#31383;&#21475;&#26368;&#22823;&#20540;&#65292;&#28369;&#21160;&#31383;&#21475;&#22823;&#23567;&#22312;&#21464;&#21270;&#36807;&#31243;&#20013;&#22987;&#32456;&#19981;&#33021;&#36229;&#20986;&#35813;&#20540;&#12290; TCP&#24314;&#31435;&#36830;&#25509;&#26102;&#65292;</span>
+<span style="color: #8B8878;">        &#21021;&#22987;&#21270;&#35813;&#23383;&#27573;&#65292;&#35774;&#32622;&#20026;&#26368;&#22823;16&#20301;&#25972;&#25968;&#24038;&#31227;&#31383;&#21475;&#25193;&#22823;&#22240;&#23376;&#30340;&#20301;&#25968;&#65292;&#20197;&#20026;&#28369;&#21160;&#31383;&#21475;&#22312;TCP&#39318;&#37096;</span>
+<span style="color: #8B8878;">        &#20013;&#20197;16&#20301;&#34920;&#31034;&#65292;window_clamp&#22826;&#22823;&#20250;&#23548;&#33268;&#28369;&#21160;&#31383;&#21475;&#26080;&#27861;&#22312;TCP&#39318;&#37096;&#20013;&#34920;&#31034;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">window_clamp</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#25509;&#25910;&#31383;&#21475;&#22823;&#23567;&#30340;&#38408;&#20540;&#12290;&#35813;&#23383;&#27573;&#19982;rcv_wnd&#20004;&#32773;&#37197;&#21512;&#65292;&#36798;&#21040;&#28369;&#21160;&#31383;&#21475;&#22823;&#23567;&#32531;&#24930;&#22686;&#38271;&#30340;&#25928;&#26524;&#65306;</span>
+<span style="color: #8B8878;">           &#20854;&#21021;&#22987;&#20540;&#20026;rcv_wnd&#65292;&#24403;&#26412;&#22320;&#22871;&#25509;&#21475;&#25910;&#21040;&#27573;&#65292;&#24182;&#28385;&#36275;&#19968;&#23450;&#26465;&#20214;&#26102;&#65292;&#20250;&#36882;&#22686;&#35813;&#23383;&#27573;&#20540;;</span>
+<span style="color: #8B8878;">           &#21040;&#19979;&#19968;&#27425;&#21457;&#36865;&#25968;&#25454;&#32452;&#24314;TCP&#39318;&#37096;&#26102;&#65292;&#38656;&#35201;&#36890;&#21578;&#23545;&#31471;&#24403;&#21069;&#25509;&#25910;&#31383;&#21475;&#30340;&#22823;&#23567;&#65292;&#27492;&#26102;&#26356;&#26032;rcv_wnd&#65292;</span>
+<span style="color: #8B8878;">        &#32780;rcv_wnd&#30340;&#21462;&#20540;&#19981;&#33021;&#36229;&#36807;rcv_ssthresh&#30340;&#20540;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rcv_ssthresh</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#36229;&#26102;&#21457;&#29983;&#26102;&#65292;&#22312;&#21551;&#29992;F-RTO&#24773;&#20917;&#19979;&#65292;&#29992;&#26469;&#20445;&#23384;&#24453;&#21457;&#36865;&#30340;&#19979;&#19968;&#20010;TCP&#27573;&#30340;&#24207;&#21495;&#65288;SND.NXT&#65289;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">frto_highmark</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#19981;&#25903;&#25345;SACK&#26102;&#65292;&#30001;&#20110;&#36830;&#25509;&#25509;&#25910;&#21040;&#37325;&#22797;&#30830;&#35748;&#32780;&#36827;&#20837;&#24555;&#36895;&#24674;&#22797;&#38454;&#27573;&#30340;&#37325;&#22797;&#30830;&#35748;&#25968;&#30340;&#38408;&#20540;&#12290;</span>
+<span style="color: #8B8878;">        &#22312;&#25903;&#25345;SACK&#26102;&#65292;&#27809;&#26377;&#30830;&#23450;&#20002;&#22833;&#21253;&#30340;&#24773;&#20917;&#19979;&#65292;&#26159;TCP&#27969;&#20013;&#21487;&#20197;&#37325;&#25490;&#24207;&#30340;&#25968;&#25454;&#27573;&#25968;&#12290;</span>
+<span style="color: #8B8878;">           &#30001;&#30456;&#20851;&#36335;&#30001;&#32531;&#23384;&#39033;&#20013;&#30340;reordering&#24230;&#37327;&#20540;&#25110;&#31995;&#32479;&#21442;&#25968; tcp_reordering &#36827;&#34892;&#21021;&#22987;&#21270;&#65292;&#26356;&#26032;&#26102;</span>
+<span style="color: #8B8878;">        &#20250;&#21516;&#26102;&#26356;&#26032;&#21040;&#30446;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;&#30340;reordering&#20013;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">reordering</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20256;&#36865;&#36229;&#26102;&#21518;&#65292;&#35760;&#24405;&#22312;&#21551;&#29992;F-RTO&#31639;&#27861;&#26102;&#65292;&#25509;&#25910;&#21040;ACK&#27573;&#30340;&#25968;&#30446;&#12290;</span>
+<span style="color: #8B8878;">        &#20256;&#36865;&#36229;&#26102;&#21518;&#65292;&#22914;&#26524;&#21551;&#29992;F-RTO&#31639;&#27861;&#65292;&#21017;&#36827;&#20837;F-RTO&#22788;&#29702;&#38454;&#27573;&#65292;&#22312;&#27492;&#38454;&#27573;&#65292;&#22914;&#26524;&#36830;&#32493;&#25509;&#25910;&#21040;3&#20010;&#23545;</span>
+<span style="color: #8B8878;">        &#26032;&#25968;&#25454;&#30830;&#35748;&#30340;ACK&#27573;&#65292;&#21017;&#24674;&#22797;&#21040;&#27491;&#24120;&#27169;&#24335;&#19979;&#12290; &#38750;&#38646;&#26102;&#65292;&#20063;&#34920;&#31034;&#22312;F-RTO&#22788;&#29702;&#38454;&#27573;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">frto_counter</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26159;&#21542;&#21551;&#29992;nagle&#31639;&#27861;&#65292;Nagle&#31639;&#27861;&#25226;&#36739;&#23567;&#30340;&#27573;&#32452;&#35013;&#20026;&#26356;&#22823;&#30340;&#27573;&#65292;&#20027;&#35201;&#29992;&#20110;&#35299;&#20915;&#30001;&#20110;&#22823;&#37327;&#30340;</span>
+<span style="color: #8B8878;">        &#23567;&#21253;&#23548;&#33268;&#32593;&#32476;&#21457;&#29983;&#25317;&#22622;&#30340;&#38382;&#39064;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">nonagle</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20445;&#27963;&#25506;&#27979;&#27425;&#25968;&#65292;&#26368;&#22823;&#20540;&#20026;127 &#65288;TCP_KEEPCNT&#36873;&#39033;&#65289;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">keepalive_probes</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RTT &#27979;&#37327;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">srtt</span>;           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24179;&#28369;RTT,&#20026;&#20102;&#36991;&#20813;&#28014;&#28857;&#36816;&#31639;&#65292;&#23558;&#20854;&#25918;&#22823;8&#20493;&#21518;&#23384;&#20648;&#65288;time &lt;&lt; 3&#65289;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">mdev</span>;           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">RTT&#24179;&#22343;&#20559;&#24046;&#65292;&#30001;RTT&#19982;RTT&#22343;&#20540;&#20559;&#24046;&#21152;&#26435;&#24179;&#22343;&#32780;&#24471;&#21040;&#65292;&#20540;&#36234;&#22823;&#35828;&#26126;RTT&#25238;&#21160;&#36234;&#21385;&#23475;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">mdev_max</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36319;&#36394;&#27599;&#27425;&#21457;&#36865;&#31383;&#21475;&#20869;&#30340;&#27573;&#34987;&#20840;&#37096;&#30830;&#35748;&#36807;&#31243;&#20013;&#65292;RTT&#24179;&#22343;&#20559;&#24046;&#30340;&#26368;&#22823;&#20540;&#65292;&#25551;&#36848;RTT&#25238;&#21160;&#30340;&#26368;&#22823;&#33539;&#22260;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rttvar</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24179;&#28369;&#30340;RTT&#24179;&#22343;&#20559;&#24046;&#65292;&#30001;mdev&#35745;&#31639;&#24471;&#21040;&#65292;&#29992;&#26469;&#35745;&#31639;RTO</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rtt_seq</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;SND.UNA&#12290;&#29992;&#26469;&#22312;&#35745;&#31639;RTO&#26102;&#27604;&#36739;SND.UNA&#26159;&#21542;&#24050;&#32463;&#34987;&#26356;&#26032;&#20102;&#65292;&#22914;&#26524;&#34987;&#26356;&#26032;&#65292;&#21017;&#38656;&#35201;&#21516;&#26102;&#26356;&#26032;rttvar&#12290;</span><span style="color: #8B8878;">*/</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#21457;&#36865;&#38431;&#21015;&#21457;&#20986;&#32780;&#26410;&#24471;&#21040;&#30830;&#35748;TCP&#27573;&#30340;&#25968;&#30446;&#65288;SND.NXT-SND.UNA&#65289;&#12290;&#35813;&#20540;&#21160;&#24577;&#35745;&#31639;&#65292;</span>
+<span style="color: #8B8878;">        &#24403;&#26377;&#26032;&#30340;&#27573;&#21457;&#20986;&#25110;&#25910;&#21040;&#26032;&#30830;&#35748;&#27573;&#37117;&#20250;&#22686;&#21152;&#25110;&#20943;&#23567;&#35813;&#20540;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">packets_out</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24050;&#31163;&#24320;&#20027;&#26426;&#22312;&#32593;&#32476;&#20013;&#19988;&#26410;&#30830;&#35748;&#30340;TCP&#27573;&#25968;&#12290;&#26377;&#20004;&#31181;&#24773;&#20917;&#65292;&#36890;&#36807;SACK&#30830;&#35748;&#30340;&#27573;&#21644;&#24050;&#20002;&#22833;&#30340;&#27573;&#65292;</span>
+<span style="color: #8B8878;">        &#21363; left_out = sacked_out + lost_out&#12290;</span>
+
+<span style="color: #8B8878;">           left_out&#19981;&#21516;&#20110;packets_out&#12290; pakcets_out&#21482;&#26159;&#31163;&#24320;&#21457;&#36865;&#38431;&#21015;&#65292;&#32780;left_out&#26159;&#31163;&#24320;&#20027;&#26426;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">left_out</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#36824;&#26410;&#24471;&#21040;&#30830;&#35748;&#30340;TCP&#27573;&#25968;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">retrans_out</span>;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#25509;&#25910;&#21040;&#30340;TCP&#36873;&#39033;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_options_received</span> <span style="color: #FF8C00;">rx_opt</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25317;&#22622;&#25511;&#21046;&#26102;&#24930;&#21551;&#21160;&#30340;&#38408;&#20540;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_ssthresh</span>;
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_cwnd</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#25317;&#22622;&#31383;&#21475;&#22823;&#23567;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20174;&#19978;&#27425;&#35843;&#25972;&#25317;&#22622;&#31383;&#21475;&#21040;&#30446;&#21069;&#20026;&#27490;&#65292;&#25509;&#25910;&#21040;&#30340;&#24635;ACK&#27573;&#25968;&#12290;&#22914;&#26524;&#20026;0&#65292;&#35828;&#26126;&#24050;&#32463;&#35843;&#25972;&#25317;&#22622;&#31383;&#21475;&#65292;</span>
+<span style="color: #8B8878;">        &#19988;&#36824;&#26410;&#25910;&#21040;ACK&#27573;&#12290;&#35843;&#25972;&#21518;&#65292;&#27599;&#25910;&#21040;&#19968;&#20010;ACK&#27573;&#65292;&#35813;&#20540;&#21152;1&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">snd_cwnd_cnt</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20801;&#35768;&#30340;&#26368;&#22823;&#25317;&#22622;&#31383;&#21475;&#20540;&#65292;&#21021;&#22987;&#20540;65535&#65292;&#20043;&#21518;&#22312;&#25509;&#25910;&#21040;SYN&#21644;ACK&#27573;&#26102;&#65292;&#20250;&#26681;&#25454;&#26465;&#20214;&#30830;&#23450;&#26159;&#21542;</span>
+<span style="color: #8B8878;">        &#20174;&#36335;&#30001;&#37197;&#32622;&#39033;&#35835;&#21462;&#20449;&#24687;&#26356;&#26032;&#35813;&#23383;&#27573;&#65292;&#26368;&#21518;&#22312;TCP&#36830;&#25509;&#22797;&#20301;&#21069;&#65292;&#23558;&#26356;&#26032;&#21518;&#30340;&#20540;&#26681;&#25454;&#31639;&#27861;&#26356;&#26032;&#22238;&#23545;&#24212;</span>
+<span style="color: #8B8878;">        &#36335;&#30001;&#37197;&#32622;&#39033;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">snd_cwnd_clamp</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#24212;&#29992;&#31243;&#24207;&#38480;&#21046;&#26102;&#65292;&#35760;&#24405;&#24403;&#21069;&#20174;&#21457;&#36865;&#38431;&#21015;&#21457;&#20986;&#32780;&#26410;&#24471;&#21040;&#30830;&#35748;&#30340;&#27573;&#25968;&#65292;&#29992;&#20110;&#22312;&#26816;&#39564;&#25317;&#22622;&#31383;&#21475;&#26102;</span>
+<span style="color: #8B8878;">        &#35843;&#33410;&#25317;&#22622;&#31383;&#21475;&#65292;&#36991;&#20813;&#25317;&#22622;&#31383;&#21475;&#23454;&#25928;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_cwnd_used</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;&#26368;&#36817;&#19968;&#27425;&#26816;&#39564;&#25317;&#22622;&#31383;&#21475;&#30340;&#26102;&#38388;&#12290; &#22312;&#25317;&#22622;&#26399;&#38388;&#65292;&#25509;&#25910;&#21040;ACK&#21518;&#65292;&#20250;&#36827;&#34892;&#25317;&#22622;&#31383;&#21475;&#30340;&#26816;&#39564;&#12290;</span>
+<span style="color: #8B8878;">        &#32780;&#22312;&#38750;&#25317;&#22622;&#26399;&#38388;&#65292;&#20026;&#38450;&#27490;&#30001;&#20110;&#24212;&#29992;&#31243;&#24207;&#38480;&#21046;&#32780;&#36896;&#25104;&#25317;&#22622;&#31383;&#21475;&#23454;&#25928;&#65292;&#22240;&#27492;&#22312;&#25104;&#21151;&#21457;&#36865;&#27573;&#21518;&#65292;</span>
+<span style="color: #8B8878;">        &#22914;&#26377;&#24517;&#35201;&#20063;&#20250;&#26816;&#39564;&#25317;&#22622;&#31383;&#21475;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_cwnd_stamp</span>;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20081;&#24207;&#32531;&#23384;&#38431;&#21015;&#65292;&#29992;&#26469;&#26242;&#23384;&#25509;&#25910;&#21040;&#30340;&#20081;&#24207;&#30340;TCP&#27573;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">out_of_order_queue</span>;
+
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rcv_wnd</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#25509;&#25910;&#31383;&#21475;&#22823;&#23567;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#26368;&#26089;&#25509;&#25910;&#20294;&#26410;&#30830;&#35748;&#30340;&#27573;&#30340;&#24207;&#21495;&#65292;&#21363;&#24403;&#21069;&#25509;&#25910;&#31383;&#21475;&#30340;&#24038;&#31471;&#12290;&#22312;&#21457;&#36865;ACK&#26102;&#65292;&#30001;rcv_nxt&#26356;&#26032;&#65292;</span>
+<span style="color: #8B8878;">        &#22240;&#27492;rcv_wup&#30340;&#26356;&#26032;&#36890;&#24120;&#27604;rcv_nxt&#28382;&#21518;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rcv_wup</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#21152;&#20837;&#21040;&#21457;&#36865;&#38431;&#21015;&#30340;&#26368;&#21518;&#19968;&#20010;&#23383;&#33410;&#30340;&#24207;&#21495;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">write_seq</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36890;&#24120;&#24773;&#20917;&#19979;&#26631;&#35782;&#24050;&#32463;&#30495;&#27491;&#21457;&#36865;&#20986;&#21435;&#30340;&#26368;&#21518;&#19968;&#20010;&#23383;&#33410;&#24207;&#21495;; &#26377;&#26102;&#20063;&#21487;&#33021;&#26631;&#35782;&#26399;&#26395;&#21457;&#36865;&#20986;&#21435;&#30340;&#26368;&#21518;</span>
+<span style="color: #8B8878;">        &#19968;&#20010;&#23383;&#33410;&#24207;&#21495;&#65292;&#20363;&#22914;&#22312;&#21551;&#29992;&#20102;nagle&#31639;&#27861;&#21518; &#25110;&#32773; &#22312;&#21457;&#36865;&#25345;&#32493;&#25506;&#27979;&#27573;&#21518;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">pushed_seq</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23578;&#26410;&#20174;&#20869;&#26680;&#31354;&#38388;&#22797;&#21046;&#21040;&#29992;&#25143;&#31354;&#38388;&#30340;&#27573;&#30340;&#26368;&#21069;&#38754;&#19968;&#20010;&#23383;&#33410;&#30340;&#24207;&#21495;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">copied_seq</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23384;&#20648;&#29992;&#20110;&#22238;&#22797;&#23545;&#31471;SACK&#30340;&#20449;&#24687;&#65292;&#22312;&#22238;&#22797;SACK&#26102;&#65292;&#20250;&#20174;&#20013;&#25277;&#21462;&#20986;D-ACK&#21644;SACK&#20449;&#24687;&#65292;</span>
+<span style="color: #8B8878;">        &#22312;&#22788;&#29702;&#25509;&#25910;&#21040;&#20081;&#24207;&#30340;&#27573;&#26102;&#65292;&#24819;&#36825;&#20004;&#20010;&#23383;&#27573;&#20013;&#22635;&#20837;&#30456;&#24212;&#30340;&#20449;&#24687;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sack_block</span> <span style="color: #FF8C00;">duplicate_sack</span>[1]; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">D-SACK&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sack_block</span> <span style="color: #FF8C00;">selective_acks</span>[4]; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">SACK&#20449;&#24687;</span><span style="color: #8B8878;">*/</span>
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#25509;&#25910;&#21040;&#30340;SACK&#36873;&#39033;&#20449;&#24687;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sack_block</span> <span style="color: #FF8C00;">recv_sack_cache</span>[4];
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19968;&#33324;&#22312;&#25317;&#22622;&#29366;&#24577;&#27809;&#26377;&#25764;&#38144;&#25110;&#27809;&#26377;&#36827;&#20837;Loss&#29366;&#24577;&#26102;&#65292;&#22312;&#37325;&#20256;&#38431;&#21015;&#20013;&#65292;&#32531;&#23384;&#19978;&#19968;&#27425;&#26631;&#35760;&#35760;&#20998;&#29260;</span>
+<span style="color: #8B8878;">        &#26410;&#20002;&#22833;&#30340;&#26368;&#21518;&#19968;&#20010;&#27573;&#65292;&#20027;&#35201;&#20026;&#20102;&#21152;&#36895;&#23545;&#37325;&#20256;&#38431;&#21015;&#30340;&#26631;&#35760;&#25805;&#20316;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>* <span style="color: #FF8C00;">lost_skb_hint</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">lost_cnt_hint</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19968;&#33324;&#22312;&#25317;&#22622;&#29366;&#24577;&#27809;&#26377;&#25764;&#38144;&#25110;&#27809;&#26377;&#36827;&#20837;Loss&#29366;&#24577;&#26102;&#65292;&#22312;&#37325;&#20256;&#38431;&#21015;&#20013;&#65292;&#35760;&#24405;&#19978;&#19968;&#27425;&#26356;&#26032;&#35760;&#20998;&#29260;</span>
+<span style="color: #8B8878;">        &#30340;&#26368;&#21518;&#19968;&#20010;SKB&#65292;&#20027;&#35201;&#20026;&#20102;&#21152;&#36895;&#23545;&#37325;&#20256;&#38431;&#21015;&#30340;&#26631;&#35760;&#25805;&#20316;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">scoreboard_skb_hint</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#35760;&#24405;&#24403;&#21069;&#37325;&#20256;&#30340;&#20301;&#32622;&#12290;retransmit_skb_hint&#20301;&#32622;&#20043;&#21069;&#30340;&#27573;&#32463;&#36807;&#20102;&#37325;&#20256;&#65292;&#24403;&#35748;&#20026;&#37325;&#20256;&#30340;</span>
+<span style="color: #8B8878;">        &#27573;&#20063;&#20002;&#22833;&#26102;&#65292;&#35774;&#32622;&#20026;NULL&#65292;&#36825;&#26679;&#37325;&#20256;&#21448;&#20174;sk_write_queue&#24320;&#22987;&#65292;&#21363;&#20351;&#35813;&#27573;&#24182;&#26410;&#30495;&#27491;&#20002;&#22833;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">retransmit_skb_hint</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">retransmit_cnt_hint</span>;
+
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#24403;&#25903;&#25345;SACK&#25110;FACK&#26102;&#65292;&#22312;&#37325;&#20256;&#22788;&#20110;SACk&#22359;&#20013;&#30340;&#31354;&#38553;&#20013;&#30340;&#27573;&#26102;&#65292;&#29992;&#20110;&#35760;&#24405;&#30001;&#20110;&#28385;&#36275;&#20854;&#20182;&#26465;&#20214;&#32780;</span>
+<span style="color: #8B8878;">        &#26410;&#33021;&#37325;&#20256;&#30340;&#20301;&#32622;&#65292;&#19979;&#27425;&#21487;&#20197;&#20174;&#27492;&#20301;&#32622;&#32487;&#32493;&#22788;&#29702;&#12290;&#22914;&#26524;&#37325;&#20256;&#20102;&#65292;&#21017;&#19979;&#27425;&#20174;&#37325;&#20256;&#38431;&#21015;&#38431;&#39318;&#37325;&#26032;&#22788;&#29702;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">forward_skb_hint</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">forward_cnt_hint</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">fastpath_skb_hint&#35760;&#24405;&#19978;&#19968;&#27425;&#22788;&#29702;SACK&#36873;&#39033;&#30340;&#26368;&#39640;&#24207;&#21495;&#27573;&#30340;SKB, fastpath_cnt_hint&#35760;&#24405;</span>
+<span style="color: #8B8878;">        &#19978;&#19968;&#27425;&#35745;&#31639;&#24471;&#21040;&#30340;fackets_out, &#30446;&#30340;&#26159;&#20026;&#20102;&#22312;&#25317;&#22622;&#29366;&#24577;&#27809;&#26377;&#21457;&#29983;&#21464;&#21270;&#25110;&#25509;&#25910;&#21040;&#30340;SACK&#27809;&#26377;&#21457;&#29983;</span>
+<span style="color: #8B8878;">        &#21464;&#21270;&#26102;&#65292;&#21152;&#36895;&#23545;fackets_out&#12289;sacket_out&#31561;&#30340;&#35745;&#31639;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">fastpath_skb_hint</span>;
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">fastpath_cnt_hint</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26412;&#31471;&#33021;&#25509;&#25910;&#30340;MSS&#19978;&#38480;&#65292;&#22312;&#24314;&#31435;&#36830;&#25509;&#26102;&#29992;&#26469;&#36890;&#21578;&#23545;&#31471;&#12290; &#27492;&#20540;&#26377;&#36335;&#30001;&#32531;&#23384;&#39033;&#20013;MSS&#24230;&#37327;&#20540;</span>
+<span style="color: #8B8878;">        &#65288;RTAX_ADVMSS&#65289;&#36827;&#34892;&#21021;&#22987;&#21270;&#65292;&#32780;&#36335;&#30001;&#32531;&#23384;&#39033;&#20013;MSS&#24230;&#37327;&#20540;&#21017;&#30452;&#25509;&#21462;&#33258;&#32593;&#32476;&#35774;&#22791;&#25509;&#21475;&#30340;MTU&#20943;&#21435;</span>
+<span style="color: #8B8878;">        IP&#39318;&#37096;&#21450;TCP&#39318;&#37096;&#30340;&#38271;&#24230;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">advmss</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#21551;&#29992;FRTO&#31639;&#27861;&#30340;&#24773;&#20917;&#19979;&#65292;&#36335;&#24452;MTU&#25506;&#27979;&#25104;&#21151;&#65292;&#36827;&#20837;&#25317;&#22622;&#25511;&#21046;Disorder&#12289;Recovery&#12289;Loss</span>
+<span style="color: #8B8878;">        &#29366;&#24577;&#26102;&#20445;&#23384;&#30340;ssthresh&#20540;&#12290;&#20027;&#35201;&#29992;&#26469;&#22312;&#25317;&#22622;&#31383;&#21475;&#25764;&#38144;&#26102;&#65292;&#24674;&#22797;&#25317;&#22622;&#25511;&#21046;&#30340;&#24930;&#21551;&#21160;&#38408;&#20540;&#12290;</span>
+<span style="color: #8B8878;">        &#24403;prior_ssthresh&#35774;&#32622;&#20026;0&#26102;&#65292;&#34920;&#31034;&#31105;&#27490;&#25317;&#22622;&#31383;&#21475;&#30340;&#25764;&#38144;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">prior_ssthresh</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21457;&#36865;&#21518;&#20002;&#22833;&#22312;&#20256;&#36755;&#36807;&#31243;&#20013;&#30340;&#27573;&#30340;&#25968;&#37327;&#12290; &#30446;&#21069;TCP&#21327;&#35758;&#36824;&#27809;&#26377;&#31867;&#20284;&#8220;&#27573;&#20002;&#22833;&#36890;&#30693;&#8221;&#30340;&#26426;&#21046;&#65292;</span>
+<span style="color: #8B8878;">        &#22240;&#27492;&#20002;&#22833;&#30340;&#27573;&#21482;&#33021;&#36890;&#36807;&#26576;&#31181;&#31639;&#27861;&#25512;&#27979;&#65292;&#20363;&#22914;&#24403;RTO&#36229;&#26102;&#21518;&#65292;&#21487;&#35748;&#20026;&#21457;&#36865;&#30340;&#27573;&#37117;&#24050;&#20002;&#22833;&#12290;</span>
+<span style="color: #8B8878;">        lost_out = packets = out;</span>
+<span style="color: #8B8878;">        in_flight = retrans_out;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">lost_out</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21551;&#29992;SACK&#26102;&#65292;&#36890;&#36807;SACK&#30340;TCP&#36873;&#39033;&#34920;&#31034;&#24050;&#25509;&#25910;&#21040;&#27573;&#30340;&#25968;&#37327;&#12290;</span>
+<span style="color: #8B8878;">           &#19981;&#21551;&#29992;SACK&#26102;&#65292;&#26631;&#35782;&#25509;&#25910;&#21040;&#37325;&#22797;&#30830;&#35748;&#30340;&#27425;&#25968;&#12290;&#27492;&#20540;&#22312;&#25509;&#25910;&#21040;&#30830;&#35748;&#26032;&#25968;&#25454;&#30340;&#27573;&#26102;&#34987;&#28165;&#38500;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">sacked_out</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;SND.UNA&#19982;SACK&#36873;&#39033;&#20013;&#30446;&#21069;&#25509;&#25910;&#26041;&#25910;&#21040;&#30340;&#27573;&#20013;&#26368;&#39640;&#24207;&#21495;&#27573;&#20043;&#38388;&#30340;&#27573;&#25968;&#12290;</span>
+<span style="color: #8B8878;">        FACK&#31639;&#27861;&#29992;SACK&#36873;&#39033;&#26469;&#35745;&#31639;&#20002;&#22833;&#22312;&#32593;&#32476;&#19978;&#30340;&#27573;&#25968;&#65292;&#20363;&#22914;&#65306;</span>
+<span style="color: #8B8878;">        lost_out = fackets_out - sacked_out</span>
+<span style="color: #8B8878;">        left_out = fackets_out</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">fackets_out</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#21457;&#29983;&#25317;&#22622;&#26102;&#30340;SND.NXT&#65292;&#26631;&#35782;&#37325;&#20256;&#38431;&#21015;&#30340;&#23614;&#37096;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">high_seq</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#20027;&#21160;&#36830;&#25509;&#26102;&#65292;&#35760;&#24405;&#31532;&#19968;&#20010;SYN&#27573;&#30340;&#21457;&#36865;&#26102;&#38388;&#65292;&#29992;&#26469;&#26816;&#27979;ACK&#24207;&#21495;&#26159;&#21542;&#22238;&#32469;&#12290;</span>
+<span style="color: #8B8878;">        &#22312;&#25968;&#25454;&#20256;&#36755;&#27573;&#65292;&#24403;&#21457;&#36865;&#36229;&#26102;&#37325;&#20256;&#26102;&#65292;&#35760;&#24405;&#19978;&#27425;&#37325;&#20256;&#38454;&#27573;&#31532;&#19968;&#20010;&#37325;&#20256;&#30340;&#21457;&#36865;&#26102;&#38388;&#65292;&#29992;&#26469;&#21028;&#26029;&#26159;&#21542;&#21551;&#29992;nalgle&#31639;&#27861;&#26159;&#21542;&#21487;&#20197;&#36827;&#34892;&#25317;&#22622;&#25764;&#38144;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">retrans_stamp</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#22312;&#20351;&#29992;F-RTO&#31639;&#27861;&#36827;&#34892;&#21457;&#36865;&#36229;&#26102;&#22788;&#29702;&#65292;&#25110;&#32773;&#36827;&#20837;Recovery&#36827;&#34892;&#37325;&#20256;&#65292;&#25110;&#36827;&#20837;Loss&#24320;&#22987;&#24930;&#21551;&#21160;&#26102;&#65292;</span>
+<span style="color: #8B8878;">        &#35760;&#24405;&#24403;&#26102;&#30340;SND.UNA&#65292; &#26631;&#35760;&#37325;&#20256;&#36215;&#22987;&#28857;&#12290; &#35813;&#20540;&#20316;&#20026;&#26816;&#27979;&#26159;&#21542;&#21487;&#20197;&#36827;&#34892;&#25317;&#22622;&#25764;&#38144;&#30340;&#26465;&#20214;&#20043;&#19968;&#65292;</span>
+<span style="color: #8B8878;">        &#19968;&#33324;&#22312;&#23436;&#25104;&#25317;&#22622;&#25764;&#38144;&#25805;&#20316;&#25110;&#32773;&#36827;&#20837;&#25317;&#22622;&#25511;&#21046;Loss&#29366;&#24577;&#21518;&#28165;&#38646;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">undo_marker</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#24674;&#22797;&#25317;&#22622;&#25511;&#21046;&#20043;&#21069;&#21487;&#36827;&#34892;&#25764;&#38144;&#30340;&#37325;&#20256;&#27573;&#25968;&#12290; &#22312;&#36827;&#20837;FRTO&#31639;&#27861;&#25110;&#25317;&#22622;&#29366;&#24577;Loss&#26102;&#28165;&#38646;&#65292;</span>
+<span style="color: #8B8878;">        &#22312;&#37325;&#20256;&#26102;&#35745;&#25968;&#65292;&#26159;&#26816;&#27979;&#26159;&#21542;&#21487;&#20197;&#36827;&#34892;&#25317;&#22622;&#25764;&#38144;&#30340;&#26465;&#20214;&#20043;&#19968;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">undo_retrans</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32039;&#24613;&#25968;&#25454;&#30340;&#24207;&#21495;&#65292; &#30001;&#25152;&#22312;&#27573;&#30340;&#24207;&#21495;&#21644;&#32039;&#24613;&#25351;&#38024;&#30456;&#21152;&#32780;&#24471;&#21040;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">urg_seq</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20302;8&#20301;&#23384;&#25918;&#25509;&#25910;&#21040;&#30340;&#32039;&#24613;&#25968;&#25454;&#12290;</span>
+<span style="color: #8B8878;">        &#39640;8&#20301;&#29992;&#20110;&#26631;&#35782;&#32039;&#24613;&#25968;&#25454;&#30456;&#20851;&#30340;&#29366;&#24577;:</span>
+<span style="color: #8B8878;">           TCP_URG_NOTYET:  &#25509;&#25910;&#21040;&#30340;&#27573;&#20013;&#23384;&#22312;&#32039;&#24613;&#25968;&#25454;</span>
+<span style="color: #8B8878;">           TCP_URG_VALID: &#32039;&#24613;&#25968;&#25454;&#26159;&#26377;&#25928;&#30340;&#65292;&#29992;&#25143;&#21487;&#20197;&#35835;&#21462;</span>
+<span style="color: #8B8878;">           TCP_URG_READ:  &#32039;&#24613;&#25968;&#25454;&#24050;&#32463;&#20840;&#37096;&#34987;&#35835;&#21462;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">urg_data</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#22788;&#20110;&#32039;&#24613;&#27169;&#24335;&#65292;&#21578;&#35785;&#25509;&#25910;&#26041;&#8220;&#32039;&#24613;&#25968;&#25454;&#8221;&#24050;&#32463;&#25918;&#32622;&#22312;&#26222;&#36890;&#25968;&#25454;&#27969;&#20013;</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">urg_mode</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29616;&#23454;&#25317;&#22622;&#36890;&#30693;&#29366;&#24577;&#20301;&#65306;</span>
+<span style="color: #8B8878;">           TCP_ECN_OK: &#26631;&#35782;&#26412;&#31471;&#26159;&#21542;&#25903;&#25345;&#29616;&#23454;&#25317;&#22622;&#36890;&#30693;&#12290;&#22312;&#24314;&#31435;TCP&#36830;&#25509;&#30340;&#36807;&#31243;&#20013;&#26681;&#25454;tcp_ecn&#31995;&#32479;&#21442;&#25968;&#21644;</span>
+<span style="color: #8B8878;">        TCP&#39318;&#37096;&#20013;&#30340;ECE&#12289;CWR&#26631;&#24535;&#20301;&#35774;&#32622;&#12290;</span>
+<span style="color: #8B8878;">           TCP_ECN_QUEUE_CWR:  &#26631;&#35782;&#21457;&#36865;&#26041;&#30001;&#20110;&#21463;&#21040;&#29616;&#23454;&#25317;&#22622;&#36890;&#30693;&#32780;&#36827;&#20837;&#25317;&#22622;&#29366;&#24577;</span>
+<span style="color: #8B8878;">           TCP_ECN_DEMAND_CWR: &#26631;&#35782;&#25509;&#25910;&#21040;&#30340;&#27573;&#32463;&#21382;&#20102;&#25317;&#22622;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">ecn_flags</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32039;&#24613;&#25968;&#25454;&#25351;&#38024;&#65292;&#21363;&#24102;&#22806;&#25968;&#25454;&#30340;&#24207;&#21495;&#65292;&#29992;&#26469;&#35745;&#31639;TCP&#39318;&#37096;&#20013;&#30340;&#8220;&#32039;&#24613;&#25351;&#38024;&#8221;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">snd_up</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25972;&#20010;&#36830;&#25509;&#20013;&#24635;&#30340;&#37325;&#20256;&#27425;&#25968;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">total_retrans</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21551;&#29992;tcp_abc&#21518;&#65292;&#22312;&#25317;&#22622;&#22238;&#36991;&#38454;&#27573;&#65292;&#20445;&#23384;&#24050;&#30830;&#35748;&#30340;&#23383;&#33410;&#25968;&#65292;&#21442;&#35265;RFC3465&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">bytes_acked</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">TCP&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#21069;&#65292;TCP&#36830;&#25509;&#30340;&#31354;&#38386;&#26102;&#38388;&#65292;&#21363;&#20445;&#27963;&#23450;&#26102;&#22120;&#21551;&#21160;&#30340;&#26102;&#38388;&#25139;&#20540;&#12290;</span>
+<span style="color: #8B8878;">        &#22312;&#21551;&#29992;SO_KEEPALIVE&#36873;&#39033;&#30340;&#24773;&#20917;&#19979;&#65292;&#19968;&#20010;&#36830;&#25509;&#31354;&#38386;&#20102;&#19968;&#27573;&#26102;&#38388;&#20043;&#21518;&#65292;TCP&#20250;&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#21040;&#23545;&#31471;&#65292;</span>
+<span style="color: #8B8878;">        &#22914;&#26524;&#23545;&#31471;&#31995;&#32479;&#27809;&#26377;&#23545;&#20445;&#27963;&#25506;&#27979;&#36827;&#34892;&#22238;&#24212;&#65292;TCP&#20250;&#37325;&#22797;&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#65292;&#30452;&#21040;&#27425;&#25968;&#36798;&#21040;&#38408;&#20540;&#65292;</span>
+<span style="color: #8B8878;">        &#25165;&#35748;&#20026;&#27492;&#36830;&#25509;&#24050;&#32463;&#26080;&#25928;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">keepalive_time</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">keepalive_intvl</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#30340;&#26102;&#38388;&#38388;&#38548;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;TCP&#36801;&#31227;&#21040;CLOSED&#29366;&#24577;&#20043;&#21069;&#20445;&#25345;&#22312;FIN_WAIT_2&#29366;&#24577;&#30340;&#26102;&#38388;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>      <span style="color: #FF8C00;">linger2</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21551;&#29992;tcp_syncookies&#26102;&#65292;&#24314;&#31435;&#36830;&#25509;&#26102;&#35760;&#24405;&#25509;&#25910;SYN&#27573;&#30340;&#26102;&#38388;&#65292;&#29992;&#26469;&#26816;&#27979;&#36830;&#25509;&#26159;&#21542;&#36229;&#26102;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">last_synq_overflow</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#32463;&#36807;TSO&#20998;&#27573;&#30340;&#27573;&#26159;&#21542;&#38656;&#35201;&#24310;&#26102;&#21457;&#36865;&#65292;&#26368;&#38271;&#19981;&#33021;&#36229;&#36807;&#20004;&#20010;&#26102;&#38047;&#28404;&#31572;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">tso_deferred</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23384;&#20648;&#25509;&#25910;&#26041;&#30340;RTT&#20272;&#31639;&#20540;&#29992;&#20110;&#26159;&#24819;&#36890;&#36807;&#35843;&#33410;&#25509;&#25910;&#31383;&#21475;&#26469;&#36827;&#34892;&#27969;&#37327;&#25511;&#21046;&#30340;&#21151;&#33021;&#12290;</span>
+<span style="color: #8B8878;">        &#25509;&#25910;&#26041;RTT&#20272;&#31639;&#20540;&#29992;&#26469;&#38480;&#21046;&#35843;&#25972;TCP&#25509;&#25910;&#32531;&#20914;&#21306;&#31354;&#38388;&#30340;&#39057;&#29575;&#65292;&#27599;&#27425;&#35843;&#25972;TCP&#25509;&#25910;&#32531;&#20914;&#21306;&#31354;&#38388;</span>
+<span style="color: #8B8878;">        &#30340;&#38388;&#38548;&#26102;&#38388;&#19981;&#33021;&#23567;&#20110;RTT&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rtt</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#25918;&#25509;&#25910;&#26041;&#20272;&#31639;&#30340;RTT&#65292;&#35745;&#31639;&#26041;&#27861;&#22240;&#25509;&#25910;&#21040;&#30340;&#27573;&#20013;&#26159;&#21542;&#26377;&#26102;&#38388;&#25139;&#36873;&#39033;&#32780;&#19981;&#21516;</span>
+		<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">seq</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;&#25509;&#25910;&#21040;&#30340;&#27573;&#27809;&#26377;&#26102;&#38388;&#25139;&#26102;&#65292;&#26356;&#26032;&#25509;&#25910;&#26041;RTT&#26102;&#30340;&#25509;&#25910;&#31383;&#21475;&#21491;&#31471;&#24207;&#21495;&#65292;</span>
+<span style="color: #8B8878;">                         &#27599;&#23436;&#25104;&#19968;&#20010;&#25509;&#25910;&#31383;&#21475;&#30340;&#25509;&#25910;&#65292;&#21017;&#26356;&#26032;&#19968;&#27425;&#25509;&#25910;&#26041;RTT&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">time</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#25509;&#25910;&#21040;&#30340;&#27573;&#27809;&#26377;&#26102;&#38388;&#25139;&#26102;&#65292;&#35760;&#24405;&#27599;&#27425;&#26356;&#26032;&#25509;&#25910;&#26041;RTT&#30340;&#26102;&#38388;&#65292;&#29992;&#26469;&#35745;&#31639;&#25509;&#25910;&#26041;&#30340;RTT&#12290;</span>
+	} <span style="color: #FF8C00;">rcv_rtt_est</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#26469;&#35843;&#25972;TCP&#25509;&#25910;&#32531;&#20914;&#31354;&#38388;&#21644;&#25509;&#25910;&#31383;&#21475;&#22823;&#23567;&#65292;&#20063;&#29992;&#20110;&#23454;&#29616;&#36890;&#36807;&#35843;&#33410;&#25509;&#25910;&#31383;&#21475;&#26469;&#36827;&#34892;&#27969;&#37327;&#25511;&#21046;</span>
+<span style="color: #8B8878;">        &#30340;&#21151;&#33021;&#12290;&#27599;&#27425;&#23558;&#25968;&#25454;&#22797;&#21046;&#21040;&#29992;&#25143;&#31354;&#38388;&#65292;&#37117;&#20250;&#35843;&#29992;tcp_rcv_space_adjust()&#26469;&#35745;&#31639;&#26032;&#30340;TCP&#25509;&#25910;</span>
+<span style="color: #8B8878;">        &#32531;&#20914;&#31354;&#38388;&#22823;&#23567;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #5FD7FF;">int</span>     <span style="color: #FF8C00;">space</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35843;&#25972;&#25509;&#25910;&#32531;&#23384;&#30340;&#22823;&#23567;</span>
+		<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">seq</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#22797;&#21046;&#21040;&#29992;&#25143;&#31354;&#38388;&#30340;TCP&#27573;&#24207;&#21495;</span>
+		<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">time</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#26368;&#36817;&#19968;&#27425;&#36827;&#34892;&#35843;&#25972;&#30340;&#26102;&#38388;</span>
+	} <span style="color: #FF8C00;">rcvq_space</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23384;&#20648;&#24050;&#21457;&#36865;MTU&#21457;&#29616;&#27573;&#30340;&#36215;&#22987;&#24207;&#21495;&#21644;&#32467;&#26463;&#24207;&#21495;&#65292;&#19982;&#21457;&#36865;MTU&#21457;&#29616;&#27573;&#30340;SKB&#20013;tcp_skb_cb&#32467;&#26500;&#30340;</span>
+<span style="color: #8B8878;">        seq&#21644;end_seq&#23383;&#27573;&#30456;&#23545;&#24212;&#65292;&#29992;&#26469;&#21028;&#26029;&#36335;&#24452;MTU&#21457;&#29616;&#26159;&#21542;&#25104;&#21151;&#12290;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #5FD7FF;">u32</span>               <span style="color: #FF8C00;">probe_seq_start</span>;
+		<span style="color: #5FD7FF;">u32</span>               <span style="color: #FF8C00;">probe_seq_end</span>;
+	} <span style="color: #FF8C00;">mtu_probe</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgad96ebc" class="outline-3">
+<h3 id="orgad96ebc"><span class="section-number-3">4.4</span> tcp_options_received结构</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+该结构用来保存接收到的TCP选项信息，如时间戳、SACK等; 同时标识对端支持的特性，例如对端是否支持窗口扩大因子、是否支持SACK等。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_options_received</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;&#20174;&#25509;&#25910;&#21040;&#30340;&#27573;&#20013;&#21462;&#20986;&#30340;&#26102;&#38388;&#25139;&#35774;&#32622;&#21040;ts_recent&#30340;&#26102;&#38388;&#65292;&#29992;&#20110;&#26816;&#27979;ts_recent&#30340;&#26377;&#25928;&#24615;&#12290;</span>
+<span style="color: #8B8878;">        &#22914;&#26524;&#33258;&#20174;&#35813;&#26102;&#38388;&#20043;&#21518;&#24050;&#32463;&#36807;&#20102;&#36229;&#36807;24&#22825;&#30340;&#26102;&#38388;&#65292;&#21017;&#35748;&#20026;ts_recent&#22833;&#25928;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">ts_recent_stamp</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19979;&#19968;&#20010;&#24453;&#21457;&#36865;TCP&#27573;&#20013;&#30340;&#26102;&#38388;&#25139;&#22238;&#26174;&#20540;&#12290; &#24403;&#19968;&#20010;&#21547;&#26377;&#26368;&#21518;&#21457;&#36865;ACK&#20013;&#30830;&#35748;&#24207;&#21495;&#30340;&#27573;&#21040;&#36798;&#26102;&#65292;</span>
+<span style="color: #8B8878;">        &#35813;&#27573;&#30340;&#26102;&#38388;&#25139;&#34987;&#20445;&#23384;&#22312;ts_recent&#20013;&#12290;&#32780;&#19979;&#19968;&#20010;&#24102;&#21457;&#36865;&#30340;TCP&#27573;&#30340;&#26102;&#38388;&#25139;&#20540;&#26159;&#30001;SKB&#20013;TCP&#25511;&#21046;&#22359;</span>
+<span style="color: #8B8878;">        &#30340;&#25104;&#21592;when&#22635;&#20837;&#30340;&#65292; when&#23383;&#27573;&#20540;&#26159;&#30001;&#21327;&#35758;&#26632;&#21462;&#31995;&#32479;&#26102;&#38388;&#21464;&#37327;jiffies&#30340;&#20302;32&#20301;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">ts_recent</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20445;&#23384;&#26368;&#36817;&#19968;&#27425;&#25509;&#25910;&#21040;&#23545;&#31471;&#30340;TCP&#27573;&#30340;&#26102;&#38388;&#25139;&#36873;&#39033;&#20013;&#30340;&#26102;&#38388;&#25139;&#22238;&#26174;&#24212;&#31572;&#12290;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rcv_tsval</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20445;&#23384;&#26368;&#36817;&#19968;&#27425;&#25509;&#25910;&#21040;&#23545;&#31471;&#30340;TCP&#27573;&#30340;&#26102;&#38388;&#25139;&#36873;&#39033;&#20013;&#30340;&#26102;&#38388;&#25139;&#22238;&#26174;&#24212;&#31572;</span>
+	<span style="color: #5FD7FF;">u32</span>     <span style="color: #FF8C00;">rcv_tsecr</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26368;&#36817;&#19968;&#27425;&#25509;&#25910;&#21040;&#30340;TCP&#27573;&#26159;&#21542;&#23384;&#22312;TCP&#26102;&#38388;&#25139;&#36873;&#39033;&#65292;1&#20195;&#34920;&#26377;&#65292;0&#21017;&#27809;&#26377;&#12290;</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">saw_tstamp</span> : 1,
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#26631;&#35782;TCP&#36830;&#25509;&#26159;&#21542;&#21551;&#29992;&#26102;&#38388;&#25139;&#36873;&#39033;&#12290;&#22312;TCP&#24314;&#31435;&#36830;&#25509;&#36807;&#31243;&#20013;&#22914;&#26524;&#25509;&#25910;&#21040;TCP&#27573;&#20013;&#26377;&#26102;&#38388;&#25139;&#36873;&#39033;&#65292;</span>
+<span style="color: #8B8878;">        &#21017;&#35828;&#26126;&#23545;&#31471;&#20063;&#25903;&#25345;&#26102;&#38388;&#25139;&#36873;&#39033;&#65292;&#36825;&#26102;&#35774;&#32622;&#20026;1&#65292;&#34920;&#31034;&#36830;&#25509;&#25903;&#25345;&#26102;&#38388;&#25139;&#36873;&#39033;&#12290;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF8C00;">tstamp_ok</span> : 1,
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#19979;&#27425;&#21457;&#36865;&#30340;&#27573;&#20013;SACK&#36873;&#39033;&#26159;&#21542;&#23384;&#22312;D-SACK</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF8C00;">dsack</span> : 1,
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#25509;&#25910;&#26041;&#26159;&#21542;&#25903;&#25345;&#31383;&#21475;&#25193;&#22823;&#22240;&#23376;&#65292; &#21482;&#33021;&#20986;&#29616;&#22312;SYN&#27573;&#20013;&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF8C00;">wscale_ok</span> : 1,
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#25509;&#25910;&#26041;&#26159;&#21542;&#25903;&#25345;SACK&#12290;&#20026;0&#21017;&#19981;&#25903;&#25345;SACK&#12290;&#38750;&#38646;&#21017;&#25903;&#25345;&#65292;</span>
+<span style="color: #8B8878;">        &#31532;1&#20301;&#26631;&#35782;&#26159;&#21542;&#21551;&#29992;FACK&#25317;&#22622;&#36991;&#20813;&#65292;&#31532;&#20108;&#20301;&#34920;&#31034;&#22312;SACK&#36873;&#39033;&#20013;&#26159;&#21542;&#23384;&#22312;D-SACK,&#31532;&#19977;&#20301;&#20445;&#30041;&#12290;</span>
+
+<span style="color: #8B8878;">        TCP&#20027;&#35201;&#30340;&#22235;&#20010;&#29256;&#26412;&#65306;Tahoe&#12289;Reno&#12289;NewReno&#12289;SACK</span>
+<span style="color: #8B8878;">          Tahoe   &#65306;&#26089;&#26399;tcp&#29256;&#26412;&#65292;&#21253;&#25324;&#19977;&#20010;&#22522;&#26412;&#30340;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861; &#8220;&#24930;&#21551;&#21160;&#8221; &#8220;&#25317;&#22622;&#36991;&#20813;&#8221; &#8220;&#24555;&#36895;&#37325;&#20256;&#8221;</span>
+<span style="color: #8B8878;">          Reno    &#65306;&#22312;Tahoe&#22522;&#30784;&#19978;&#22686;&#21152; &#8220;&#24555;&#36895;&#24674;&#22797;&#8221; &#31639;&#27861;</span>
+<span style="color: #8B8878;">          NewReno &#65306;&#23545;Reno&#20013;&#30340; &#8220;&#24555;&#36895;&#24674;&#22797;&#8220; &#31639;&#27861;&#36827;&#34892;&#20102;&#20462;&#27491;&#65292;&#32771;&#34385;&#20102;&#19968;&#20010;&#21457;&#36865;&#31383;&#21475;&#20869;&#26377;&#22810;&#20010;&#25968;&#25454;&#21253;</span>
+<span style="color: #8B8878;">            &#20002;&#22833;&#30340;&#24773;&#20917;&#65292;&#22312;Reno&#29256;&#26412;&#20013;&#65292;&#21457;&#36865;&#31471;&#21463;&#21040;&#19968;&#20010;&#26032;&#30340;ACK&#21518;&#23601;&#36864;&#20986;&#8221;&#24555;&#36895;&#24674;&#22797;&#8220;&#38454;&#27573;&#65292; NewReno&#20013;&#65292;</span>
+<span style="color: #8B8878;">        &#21482;&#26377;&#24403;&#25152;&#26377;&#30340;&#25968;&#25454;&#21253;&#37117;&#34987;&#30830;&#35748;&#21518;&#25165;&#36864;&#20986;&#8221;&#24555;&#36895;&#24674;&#22797;&#8220;&#38454;&#27573;&#12290;</span>
+<span style="color: #8B8878;">          SACK    &#65306;&#20851;&#27880;&#30340;&#20063;&#26159;&#19968;&#20010;&#31383;&#21475;&#20869;&#22810;&#20010;&#25968;&#25454;&#21253;&#20002;&#22833;&#30340;&#24773;&#20917;&#65292;&#36991;&#20813;&#20102;&#20043;&#21069;&#29256;&#26412;&#30340;TCP&#37325;&#20256;&#19968;&#20010;</span>
+<span style="color: #8B8878;">        &#31383;&#21475;&#20869;&#25152;&#26377;&#25968;&#25454;&#21253;&#30340;&#24773;&#20917;&#65292;&#21253;&#25324;&#37027;&#20123;&#24050;&#32463;&#34987;&#25509;&#25910;&#31471;&#27491;&#30830;&#25509;&#25910;&#30340;&#25968;&#25454;&#21253;&#65292;&#20165;&#37325;&#20256;&#34987;&#20002;&#24323;&#30340;&#25968;&#25454;&#21253;&#12290;</span>
+
+<span style="color: #8B8878;">        &#22240;&#27492;&#21487;&#20197;&#36890;&#36807;sack_ok&#26469;&#21028;&#26029;&#24403;&#21069;&#25903;&#25345;&#30340;&#31639;&#27861;&#65292;&#22914;&#26524;&#19981;&#25903;&#25345;TCP SACK,&#23601;&#21028;&#23450;&#24403;&#21069;&#21482;&#25903;&#25345;NewReno,</span>
+<span style="color: #8B8878;">        &#20351;&#29992;&#30340;&#23439;&#20026;&#65306;#define IsReno(tp) ((tp)-&gt;rx_opt.sack_ok == 0)</span>
+<span style="color: #8B8878;">         */</span>
+		<span style="color: #FF8C00;">sack_ok</span> : 4,
+	     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21457;&#36865;&#31383;&#21475;&#25193;&#22823;&#22240;&#23376;&#65292;&#21363;&#35201;&#25226;TCP&#39318;&#37096;&#20013;&#28369;&#21160;&#31383;&#21475;&#22823;&#23567;&#24038;&#31227;snd_swcale&#20301;&#21518;&#65292;&#25165;&#26159;&#30495;&#27491;&#30340;&#28369;&#21160;</span>
+<span style="color: #8B8878;">         &#31383;&#21475;&#22823;&#23567;&#12290;TCP&#39318;&#37096;&#20013;&#65292;&#28369;&#21160;&#31383;&#21475;&#22823;&#23567;&#20540;&#26159;16&#20301;&#30340;&#65292;snd_wscale&#30340;&#20540;&#26368;&#22823;&#20026;14&#65292;&#25152;&#20197;&#65292;&#28369;&#21160;&#31383;&#21475;</span>
+<span style="color: #8B8878;">         &#20540;&#26368;&#22823;&#21487;&#25193;&#23637;&#21040;30&#20301;&#12290; &#22312;&#21327;&#35758;&#26632;&#30340;&#23454;&#38469;&#23454;&#29616;&#20013;&#65292;&#21487;&#20197;&#30475;&#21040;&#31383;&#21475;&#22823;&#23567;&#34987;&#35774;&#32622;&#20026;5840, &#25193;&#22823;&#22240;&#23376;&#20026;2,</span>
+<span style="color: #8B8878;">         &#21363;&#23454;&#38469;&#30340;&#31383;&#21475;&#22823;&#23567;&#20026; 5840&lt;&lt;2 = 23360B&#12290;</span><span style="color: #8B8878;">*/</span>
+		<span style="color: #FF8C00;">snd_wscale</span> : 4,
+		<span style="color: #FF8C00;">rcv_wscale</span> : 4; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#25910;&#31383;&#21475;&#25193;&#22823;&#22240;&#23376;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19979;&#19968;&#20010;&#24453;&#21457;&#36865;&#30340;&#27573;&#20013;SACK&#36873;&#39033;&#30340;SACK&#25968;&#32452;&#22823;&#23567;&#65292;&#22914;&#26524;&#20026;0&#21017;&#27809;&#26377;SACK&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">eff_sacks</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#19979;&#19968;&#20010;&#24453;&#21457;&#36865;&#30340;&#27573;&#20013;SACK&#36873;&#39033;&#30340;SACK&#22359;&#25968;&#65292;&#21516;&#26102;&#29992;&#26469;&#35745;&#31639;eff_sacks&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">u8</span>      <span style="color: #FF8C00;">num_sacks</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#25143;&#35774;&#32622;&#30340;MSS&#19978;&#38480;&#65292;&#19982;&#24314;&#31435;&#36830;&#25509;&#26102;SYN&#27573;&#20013;&#30340;MSS&#65292;&#20004;&#32773;&#21462;&#26368;&#23567;&#20540;&#20316;&#20026;&#35813;&#36830;&#25509;&#30340;MSS&#19978;&#38480;&#65292;</span>
+<span style="color: #8B8878;">        &#23384;&#20648;&#22312;mss_clamp&#20013;&#12290; &#20351;&#29992;setsockopt/getsockopt&#31995;&#32479;&#35843;&#29992;TCP_MAXSEG&#36873;&#39033;&#35774;&#32622;/&#33719;&#21462;&#65292;</span>
+<span style="color: #8B8878;">        &#26377;&#25928;&#20540;&#22312;8&#33267;32767&#20043;&#38388;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">user_mss</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#36830;&#25509;&#30340;&#23545;&#31471;MSS&#19978;&#38480;&#12290;user_mss&#19982;&#24314;&#31435;&#36830;&#25509;&#26102;SYN&#27573;&#20013;&#30340;MSS&#65292;&#20004;&#32773;&#21462;&#26368;&#23567;&#20540;&#20316;&#20026;&#35813;&#36830;&#25509;&#30340;mss&#19978;&#38480;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">u16</span>     <span style="color: #FF8C00;">mss_clamp</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7472d09" class="outline-3">
+<h3 id="org7472d09"><span class="section-number-3">4.5</span> tcp_skb_cb结构</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+TCP层在SKB区中有个私有信息控制块，即skb_buff结构的cb成员，TCP利用这个字段存储了一个tcp_skb_cb结构。在TCP层，用 TCP_SKB_CB宏来访问该信息控制块。 对这个私有信息控制块的赋值一般在本层接收到段或者发送段之前进行。
+</p>
+
+<p>
+例如 tcp_v4_rcv()是TCP层的接收函数，接收到TCP段并对其进行校验后，就会对此段的tcp_skb_cb进行设置。 发送过程中，大多数在生成TCP段时，或是在对TCP段进行分段时设置，例如创建TCP分段函数tcp_fragment()，在MAC层发送前进行tso分段的函数tso_fragment()，进行路径MTU探测的函数tcp_mtu_probe(),发送FIN段的函数tcp_send_fin()，这些函数都会创建一个TCP段。在发送TCP段前会根据tcp_skb_cb的值进行处理或从中取值，如发送TCP段的函数tcp_transmit_skb()，重传TCP段的函数 tcp_retransmit_skb()。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_skb_cb</span> {
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22312;TCP&#22788;&#29702;&#25509;&#25910;&#21040;&#30340;TCP&#27573;&#20043;&#21069;&#65292;&#19979;&#23618;&#21327;&#35758;&#20250;&#20808;&#22788;&#29702;&#35813;&#27573;&#65292;&#19988;&#20250;&#21033;&#29992;SKB&#20013;&#30340;&#25511;&#21046;&#22359;&#26469;&#35760;&#24405;&#27599;&#19968;&#20010;</span>
+<span style="color: #8B8878;">        &#21253;&#20013;&#30340;&#20449;&#24687;&#65292;&#20363;&#22914;IPv4&#20250;&#35760;&#24405;&#20174;IP&#39318;&#37096;&#20013;&#35299;&#26512;&#20986;&#30340;IP&#39318;&#37096;&#36873;&#39033;&#12290;&#20026;&#20102;&#19981;&#30772;&#22351;&#19977;&#23618;&#21327;&#35758;&#23618;&#31169;&#26377;&#25968;&#25454;&#65292;</span>
+<span style="color: #8B8878;">        &#22312;SKB&#20013;TCP&#25511;&#21046;&#22359;&#30340;&#21069;&#19981;&#23450;&#20041;&#20102;&#36825;&#20010;&#32467;&#26500;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">union</span> {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_skb_parm</span>    <span style="color: #FF8C00;">h4</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet6_skb_parm</span>   <span style="color: #FF8C00;">h6</span>;
+	} <span style="color: #FF8C00;">header</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#27573;&#24320;&#22987;&#24207;&#21495;&#65292;end_seq&#20026;&#24403;&#21069;&#27573;&#24320;&#22987;&#24207;&#21495;&#21152;&#19978;&#24403;&#21069;&#27573;&#25968;&#25454;&#38271;&#24230;&#65292;&#22914;&#26524;&#26631;&#24535;&#22495;&#20013;&#23384;&#22312;SYN&#25110;</span>
+<span style="color: #8B8878;">        FIN&#26631;&#24535;&#65292;&#21017;&#36824;&#38656;&#21152;1,&#20197;&#20026;SYN&#21644;FIN&#37117;&#20250;&#28040;&#32791;&#19968;&#20010;&#24207;&#21495;&#12290;&#21033;&#29992;end_seq&#12289;seq&#21644;&#26631;&#24535;&#65292;&#24456;&#23481;&#26131;&#24471;&#21040;</span>
+<span style="color: #8B8878;">        &#25968;&#25454;&#38271;&#24230;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">seq</span>;
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">end_seq</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27573;&#21457;&#36865;&#26102;&#38388;&#21450;&#27573;&#21457;&#36865;&#26102;&#35760;&#24405;&#30340;&#24403;&#21069;jiffies&#20540;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">when</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35760;&#24405;&#21407;&#22987;TCP&#39318;&#37096;&#30340;&#26631;&#24535;&#65292;&#21457;&#36865;&#36807;&#31243;&#20013;&#65292;tcp_transmit_skb()&#22312;&#21457;&#36865;TCP&#27573;&#20043;&#21069;&#20250;&#26681;&#25454;&#27492;&#26631;&#24535;&#26469;</span>
+<span style="color: #8B8878;">        &#22635;&#20805;&#21457;&#36865;&#27573;&#30340;TCP&#39318;&#37096;&#30340;&#26631;&#24535;&#22495;; &#25509;&#25910;&#36807;&#31243;&#20013;&#65292;&#20250;&#25552;&#21462;&#25509;&#25910;&#27573;&#30340;TCP&#39318;&#37096;&#26631;&#24535;&#21040;&#35813;&#23383;&#27573;&#20013;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">flags</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_FIN</span>          0x01
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_SYN</span>          0x02
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_RST</span>          0x04
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_PSH</span>          0x08
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_ACK</span>          0x10
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_URG</span>          0x20
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_ECE</span>          0x40
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_FLAG_CWR</span>          0x80
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#26469;&#25551;&#36848;&#27573;&#30340;&#37325;&#20256;&#29366;&#24577;&#65292;&#21516;&#26102;&#26631;&#35782;&#26159;&#21542;&#21253;&#21547;&#32039;&#24613;&#25968;&#25454;&#12290;</span>
+<span style="color: #8B8878;">           &#26816;&#26597;&#25509;&#25910;&#21040;&#30340;SACK&#65292;&#26681;&#25454;&#38656;&#35201;&#26356;&#26032;TCPCB_TAGBITS&#26631;&#24535;&#20301;&#65292;&#37325;&#20256;&#24341;&#25806;&#20250;&#26681;&#25454;&#35813;&#26631;&#24535;&#20301;&#26469;&#30830;&#23450;&#26159;&#21542;</span>
+<span style="color: #8B8878;">        &#38656;&#35201;&#37325;&#20256;&#65292;&#19968;&#26086;&#37325;&#20256;&#36229;&#26102;&#65292;&#25152;&#26377;SACK&#29366;&#24577;&#26631;&#24535;&#23558;&#34987;&#28165;&#26970;&#65292;&#20197;&#20026;&#26080;&#38656;&#20877;&#20851;&#24515;&#20854;&#29366;&#24577;&#12290;</span>
+<span style="color: #8B8878;">           &#26080;&#35770;&#36890;&#36807;&#36890;&#36807;&#37027;&#31181;&#26041;&#24335;&#37325;&#20256;&#21253;&#65292;&#37325;&#20256;&#36229;&#26102;&#25110;&#32773;&#24555;&#36895;&#37325;&#20256;&#65292;&#37117;&#20250;&#35774;&#32622;TCPCB_EVER_RETRANS&#26631;&#24535;&#20301;&#12290;</span>
+<span style="color: #8B8878;">        tcp_retransmit_skb()&#20013;&#35774;&#32622;TCPCB_SACK_RETRANS&#21644;TCPCB_EVER_RETRANS&#26631;&#24535;&#20301;&#65292; tcp_enter_loss()</span>
+<span style="color: #8B8878;">        &#20013;&#21017;&#28165;&#38500;TCPCB_SACK_RETRANS&#26631;&#24535;&#20301;&#12290;</span>
+
+<span style="color: #8B8878;">          &#27880;&#24847;&#65292;&#22312;&#25551;&#36848;&#21253;&#30340;&#37325;&#20256;&#29366;&#24577;&#20043;&#21069;&#30340;sacked&#20540;&#65292;&#24182;&#38750;&#26159;&#27573;&#30340;&#37325;&#20256;&#29366;&#24577;&#65292;&#32780;&#26159;SACK&#36873;&#39033;&#22312;TCP&#39318;&#37096;&#30340;</span>
+<span style="color: #8B8878;">        &#20559;&#31227;&#65292;&#27492;&#20540;&#22312;&#25509;&#25910;TCP&#27573;&#20043;&#21518;&#30340;tcp_parse_options()&#20013;&#35299;&#26512;TCP&#36873;&#39033;&#26102;&#34987;&#36171;&#20540;&#12290;&#32780;&#21518;&#22312;</span>
+<span style="color: #8B8878;">        tcp_sacktag_write_queue()&#20013;&#25165;&#30495;&#27491;&#26681;&#25454;SACK&#36873;&#39033;&#26631;&#35760;&#27573;&#30340;&#37325;&#20256;&#29366;&#24577;&#31561;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">sacked</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_SACKED_ACKED</span>          0x01        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#27573;&#36890;&#36807;SACK&#34987;&#30830;&#35748;</span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_SACKED_RETRANS</span>    0x02    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#27573;&#24050;&#37325;&#20256;</span><span style="color: #8B8878;">*/</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_LOST</span>                  0x04        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#27573;&#22312;&#20256;&#36755;&#36807;&#31243;&#20013;&#24050;&#20002;&#22833;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_TAGBITS</span>           0x07    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35813;&#27573;&#20013;&#23384;&#22312;&#24102;&#22806;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_EVER_RETRANS</span>          0x80        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Ever retransmitted frame</span><span style="color: #8B8878;">     */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_RETRANS</span>           (TCPCB_SACKED_RETRANS|TCPCB_EVER_RETRANS)
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_URG</span>                   0x20        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Urgent pointer advanced here</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">TCPCB_AT_TAIL</span>           (TCPCB_URG)
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#23384;&#22312;TCPCB_FLAG_URG&#26631;&#24535;&#65292;&#21017;&#35828;&#26126;TCP&#27573;&#20013;&#26377;&#32039;&#24613;&#25968;&#25454;&#65292;&#32780;urg_ptr&#29992;&#26469;&#20445;&#23384;TCP&#39318;&#37096;&#20013;&#30340;&#32039;&#24613;&#25351;&#38024;&#20540;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">urg_ptr</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#21040;&#30340;TCP&#27573;&#39318;&#37096;&#20013;&#30340;&#30830;&#35748;&#24207;&#21495;&#12290;</span>
+	<span style="color: #5FD7FF;">__u32</span>           <span style="color: #FF8C00;">ack_seq</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc9de6b1" class="outline-2">
+<h2 id="orgc9de6b1"><span class="section-number-2">5</span> TCP的proto结构和proto_ops结构的实例</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+TCP传输层接口为 tcp_prot, 套接口层接口为inet_stream_ops。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9f3283e" class="outline-2">
+<h2 id="org9f3283e"><span class="section-number-2">6</span> TCP状态迁移图</h2>
+<div class="outline-text-2" id="text-6">
+
+<div class="figure">
+<p><img src="image/tcp-proto/tcp-state.png" alt="tcp-state.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>TCP状态迁移图</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org964548d" class="outline-2">
+<h2 id="org964548d"><span class="section-number-2">7</span> TCP首部</h2>
+<div class="outline-text-2" id="text-7">
+
+<div class="figure">
+<p><img src="image/tcp-proto/tcp-hdr.png" alt="tcp-hdr.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>TCP首部</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span> {
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">source</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">dest</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">seq</span>;
+	<span style="color: #5FD7FF;">__be32</span>  <span style="color: #FF8C00;">ack_seq</span>;
+<span style="color: #FF1493;">#if</span> <span style="color: #FF1493;">defined</span>(__LITTLE_ENDIAN_BITFIELD)
+	<span style="color: #5FD7FF;">__u16</span>   <span style="color: #FF8C00;">res1</span>:4,
+		<span style="color: #FF8C00;">doff</span>:4,
+		<span style="color: #FF8C00;">fin</span>:1,
+		<span style="color: #FF8C00;">syn</span>:1,
+		<span style="color: #FF8C00;">rst</span>:1,
+		<span style="color: #FF8C00;">psh</span>:1,
+		<span style="color: #FF8C00;">ack</span>:1,
+		<span style="color: #FF8C00;">urg</span>:1,
+		<span style="color: #FF8C00;">ece</span>:1,
+		<span style="color: #FF8C00;">cwr</span>:1;
+<span style="color: #FF1493;">#elif</span> <span style="color: #FF1493;">defined</span>(__BIG_ENDIAN_BITFIELD)
+	<span style="color: #5FD7FF;">__u16</span>   <span style="color: #FF8C00;">doff</span>:4,
+		<span style="color: #FF8C00;">res1</span>:4,
+		<span style="color: #FF8C00;">cwr</span>:1,
+		<span style="color: #FF8C00;">ece</span>:1,
+		<span style="color: #FF8C00;">urg</span>:1,
+		<span style="color: #FF8C00;">ack</span>:1,
+		<span style="color: #FF8C00;">psh</span>:1,
+		<span style="color: #FF8C00;">rst</span>:1,
+		<span style="color: #FF8C00;">syn</span>:1,
+		<span style="color: #FF8C00;">fin</span>:1;
+<span style="color: #FF1493;">#else</span>
+<span style="color: #FF1493;">#error</span>  <span style="color: #CDC673;">"Adjust your &lt;asm/byteorder.h&gt; defines"</span>
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">window</span>;
+	<span style="color: #5FD7FF;">__sum16</span> <span style="color: #FF8C00;">check</span>;
+	<span style="color: #5FD7FF;">__be16</span>  <span style="color: #FF8C00;">urg_ptr</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgfc9fc7c" class="outline-2">
+<h2 id="orgfc9fc7c"><span class="section-number-2">8</span> TCP校验和</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+TCP的校验和 覆盖了TCP首部及TCP数据，而IP首部中的校验和只覆盖了IP首部。
+</p>
+
+<p>
+TCP校验和的计算和IP首部校验和类似，即每16位字取反后相加，但是还是有一些差异：
+</p>
+<ol class="org-ol">
+<li>tcp段的长度可以是基数字节，在计算检验和每16位取反时，末尾填充0，但这只是为了计算校验和。</li>
+<li>TCP段都包含一个12B的伪首部，这是为了计算校验和而设置的，伪首部包含IP首部的一些字段。目的是让TCP两次检查数据是否已经正确到达目的地，例如，IP有没有接收地址不是本主机的数据报， IP是否把应该传给另一高层协议的数据报传给TCP等。 伪首部格式见下图。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/tcp-proto/tcp-chksum-format.png" alt="tcp-chksum-format.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>TCP校验和计算过程中使用的各个字段。</p>
+</div>
+
+<p>
+如果接收方检测到校验和有差错，则TCP段会被丢弃，并且 <b>不产生</b> 任何差错报文。
+</p>
+
+<p>
+TCP校验和是一个端到端的校验和，由发送方计算，接收端验证。其目的是为了检测TCP首部和数据在发送端到接收端之间发生的任何改动。
+</p>
+</div>
+
+<div id="outline-container-org982b5b1" class="outline-3">
+<h3 id="org982b5b1"><span class="section-number-3">8.1</span> 输入TCP段的校验和的检测</h3>
+<div class="outline-text-3" id="text-8-1">
+<ol class="org-ol">
+<li>tcp_v4_checksum_init()</li>
+</ol>
+
+<p>
+该函数用于对接收TCP段进行校验的初始化，主要是对伪首部进行校验和的计算。如果校验和由硬件完成，则只对伪首部进行校验检测。对全长不超过76B的TCP包，则直接进行伪首部和全包校验检测。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">__sum16</span> <span style="color: #87D700;">tcp_v4_checksum_init</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;TCP&#21253;&#26412;&#36523;&#30340;&#26657;&#39564;&#24050;&#32463;&#30001;&#30828;&#20214;&#23436;&#25104;&#65292;&#21017;&#21482;&#23545;&#20266;&#39318;&#37096;&#36827;&#34892;&#26657;&#39564;&#12290;</span>
+	<span style="color: #FF1493;">if</span> (skb-&gt;ip_summed == CHECKSUM_COMPLETE) {
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tcp_v4_check(skb-&gt;h.th, skb-&gt;len, skb-&gt;nh.iph-&gt;saddr,
+				  skb-&gt;nh.iph-&gt;daddr, skb-&gt;csum)) {
+			skb-&gt;ip_summed = CHECKSUM_UNNECESSARY;
+			<span style="color: #FF1493;">return</span> 0;
+		}
+	}
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#36719;&#20214;&#23436;&#25104;&#26657;&#39564;&#21644;&#30340;&#25805;&#20316;&#65292;&#21017;&#39318;&#20808;&#29983;&#25104;&#20266;&#39318;&#37096;&#37096;&#20998;&#30340;&#32047;&#21152;&#21644;&#12290;</span>
+	skb-&gt;csum = csum_tcpudp_nofold(skb-&gt;nh.iph-&gt;saddr, skb-&gt;nh.iph-&gt;daddr, skb-&gt;len, IPPROTO_TCP, 0);
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#24635;&#38271;&#24230;&#19981;&#36229;&#36807;76B&#65292;&#21017;&#30452;&#25509;&#36827;&#34892;&#20840;&#21253;&#26657;&#39564;</span>
+	<span style="color: #FF1493;">if</span> (skb-&gt;len &lt;= 76) {
+		<span style="color: #FF1493;">return</span> __skb_checksum_complete(skb);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20854;&#20182;&#24773;&#20917;&#65292;&#22312;&#21518;&#32493;&#25805;&#20316;&#20013;&#23436;&#25104;&#20840;&#21253;&#26657;&#39564;&#21644;&#30340;&#26816;&#27979;&#12290;</span>
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>tcp_checksum_complete() 和 tcp_checksum_complete_user()</li>
+</ol>
+
+<p>
+这两个函数都是基于伪首部累加和，完成全包校验和的检测。 前者是用于校验没有负载的TCP段，后者用于校验在ESTABLISHED状态下接收到的段，这两个函数最后都调用 __tcp_checksum_complete()完成校验，但是在ESTABLISHED状态下设计传输控制块是否被进程锁定的情况。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_checksum_complete</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">return</span> skb-&gt;ip_summed != CHECKSUM_UNNECESSARY &amp;&amp;
+		__tcp_checksum_complete(skb);
+}
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_checksum_complete_user</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">return</span> skb-&gt;ip_summed != CHECKSUM_UNNECESSARY &amp;&amp;
+		__tcp_checksum_complete_user(sk, skb);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org24ca4ee" class="outline-3">
+<h3 id="org24ca4ee"><span class="section-number-3">8.2</span> 输出TCP段校验和的计算</h3>
+<div class="outline-text-3" id="text-8-2">
+<p>
+一下代码基于TCP用户数据的中间累加和（如果存在数据），生成TCP包的校验和。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This routine computes an IPv4 TCP checksum.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_v4_send_check</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span> *<span style="color: #FF8C00;">inet</span> = inet_sk(sk);
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span> *<span style="color: #FF8C00;">th</span> = skb-&gt;h.th;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;TCP&#21253;&#26412;&#36523;&#30340;&#26657;&#39564;&#21644;&#26159;&#36890;&#36807;&#30828;&#20214;&#26469;&#23436;&#25104;&#65292;&#21017;&#21482;&#25191;&#34892;&#20266;&#39318;&#37096;&#26657;&#39564;&#21644;</span>
+	<span style="color: #FF1493;">if</span> (skb-&gt;ip_summed == CHECKSUM_PARTIAL) {
+		th-&gt;check = ~tcp_v4_check(th, len,
+					  inet-&gt;saddr, inet-&gt;daddr, 0);
+		skb-&gt;csum_offset = offsetof(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span>, check);
+	} <span style="color: #FF1493;">else</span> {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;&#20110;&#29992;&#36719;&#20214;&#23436;&#25104;&#26657;&#39564;&#21644;&#30340;&#25805;&#20316;&#65292;&#21017;&#22522;&#20110;TCP&#29992;&#25143;&#25968;&#25454;&#30340;&#20013;&#38388;&#32047;&#21152;&#21644;&#65292;&#29983;&#25104;TCP&#21253;&#30340;&#26657;&#39564;&#21644;&#12290;</span>
+		th-&gt;check = tcp_v4_check(th, len, inet-&gt;saddr, inet-&gt;daddr, csum_partial((<span style="color: #5FD7FF;">char</span> *)th,
+			       th-&gt;doff &lt;&lt; 2,
+			       skb-&gt;csum));
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1186ee7" class="outline-2">
+<h2 id="org1186ee7"><span class="section-number-2">9</span> TCP的初始化</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+tcp_init() 是TCP模块的初始化函数，是由IPv4协议族的初始化函数inet_init()调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__init</span> tcp_init(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">limit</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">order</span>, <span style="color: #FF8C00;">i</span>, <span style="color: #FF8C00;">max_share</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;&#20110;TCP&#23618;&#20250;&#22312;SKB&#30340;cb&#20013;&#23384;&#20648;&#19968;&#20010;tcp_skb_cb&#32467;&#26500;&#65292;&#25152;&#20197;SKB&#20013;&#30340;cb&#25968;&#32452;&#24517;&#39035;&#22823;&#20110;tcp_skb_cb&#32467;&#26500;&#30340;&#22823;&#23567;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_skb_cb</span>) &gt; <span style="color: #FF1493;">sizeof</span>(skb-&gt;cb))
+		__skb_cb_too_small_for_tcp(<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_skb_cb</span>),
+					   <span style="color: #FF1493;">sizeof</span>(skb-&gt;cb));
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;&#29992;&#20110;&#20998;&#37197;inet_bind_hashbucket&#32467;&#26500;&#30340;&#21518;&#22791;&#39640;&#36895;&#32531;&#23384;&#65292;&#35813;&#32467;&#26500;&#20027;&#35201;&#29992;&#26469;&#23384;&#20648;&#31649;&#29702;&#24050;&#32465;&#23450;&#31471;&#21475;&#30340;&#20449;&#24687;&#12290;</span>
+	tcp_hashinfo.bind_bucket_cachep =
+		kmem_cache_create(<span style="color: #CDC673;">"tcp_bind_bucket"</span>,
+				  <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_bucket</span>), 0,
+				  SLAB_HWCACHE_ALIGN|SLAB_PANIC, <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20998;&#37197;&#29992;&#20110;&#23384;&#20648;TCP&#29366;&#24577;&#20026;TCP_ESTABLISHED&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#25955;&#21015;&#34920;&#65292;</span>
+<span style="color: #8B8878;">        &#24182;&#26681;&#25454;thash_entries&#24471;&#21040;&#25955;&#21015;&#34920;&#30340;&#22823;&#23567;ehash_size&#65292;thash_enties&#26159;&#20869;&#26680;</span>
+<span style="color: #8B8878;">        &#21442;&#25968;&#65292;&#20195;&#34920;TCP_ESTABLISHED&#29366;&#24577;&#30340;TCP&#22871;&#25509;&#21475;&#25955;&#21015;&#34920;&#20801;&#35768;&#20351;&#29992;&#30340;&#22823;&#23567;</span><span style="color: #8B8878;">*/</span>
+	tcp_hashinfo.ehash =
+		alloc_large_system_hash(<span style="color: #CDC673;">"TCP established"</span>,
+					<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_ehash_bucket</span>),
+					thash_entries,
+					(num_physpages &gt;= 128 * 1024) ?
+					13 : 15,
+					0,
+					&amp;tcp_hashinfo.ehash_size,
+					<span style="color: #AF87FF;">NULL</span>,
+					0);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;ehash&#25955;&#21015;&#34920;</span>
+	tcp_hashinfo.ehash_size = (1 &lt;&lt; tcp_hashinfo.ehash_size) &gt;&gt; 1;
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; (tcp_hashinfo.ehash_size &lt;&lt; 1); i++) {
+		rwlock_init(&amp;tcp_hashinfo.ehash[i].lock);
+		INIT_HLIST_HEAD(&amp;tcp_hashinfo.ehash[i].chain);
+	}
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20998;&#37197;&#29992;&#20110;&#23384;&#20648;&#24050;&#32465;&#23450;&#31471;&#21475;&#20449;&#24687;&#30340;&#25955;&#21015;&#34920;&#65292;&#24182;&#26681;&#25454;ehash_size&#24471;&#21040;</span>
+<span style="color: #8B8878;">        &#25955;&#21015;&#34920;&#22823;&#23567;bhash_size&#12290;</span><span style="color: #8B8878;">*/</span>
+	tcp_hashinfo.bhash =
+		alloc_large_system_hash(<span style="color: #CDC673;">"TCP bind"</span>,
+					<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_hashbucket</span>),
+					tcp_hashinfo.ehash_size,
+					(num_physpages &gt;= 128 * 1024) ?
+					13 : 15,
+					0,
+					&amp;tcp_hashinfo.bhash_size,
+					<span style="color: #AF87FF;">NULL</span>,
+					64 * 1024);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;bhash&#25955;&#21015;&#34920;</span>
+	tcp_hashinfo.bhash_size = 1 &lt;&lt; tcp_hashinfo.bhash_size;
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; tcp_hashinfo.bhash_size; i++) {
+		spin_lock_init(&amp;tcp_hashinfo.bhash[i].lock);
+		INIT_HLIST_HEAD(&amp;tcp_hashinfo.bhash[i].chain);
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26681;&#25454;bash_size&#26469;&#35745;&#31639;order&#30340;&#20540;&#65292;order&#29992;&#26469;&#30830;&#23450;&#22914;&#20309;&#35774;&#32622;&#21487;&#20998;&#37197;&#31471;&#21475;&#30340;&#21306;&#38388;&#12290;</span>
+<span style="color: #8B8878;">        bhash_size&#30340;&#20540;&#26368;&#32456;&#26377;&#31995;&#32479;&#21442;&#25968;thash_entries&#30830;&#23450;&#65292;&#36825;&#20010;&#26159;&#24212;&#29992;&#31574;&#30053;&#38382;&#39064;&#65292;</span>
+<span style="color: #8B8878;">        &#22914;&#26524;&#29992;&#20316;&#32593;&#32476;&#26381;&#21153;&#22120;&#65292;&#21017;thash_entries&#21442;&#25968;&#24212;&#35813;&#35774;&#32622;&#30340;&#26356;&#22823;&#20123;&#65292;&#32780;&#22914;&#26524;&#29992;&#20316;</span>
+<span style="color: #8B8878;">        &#19968;&#33324;&#30340;&#26700;&#38754;&#31995;&#32479;&#25110;&#23884;&#20837;&#24335;&#31995;&#32479;&#65292;&#21017;thash_entries&#21442;&#25968;&#24212;&#35774;&#32622;&#30340;&#23567;&#19968;&#20123;&#12290;</span>
+<span style="color: #8B8878;">        &#31995;&#32479;&#36816;&#34892;&#26399;&#38388;&#20063;&#21487;&#20197;&#20462;&#25913;&#35813;&#20540;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">for</span> (order = 0; ((1 &lt;&lt; order) &lt;&lt; PAGE_SHIFT) &lt;
+			(tcp_hashinfo.bhash_size * <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_hashbucket</span>));
+			order++)
+		;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30001;&#20110;order&#34920;&#31034;&#31995;&#32479;&#33021;&#25552;&#20379;&#36164;&#28304;&#30340;&#22810;&#23569;&#65292;&#19968;&#27425;&#38656;&#26681;&#25454;order&#30340;&#22823;&#23567;&#26469;&#35774;&#32622;&#21487;</span>
+<span style="color: #8B8878;">        &#32465;&#23450;&#31471;&#21475;&#30340;&#21306;&#38388;&#12289;&#20445;&#25345;&#22312;TIME-WAIT&#29366;&#24577;&#19979;&#30340;&#22871;&#25509;&#21475;&#30340;&#26368;&#22823;&#25968; max_tw_buckets&#12289;</span>
+<span style="color: #8B8878;">        &#31995;&#32479;&#25152;&#33021;&#22788;&#29702;&#19981;&#23646;&#20110;&#20219;&#20309;&#36827;&#31243;&#30340;&#23396;&#20799;&#22871;&#25509;&#21475;&#30340;&#26368;&#22823;&#25968; tcp_max_orphans,</span>
+<span style="color: #8B8878;">        &#20197;&#21450;&#31995;&#32479;&#21487;&#20197;&#21516;&#26102;&#23384;&#22312;&#26410;&#23436;&#25104;&#19977;&#27425;&#25569;&#25163;&#30340;SYN&#35831;&#27714;&#30340;&#26368;&#22823;&#25968;max_syn_backlog&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (order &gt;= 4) {
+		sysctl_local_port_range[0] = 32768;
+		sysctl_local_port_range[1] = 61000;
+		tcp_death_row.sysctl_max_tw_buckets = 180000;
+		sysctl_tcp_max_orphans = 4096 &lt;&lt; (order - 4);
+		sysctl_max_syn_backlog = 1024;
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (order &lt; 3) {
+		sysctl_local_port_range[0] = 1024 * (3 - order);
+		tcp_death_row.sysctl_max_tw_buckets &gt;&gt;= (3 - order);
+		sysctl_tcp_max_orphans &gt;&gt;= (3 - order);
+		sysctl_max_syn_backlog = 128;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#31995;&#32479;&#25511;&#21046;&#21442;&#25968; tcp_mem&#65292;&#26159;&#19968;&#32452;&#29992;&#20110;&#25511;&#21046;TCP&#26632;&#32531;&#23384;&#20351;&#29992;&#30340;&#38408;&#20540;</span><span style="color: #8B8878;"> */</span>
+	sysctl_tcp_mem[0] = (1536 / <span style="color: #FF1493;">sizeof</span> (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_hashbucket</span>)) &lt;&lt; order;
+	sysctl_tcp_mem[1] = sysctl_tcp_mem[0] * 4 / 3;
+	sysctl_tcp_mem[2] = sysctl_tcp_mem[0] * 2;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#31995;&#32479;&#25511;&#21046;&#21442;&#25968;tcp_wmem&#21644;tcp_rmen</span>
+	limit = ((<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>)sysctl_tcp_mem[1]) &lt;&lt; (PAGE_SHIFT - 7);
+	max_share = min(4UL*1024*1024, limit);
+	sysctl_tcp_wmem[0] = SK_STREAM_MEM_QUANTUM;
+	sysctl_tcp_wmem[1] = 16*1024;
+	sysctl_tcp_wmem[2] = max(64*1024, max_share);
+	sysctl_tcp_rmem[0] = SK_STREAM_MEM_QUANTUM;
+	sysctl_tcp_rmem[1] = 87380;
+	sysctl_tcp_rmem[2] = max(87380, max_share);
+
+	printk(KERN_INFO <span style="color: #CDC673;">"TCP: Hash tables configured "</span>
+	       <span style="color: #CDC673;">"(established %d bind %d)\n"</span>,
+	       tcp_hashinfo.ehash_size &lt;&lt; 1, tcp_hashinfo.bhash_size);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21521;TCP&#20256;&#36755;&#25511;&#21046;&#22359;&#20013;&#27880;&#20876;reno&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;&#65292;&#36825;&#20010;&#31995;&#32479;&#40664;&#35748;&#30340;&#25317;&#22622;&#25511;&#21046;&#31639;&#27861;</span>
+	tcp_register_congestion_control(&amp;tcp_reno);
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga920407" class="outline-2">
+<h2 id="orga920407"><span class="section-number-2">10</span> TCP传输控制块的管理</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+在成功创建一个TCP传输控制块后，就需要对其进行管理。TCP存在多个状态，有些状态存在的时间比较短暂，在TCP两端交互的过程中，这些状态很快会迁移到另一种状态。LISTEN和ESTABLISHED这两种状态相对来说是一种常态。
+</p>
+
+<p>
+为了能够对处于不同状态的传输控制块进行合理的管理和访问，TCP根据状态将传输控制块存储到多个不同的散列表。
+</p>
+</div>
+
+<div id="outline-container-org23be13d" class="outline-3">
+<h3 id="org23be13d"><span class="section-number-3">10.1</span> inet_hashinfo结构</h3>
+<div class="outline-text-3" id="text-10-1">
+<p>
+TCP传输层中使用 inet_hashinfo结构类型的全局变量 <b>tcp_hashinfo</b> 对所有的散列表进行集中管理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_hashinfo</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#22823;&#23567;&#20026; ehahs_size &#30340;&#25955;&#21015;&#34920;&#65292;&#29992;&#26469;&#31649;&#29702;TCP&#29366;&#24577;&#38500;LISTEN&#20043;&#22806;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;&#25955;&#21015;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_ehash_bucket</span>        *<span style="color: #FF8C00;">ehash</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#22823;&#23567;&#20026; bhahs_size &#30340;&#25955;&#21015;&#34920;&#65292;&#29992;&#26469;&#23384;&#20648;&#24050;&#32465;&#23450;&#31471;&#21475;&#30340;&#20449;&#24687;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_hashbucket</span>     *<span style="color: #FF8C00;">bhash</span>;
+
+	<span style="color: #5FD7FF;">int</span>                             <span style="color: #FF8C00;">bhash_size</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ehash&#25955;&#21015;&#34920;&#22823;&#23567;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>            <span style="color: #FF8C00;">ehash_size</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">bhash&#25955;&#21015;&#34920;&#22823;&#23567;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#23384;&#20648;&#31649;&#29702;LISTEN&#29366;&#24577;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#25955;&#21015;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span>               <span style="color: #FF8C00;">listening_hash</span>[INET_LHTABLE_SIZE];
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#21516;&#27493;&#35775;&#38382;lhahs_users&#21644;lhash_wait&#30340;&#35835;&#20889;&#38145;</span>
+	rwlock_t                        <span style="color: #5FD7FF;">lhash_lock</span> <span style="color: #FF8C00;">____cacheline_aligned</span>;
+	<span style="color: #5FD7FF;">atomic_t</span>                        <span style="color: #FF8C00;">lhash_users</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24341;&#29992;&#35745;&#25968;&#22120;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23545;hashinfo&#36827;&#34892;&#20889;&#25152;&#26102;&#65292;&#22914;&#26524;&#24341;&#29992;&#35745;&#25968;&#22120;lhash_users&#22823;&#20110;0,&#21017;</span>
+<span style="color: #8B8878;">        &#20250;&#30561;&#30496;&#31561;&#24453;&#30452;&#21040;&#35813;&#23383;&#27573;&#20540;&#20026;0, &#30561;&#30496;&#36827;&#31243;&#30340;&#25551;&#36848;&#31526;&#20250;&#21152;&#20837;&#21040;lhash_wait&#20013;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">wait_queue_head_t</span>               <span style="color: #FF8C00;">lhash_wait</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#20998;&#37197;inet_bind_hashbucket&#32467;&#26500;&#30340;&#21518;&#22791;&#39640;&#36895;&#32531;&#23384;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kmem_cache</span>               *<span style="color: #FF8C00;">bind_bucket_cachep</span>;
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_ehash_bucket</span> {
+	<span style="color: #5FD7FF;">rwlock_t</span>          <span style="color: #FF8C00;">lock</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25511;&#21046;&#35813;&#38142;&#34920;&#30340;&#35835;&#20889;&#38145;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span> <span style="color: #FF8C00;">chain</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#38142;&#25509;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_hashbucket</span> {
+	<span style="color: #5FD7FF;">spinlock_t</span>              <span style="color: #FF8C00;">lock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#24314;&#31435;&#31471;&#21475;&#32465;&#23450;&#30340;&#20449;&#24687;&#22359;&#65292;&#20854;&#32467;&#26500;&#20026;inet_bind_bucket</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span>       <span style="color: #FF8C00;">chain</span>;
+};
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_bind_bucket</span> {
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">port</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32465;&#23450;&#30340;&#31471;&#21475;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#31471;&#21475;&#26159;&#21542;&#33021;&#37325;&#29992;</span>
+<span style="color: #8B8878;">        0&#65306;&#35813;&#31471;&#21475;&#24050;&#36890;&#36807;bind&#32465;&#23450;&#65292;&#19981;&#33021;&#37325;&#29992;</span>
+<span style="color: #8B8878;">        1&#65306;&#35813;&#31471;&#21475;&#24050;&#36890;&#36807;bind&#32465;&#23450;&#65292;&#33021;&#37325;&#29992;</span>
+<span style="color: #8B8878;">        -1&#65306;&#35813;&#31471;&#21475;&#34987;&#23458;&#25143;&#31471;&#21160;&#24577;&#32465;&#23450;&#65288;inet_hash_connect()&#65289;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">signed</span> <span style="color: #5FD7FF;">short</span>    <span style="color: #FF8C00;">fastreuse</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#23384;&#20648;bhash&#25955;&#21015;&#34920;&#30340;&#32467;&#28857;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">node</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32465;&#23450;&#22312;&#35813;&#31471;&#21475;&#19978;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;&#38142;&#34920;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span>       <span style="color: #FF8C00;">owners</span>;
+};
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="image/tcp-proto/inet-hashinfo.png" alt="inet-hashinfo.png" />
+</p>
+<p><span class="figure-number">Figure 5: </span>inet_hashinfo结构示意图</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1ea2bee" class="outline-3">
+<h3 id="org1ea2bee"><span class="section-number-3">10.2</span> 管理除LISTEN状态之外的TCP传输控制块</h3>
+<div class="outline-text-3" id="text-10-2">
+<p>
+在成功创建一个传输控制块后，就会调用传输接口层的hash接口，将该传输控制块添加到ehash散列表中，直至释放该传输控制块为止。在TCP中，hash接口实现为 tcp_v4_hash()。
+</p>
+
+<p>
+当不再需要某个传输控制块时，就会调用传输接口层的unhash接口，将传输控制块从ehash散列表中删除。在TCP中，unhash接口实现为 tcp_unhash()。
+</p>
+
+
+<div class="figure">
+<p><img src="image/tcp-proto/ehash.png" alt="ehash.png" />
+</p>
+<p><span class="figure-number">Figure 6: </span>ehash散列表结构（除LISTEN状态之外的TCP传输控制块散列表）</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgff581a9" class="outline-3">
+<h3 id="orgff581a9"><span class="section-number-3">10.3</span> 管理LISTEN状态的TCP传输控制块</h3>
+<div class="outline-text-3" id="text-10-3">
+<p>
+在调用listen后，套接口会进入LISTEN状态，此时会调用__inet_hash()函数将该传输控制块添加到listening_hash散列表中，一边快速的查找处于监听状态的套接口。
+</p>
+
+
+<div class="figure">
+<p><img src="image/tcp-proto/listening-hash.png" alt="listening-hash.png" />
+</p>
+<p><span class="figure-number">Figure 7: </span>listening_hash散列表结构（LISTEN状态的TCP传输控制块的散列表）</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbbd9912" class="outline-2">
+<h2 id="orgbbd9912"><span class="section-number-2">11</span> TCP层的套接口选项</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+TCP层的套接口选项入口函数为tcp_setsockopt()。在tcp_setsockopt()中会根据选项的级别来选择不同的函数处理; 如果是SOL_TCP级别，则调用do_tcp_setsockopt()，否则通过IP接口调用ip_setsockopt()。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_setsockopt</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval,
+		   <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+
+	<span style="color: #FF1493;">if</span> (level != SOL_TCP)
+		<span style="color: #FF1493;">return</span> icsk-&gt;icsk_af_ops-&gt;setsockopt(sk, level, optname,
+						     optval, optlen);
+	<span style="color: #FF1493;">return</span> do_tcp_setsockopt(sk, level, optname, optval, optlen);
+}
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>TCP_CONGESTION</dt><dd>选择并启用指定的拥塞控制算法。 设置过程：首先从用户空间取得拥塞控制算法名称，之后调用tcp_set_congestion_control()修改传输控制块的拥塞控制算法。</dd>
+<dt>TCP_MAXSEG</dt><dd>在应用层设置MSS上限，该上限和建立连接时SYN段中的MSS两者取最小值作为该连接的MSS上限，有效值在8～MAX_TCP_WINDOW(32767)之间，设置到传输控制块中的 rx_opt 的成员 user_mss。</dd>
+<dt>TCP_NODELAY</dt><dd>禁用或启用该套接口上的Nagle算法。如果禁用了Nagle算法，则意味着所有的段都会尽快发送出去，即使数据很少的报文也不例外; 而启用了Nagle算法后，可以有效利用数据包的空间，尽可能使得发送的段满载，用以避免网络拥塞，缺点是交互程度低，不能满足交互式要求高的应用。该选项不能与TCP_CORK共存，设置到传输控制块中的nonagle成员。</dd>
+<dt>TCP_CORK</dt><dd>使能此选项后，会对Nagle算法进行优化，使发送的段尽可能携带更多的数据，但是有个200ms的时间限制，一旦超时就将被排入发送队列进行发送。该选项与TCP_NODELAY互斥。</dd>
+<dt>TCP_KEEPIDLE</dt><dd>设置在TCP发送保活探测前TCP连接空闲的时间，也就是保活定时器启动的时间阈值。有效值在 1～32767,设置到传输控制块中的keepalive_time成员。</dd>
+<dt>TCP_KEEPINTVL</dt><dd>设置保活探测时间间隔，有效值 1～MAX_TCP_KEEPINTVL，设置到传输控制块中的 keepalive_intvl成员。</dd>
+<dt>TCP_KEEPCNT</dt><dd>设置保活探测次数的上限，超过该认为连接已经断开，有效值 1～127，设置到传输控制块中的keepalive_probes成员。</dd>
+<dt>TCP_SYNCNT</dt><dd>设置该套接口建立TCP连接时允许重试发送SYN段的次数，有效值为1～127,设置到传输控制块中的icsk_syn_retries成员。</dd>
+<dt>TCP_LINGER2</dt><dd>设置TCP从FIN_WAIT_2状态到CLOSED状态之前保持在 FIN_WAIT_2状态的时间，有效值小于 tcp_fin_timeout/HZ, 设置到传输控制块中的linger2成员。 如果小于0则表示立即关闭。</dd>
+<dt>TCP_DEFER_ACCEPT</dt><dd><p>
+建立TCP连接进行三次握手过程中所发送的段都是不带数据负载的，只有当连接完成后，双方才能进行数据的发送。这对于HTTP客户端和服务器的交互来说，延迟时间是可观的，为减轻这些问题带来的影响，TCP中实现该选项。
+</p>
+
+<p>
+启用TCP_DEFER_ACCEPT选项后，对于侦听套几口的服务器端，不会等待三次握手的最后的ACK包以及第一个真正有数据的包到达后才初始化侦听进程，而是在发送SYN+ACK后，就开始等待客户端发送包含数据的IP数据报。如此建立连接只需要两次握手，显著降低连接建立的延迟。
+</p>
+
+<p>
+对客户端来说，受到服务段的SYN+ACK后不再发送ACK段，而是等待用户程序发送数据请求。
+</p></dd>
+<dt>TCP_WINDOW_CLAMP</dt><dd>设置滑动窗口的上限，有效值0～SOCK_MIN_RCV_BUF/2 ，设置到传输控制块中的window_clamp成员。</dd>
+<dt>TCP_QUICKACK</dt><dd>启用或禁用快速确认模式。在快速确认模式中，ACK不会被延迟，而是立即发送。在TCP处理过程中，如果有需要还会进入到正常的模式运行，也就是说该表示的设置不是永久性的，只是在当时启用或禁用快速确认模式，在随后的TCP协议处理过程中，有可能根据需要启用或者禁用快速确认模式，例如延时确认超时、数据传输等因素。</dd>
+<dt>TCP_INFO</dt><dd>获取有关当前连接的相关信息，包括当前的状态、重传次数、重传超时时间等。</dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-org576377b" class="outline-2">
+<h2 id="org576377b"><span class="section-number-2">12</span> TCP的ioctl</h2>
+<div class="outline-text-2" id="text-12">
+<p>
+TCP层套接口ioctl入口函数是tcp_ioctl()。
+</p>
+
+<p>
+ioctl的命令如下：
+</p>
+
+<dl class="org-dl">
+<dt>SIOCINQ</dt><dd>获取在接收队列缓存中未读的数据量。如果在LISTEN状态，则返回EINVAL错误。</dd>
+
+<dt>SIOCATMARK</dt><dd>检测带外数据是否已全部被用户进程读取。</dd>
+
+<dt>SIOCOUTQ</dt><dd>获取在发送队列缓存中为发送出去的数据量。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-orga46c6c2" class="outline-2">
+<h2 id="orga46c6c2"><span class="section-number-2">13</span> TCP传输控制块的初始化</h2>
+<div class="outline-text-2" id="text-13">
+<p>
+TCP中的proto结构实例是 tcp_prot，其init接口是 tcp_v4_init_sock()，因此在创建TCP套接口完成后会调用该接口对TCP传输控制块进行初始化。
+</p>
+</div>
+
+<div id="outline-container-org1e17392" class="outline-3">
+<h3 id="org1e17392"><span class="section-number-3">13.1</span> TCP的差错处理</h3>
+<div class="outline-text-3" id="text-13-1">
+<p>
+TCP的差错处理函数是 tcp_v4_err()，在ICMP模块接收到差错报文后，如果传输层协议是TCP,则调用该函数处理。
+</p>
+
+<p>
+如果错误码小于零，则先关闭连接，然后将错误返回给用户进程；大于零则根据ICMP报文的类型及编码作相应的处理。
+</p>
+
+<p>
+在ICMP报文的数据中负载了原始IP首部（包含选项）及原始IP数据报数据的前8个字节，因此可获取原始TCP首部前8个字节（16位的源、目的端口，以及32位的序列号）。根据TCP首部中的源端口号和IP首部的源地址，可得到发送这个报文的传输控制块，然后在交给传输控制块做处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_v4_err</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">info</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *)skb-&gt;data;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span> *<span style="color: #FF8C00;">th</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span> *)(skb-&gt;data + (iph-&gt;ihl &lt;&lt; 2));
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span> *<span style="color: #FF8C00;">inet</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span> = skb-&gt;h.icmph-&gt;type;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">code</span> = skb-&gt;h.icmph-&gt;code;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>;
+	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">seq</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ICMP&#25253;&#25991;&#38271;&#24230;&#26159;&#21542;&#21253;&#21547;&#20102;&#21407;&#22987;IP&#39318;&#37096;&#21644;&#21407;&#22987;IP&#25968;&#25454;&#21253;&#20013;&#30340;&#21069;8&#23383;&#33410;&#25968;&#25454;&#65292;&#22914;&#26524;&#19981;&#23436;&#25972;&#21017;&#36820;&#22238;</span>
+	<span style="color: #FF1493;">if</span> (skb-&gt;len &lt; (iph-&gt;ihl &lt;&lt; 2) + 8) {
+		ICMP_INC_STATS_BH(ICMP_MIB_INERRORS);
+		<span style="color: #FF1493;">return</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#21457;&#36865;&#35813;TCP&#25253;&#25991;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	sk = inet_lookup(&amp;tcp_hashinfo, iph-&gt;daddr, th-&gt;dest, iph-&gt;saddr,
+			 th-&gt;source, inet_iif(skb));
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sk) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#22833;&#36133;&#21017;&#35828;&#26126;ICMP&#25253;&#25991;&#26377;&#35823;&#25110;&#35813;&#22871;&#25509;&#21475;&#24050;&#32463;&#20851;&#38381;</span>
+		ICMP_INC_STATS_BH(ICMP_MIB_INERRORS);
+		<span style="color: #FF1493;">return</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;TCP&#29366;&#24577;&#20301;TIME_WAIT,&#21017;&#35828;&#26126;&#22871;&#25509;&#21475;&#21363;&#23558;&#20851;&#38381;&#65292;&#26080;&#38656;&#36827;&#19968;&#27493;&#22788;&#29702;</span>
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state == TCP_TIME_WAIT) {
+		inet_twsk_put(inet_twsk(sk));
+		<span style="color: #FF1493;">return</span>;
+	}
+
+	bh_lock_sock(sk);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If too many ICMPs get dropped on busy</span>
+<span style="color: #8B8878;">         * servers this needs to be solved differently.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (sock_owned_by_user(sk)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#20256;&#36755;&#25511;&#21046;&#22359;&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;&#65288;&#20363;&#22914;&#27491;&#22312;&#35843;&#29992;send&#31561;&#31995;&#32479;&#35843;&#29992;&#65289;</span>
+		NET_INC_STATS_BH(LINUX_MIB_LOCKDROPPEDICMPS);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#29366;&#24577;&#26159;CLOSE,&#21017;&#35828;&#26126;&#35813;&#22871;&#25509;&#21475;&#24050;&#32463;&#20851;&#38381;&#65292;&#26080;&#38656;&#22788;&#29702;</span>
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state == TCP_CLOSE)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	tp = tcp_sk(sk);
+	seq = ntohl(th-&gt;seq);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#22788;&#20110;&#38750;&#30417;&#21548;&#29366;&#24577;&#65292;&#19988;&#24207;&#21015;&#21495;&#19981;&#20877;&#24050;&#21457;&#36865;&#26410;&#30830;&#35748;&#30340;&#21306;&#38388;&#20869;&#65292;&#21017;&#35828;&#26126;ICMP&#25253;&#25991;&#24322;&#24120;&#65292;&#26080;&#38656;&#36827;&#19968;&#27493;&#22788;&#29702;</span>
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state != TCP_LISTEN &amp;&amp;
+	    <span style="color: #CDC673; font-weight: bold;">!</span>between(seq, tp-&gt;snd_una, tp-&gt;snd_nxt)) {
+		NET_INC_STATS_BH(LINUX_MIB_OUTOFWINDOWICMPS);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+
+	<span style="color: #FF1493;">switch</span> (type) {
+	<span style="color: #FF1493;">case</span> ICMP_SOURCE_QUENCH:  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28304;&#31471;&#25233;&#21046;&#65292;&#19981;&#20570;&#22788;&#29702;</span>
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Just silently ignore these.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	<span style="color: #FF1493;">case</span> ICMP_PARAMETERPROB: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#21442;&#25968;&#38382;&#39064;&#65292;&#21017;&#35774;&#32622;&#38169;&#35823;&#30721;EPROTO</span>
+		err = EPROTO;
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> ICMP_DEST_UNREACH: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#19981;&#21487;&#36798;</span>
+		<span style="color: #FF1493;">if</span> (code &gt; NR_ICMP_UNREACH)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#38656;&#35201;&#20998;&#29255;&#20294;&#26159;&#35774;&#32622;&#20102;&#19981;&#20998;&#29255;&#20301;&#65292;&#21017;&#38656;&#35201;&#25506;&#27979;&#36335;&#24452;MTU</span>
+		<span style="color: #FF1493;">if</span> (code == ICMP_FRAG_NEEDED) { <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">PMTU discovery (RFC1191)</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_owned_by_user(sk))
+				do_pmtu_discovery(sk, iph, info); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25506;&#27979;&#36335;&#24452;MTU</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		}
+
+		err = icmp_err_convert[code].errno;
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> ICMP_TIME_EXCEEDED: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36229;&#26102;&#38169;&#35823;</span>
+		err = EHOSTUNREACH;
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">default</span>:
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+
+	<span style="color: #FF1493;">switch</span> (sk-&gt;sk_state) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_sock</span> *<span style="color: #FF8C00;">req</span>, **<span style="color: #FF8C00;">prev</span>;
+	<span style="color: #FF1493;">case</span> TCP_LISTEN:
+		<span style="color: #FF1493;">if</span> (sock_owned_by_user(sk))  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#25511;&#21046;&#22359;&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26597;&#25214;&#27491;&#22312;&#36830;&#25509;&#30340;&#23545;&#31471;&#22871;&#25509;&#21475;</span>
+		req = inet_csk_search_req(sk, &amp;prev, th-&gt;dest,
+					  iph-&gt;daddr, iph-&gt;saddr);
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>req)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ICMPs are not backlogged, hence we cannot get</span>
+<span style="color: #8B8878;">                   an established socket here.</span>
+<span style="color: #8B8878;">                 */</span>
+		BUG_TRAP(<span style="color: #CDC673; font-weight: bold;">!</span>req-&gt;sk);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#21457;&#36865;&#20986;&#21435;TCP&#27573;&#30340;&#24207;&#21495;&#19981;&#31561;&#20110;&#23545;&#31471;&#22871;&#25509;&#21475;&#20013;&#30340;&#21457;&#36865;&#24207;&#21495;&#65292;&#21017;&#35828;&#26126;&#24207;&#21495;&#26377;&#35823;</span>
+		<span style="color: #FF1493;">if</span> (seq != tcp_rsk(req)-&gt;snt_isn) {
+			NET_INC_STATS_BH(LINUX_MIB_OUTOFWINDOWICMPS);
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		}
+
+		<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                 * Still in SYN_RECV, just remove it silently.</span>
+<span style="color: #8B8878;">                 * There is no good way to pass the error to the newly</span>
+<span style="color: #8B8878;">                 * created socket, and POSIX does not want network</span>
+<span style="color: #8B8878;">                 * errors returned from accept().</span>
+<span style="color: #8B8878;">                 */</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#24182;&#37322;&#25918;&#36830;&#25509;&#36807;&#31243;&#20013;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+		inet_csk_reqsk_queue_drop(sk, req, prev);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	<span style="color: #FF1493;">case</span> TCP_SYN_SENT:
+	<span style="color: #FF1493;">case</span> TCP_SYN_RECV:  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Cannot happen.</span>
+<span style="color: #8B8878;">                               It can f.e. if SYNs crossed.</span>
+<span style="color: #8B8878;">                             */</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_owned_by_user(sk)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#20256;&#36755;&#25511;&#21046;&#22359;&#27809;&#26377;&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;</span>
+			sk-&gt;sk_err = err;
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;sk_error_report&#25509;&#21475;&#25253;&#21578;&#38169;&#35823;</span>
+			sk-&gt;sk_error_report(sk);
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#22871;&#25509;&#21475;</span>
+			tcp_done(sk);
+		} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#22914;&#26524;&#34987;&#38145;&#23450;&#65292;&#21017;&#23558;&#38169;&#35823;&#21527;&#35774;&#32622;&#21040;sk_err_soft&#65292;</span>
+<span style="color: #8B8878;">                &#36825;&#31181;&#24773;&#20917;&#19979;&#29992;&#25143;&#36827;&#31243;&#21487;&#20197;&#20351;&#29992;SO_ERROR&#22871;&#25509;&#21475;&#36873;&#39033;&#33719;&#21462;&#38169;&#35823;&#30721;</span><span style="color: #8B8878;">*/</span>
+			sk-&gt;sk_err_soft = err;
+		}
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If we've already connected we will keep trying</span>
+<span style="color: #8B8878;">         * until we time out, or the user gives up.</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         * rfc1122 4.2.3.9 allows to consider as hard errors</span>
+<span style="color: #8B8878;">         * only PROTO_UNREACH and PORT_UNREACH (well, FRAG_FAILED too,</span>
+<span style="color: #8B8878;">         * but it is obsoleted by pmtu discovery).</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         * Note, that in modern internet, where routing is unreliable</span>
+<span style="color: #8B8878;">         * and in each dark corner broken firewalls sit, sending random</span>
+<span style="color: #8B8878;">         * errors ordered by their masters even this two messages finally lose</span>
+<span style="color: #8B8878;">         * their original sense (even Linux sends invalid PORT_UNREACHs)</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         * Now we are in compliance with RFCs.</span>
+<span style="color: #8B8878;">         *                                                      --ANK (980905)</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#29702; &#38750; LISTEN&#12289;SYN_SENT&#12289;SYN_RECV&#29366;&#24577;&#30340;&#24773;&#20917;</span>
+	inet = inet_sk(sk);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_owned_by_user(sk) &amp;&amp; inet-&gt;recverr <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#20801;&#35768;&#25509;&#25910;&#25193;&#23637;&#30340;&#21487;&#38752;&#38169;&#35823;&#20449;&#24687;</span><span style="color: #8B8878;">*/</span>) {
+		sk-&gt;sk_err = err;
+		sk-&gt;sk_error_report(sk);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25253;&#21578;&#38169;&#35823;</span>
+	} <span style="color: #FF1493;">else</span>  { <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Only an error on timeout</span><span style="color: #8B8878;"> */</span>
+		sk-&gt;sk_err_soft = err;
+	}
+
+<span style="color: #AF87FF;">out</span>:
+	bh_unlock_sock(sk);
+	sock_put(sk);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd4f9f12" class="outline-2">
+<h2 id="orgd4f9f12"><span class="section-number-2">14</span> TCP传输控制块层的缓存管理</h2>
+<div class="outline-text-2" id="text-14">
+<p>
+为了合理使用内存，同时也为了有效抵抗外界的网络攻击，在TCP中实现了比较复杂的缓存管理，包括发送队列缓存、接收队列缓存以及选项缓存管理等。
+</p>
+</div>
+
+<div id="outline-container-org14fe924" class="outline-3">
+<h3 id="org14fe924"><span class="section-number-3">14.1</span> 缓存管理算法</h3>
+<div class="outline-text-3" id="text-14-1">
+<p>
+sock结构成员sk_forward_alloc表示预分配缓存长度，这只是一个预计量。对于输入，如果接收到段长度小于该值，则接收段成功，将其加入到相应的接收队列中；否则需要重新确认接收段的大小是否有效，无效则丢弃。  对于输出，如果为发送而分配的缓存大小小于该值，则分配必然成功，否则也需要重新确认分配的缓存大小是否有效，无效则需要释放已经分配的缓存。
+</p>
+
+<p>
+TCP系统参数 tcp_mem 是个整形数组，长度为3, 用来对整个TCP传输层进行控制。
+</p>
+
+<p>
+tcp_prot结构成员 memory_allocated 指向全局变量 tcp_memory_allocated，表示当前整个TCP传输层为缓冲区分配的内存页面数，是系统中所有TCP传输控制块的sk_forward_alloc的总和。
+</p>
+
+<p>
+tcp_prot结构成员 memory_pressure 指向全局变量 tcp_memory_pressure，这是一个标志：
+</p>
+
+<ul class="org-ul">
+<li>tcp_memory_allocated 大于 tcp_mem[1] 时，TCP缓存管理进入告警状态， tcp_memory_pressure置为1。</li>
+<li>tcp_memory_allocated 小于 tcp_mem[0] 时，TCP缓存管理退出告警状态， tcp_memory_pressure置为0。</li>
+</ul>
+
+<p>
+tcp_prot 结构成员 socket_allocated 指向全局变量 tcp_orphan_count，便是整个TCP传输层中待销毁的套接口数。
+</p>
+
+<ol class="org-ol">
+<li><p>
+进入告警状态
+</p>
+
+<p>
+在TCP的proto实例 tcp_prot中，enter_memory_pressure接口指向 tcp_enter_memory_pressure(),当进入告警状态时，会调用此接口将 tcp_memory_pressure 设置为1。
+</p></li>
+
+<li><p>
+缓存分配的确认
+</p>
+
+<p>
+无论是为发送而分配SKB，还是将报文接收到TCP传输层，都需要对新进入传输控制块的缓存进行确认。确认时如果套接口缓存中的数据长度大于预分配量，则需要进行全面的确认，这个过程由 sk_stream_mem_schedule()实现：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sk_stream_mem_schedule</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">size</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35201;&#30830;&#35748;&#30340;&#32531;&#23384;&#38271;&#24230;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">kind</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31867;&#22411;&#65292;0&#20026;&#21457;&#36865;&#21704;u&#20869;&#23384;&#65292;1&#20026;&#25509;&#25910;&#32531;&#23384;&#12290;</span>
+{
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">amt</span> = sk_stream_pages(size); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#24453;&#30830;&#35748;&#30340;&#32531;&#23384;&#38271;&#24230;&#21521;&#19978;&#21462;&#25972;&#33719;&#24471;&#25152;&#21344;&#29992;&#30340;&#39029;&#38754;&#25968;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#35748;&#21069;&#65292;&#20808;&#35843;&#25972;&#39044;&#20998;&#37197;&#37327;&#65292;&#21152;&#19978;&#19978;&#38754;&#35745;&#31639;&#24471;&#21040;&#30340;&#39029;&#38754;&#23383;&#33410;&#25968;</span>
+	sk-&gt;sk_forward_alloc += amt * SK_STREAM_MEM_QUANTUM;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#25972;&#25972;&#20010;TCP&#20256;&#36755;&#23618;&#24050;&#20998;&#37197;&#20869;&#23384;&#65292;&#21152;&#19978;&#19978;&#38754;&#35745;&#31639;&#30340;&#21040;&#30340;&#39029;&#38754;&#25968;</span>
+	atomic_add(amt, sk-&gt;sk_prot-&gt;memory_allocated);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#24050;&#20998;&#37197;&#20869;&#23384;&#20302;&#20110;&#20302;&#27700;&#24179;&#32447;&#65292;&#21017;&#23558;&#21407;&#20808;&#30340;&#21578;&#35686;&#29366;&#24577;&#24674;&#22797;&#21040;&#27491;&#24120;&#29366;&#24577;&#65292;&#36820;&#22238;1&#34920;&#31034;&#30830;&#35748;&#25104;&#21151;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #FF1493;">if</span> (atomic_read(sk-&gt;sk_prot-&gt;memory_allocated) &lt; sk-&gt;sk_prot-&gt;sysctl_mem[0]) {
+		<span style="color: #FF1493;">if</span> (*sk-&gt;sk_prot-&gt;memory_pressure)
+			*sk-&gt;sk_prot-&gt;memory_pressure = 0;
+		<span style="color: #FF1493;">return</span> 1;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24050;&#20998;&#37197;&#20869;&#23384;&#39640;&#20110;&#30828;&#24615;&#38480;&#21046;&#65292;&#21017;&#36827;&#20837;&#21578;&#35686;&#29366;&#24577;&#65292;&#24182;&#36339;&#36716;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (atomic_read(sk-&gt;sk_prot-&gt;memory_allocated) &gt; sk-&gt;sk_prot-&gt;sysctl_mem[2]) {
+		sk-&gt;sk_prot-&gt;enter_memory_pressure();
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">suppress_allocation</span>;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24050;&#20998;&#37197;&#20869;&#23384;&#39640;&#20110;&#35686;&#25106;&#32447;&#65292;&#19988;&#20302;&#20110;&#30828;&#20214;&#38480;&#21046;&#65292;&#21017;&#36827;&#20837;&#21578;&#35686;&#29366;&#24577;&#12290;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (atomic_read(sk-&gt;sk_prot-&gt;memory_allocated) &gt; sk-&gt;sk_prot-&gt;sysctl_mem[1])
+		sk-&gt;sk_prot-&gt;enter_memory_pressure();
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24050;&#20998;&#37197;&#20869;&#23384;&#39640;&#20110;&#35686;&#25106;&#32447;&#20294;&#20302;&#20110;&#30828;&#20214;&#38480;&#21046;&#30340;&#24773;&#20917;&#30340;&#22788;&#29702;</span><span style="color: #8B8878;">*/</span>
+
+	<span style="color: #FF1493;">if</span> (kind) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#25509;&#25910;&#32531;&#23384;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#38431;&#21015;&#20013;&#27573;&#30340;&#25968;&#25454;&#24635;&#38271;&#24230;&#23567;&#20110;&#25509;&#25910;&#32531;&#20914;&#21306;&#30340;&#38271;&#24230;&#19978;&#38480;&#65292;&#21017;&#30830;&#35748;&#25104;&#21151;&#65292;&#21542;&#21017;&#36824;&#38656;&#36827;&#19968;&#27493;&#30830;&#35748;</span>
+		<span style="color: #FF1493;">if</span> (atomic_read(&amp;sk-&gt;sk_rmem_alloc) &lt; sk-&gt;sk_prot-&gt;sysctl_rmem[0])
+			<span style="color: #FF1493;">return</span> 1;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21457;&#36865;&#32531;&#23384;&#65292;&#19988;&#21457;&#36865;&#38431;&#21015;&#20013;&#27573;&#30340;&#25968;&#25454;&#24635;&#38271;&#24230;&#23567;&#20110;&#21457;&#36865;&#32531;&#20914;&#21306;&#30340;&#38271;&#24230;&#19978;&#38480;&#65292;&#21017;&#30830;&#35748;&#25104;&#21151;&#65292;&#21542;&#21017;&#36827;&#19968;&#27493;&#30830;&#35748;</span>
+	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (sk-&gt;sk_wmem_queued &lt; sk-&gt;sk_prot-&gt;sysctl_wmem[0])
+		<span style="color: #FF1493;">return</span> 1;
+
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>*sk-&gt;sk_prot-&gt;memory_pressure || <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#36827;&#20837;&#21578;&#35686;&#29366;&#24577;</span>
+	    <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#25110;&#32773;&#24403;&#21069;&#22871;&#25509;&#21475;&#21457;&#36865;&#38431;&#21015;&#20013;&#25152;&#26377;&#27573;&#25968;&#25454;&#24635;&#38271;&#24230;&#12289;&#25509;&#25910;&#38431;&#21015;&#20013;&#25152;&#26377;&#27573;&#25968;&#25454;&#24635;&#38271;&#24230;&#12289;</span>
+<span style="color: #8B8878;">            &#39044;&#20998;&#37197;&#32531;&#23384;&#24635;&#38271;&#24230;&#20043;&#21644;*&#24403;&#21069;&#31995;&#32479;&#20013;&#22871;&#25509;&#21475;&#25968;&#37327;&#65292;&#36824;&#23567;&#20110;&#30828;&#24615;&#38480;&#21046;&#32447;&#65292;&#21017;&#30830;&#35748;&#25104;&#21151;</span><span style="color: #8B8878;">*/</span>
+	    sk-&gt;sk_prot-&gt;sysctl_mem[2] &gt; atomic_read(sk-&gt;sk_prot-&gt;sockets_allocated) *
+				sk_stream_pages(sk-&gt;sk_wmem_queued +
+						atomic_read(&amp;sk-&gt;sk_rmem_alloc) +
+						sk-&gt;sk_forward_alloc))
+		<span style="color: #FF1493;">return</span> 1;
+
+<span style="color: #AF87FF;">suppress_allocation</span>:
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#20998;&#37197;&#20869;&#23384;&#39640;&#20110;&#30828;&#24615;&#38480;&#21046;&#32447;&#30340;&#24773;&#20917;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>kind) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#32531;&#23384;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#20256;&#36755;&#25511;&#21046;&#22359;&#21457;&#36865;&#32531;&#20914;&#21306;&#30340;&#39044;&#35774;&#22823;&#23567;&#20943;&#23567;&#20026;&#24050;&#20998;&#37197;&#32531;&#20914;&#38431;&#21015;&#22823;&#23567;&#30340;&#19968;&#21322;</span>
+		sk_stream_moderate_sndbuf(sk);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#20998;&#37197;&#32531;&#20914;&#38431;&#21015;&#22823;&#23567;&#19982;&#24453;&#30830;&#35748;&#38271;&#24230;&#20043;&#21644;&#22823;&#20110;sk_sndbuf,&#21017;&#30830;&#35748;&#25104;&#21151;</span>
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_wmem_queued + size &gt;= sk-&gt;sk_sndbuf)
+			<span style="color: #FF1493;">return</span> 1;
+	} <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#24453;&#30830;&#35748;&#30340;&#25509;&#25910;&#32531;&#23384;&#65292;&#24050;&#20998;&#37197;&#20869;&#23384;&#39640;&#20110;&#30828;&#24615;&#38480;&#21046;&#32447;&#26102;&#65292;&#24517;&#28982;&#22833;&#36133;&#12290;</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22914;&#26524;&#30830;&#35748;&#22833;&#36133;&#65292;&#38656;&#24674;&#22797;sk_forward_alloc&#21644;memory_allocated</span><span style="color: #8B8878;">  */</span>
+	sk-&gt;sk_forward_alloc -= amt * SK_STREAM_MEM_QUANTUM;
+	atomic_sub(amt, sk-&gt;sk_prot-&gt;memory_allocated);
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div></li>
+
+<li><p>
+缓存的回收
+</p>
+
+<p>
+在多种情况下会调用sk_stream_mem_reclaim()来回收缓存，例如断开连接、释放传输控制块、关闭TCP套接口时释放发送或接收队列的SKB。 sk_stream_mem_reclaim()只在预分配量大于一个页面时，才调用__sk_stream_mem_reclaim()进行真正的缓存回收。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__sk_stream_mem_reclaim</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#25972;memory_allocated</span>
+	atomic_sub(sk-&gt;sk_forward_alloc / SK_STREAM_MEM_QUANTUM,
+		   sk-&gt;sk_prot-&gt;memory_allocated);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#25972;sk_forward_alloc</span>
+	sk-&gt;sk_forward_alloc &amp;= SK_STREAM_MEM_QUANTUM - 1;
+	<span style="color: #FF1493;">if</span> (*sk-&gt;sk_prot-&gt;memory_pressure &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#20110;&#21578;&#35686;&#29366;&#24577;</span>
+	    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#20998;&#37197;&#20869;&#23384;&#20302;&#20110;&#20302;&#27700;&#24179;&#32447;&#65292;&#21017;&#23558;&#29366;&#24577;&#24674;&#22797;&#21040;&#27491;&#24120;&#29366;&#24577;</span>
+	    (atomic_read(sk-&gt;sk_prot-&gt;memory_allocated) &lt;
+	     sk-&gt;sk_prot-&gt;sysctl_mem[0]))
+		*sk-&gt;sk_prot-&gt;memory_pressure = 0;
+}
+</pre>
+</div></li>
+
+<li><p>
+等待可用的缓存
+</p>
+
+<p>
+在发送数据时，如果分配缓存区失败，则会调用sk_stream_wait_memory()等待。该函数返回0，表示等待成功; 返回非0则为具体出错的错误码。
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org613306c" class="outline-3">
+<h3 id="org613306c"><span class="section-number-3">14.2</span> 发送缓存的管理</h3>
+<div class="outline-text-3" id="text-14-2">
+<p>
+sock结构成员sk_sndbuf表示发送缓冲区长度的上限。通常情况下，传输控制块中已分配SKB数据区总长度sk_wmem_alloc以及发送队列中段数据总长度sk_wmem_queued都不能超过该值。sk_sndbuf的值由系统参数tcp_wmem来设置和调整。
+</p>
+
+<p>
+sock结构成员sk_wmem_alloc为该传输控制块已分配SKB数据区总长度。
+</p>
+
+<p>
+sock结构成员sk_wmem_queued表示发送队列中多有段数据总长度。
+</p>
+
+<p>
+sk_stream_alloc_skb()调用sk_stream_alloc_pskb()分配待发送的SKB，分配成功就可调用skb_entail()加入到发送队列中了。
+</p>
+
+<p>
+sock_wmalloc()也用来分配发送缓存，但只是在构造SYN+ACK时使用，发送用户数据时通常使用sk_stream_alloc_pskb()来分配发送缓存。
+</p>
+
+<p>
+skb_entail()将待发送的SKB添加到发送队列尾部，然后调用sk_charge_skb()调整sk_wmem_queued和sk_forward_alloc，前者将增加该SKB中数据的长度，而后者则减少该SKB中数据的长度。在发送时会调用skb_set_owner_w()设置该SKB的宿主，同时设置该套接口释放时的回调函数为sock_wfree()，最后sk_wmem_alloc将增加该SKB中数据的长度。
+</p>
+
+<p>
+sock_wfree()在SKB释放时被回调，sk_wmem_alloc将减少该SKB中数据的长度。
+</p>
+
+<p>
+sk_stream_free_skb()用来释放发送的SKB,释放后sk_wmem_queued将减少该SKB中数据的长度，而sk_forward_alloc则增加该SKB中数据的长度。
+</p>
+
+<ol class="org-ol">
+<li>分配SKB</li>
+</ol>
+
+<p>
+sk_stream_alloc_pskb()用来分配待发送的SKB。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">sk_stream_alloc_pskb</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+						   <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">mem</span>,
+						   <span style="color: #5FD7FF;">gfp_t</span> <span style="color: #FF8C00;">gfp</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hdr_len</span>;
+
+	hdr_len = SKB_DATA_ALIGN(sk-&gt;sk_prot-&gt;max_header);
+	skb = alloc_skb_fclone(size + hdr_len, gfp); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#25351;&#23450;&#38271;&#24230;&#30340;SKB</span>
+	<span style="color: #FF1493;">if</span> (skb) {
+		skb-&gt;truesize += mem;
+		<span style="color: #FF1493;">if</span> (sk_stream_wmem_schedule(sk, skb-&gt;truesize)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#35748;&#21457;&#36865;&#32531;&#23384;&#26159;&#21542;&#21487;&#29992;</span>
+			skb_reserve(skb, hdr_len);
+			<span style="color: #FF1493;">return</span> skb;
+		}
+		__kfree_skb(skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#21487;&#29992;&#21017;&#37322;&#25918;</span>
+	} <span style="color: #FF1493;">else</span> {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#22833;&#36133;&#65292;&#20351;TCP&#32531;&#23384;&#31649;&#29702;&#36827;&#20837;&#21578;&#35686;&#29366;&#24577;</span>
+		sk-&gt;sk_prot-&gt;enter_memory_pressure();
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27809;&#26377;&#36890;&#36807;SO_SNDBUF&#36873;&#39033;&#36827;&#34892;&#25163;&#24037;&#35774;&#23450;&#21457;&#36865;&#32531;&#23384;&#22823;&#23567;&#30340;&#19978;&#38480;&#65292;&#21017;&#37325;&#26032;&#35843;&#25972;&#21457;&#36865;&#32531;&#23384;&#30340;&#19978;&#38480;</span>
+		sk_stream_moderate_sndbuf(sk);
+	}
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>确认发送缓存是否可用</li>
+</ol>
+
+<p>
+sk_stream_wmem_schedule()用来确认发送缓存是否可用，如果该套接口缓存中的数据长度小于预分配量，则确认成功，否则需要调用sk_stream_mem_schedule()进行全面的确认。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org40bb16a" class="outline-3">
+<h3 id="org40bb16a"><span class="section-number-3">14.3</span> 接收缓存的管理</h3>
+<div class="outline-text-3" id="text-14-3">
+<p>
+sock结构成员sk_rcvbuf表示接收缓冲区长度的上限。通常情况下，接收队列中所有段的数据总长度sk_rmem_alloc不能超过该值。sk_rcvbuf的值由tcp_rmem来设置和调整。
+</p>
+
+<p>
+sock结构成员sk_rmem_alloc表示接收队列sk_receive_queue中所有段的数据总长度。
+</p>
+
+<p>
+当接收到TCP段后会调用sk_stream_rmem_schedule()确认接收缓存是否可用。如果可用，则会将其添加到TCP接收队列，同时调用sk_stream_set_owner_r()设置该SKB的宿主；然后设置释放该套接口时的回调函数为sk_stream_rfree()；最后更新sk_rmem_alloc和sk_forward_alloc，前者增加而后者减少该SKB中数据的长度。
+</p>
+
+<ol class="org-ol">
+<li><p>
+确认接收缓存是否可用
+</p>
+
+<p>
+sk_stream_rmem_schedule()用来确认接收缓存是否可用，如果该套接口缓存中的数据长度小于预分配量，则确认成功，否则需要调用sk_stream_mem_schedule()进行全面的确认。
+</p></li>
+
+<li><p>
+释放SKB
+</p>
+
+<p>
+sk_stream_rfree()在释放SKB时被回调，sk_rmem_alloc中将减去该SKB中数据的长度，而sk_forward_alloc则增加该skb中数据的长度。
+</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-04-25 Mon 22:45</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

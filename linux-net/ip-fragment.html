@@ -1,0 +1,1293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-01-07 Fri 23:25 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IP: 分片与组装</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">IP: 分片与组装</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgb944a5a">1. 系统参数</a></li>
+<li><a href="#orgd75c03b">2. 分片</a></li>
+<li><a href="#orga9cc250">3. 组装</a>
+<ul>
+<li><a href="#org7869066">3.1. ipq结构</a></li>
+<li><a href="#orgdba14c6">3.2. ipq散列表和链表的维护</a></li>
+<li><a href="#org0ed31f2">3.3. ipq散列表的重组</a></li>
+<li><a href="#org061abcb">3.4. IP分片超时</a></li>
+<li><a href="#org4ab1e67">3.5. 垃圾回收</a></li>
+<li><a href="#org71373ec">3.6. 分片组装相关函数</a></li>
+<li><a href="#orge188dc2">3.7. 分片组装</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+如果IP数据报长度超出最大传输单元MTU，并且允许分片时，就需要进行IP分片处理。 以太网MTU为1500B，通常UDP协议发送的数据报容易导致IP分片，而TCP协议通常不会产生分片。
+</p>
+
+<p>
+IP数据报分片后，独立选择路由，在所有分片达到目的主机后，目的主机IP层会先将其组装为完整的IP数据报，在交给传输层处理。
+</p>
+
+<div id="outline-container-orgb944a5a" class="outline-2">
+<h2 id="orgb944a5a"><span class="section-number-2">1</span> 系统参数</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>ipfrag_high_thresh 用于组装IP数据报的内存上限值， 如果组装时超过该值，则调用ip_evictor()进行垃圾回收。</li>
+
+<li>ipfrag_low_thresh 用于组装IP数据报的内存下限值，调用ip_evictor()进行垃圾回收时，下降到该值时，停止垃圾回首。</li>
+
+<li>ipfrag_max_dist 允许接收来自同一个源IP地址的IP分片数量的上限值（防止DoS攻击）</li>
+
+<li>ipfrag_secret_interval 定时重组ipq散列表的时间间隔，默认600s。</li>
+
+<li>ipfrag_time 待组装IP分片在内存中允许保留的时间，默认30s。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd75c03b" class="outline-2">
+<h2 id="orgd75c03b"><span class="section-number-2">2</span> 分片</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+ip_finish_output()将数据报（包括本地发送的数据报和转发的数据报）发送之前，会检测SKB缓存区数据长度，如果超出设备MTU，且符合分片条件，则调用ip_fragment()对数据报进行分片，否则调用ip_finish_output2() 输出。
+</p>
+
+<p>
+分片过程需要将网络层的有效负载根据MTU分为一个一个的片段，对每个分片设置IP首部，更新IP校验和等。
+</p>
+
+<p>
+分片分两种处理方式：
+</p>
+<ul class="org-ul">
+<li>快速分片： 此时数据分割为片段的工作已经由传输层完成，网络层只需要将片段组成IP分片。</li>
+<li>慢速分片： 慢速分片需要对完整的IP数据报进行分片。</li>
+</ul>
+
+
+
+<div class="figure">
+<p><img src="image/ip-fragment/ip-fragment.png" alt="ip-fragment.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>ip_fragment()流程</p>
+</div>
+
+
+
+<div class="figure">
+<p><img src="image/ip-fragment/fast-fragment-skb.png" alt="fast-fragment-skb.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>快速分片之前，SKB的缓存区</p>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      This IP datagram is too large to be sent in one piece.  Break it up into</span>
+<span style="color: #8B8878;"> *      smaller pieces (each of size equal to IP header plus</span>
+<span style="color: #8B8878;"> *      a block of the data of the original IP data part) that will yet fit in a</span>
+<span style="color: #8B8878;"> *      single device frame, and queue such a frame for sending.</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_fragment</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">output</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>*)<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ipv4&#20013;&#20026;ip_finish_output2()</span><span style="color: #8B8878;">*/</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">raw</span> = 0;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ptr</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb2</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">mtu</span>, <span style="color: #FF8C00;">hlen</span>, <span style="color: #FF8C00;">left</span>, <span style="color: #FF8C00;">len</span>, <span style="color: #FF8C00;">ll_rs</span>, <span style="color: #FF8C00;">pad</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>;
+	<span style="color: #5FD7FF;">__be16</span> <span style="color: #FF8C00;">not_last_frag</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span> *<span style="color: #FF8C00;">rt</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>*)skb-&gt;dst;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = 0;
+
+	dev = rt-&gt;u.dst.dev;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Point into the IP datagram header.</span>
+<span style="color: #8B8878;">         */</span>
+
+	iph = skb-&gt;nh.iph;
+
+	<span style="color: #FF1493;">if</span> (unlikely((iph-&gt;frag_off &amp; htons(IP_DF)) &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>skb-&gt;local_df)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31105;&#27490;&#20998;&#29255;</span>
+		IP_INC_STATS(IPSTATS_MIB_FRAGFAILS);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#26080;&#27861;&#20998;&#29255;&#30340;&#30446;&#30340;&#19981;&#21487;&#36798;ICMP&#25253;&#25991;</span>
+		icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED,
+			  htonl(dst_mtu(&amp;rt-&gt;u.dst)));
+		kfree_skb(skb);
+		<span style="color: #FF1493;">return</span> -EMSGSIZE;
+	}
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Setup starting values.</span>
+<span style="color: #8B8878;">         */</span>
+
+	hlen = iph-&gt;ihl * 4; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25968;&#25454;&#25253;&#39318;&#37096;&#38271;&#24230;</span>
+	mtu = dst_mtu(&amp;rt-&gt;u.dst) - hlen;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21435;&#38500;IP&#39318;&#37096;&#21518;&#30340;MTU&#20540;</span><span style="color: #8B8878;">*/</span>
+	IPCB(skb)-&gt;flags |= IPSKB_FRAG_COMPLETE;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">When frag_list is given, use it. First, check its validity:</span>
+<span style="color: #8B8878;">         * some transformers could create wrong frag_list or break existing</span>
+<span style="color: #8B8878;">         * one, it is not prohibited. In this case fall back to copying.</span>
+<span style="color: #8B8878;">         *</span>
+<span style="color: #8B8878;">         * LATER: this step can be merged to real generation of fragments,</span>
+<span style="color: #8B8878;">         * we can switch to copy when see the first bad fragment.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (skb_shinfo(skb)-&gt;frag_list) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#20256;&#36755;&#23618;&#24050;&#32463;&#23558;&#25968;&#25454;&#20998;&#22359;&#65292;&#36208;&#24555;&#36895;&#20998;&#29255;&#36923;&#36753;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">frag</span>;
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">first_len</span> = skb_pagelen(skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;SKB&#30340;&#31532;&#19968;&#20010;&#20998;&#29255;&#30340;&#25968;&#25454;&#24635;&#38271;&#24230;&#65292;&#21253;&#25324;SG&#31867;&#22411;&#32858;&#21512;&#20998;&#25955;I/O&#25968;&#25454;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20197;&#19979;&#24773;&#20917;&#37117;&#19981;&#33021;&#36208;&#24555;&#36895;&#20998;&#29255;</span>
+		<span style="color: #FF1493;">if</span> (first_len - hlen &gt; mtu ||  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#29255;&#38271;&#24230;&#22823;&#20110;MTU</span>
+		    ((first_len - hlen) &amp; 7) ||  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#20010;&#20998;&#29255;&#27809;&#26377;8&#23383;&#33410;&#23545;&#40784;</span>
+		    (iph-&gt;frag_off &amp; htons(IP_MF|IP_OFFSET)) || <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26377;&#36825;&#20004;&#20010;&#26631;&#24535;&#65292;&#34920;&#31034;&#19981;&#26159;&#23436;&#25104;IP&#25968;&#25454;&#25253;</span>
+		    skb_cloned(skb)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">SKB&#34987;&#20811;&#38534;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">slow_path</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#21518;&#32493;&#20998;&#29255;</span>
+		<span style="color: #FF1493;">for</span> (frag = skb_shinfo(skb)-&gt;frag_list; frag; frag = frag-&gt;next) {
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Correct geometry.</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (frag-&gt;len &gt; mtu || <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#29255;&#22823;&#20110;MTU</span>
+			    ((frag-&gt;len &amp; 7) &amp;&amp; frag-&gt;next) ||  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;8&#23383;&#33410;&#23545;&#40784;&#19988;&#19981;&#26159;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;</span>
+			    skb_headroom(frag) &lt; hlen) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#20998;&#29255;&#27809;&#26377;&#20026;&#20108;&#23618;&#39318;&#37096;&#39044;&#30041;&#36275;&#22815;&#31354;&#38388;</span>
+			    <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">slow_path</span>;
+
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Partially cloned skb?</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (skb_shared(frag)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#29255;&#34987;&#20811;&#38534;</span>
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">slow_path</span>;
+
+			BUG_ON(frag-&gt;sk);
+			<span style="color: #FF1493;">if</span> (skb-&gt;sk) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+				sock_hold(skb-&gt;sk);
+				frag-&gt;sk = skb-&gt;sk; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#20998;&#29255;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;&#36171;&#20540;</span>
+				frag-&gt;destructor = sock_wfree;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#35813;&#20998;&#29255;skb &#30340;&#22238;&#35843;</span>
+				skb-&gt;truesize -= frag-&gt;truesize; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20462;&#25913;&#39318;&#20010;skb&#30340;&#32531;&#23384;&#21306;&#24635;&#38271;&#24230;</span>
+			}
+		}
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Everything is OK. Generate!</span><span style="color: #8B8878;"> */</span>
+
+		err = 0;
+		offset = 0;
+		frag = skb_shinfo(skb)-&gt;frag_list;
+		skb_shinfo(skb)-&gt;frag_list = <span style="color: #AF87FF;">NULL</span>;
+		skb-&gt;data_len = first_len - skb_headlen(skb);
+		skb-&gt;len = first_len;
+		iph-&gt;tot_len = htons(first_len);
+		iph-&gt;frag_off = htons(IP_MF);
+		ip_send_check(iph);
+
+		<span style="color: #FF1493;">for</span> (;;) {
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Prepare header of the next frame,</span>
+<span style="color: #8B8878;">                         * before previous one went down.</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (frag) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#39318;&#20010;&#20998;&#29255;&#65288;skb&#65289;&#65292;&#21021;&#22987;&#21270;&#19979;&#19968;&#20010;&#20998;&#29255;&#30340;skb&#21644;IP&#39318;&#37096;</span>
+				frag-&gt;ip_summed = CHECKSUM_NONE;
+				frag-&gt;h.raw = frag-&gt;data;
+				frag-&gt;nh.raw = __skb_push(frag, hlen);
+				memcpy(frag-&gt;nh.raw, iph, hlen);
+				iph = frag-&gt;nh.iph;
+				iph-&gt;tot_len = htons(frag-&gt;len);
+				ip_copy_metadata(frag, skb);
+				<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                                    &#19968;&#20123;ip&#36873;&#39033;&#26080;&#38656;&#22797;&#21046;&#21040;&#21518;&#32493;&#20998;&#29255;&#65292;&#25152;&#20197;&#39318;&#27425;&#24490;&#29615;&#26102;&#65292;&#35774;&#32622;&#31532;&#20108;&#20010;&#20998;&#29255;&#30340;IP&#36873;&#39033;&#65292;</span>
+<span style="color: #8B8878;">                                &#21518;&#32493;&#30340;&#20998;&#29255;&#30452;&#25509;&#25335;&#36125;&#19978;&#19968;&#20010;&#20998;&#29255;&#21363;&#21487;&#12290;</span>
+<span style="color: #8B8878;">                                */</span>
+				<span style="color: #FF1493;">if</span> (offset == 0)
+					ip_options_fragment(frag);
+				offset += skb-&gt;len - hlen;
+				iph-&gt;frag_off = htons(offset&gt;&gt;3);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#21518;&#19968;&#20010;&#20998;&#29255;&#30340;&#20559;&#31227;</span>
+				<span style="color: #FF1493;">if</span> (frag-&gt;next != <span style="color: #AF87FF;">NULL</span>)
+					iph-&gt;frag_off |= htons(IP_MF);
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Ready, complete checksum</span><span style="color: #8B8878;"> */</span>
+				ip_send_check(iph); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26657;&#39564;&#21644;</span>
+			}
+
+			err = output(skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#24403;&#21069;&#20998;&#29255;</span>
+
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>err)
+				IP_INC_STATS(IPSTATS_MIB_FRAGCREATES);
+			<span style="color: #FF1493;">if</span> (err || <span style="color: #CDC673; font-weight: bold;">!</span>frag) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26377;&#19968;&#20010;&#20998;&#29255;&#22833;&#36133;&#65292;&#21017;&#21518;&#32493;&#23558;&#19981;&#20877;&#21457;&#36865;</span>
+				<span style="color: #FF1493;">break</span>;
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#29702;&#19979;&#19968;&#20010;&#20998;&#29255;</span>
+			skb = frag;
+			frag = skb-&gt;next;
+			skb-&gt;next = <span style="color: #AF87FF;">NULL</span>;
+		}
+
+		<span style="color: #FF1493;">if</span> (err == 0) {
+			IP_INC_STATS(IPSTATS_MIB_FRAGOKS);
+			<span style="color: #FF1493;">return</span> 0;
+		}
+
+		<span style="color: #FF1493;">while</span> (frag) {
+			skb = frag-&gt;next;
+			kfree_skb(frag);
+			frag = skb;
+		}
+		IP_INC_STATS(IPSTATS_MIB_FRAGFAILS);
+		<span style="color: #FF1493;">return</span> err;
+	}
+
+<span style="color: #AF87FF;">slow_path</span>:
+	left = skb-&gt;len - hlen;       <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">IP&#25968;&#25454;&#25253;&#30340;&#25968;&#25454;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	ptr = raw + hlen;               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25968;&#25454;&#21306;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26725;&#25509;&#20013;&#36716;&#21457;&#22522;&#20110;VLAN&#30340;ip&#25968;&#25454;&#25253;&#65292;&#21017;&#38656;&#35201;&#33719;&#21462;VLAN&#39318;&#37096;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+	pad = nf_bridge_pad(skb);
+	ll_rs = LL_RESERVED_SPACE_EXTRA(rt-&gt;u.dst.dev, pad);
+	mtu -= pad;
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Fragment the datagram.</span>
+<span style="color: #8B8878;">         */</span>
+
+	offset = (ntohs(iph-&gt;frag_off) &amp; IP_OFFSET) &lt;&lt; 3;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#37096;&#20013;&#30340;&#20998;&#29255;&#20559;&#31227;&#20540;</span>
+	not_last_frag = iph-&gt;frag_off &amp; htons(IP_MF);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;MF&#26631;&#24535;&#20301;&#20301;&#30340;&#20540;</span>
+
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         *      Keep copying data until we run out.</span>
+<span style="color: #8B8878;">         */</span>
+
+	<span style="color: #FF1493;">while</span>(left &gt; 0) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24490;&#29615;&#23545;left&#38271;&#24230;&#30340;&#25968;&#25454;&#36827;&#34892;&#20998;&#29255;</span>
+		len = left;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IF: it doesn't fit, use 'mtu' - the data space left</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (len &gt; mtu)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20197;mtu&#20026;&#20998;&#29255;&#38271;&#24230;</span>
+			len = mtu;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">IF: we are not sending upto and including the packet end</span>
+<span style="color: #8B8878;">                   then align the next start on an eight byte boundary</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (len &lt; left) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#26159;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#65292;&#21017;&#38656;&#35201;8&#23383;&#33410;&#23545;&#40784;</span>
+			len &amp;= ~7;
+		}
+		<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                 *      Allocate buffer.</span>
+<span style="color: #8B8878;">                 */</span>
+
+		<span style="color: #FF1493;">if</span> ((skb2 = alloc_skb(len+hlen+ll_rs, GFP_ATOMIC)) == <span style="color: #AF87FF;">NULL</span>) {
+			NETDEBUG(KERN_INFO <span style="color: #CDC673;">"IP: frag: no memory for new fragment!\n"</span>);
+			err = -ENOMEM;
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">fail</span>;
+		}
+
+		<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                 *      Set up data on packet</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22635;&#20805;&#26032;&#20998;&#37197;&#30340;SKB</span>
+		ip_copy_metadata(skb2, skb);
+		skb_reserve(skb2, ll_rs);
+		skb_put(skb2, len + hlen);
+		skb2-&gt;nh.raw = skb2-&gt;data;
+		skb2-&gt;h.raw = skb2-&gt;data + hlen;
+
+		<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                 *      Charge the memory for the fragment to any owner</span>
+<span style="color: #8B8878;">                 *      it might possess</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (skb-&gt;sk)
+			skb_set_owner_w(skb2, skb-&gt;sk);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22797;&#21046;IP&#39318;&#37096;&#21040;SKB&#20013;</span><span style="color: #8B8878;"> */</span>
+		memcpy(skb2-&gt;nh.raw, skb-&gt;data, hlen);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22797;&#21046;IP&#20998;&#29255;&#25968;&#25454;</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (skb_copy_bits(skb, ptr, skb2-&gt;h.raw, len))
+			BUG();
+		left -= len;
+
+		<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                 *      Fill in the new header fields.</span>
+<span style="color: #8B8878;">                 */</span>
+		iph = skb2-&gt;nh.iph;
+		iph-&gt;frag_off = htons((offset &gt;&gt; 3)); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#20998;&#29255;&#20559;&#31227;&#23383;&#27573;</span>
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ANK: dirty, but effective trick. Upgrade options only if</span>
+<span style="color: #8B8878;">                 * the segment to be fragmented was THE FIRST (otherwise,</span>
+<span style="color: #8B8878;">                 * options are already fixed) and make it ONCE</span>
+<span style="color: #8B8878;">                 * on the initial skb, so that all the following fragments</span>
+<span style="color: #8B8878;">                 * will inherit fixed options.</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (offset == 0) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19968;&#20123;&#36873;&#39033;&#21482;&#38656;&#35201;&#23384;&#22312;&#20110;&#39318;&#20010;&#20998;&#29255;&#20013;</span>
+			ip_options_fragment(skb);
+
+		<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                 *      Added AC : If we are fragmenting a fragment that's not the</span>
+<span style="color: #8B8878;">                 *                 last fragment then keep MF on each bit</span>
+<span style="color: #8B8878;">                 */</span>
+		<span style="color: #FF1493;">if</span> (left &gt; 0 || not_last_frag)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38750;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#65292;&#38656;&#35201;&#35774;&#32622;IP_MF</span>
+			iph-&gt;frag_off |= htons(IP_MF);
+		ptr += len;
+		offset += len;
+
+		<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                 *      Put this fragment into the sending queue.</span>
+<span style="color: #8B8878;">                 */</span>
+		iph-&gt;tot_len = htons(len + hlen);
+		ip_send_check(iph);
+		err = output(skb2);
+		<span style="color: #FF1493;">if</span> (err)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">fail</span>;
+		IP_INC_STATS(IPSTATS_MIB_FRAGCREATES);
+	}
+	kfree_skb(skb);
+	IP_INC_STATS(IPSTATS_MIB_FRAGOKS);
+	<span style="color: #FF1493;">return</span> err;
+<span style="color: #AF87FF;">fail</span>:
+	kfree_skb(skb);
+	IP_INC_STATS(IPSTATS_MIB_FRAGFAILS);
+	<span style="color: #FF1493;">return</span> err;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga9cc250" class="outline-2">
+<h2 id="orga9cc250"><span class="section-number-2">3</span> 组装</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+接收方在接收某个数据报的分片时，需要将该数据报所有分片组合后，才可以提交到上层协议。 通过 struct ipq 结构的实例来表示被组合的IP数据报。
+</p>
+</div>
+
+<div id="outline-container-org7869066" class="outline-3">
+<h3 id="org7869066"><span class="section-number-3">3.1</span> ipq结构</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+为了能够高效的组装分片，ipq结构需要满足一下要求：
+</p>
+<ul class="org-ul">
+<li>快速定位属于某一数据报的一组分片。</li>
+<li>在属于某一数据报的一组分片中快速插入新的分片。</li>
+<li>有效的判断一个数据报的分片是否已经全部接收。</li>
+<li>具有组装超时机制，如果超时，则删除该数据报的所有内容。</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Describe an entry in the "incomplete datagrams" queue.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> {
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> <span style="color: #FF8C00;">list</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#22312;ipq_hash&#25955;&#21015;&#34920;&#20013;&#36830;&#25509;&#20026;&#21452;&#21521;&#38142;&#34920;</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#36830;&#25509;&#21040;&#20840;&#23616;&#30340; ipq_lru_list &#38142;&#34920;&#20013;&#12290;&#35813;&#38142;&#34920;&#29992;&#20110;&#22403;&#22334;&#22238;&#25910;&#65292;&#24403;IP&#32452;&#35013;&#27169;&#22359;&#28040;&#32791;&#20869;&#23384;&#23707;&#23679;&#19978;&#38480;&#26102;&#65292;&#22238;&#25910;&#20998;&#29255;</span><span style="color: #8B8878;">  */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">lru_list</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#26631;&#35782;&#20998;&#29255;&#26469;&#28304;</span>
+<span style="color: #8B8878;">                IP_DEFRAG_LOCAL_DELIVER  &#26469;&#33258;&#32593;&#32476;&#20027;&#26426;&#25110;&#32773;&#26412;&#22320;&#29615;&#22238;&#21475;&#30340;&#20998;&#29255;</span>
+<span style="color: #8B8878;">                IP_DEFRAG_CALL_RA_CHAIN  &#21547;&#26377;&#36335;&#30001;&#35686;&#21578;&#36873;&#39033;&#30340;IP&#20998;&#29255;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #5FD7FF;">u32</span>             <span style="color: #FF8C00;">user</span>;
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">saddr</span>;
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">daddr</span>;
+	<span style="color: #5FD7FF;">__be16</span>          <span style="color: #FF8C00;">id</span>;
+	<span style="color: #5FD7FF;">u8</span>              <span style="color: #FF8C00;">protocol</span>;
+	<span style="color: #5FD7FF;">u8</span>              <span style="color: #FF8C00;">last_in</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">last_in &#30340;&#21462;&#20540;</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">COMPLETE</span>                4   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25152;&#26377;&#20998;&#29255;&#37117;&#24050;&#32463;&#36798;&#21040;</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FIRST_IN</span>                2   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31532;&#19968;&#20010;&#20998;&#29255;&#24050;&#32463;&#21040;&#36798;&#65292;&#31532;&#19968;&#20010;&#20998;&#29255;&#21253;&#21547;&#20102;&#25152;&#26377;&#30340;IP&#36873;&#39033;</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">LAST_IN</span>         1   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#24050;&#32463;&#21040;&#36798;&#65292;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#24102;&#26377;&#21407;&#22987;&#25968;&#25454;&#25253;&#30340;&#38271;&#24230;&#20449;&#24687;</span>
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>  *<span style="color: #FF8C00;">fragments</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#38142;&#25509;&#24050;&#32463;&#25509;&#25910;&#30340;&#20998;&#29255;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#24050;&#32463;&#25910;&#21040;&#30340;&#20998;&#29255;&#20013;&#65292;offset&#26368;&#22823;&#30340;&#20998;&#29255;&#21152;&#19978;&#20854;&#38271;&#24230;&#20540;&#65292;&#24403;&#25910;&#21040;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#26102;&#65292;&#35813;&#20540;&#20195;&#34920;&#21407;&#22987;&#25968;&#25454;&#25253;&#38271;&#24230;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">len</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#25910;&#21040;&#30340;&#25152;&#26377;&#20998;&#29255;&#24635;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">meat</span>;
+	<span style="color: #5FD7FF;">spinlock_t</span>      <span style="color: #FF8C00;">lock</span>;
+	<span style="color: #5FD7FF;">atomic_t</span>        <span style="color: #FF8C00;">refcnt</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span> <span style="color: #FF8C00;">timer</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32452;&#35013;&#36229;&#26102;&#23450;&#26102;&#22120;</span><span style="color: #8B8878;">       */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timeval</span>  <span style="color: #FF8C00;">stamp</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#21040;&#36798;&#30340;&#26102;&#38388;</span>
+	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">iif</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#30340;&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;&#21495;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">rid</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#25509;&#25910;&#20998;&#29255;&#35745;&#25968;&#22120;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_peer</span> *<span style="color: #FF8C00;">peer</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#21457;&#36865;&#26041;&#20449;&#24687;</span>
+};
+</pre>
+</div>
+
+
+
+<div class="figure">
+<p><img src="image/ip-fragment/ipq-hash.png" alt="ipq-hash.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>ipq散列表</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdba14c6" class="outline-3">
+<h3 id="orgdba14c6"><span class="section-number-3">3.2</span> ipq散列表和链表的维护</h3>
+<div class="outline-text-3" id="text-3-2">
+<ul class="org-ul">
+<li>ipq_kill() 将组装定时器超时的ipq， 从ipq散列表及ipq_lry_list链表中删除，但是不释放。</li>
+<li>ipq_put()  用来释放ipq及分片。其中调用ip_frag_destroy()执行释放操作。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0ed31f2" class="outline-3">
+<h3 id="org0ed31f2"><span class="section-number-3">3.3</span> ipq散列表的重组</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+所有的分片重组都是通过ipq散列表进行。开始时ipq在散列表中的分布会比较均匀，但是一段时间后，经过不断的添加删除，ipq散列表中的ipq分布不再均匀，因此需要定时进行重组。
+</p>
+
+<ol class="org-ol">
+<li>ipfrag_init()</li>
+</ol>
+
+<p>
+ipq散列表的定时重组通过ipfrag_secret_timer定时器实现，在ipfrag_init()中对ipfrag_secret_timer定时器初始化。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ipfrag_init</span>(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#21644;ip&#39318;&#37096;&#30340;&#28304;&#22320;&#22336;&#12289;&#30446;&#30340;&#22320;&#22336;&#31561;&#26500;&#25104;ipq&#25955;&#21015;&#34920;&#30340;&#20851;&#38190;&#23383;&#12290;&#27599;&#27425;&#37325;&#32452;&#26102;&#26356;&#26032;</span>
+	ipfrag_hash_rnd = (u32) ((num_physpages ^ (num_physpages&gt;&gt;7)) ^
+				 (jiffies ^ (jiffies &gt;&gt; 6)));
+
+	init_timer(&amp;ipfrag_secret_timer);
+	ipfrag_secret_timer.function = ipfrag_secret_rebuild;
+	ipfrag_secret_timer.expires = jiffies + sysctl_ipfrag_secret_interval;
+	add_timer(&amp;ipfrag_secret_timer);
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>ipfrag_secret_rebuild()</li>
+</ol>
+
+<p>
+ipfrag_secret_rebuild()函数是ipfrag_secret_timer定时器的例程，用来重组ipq散列表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ipfrag_secret_rebuild</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">dummy</span>)
+{
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span> = jiffies;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
+
+	write_lock(&amp;ipfrag_lock);
+	get_random_bytes(&amp;ipfrag_hash_rnd, <span style="color: #FF1493;">sizeof</span>(u32)); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;ipfrag_hash_rnd</span>
+	<span style="color: #FF1493;">for</span> (i = 0; i &lt; IPQ_HASHSZ; i++) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;hash&#26742;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">q</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> *<span style="color: #FF8C00;">p</span>, *<span style="color: #FF8C00;">n</span>;
+		<span style="color: #8B8878;">//</span>
+		hlist_for_each_entry_safe(q, p, n, &amp;ipq_hash[i], list) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;hash&#26742;&#30340;&#38142;&#34920;</span>
+			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35745;&#31639;hash&#20540;</span>
+			<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hval</span> = ipqhashfn(q-&gt;id, q-&gt;saddr,
+						      q-&gt;daddr, q-&gt;protocol);
+
+			<span style="color: #FF1493;">if</span> (hval != i) {
+				hlist_del(&amp;q-&gt;list);
+
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Relink to new hash chain.</span><span style="color: #8B8878;"> */</span>
+				hlist_add_head(&amp;q-&gt;list, &amp;ipq_hash[hval]);
+			}
+		}
+	}
+	write_unlock(&amp;ipfrag_lock);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35774;&#32622;&#23450;&#26102;&#22120;</span>
+	mod_timer(&amp;ipfrag_secret_timer, now + sysctl_ipfrag_secret_interval);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org061abcb" class="outline-3">
+<h3 id="org061abcb"><span class="section-number-3">3.4</span> IP分片超时</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+如果ip分片已经超时，并且数据报的分片还未全部抵达，则删除已经抵达的所有分片。
+</p>
+
+<ol class="org-ol">
+<li>ip_frag_create()</li>
+</ol>
+
+<p>
+当接收到一个新的IP数据报的ip分片时，会创建对应的ipq，并初始化超时定时器。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Add an entry to the 'ipq' queue for a newly received IP datagram.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #87D700;">ip_frag_create</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">user</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>;
+
+	<span style="color: #FF1493;">if</span> ((qp = frag_alloc_queue()) == <span style="color: #AF87FF;">NULL</span>)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_nomem</span>;
+
+	qp-&gt;protocol = iph-&gt;protocol;
+	qp-&gt;last_in = 0;
+	qp-&gt;id = iph-&gt;id;
+	qp-&gt;saddr = iph-&gt;saddr;
+	qp-&gt;daddr = iph-&gt;daddr;
+	qp-&gt;user = user;
+	qp-&gt;len = 0;
+	qp-&gt;meat = 0;
+	qp-&gt;fragments = <span style="color: #AF87FF;">NULL</span>;
+	qp-&gt;iif = 0;
+	qp-&gt;peer = sysctl_ipfrag_max_dist ? inet_getpeer(iph-&gt;saddr, 1) : <span style="color: #AF87FF;">NULL</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#36229;&#26102;&#23450;&#26102;&#22120;</span><span style="color: #8B8878;"> */</span>
+	init_timer(&amp;qp-&gt;timer);
+	qp-&gt;timer.data = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>) qp;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">pointer to queue</span><span style="color: #8B8878;">     */</span>
+	qp-&gt;timer.function = ip_expire;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23450;&#26102;&#22120;&#30340;&#36229;&#26102;&#20363;&#31243;</span><span style="color: #8B8878;">     */</span>
+	spin_lock_init(&amp;qp-&gt;lock);
+	atomic_set(&amp;qp-&gt;refcnt, 1);
+	<span style="color: #FF1493;">return</span> ip_frag_intern(qp);
+<span style="color: #AF87FF;">out_nomem</span>:
+	LIMIT_NETDEBUG(KERN_ERR <span style="color: #CDC673;">"ip_frag_create: no memory left !\n"</span>);
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>ip_expire()</li>
+</ol>
+
+<p>
+ip_frag_create()中，将ip_expire()设置为超时的处理例程。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Oops, a fragment queue timed out.  Kill it and send an ICMP reply.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ip_expire</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *) arg;
+	spin_lock(&amp;qp-&gt;lock);
+	<span style="color: #FF1493;">if</span> (qp-&gt;last_in &amp; COMPLETE) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">COMPLETE&#29366;&#24577;&#65292;&#21017;&#19981;&#29992;&#22788;&#29702;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+
+	ipq_kill(qp);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;ipq&#25955;&#21015;&#34920;&#21450;ipq_lru_list&#38142;&#34920;&#20013;&#21024;&#38500;</span>
+
+	IP_INC_STATS_BH(IPSTATS_MIB_REASMTIMEOUT);
+	IP_INC_STATS_BH(IPSTATS_MIB_REASMFAILS);
+
+	<span style="color: #FF1493;">if</span> ((qp-&gt;last_in&amp;FIRST_IN) &amp;&amp; qp-&gt;fragments != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#20010;&#20998;&#29255;&#24050;&#32463;&#21040;&#36798;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">head</span> = qp-&gt;fragments;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21457;&#36865; &#8220;&#20998;&#29255;&#32452;&#35013;&#36229;&#26102;&#8221; &#30340;ICMP &#28040;&#24687;.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> ((head-&gt;dev = dev_get_by_index(qp-&gt;iif)) != <span style="color: #AF87FF;">NULL</span>) {
+			icmp_send(head, ICMP_TIME_EXCEEDED, ICMP_EXC_FRAGTIME, 0);
+			dev_put(head-&gt;dev);
+		}
+	}
+<span style="color: #AF87FF;">out</span>:
+	spin_unlock(&amp;qp-&gt;lock);
+	ipq_put(qp, <span style="color: #AF87FF;">NULL</span>); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;ipq&#21450;&#20854;&#25152;&#26377;&#20998;&#29255;</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4ab1e67" class="outline-3">
+<h3 id="org4ab1e67"><span class="section-number-3">3.5</span> 垃圾回收</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+全局变量 <i><b>ip_frag_mem</b></i> 保存了ipq散列表占用的内存。
+</p>
+
+<p>
+有两个阈值用于控制IP分片组装所占用的内存：ipfrag_high_thresh和ipfrag_low_thresh。  当ip_frag_mem大于ipfrag_high_thresh时，调用ip_evictor进行清理，直到 ip_frag_mem 小于 ipfrag_low_thresh 。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Memory limiting on fragments.  Evictor trashes the oldest</span>
+<span style="color: #8B8878;"> * fragment queue until we are back under the threshold.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ip_evictor</span>(<span style="color: #5FD7FF;">void</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> *<span style="color: #FF8C00;">tmp</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">work</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#38656;&#35201;&#28165;&#29702;&#30340;&#25968;&#37327;&#12290;</span>
+	work = atomic_read(&amp;ip_frag_mem) - sysctl_ipfrag_low_thresh;
+	<span style="color: #FF1493;">if</span> (work &lt;= 0)
+		<span style="color: #FF1493;">return</span>;
+
+	<span style="color: #FF1493;">while</span> (work &gt; 0) {
+		read_lock(&amp;ipfrag_lock);
+		<span style="color: #FF1493;">if</span> (list_empty(&amp;ipq_lru_list)) {
+			read_unlock(&amp;ipfrag_lock);
+			<span style="color: #FF1493;">return</span>;
+		}
+		tmp = ipq_lru_list.next;
+		qp = list_entry(tmp, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span>, lru_list);
+		atomic_inc(&amp;qp-&gt;refcnt);
+		read_unlock(&amp;ipfrag_lock);
+
+		spin_lock(&amp;qp-&gt;lock);
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(qp-&gt;last_in&amp;COMPLETE)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#29255;&#36824;&#26410;&#21040;&#40784;</span>
+			ipq_kill(qp);
+		spin_unlock(&amp;qp-&gt;lock);
+		ipq_put(qp, &amp;work); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;ipq&#21450;&#20854;&#25152;&#26377;&#20998;&#29255;</span>
+		IP_INC_STATS_BH(IPSTATS_MIB_REASMFAILS);
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org71373ec" class="outline-3">
+<h3 id="org71373ec"><span class="section-number-3">3.6</span> 分片组装相关函数</h3>
+<div class="outline-text-3" id="text-3-6">
+<ol class="org-ol">
+<li>ip_find()，根据分片的ip首部及user标志，在ipq散列表中寻找对应的ipq，没有找到则创建新的ipq。</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Find the correct entry in the "incomplete datagrams" queue for</span>
+<span style="color: #8B8878;"> * this IP datagram, and create new one, if nothing is found.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #87D700;">ip_find</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">user</span>)
+{
+	<span style="color: #5FD7FF;">__be16</span> <span style="color: #FF8C00;">id</span> = iph-&gt;id;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span> = iph-&gt;saddr;
+	<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">daddr</span> = iph-&gt;daddr;
+	<span style="color: #5FD7FF;">__u8</span> <span style="color: #FF8C00;">protocol</span> = iph-&gt;protocol;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hash</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> *<span style="color: #FF8C00;">n</span>;
+
+	read_lock(&amp;ipfrag_lock);
+	hash = ipqhashfn(id, saddr, daddr, protocol); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;hash&#20540;</span>
+	hlist_for_each_entry(qp, n, &amp;ipq_hash[hash], list) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#35813;&#26742;&#30340;&#38142;&#34920;</span>
+		<span style="color: #FF1493;">if</span>(qp-&gt;id == id         &amp;&amp;
+		   qp-&gt;saddr == saddr   &amp;&amp;
+		   qp-&gt;daddr == daddr   &amp;&amp;
+		   qp-&gt;protocol == protocol &amp;&amp;
+		   qp-&gt;user == user) {
+			atomic_inc(&amp;qp-&gt;refcnt);
+			read_unlock(&amp;ipfrag_lock);
+			<span style="color: #FF1493;">return</span> qp;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25214;&#21040;</span>
+		}
+	}
+	read_unlock(&amp;ipfrag_lock);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26410;&#25214;&#21040;&#65292;&#21019;&#24314;&#26032;&#30340;ipq</span>
+	<span style="color: #FF1493;">return</span> ip_frag_create(iph, user);
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>ip_frag_create()，创建ipq，并插入ipq散列表。</li>
+
+<li>ip_frag_intern()，将新创建的ipq插入ipq散列表和ipq_lru_list链表。</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Creation primitives.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #87D700;">ip_frag_intern</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp_in</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>;
+<span style="color: #FF1493;">#ifdef</span> CONFIG_SMP
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span> *<span style="color: #FF8C00;">n</span>;
+<span style="color: #FF1493;">#endif</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hash</span>;
+
+	write_lock(&amp;ipfrag_lock);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;hash&#20540;</span>
+	hash = ipqhashfn(qp_in-&gt;id, qp_in-&gt;saddr, qp_in-&gt;daddr,
+			 qp_in-&gt;protocol);
+<span style="color: #FF1493;">#ifdef</span> CONFIG_SMP
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">With SMP race we have to recheck hash table, because</span>
+<span style="color: #8B8878;">         * such entry could be created on other cpu, while we</span>
+<span style="color: #8B8878;">         * promoted read lock to write lock.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #87D700;">hlist_for_each_entry</span>(qp, n, &amp;ipq_hash[hash], list) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#35813;&#26742;&#30340;&#38142;&#34920;</span>
+		<span style="color: #FF1493;">if</span>(qp-&gt;id == qp_in-&gt;id          &amp;&amp;
+		   qp-&gt;saddr == qp_in-&gt;saddr    &amp;&amp;
+		   qp-&gt;daddr == qp_in-&gt;daddr    &amp;&amp;
+		   qp-&gt;protocol == qp_in-&gt;protocol &amp;&amp;
+		   qp-&gt;user == qp_in-&gt;user) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#23384;&#22312;&#65292;&#21017;&#38656;&#35201;&#37322;&#25918;&#24453;&#25554;&#20837;&#30340;ipq</span>
+			atomic_inc(&amp;qp-&gt;refcnt);
+			write_unlock(&amp;ipfrag_lock);
+			qp_in-&gt;last_in |= COMPLETE;
+			ipq_put(qp_in, <span style="color: #AF87FF;">NULL</span>);
+			<span style="color: #FF1493;">return</span> qp;
+		}
+	}
+<span style="color: #FF1493;">#endif</span>
+	qp = qp_in;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23433;&#35013;&#32452;&#35013;&#23450;&#26102;&#22120;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>mod_timer(&amp;qp-&gt;timer, jiffies + sysctl_ipfrag_time))
+		atomic_inc(&amp;qp-&gt;refcnt);
+
+	atomic_inc(&amp;qp-&gt;refcnt);
+	hlist_add_head(&amp;qp-&gt;list, &amp;ipq_hash[hash]); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#21040;hash&#34920;</span>
+	INIT_LIST_HEAD(&amp;qp-&gt;lru_list);
+	list_add_tail(&amp;qp-&gt;lru_list, &amp;ipq_lru_list); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;&#21040;ipq_lru_list&#38142;&#34920;</span>
+	ip_frag_nqueues++;
+	write_unlock(&amp;ipfrag_lock);
+	<span style="color: #FF1493;">return</span> qp;
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>ip_frag_queue(), 将分片SKB添加到qb指定的ipq的分片链表。</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Add new segment to existing queue.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ip_frag_queue</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">prev</span>, *<span style="color: #FF8C00;">next</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #FF8C00;">offset</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ihl</span>, <span style="color: #FF8C00;">end</span>;
+
+	<span style="color: #FF1493;">if</span> (qp-&gt;last_in &amp; COMPLETE) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#24050;&#32463;&#20840;&#37096;&#25509;&#25910;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#26159;&#21542;&#21463;&#21040;Dos&#25915;&#20987;</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(IPCB(skb)-&gt;flags &amp; IPSKB_FRAG_COMPLETE) &amp;&amp;
+	    unlikely(ip_frag_too_far(qp)) &amp;&amp; unlikely(ip_frag_reinit(qp))) {
+		ipq_kill(qp);
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+	}
+
+	offset = ntohs(skb-&gt;nh.iph-&gt;frag_off); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#20986;&#20998;&#29255;&#20559;&#31227;</span>
+	flags = offset &amp; ~IP_OFFSET;
+	offset &amp;= IP_OFFSET;
+	offset &lt;&lt;= 3;           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20998;&#29255;&#20559;&#31227;&#20195;&#34920;8&#23383;&#33410;&#30340;&#20493;&#25968;</span><span style="color: #8B8878;"> */</span>
+	ihl = skb-&gt;nh.iph-&gt;ihl * 4; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">IP&#39318;&#37096;&#38271;&#24230;</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35745;&#31639;&#20998;&#29255;&#26411;&#23614;&#22788;&#22312;&#21407;&#22987;&#25968;&#25454;&#21253;&#20013;&#30340;&#20301;&#32622;</span><span style="color: #8B8878;"> */</span>
+	end = offset + skb-&gt;len - ihl;
+
+	<span style="color: #FF1493;">if</span> ((flags &amp; IP_MF) == 0) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;IP_MF&#26631;&#24535;&#65292;&#21017;&#20026;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;</span>
+		<span style="color: #FF1493;">if</span> (end &lt; qp-&gt;len ||   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26411;&#23614;&#20301;&#32622;&#23567;&#20110;&#21407;&#22987;&#25968;&#25454;&#21253;&#38271;&#24230;</span>
+		    ((qp-&gt;last_in &amp; LAST_IN) &amp;&amp; end != qp-&gt;len)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#26377;LAST_IN&#26631;&#24535;&#65292;&#20294;&#26159;&#26411;&#23614;&#20301;&#32622;&#19981;&#31561;&#20110;&#21407;&#22987;&#25968;&#25454;&#21253;&#38271;&#24230;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+		qp-&gt;last_in |= LAST_IN;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;LAST_IN&#26631;&#24535;</span>
+		qp-&gt;len = end;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#23436;&#25972;&#25968;&#25454;&#21253;&#38271;&#24230;</span>
+	} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19981;&#26159;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;</span>
+		<span style="color: #FF1493;">if</span> (end&amp;7) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;8&#23383;&#33410;&#23545;&#40784;</span>
+			end &amp;= ~7; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25130;&#26029;&#20026;8&#23383;&#33410;&#23545;&#40784;</span>
+			<span style="color: #FF1493;">if</span> (skb-&gt;ip_summed != CHECKSUM_UNNECESSARY)
+				skb-&gt;ip_summed = CHECKSUM_NONE; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#37325;&#26032;&#35745;&#31639;&#26657;&#39564;&#21644;</span>
+		}
+		<span style="color: #FF1493;">if</span> (end &gt; qp-&gt;len) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#26356;&#26032;len&#23383;&#27573;</span>
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Some bits beyond end -&gt; corruption.</span><span style="color: #8B8878;"> */</span>
+			<span style="color: #FF1493;">if</span> (qp-&gt;last_in &amp; LAST_IN)
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+			qp-&gt;len = end;
+		}
+	}
+	<span style="color: #FF1493;">if</span> (end == offset) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30456;&#31561;&#20195;&#34920;&#20998;&#29255;&#25968;&#25454;&#21306;&#38271;&#24230;&#20026;0</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21435;&#25481;IP&#39318;&#37096;</span>
+	<span style="color: #FF1493;">if</span> (pskb_pull(skb, ihl) == <span style="color: #AF87FF;">NULL</span>)
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+	<span style="color: #FF1493;">if</span> (pskb_trim_rcsum(skb, end-offset)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#25972;SKB&#25968;&#25454;&#21306;&#38271;&#24230;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Find out which fragments are in front and at the back of us</span>
+<span style="color: #8B8878;">         * in the chain of fragments so far.  We must know where to put</span>
+<span style="color: #8B8878;">         * this fragment, right?</span>
+<span style="color: #8B8878;">         */</span>
+	prev = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">for</span>(next = qp-&gt;fragments; next != <span style="color: #AF87FF;">NULL</span>; next = next-&gt;next) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#23450;&#20998;&#29255;&#22312;&#38142;&#34920;&#20013;&#30340;&#20301;&#32622;</span>
+		<span style="color: #FF1493;">if</span> (FRAG_CB(next)-&gt;offset &gt;= offset)
+			<span style="color: #FF1493;">break</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">bingo!</span><span style="color: #8B8878;"> */</span>
+		prev = next;
+	}
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">We found where to put this one.  Check for overlap with</span>
+<span style="color: #8B8878;">         * preceding fragment, and, if needed, align things so that</span>
+<span style="color: #8B8878;">         * any overlaps are eliminated.</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span> (prev) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#21644;&#19978;&#19968;&#20010;&#20998;&#29255;&#30340;&#25968;&#25454;&#26159;&#21542;&#37325;&#21472;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span> = (FRAG_CB(prev)-&gt;offset + prev-&gt;len) - offset;
+
+		<span style="color: #FF1493;">if</span> (i &gt; 0) {
+			offset += i;
+			<span style="color: #FF1493;">if</span> (end &lt;= offset)
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>pskb_pull(skb, i))
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+			<span style="color: #FF1493;">if</span> (skb-&gt;ip_summed != CHECKSUM_UNNECESSARY)
+				skb-&gt;ip_summed = CHECKSUM_NONE;
+		}
+	}
+
+	<span style="color: #FF1493;">while</span> (next &amp;&amp; FRAG_CB(next)-&gt;offset &lt; end) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#26159;&#21542;&#21644;&#21518;&#19968;&#20010;&#20998;&#29255;&#30340;&#25968;&#25454;&#26377;&#37325;&#21472;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span> = end - FRAG_CB(next)-&gt;offset; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">overlap is 'i' bytes</span><span style="color: #8B8878;"> */</span>
+
+		<span style="color: #FF1493;">if</span> (i &lt; next-&gt;len) {
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Eat head of the next overlapped fragment</span>
+<span style="color: #8B8878;">                         * and leave the loop. The next ones cannot overlap.</span>
+<span style="color: #8B8878;">                         */</span>
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>pskb_pull(next, i))
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">err</span>;
+			FRAG_CB(next)-&gt;offset += i;
+			qp-&gt;meat -= i;
+			<span style="color: #FF1493;">if</span> (next-&gt;ip_summed != CHECKSUM_UNNECESSARY)
+				next-&gt;ip_summed = CHECKSUM_NONE;
+			<span style="color: #FF1493;">break</span>;
+		} <span style="color: #FF1493;">else</span> {
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">free_it</span> = next;
+
+			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Old fragment is completely overridden with</span>
+<span style="color: #8B8878;">                         * new one drop it.</span>
+<span style="color: #8B8878;">                         */</span>
+			next = next-&gt;next;
+
+			<span style="color: #FF1493;">if</span> (prev)
+				prev-&gt;next = next;
+			<span style="color: #FF1493;">else</span>
+				qp-&gt;fragments = next;
+
+			qp-&gt;meat -= free_it-&gt;len;
+			frag_kfree_skb(free_it, <span style="color: #AF87FF;">NULL</span>);
+		}
+	}
+
+	FRAG_CB(skb)-&gt;offset = offset; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#24403;&#21069;&#20998;&#29255;&#30340;&#20559;&#31227;&#20540;</span>
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23558;&#20998;&#29255;&#25554;&#20837;&#21040;&#23545;&#24212;&#20301;&#32622;</span><span style="color: #8B8878;"> */</span>
+	skb-&gt;next = next;
+	<span style="color: #FF1493;">if</span> (prev)
+		prev-&gt;next = skb;
+	<span style="color: #FF1493;">else</span>
+		qp-&gt;fragments = skb;
+
+	<span style="color: #FF1493;">if</span> (skb-&gt;dev)
+		qp-&gt;iif = skb-&gt;dev-&gt;ifindex;
+	skb-&gt;dev = <span style="color: #AF87FF;">NULL</span>;
+	skb_get_timestamp(skb, &amp;qp-&gt;stamp); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#25509;&#25910;&#26102;&#38388;&#25139;</span>
+	qp-&gt;meat += skb-&gt;len;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;ipq&#30340;&#24635;&#38271;&#24230;</span>
+	atomic_add(skb-&gt;truesize, &amp;ip_frag_mem);
+	<span style="color: #FF1493;">if</span> (offset == 0)
+		qp-&gt;last_in |= FIRST_IN; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#20010;&#20998;&#29255;&#65292;&#21017;&#35774;&#32622;FIRST_IN&#26631;&#24535;</span>
+
+	write_lock(&amp;ipfrag_lock);
+	list_move_tail(&amp;qp-&gt;lru_list, &amp;ipq_lru_list); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#25972;ipq&#22312; ipq_lru_list &#20013;&#30340;&#20301;&#32622;&#12290;</span>
+	write_unlock(&amp;ipfrag_lock);
+	<span style="color: #FF1493;">return</span>;
+<span style="color: #AF87FF;">err</span>:
+	kfree_skb(skb);
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>ip_frag_reasm()，用于组装已到齐的所有分片。</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Build a new IP datagram from all its fragments.</span><span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">ip_frag_reasm</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">fp</span>, *<span style="color: #FF8C00;">head</span> = qp-&gt;fragments;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ihlen</span>;
+	<span style="color: #87D700;">ipq_kill</span>(qp); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;ipq&#25955;&#21015;&#34920;&#21450;ipq_lry_list&#20013;&#21024;&#38500;&#65292;&#24182;&#21024;&#38500;&#23450;&#26102;&#22120;</span>
+	<span style="color: #87D700;">BUG_TRAP</span>(head != <span style="color: #AF87FF;">NULL</span>);
+	<span style="color: #87D700;">BUG_TRAP</span>(<span style="color: #5FD7FF;">FRAG_CB</span>(<span style="color: #FF8C00;">head</span>)-&gt;offset == 0);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Allocate a new buffer for the datagram.</span><span style="color: #8B8878;"> */</span>
+	ihlen = head-&gt;nh.iph-&gt;ihl*4;
+	len = ihlen + qp-&gt;len;
+
+	<span style="color: #FF1493;">if</span>(len &gt; 65535)<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24635;&#38271;&#24230;&#36229;&#36807;64KB&#65292;&#21017;&#20002;&#24323;</span>
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_oversize</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25152;&#26377;&#20998;&#29255;&#37117;&#20250;&#32452;&#35013;&#21040;&#31532;&#19968;&#20010;&#20998;&#29255;&#19978;&#65292;&#25152;&#20197;&#39318;&#20010;&#20998;&#29255;&#19981;&#33021;&#26159;&#20811;&#38534;&#30340;&#12290;</span>
+<span style="color: #8B8878;">        &#22914;&#26524;&#26159;&#20811;&#38534;&#30340;&#65292;&#21017;&#38656;&#35201;&#37325;&#26032;&#20998;&#37197;SKB</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (skb_cloned(head) &amp;&amp; pskb_expand_head(head, 0, 0, GFP_ATOMIC))
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_nomem</span>;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If the first fragment is fragmented itself, we split</span>
+<span style="color: #8B8878;">         * it to two chunks: the first with data and paged part</span>
+<span style="color: #8B8878;">         * and the second, holding only fragments.</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #8B8878;">/*  </span><span style="color: #8B8878;">&#20998;&#29255;&#38431;&#21015;&#30340;&#39318;&#20010;SKB&#19981;&#33021;&#26082;&#24102;&#26377;&#25968;&#25454;&#65292;&#26377;&#24102;&#26377;&#20998;&#29255;&#65292;&#21363;frag_list&#19978;&#19981;&#33021;&#26377;&#20998;&#29255;&#65292;</span>
+<span style="color: #8B8878;">         &#22914;&#26524;&#26377;&#21017;&#37325;&#26032;&#20998;&#37197;SKB&#12290;</span>
+
+<span style="color: #8B8878;">            &#26368;&#32456;&#25928;&#26524;&#26159;&#65292;head&#33258;&#36523;&#19981;&#21253;&#25324;&#25968;&#25454;&#65292;&#20854;frag_list&#19978;&#36830;&#25509;&#36825;&#25152;&#26377;&#20998;&#29255;&#30340;SKB&#12290;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #FF1493;">if</span> (skb_shinfo(head)-&gt;frag_list) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">clone</span>;
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>, <span style="color: #FF8C00;">plen</span> = 0;
+
+		<span style="color: #FF1493;">if</span> ((clone = alloc_skb(0, GFP_ATOMIC)) == <span style="color: #AF87FF;">NULL</span>)
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_nomem</span>;
+		clone-&gt;next = head-&gt;next;
+		head-&gt;next = clone;
+		skb_shinfo(clone)-&gt;frag_list = skb_shinfo(head)-&gt;frag_list;
+		skb_shinfo(head)-&gt;frag_list = <span style="color: #AF87FF;">NULL</span>;
+		<span style="color: #FF1493;">for</span> (i=0; i&lt;skb_shinfo(head)-&gt;nr_frags; i++)
+			plen += skb_shinfo(head)-&gt;frags[i].size;
+		clone-&gt;len = clone-&gt;data_len = head-&gt;data_len - plen;
+		head-&gt;data_len -= clone-&gt;len;
+		head-&gt;len -= clone-&gt;len;
+		clone-&gt;csum = 0;
+		clone-&gt;ip_summed = head-&gt;ip_summed;
+		atomic_add(clone-&gt;truesize, &amp;ip_frag_mem);
+	}
+
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#25152;&#26377;&#20998;&#29255;&#36830;&#25509;&#21040;&#31532;&#19968;&#20010;SKB&#30340;frag_list&#19978;</span>
+	<span style="color: #87D700;">skb_shinfo</span>(head)-&gt;frag_list = head-&gt;next;
+	<span style="color: #87D700;">skb_push</span>(head, head-&gt;data - head-&gt;nh.raw);
+	<span style="color: #87D700;">atomic_sub</span>(head-&gt;truesize, &amp;ip_frag_mem);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#25152;&#26377;&#20998;&#29255;&#65292;&#37325;&#26032;&#35745;&#31639;ip&#25968;&#25454;&#25253;&#38271;&#24230;&#12289;&#26657;&#39564;&#21644;&#31561;</span>
+	<span style="color: #FF1493;">for</span> (fp=head-&gt;next; fp; fp = fp-&gt;next) {
+		head-&gt;data_len += fp-&gt;len;
+		head-&gt;len += fp-&gt;len;
+		<span style="color: #FF1493;">if</span> (head-&gt;ip_summed != fp-&gt;ip_summed)
+			head-&gt;ip_summed = CHECKSUM_NONE;
+		<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (head-&gt;ip_summed == CHECKSUM_COMPLETE)
+			head-&gt;csum = csum_add(head-&gt;csum, fp-&gt;csum);
+		head-&gt;truesize += fp-&gt;truesize;
+		atomic_sub(fp-&gt;truesize, &amp;ip_frag_mem);
+	}
+
+	head-&gt;next = <span style="color: #AF87FF;">NULL</span>;
+	head-&gt;dev = dev;
+	<span style="color: #87D700;">skb_set_timestamp</span>(head, &amp;qp-&gt;stamp);
+
+	iph = head-&gt;nh.iph; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#37096;&#38271;&#24230;</span>
+	iph-&gt;frag_off = 0;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#29255;&#20559;&#31227;</span>
+	iph-&gt;tot_len = htons(len);
+	<span style="color: #87D700;">IP_INC_STATS_BH</span>(IPSTATS_MIB_REASMOKS);
+	qp-&gt;fragments = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">return</span> head;
+<span style="color: #AF87FF;">out_nomem</span>:
+	<span style="color: #87D700;">LIMIT_NETDEBUG</span>(KERN_ERR <span style="color: #CDC673;">"IP: queue_glue: no memory for gluing "</span>
+			      <span style="color: #CDC673;">"queue %p\n"</span>, qp);
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_fail</span>;
+<span style="color: #AF87FF;">out_oversize</span>:
+	<span style="color: #FF1493;">if</span> (net_ratelimit())
+		<span style="color: #87D700;">printk</span>(KERN_INFO
+			<span style="color: #CDC673;">"Oversized IP packet from %d.%d.%d.%d.\n"</span>,
+			NIPQUAD(qp-&gt;saddr));
+<span style="color: #AF87FF;">out_fail</span>:
+	<span style="color: #87D700;">IP_INC_STATS_BH</span>(IPSTATS_MIB_REASMFAILS);
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge188dc2" class="outline-3">
+<h3 id="orge188dc2"><span class="section-number-3">3.7</span> 分片组装</h3>
+<div class="outline-text-3" id="text-3-7">
+<p>
+分片组装过程分为三步：
+</p>
+
+<ol class="org-ol">
+<li>判断接收的IP数据报是否是分片，如果是，则需要组装。</li>
+
+<li>计算键值，从ipq散列表中查找对应的ipq实例，并插入ipq的分片链表。</li>
+
+<li>如果此时，该ipq所有分片到达，则组装为完成的IP数据报。</li>
+</ol>
+
+
+<div class="figure">
+<p><img src="image/ip-fragment/ip-defrag.png" alt="ip-defrag.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>分片组装流程</p>
+</div>
+
+<p>
+ip_defrag()用来进行分片组装。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Process an incoming IP datagram fragment.</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">ip_defrag</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">user</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iphdr</span> *<span style="color: #FF8C00;">iph</span> = skb-&gt;nh.iph;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipq</span> *<span style="color: #FF8C00;">qp</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>;
+
+	IP_INC_STATS_BH(IPSTATS_MIB_REASMREQDS);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ipq&#25955;&#21015;&#34920;&#28040;&#32791;&#20869;&#23384;&#26159;&#21542;&#22823;&#20110;&#38408;&#20540;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (atomic_read(&amp;ip_frag_mem) &gt; sysctl_ipfrag_high_thresh)
+		ip_evictor(); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25191;&#34892;&#28165;&#29702;&#25805;&#20316;</span>
+
+	dev = skb-&gt;dev;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26597;&#25214;&#25110;&#32773;&#21019;&#24314;&#20998;&#29255;&#25152;&#23646;&#30340;ipq&#23454;&#20363;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> ((qp = ip_find(iph, user)) != <span style="color: #AF87FF;">NULL</span>) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">ret</span> = <span style="color: #AF87FF;">NULL</span>;
+		spin_lock(&amp;qp-&gt;lock);
+		ip_frag_queue(qp, skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25554;&#20837;&#20998;&#29255;&#38142;&#34920;&#30340;&#36866;&#24403;&#20301;&#32622;</span>
+		<span style="color: #FF1493;">if</span> (qp-&gt;last_in == (FIRST_IN|LAST_IN) &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#39318;&#20010;&#20998;&#29255;&#21644;&#26368;&#21518;&#19968;&#20010;&#20998;&#29255;&#37117;&#24050;&#21463;&#21040;</span>
+		    qp-&gt;meat == qp-&gt;len)  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#25509;&#25910;&#30340;&#20998;&#29255;&#24635;&#38271;&#24230;&#31561;&#20110;&#21407;&#22987;&#25968;&#25454;&#25253;&#38271;&#24230;</span>
+			ret = ip_frag_reasm(qp, dev); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32452;&#35013;&#20998;&#29255;</span>
+
+		spin_unlock(&amp;qp-&gt;lock);
+		ipq_put(qp, <span style="color: #AF87FF;">NULL</span>); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;ipq&#21450;&#20854;&#25152;&#26377;&#20998;&#29255;&#12290;</span>
+		<span style="color: #FF1493;">return</span> ret;
+	}
+	IP_INC_STATS_BH(IPSTATS_MIB_REASMFAILS);
+	kfree_skb(skb);
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-01-07 Fri 23:25</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

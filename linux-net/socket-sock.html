@@ -1,0 +1,2080 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2022-04-25 Mon 22:45 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>传输控制块</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="nandfan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+	     margin-bottom: .2em; }
+  .subtitle { text-align: center;
+	      font-size: medium;
+	      font-weight: bold;
+	      margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+	    padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">传输控制块</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgadb7c45">1. 系统参数</a></li>
+<li><a href="#org64339a2">2. 传输描述块结构</a>
+<ul>
+<li><a href="#orga6255d4">2.1. sock_common结构</a></li>
+<li><a href="#org6dfa20c">2.2. sock结构</a></li>
+<li><a href="#org547e1b3">2.3. inet_sock结构</a></li>
+</ul>
+</li>
+<li><a href="#orge0832ba">3. proto结构</a>
+<ul>
+<li><a href="#org5940731">3.1. proto实例组织结构</a></li>
+<li><a href="#org04cdaeb">3.2. proto_register()</a></li>
+<li><a href="#org62e49b1">3.3. proto_unregister()</a></li>
+</ul>
+</li>
+<li><a href="#org056d1be">4. 传输控制块的内存管理</a>
+<ul>
+<li><a href="#org1235443">4.1. 传输控制块的分配和释放</a>
+<ul>
+<li><a href="#org7fc737d">4.1.1. sk_alloc()</a></li>
+<li><a href="#org1445460">4.1.2. sk_clone()</a></li>
+<li><a href="#org2951c07">4.1.3. sk_free()</a></li>
+<li><a href="#orge534870">4.1.4. sock_put()</a></li>
+</ul>
+</li>
+<li><a href="#org33535ea">4.2. 普通的发送缓存区的分配</a>
+<ul>
+<li><a href="#org4990f19">4.2.1. sock_alloc_send_skb()</a></li>
+<li><a href="#org42e12e2">4.2.2. sock_alloc_send_pskb()</a></li>
+<li><a href="#org99bd769">4.2.3. sock_wait_for_wmem()</a></li>
+</ul>
+</li>
+<li><a href="#org56a2921">4.3. 发送缓存的分配和释放</a>
+<ul>
+<li><a href="#orged7b4f2">4.3.1. sock_wmalloc()</a></li>
+<li><a href="#org2eefa9f">4.3.2. skb_set_owner_w()</a></li>
+<li><a href="#orgc9639d8">4.3.3. sock_wfree()</a></li>
+</ul>
+</li>
+<li><a href="#orgabda5db">4.4. 接收缓存的分配和释放</a>
+<ul>
+<li><a href="#org53b5022">4.4.1. sk_stream_set_owner_r()和sk_stream_rfree()</a></li>
+<li><a href="#org88453e8">4.4.2. skb_set_owner_t()和skb_free_datagram()</a></li>
+</ul>
+</li>
+<li><a href="#orgce9f81c">4.5. 辅助缓存的分配和释放</a></li>
+</ul>
+</li>
+<li><a href="#org96c6216">5. 异步IO机制</a>
+<ul>
+<li><a href="#org97a6981">5.1. sk_wake_async()</a></li>
+<li><a href="#org6879b34">5.2. sock_def_wakeup()</a></li>
+<li><a href="#org3e753e5">5.3. sock_def_error_report()</a></li>
+<li><a href="#orgf090080">5.4. sock_def_readable()</a></li>
+<li><a href="#org2083d0e">5.5. sock_def_write_space()和sk_stream_write_space()</a></li>
+<li><a href="#org1076f3f">5.6. sk_send_sigurg()</a></li>
+<li><a href="#orgde10047">5.7. 接收到FIN段后通知进程</a></li>
+<li><a href="#orgf19b704">5.8. sock_fasync()</a></li>
+</ul>
+</li>
+<li><a href="#orgffb63d4">6. 传输控制块的同步锁</a>
+<ul>
+<li><a href="#orge199db7">6.1. socket_lock_t 结构</a></li>
+<li><a href="#orgf0f4b40">6.2. 控制用户进程和下半部之间的同步锁</a>
+<ul>
+<li><a href="#org692d114">6.2.1. lock_sock()</a></li>
+<li><a href="#org312084b">6.2.2. release_sock()</a></li>
+<li><a href="#org2c4a53d">6.2.3. sock_owned_by_user宏</a></li>
+</ul>
+</li>
+<li><a href="#orgf008108">6.3. 控制下半部之间的同步锁</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+各协议族传输层使用各自的传输控制块存放套接口所要求的信息。
+</p>
+
+<p>
+Linux内核根据协议续和传输层协议的特点，分层次的定义了多个结构用来组成传输控制块。IPv4协议族包括 sock_common、sock、inet_sock、inet_connection_sock、tcp_sock、request_sock、inet_request_sock、tcp_request_sock、inet_timewait_sock、tcp_timewait_sock、udp_sock、raw_sock结构。
+</p>
+
+<ul class="org-ul">
+<li>sock_common 传输控制块信息的最小集合，用来构成sock和inet_timewait_sock结构前面的部分。</li>
+
+<li>sock 通用的网络层描述块，是构成传输控制块的基础，与具体的协议无关。sock结构描述了各协议族传输层协议的公共信息，因此不能直接作为传输层控制块来使用，不同协议族的传输层在使用该结构时都会对该结构进行扩展，来适合各自的传输特性，例如 inet_sock 结构由 sock 结构以及其他特性组成，构成IPv4协议族传输控制块的基础。</li>
+
+<li>inet_sock 通用的IPv4协议族描述块，包含IPv4协议族基础传输层，即UDP、TCP以及原始传输控制块共有的信息（例如：外部和本机IP地址、外部和本地端口、IP首部原型、该端结点使用的IP选项等）。</li>
+
+<li>inet_connection_sock 支持面向连接特性的描述块，构成IPv4协议族TCP控制块的基础，在inet_sock结构的基础上加入了支持连接的特性。</li>
+
+<li>tcp_sock TCP传输控制块，支持了完整的TCP特性，包含了TCP为各连接维护的所有结点信息（两个方向的序号、窗口大小、重传次数等）。</li>
+
+<li>inet_timewait_sock 面向连接特性的TCP_TIME_WAIT状态的描述，是构成tcp_timewait_sock的基础。</li>
+
+<li>tcp_timewait_sock TCP_TIME_WAIT状态的描述块，是一种比较特殊的传输块，当TCP的状态为TCP_TIME_WAIT时，tcp_sock结构会蜕变为tcp_timewait_sock结构。</li>
+
+<li>udp_sock UDP传输控制块，支持UDP的完成特性。UDP需要的信息在inet_sock结构中描述。</li>
+</ul>
+
+
+<p>
+tcp_sock、udp_sock、raw_sock和tcp_timewait_sock结构组成如下图：
+</p>
+
+
+<div class="figure">
+<p><img src="image/socket-sock/sock-st.png" alt="sock-st.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>传输控制块组成结构</p>
+</div>
+
+<div id="outline-container-orgadb7c45" class="outline-2">
+<h2 id="orgadb7c45"><span class="section-number-2">1</span> 系统参数</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>optmem_max 每个传输控制块辅助缓冲区的上限，辅助数据包括进行设置选项、设置过滤时分配的内存和组播设置，通常使用sock_kmalloc()分配。</li>
+
+<li>rmem_default 传输控制块接收缓冲区大小的上限的默认值。</li>
+
+<li>rmem_max 传输控制块接收缓冲区大小的上限最大值。</li>
+
+<li>wmem_default 传输控制块发送缓冲区大小的上限的默认值。</li>
+
+<li>wmem_max 传输控制块发送缓冲区大小的上限的最大值。</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org64339a2" class="outline-2">
+<h2 id="org64339a2"><span class="section-number-2">2</span> 传输描述块结构</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orga6255d4" class="outline-3">
+<h3 id="orga6255d4"><span class="section-number-3">2.1</span> sock_common结构</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+sock结构和inet_timewait_sock结构的前面部分都是相同的，使用sock_common结构来描述。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> *      struct sock_common - minimal network layer representation of sockets</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_family</span><span style="color: #CDC673;">: &#25152;&#23646;&#21327;&#35758;&#26063;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_state</span><span style="color: #CDC673;">: TCP&#29366;&#24577;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_reuse</span><span style="color: #CDC673;">: </span><span style="color: #AF87FF;">%SO_REUSEADDR</span><span style="color: #CDC673;"> &#26631;&#35782;&#26159;&#21542;&#21487;&#20197;&#37325;&#29992;&#22320;&#22336;&#21644;&#31471;&#21475;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_bound_dev_if</span><span style="color: #CDC673;">: &#36755;&#20986;&#25253;&#25991;&#30340;&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;&#21495;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_node</span><span style="color: #CDC673;">: TCP&#32500;&#25252;&#19968;&#20010;&#25152;&#26377;TCP&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#25955;&#21015;&#34920;tcp_hashinfo, &#32780;skc_node&#29992;&#26469;&#23558;&#25152;&#23646;TCP&#20256;&#36755;&#25511;&#21046;&#22359;&#38142;&#25509;&#21040;&#35813;&#25955;&#21015;&#34920;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_bind_node</span><span style="color: #CDC673;">: &#24050;&#32465;&#23450;&#31471;&#21475;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;&#36890;&#36807;&#35813;&#23383;&#27573;&#25554;&#20837;&#21040;&#19982;&#20043;&#32465;&#23450;&#31471;&#21475;&#20449;&#24687;&#32467;&#26500;&#20026;&#22836;&#32467;&#28857;&#30340;&#38142;&#34920;&#20013;&#12290;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_refcnt</span><span style="color: #CDC673;">: &#24341;&#29992;&#35745;&#25968;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_hash</span><span style="color: #CDC673;">: &#23384;&#20648;TCP&#29366;&#24577;&#20026;established&#26102;&#21152;&#20837;&#21040;&#25955;&#21015;&#34920;&#30340;&#20851;&#38190;&#23383;&#30340;&#38190;&#20540;&#12290;&#30001;&#20110;&#35745;&#31639;&#38190;&#20540;&#30456;&#23545;&#32791;&#26102;&#65292;&#22240;&#27492;&#29992;&#35813;&#25104;&#21592;&#26469;&#23384;&#20648;&#38190;&#20540;&#26377;&#21033;&#20110;&#25552;&#39640;&#25928;&#29575;&#12290;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@skc_prot</span><span style="color: #CDC673;">: &#25351;&#21521;&#32593;&#32476;&#25509;&#21475;&#23618;&#30340;&#25351;&#38024;&#12290;</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> *      This is the minimal network layer representation of sockets, the header</span>
+<span style="color: #CDC673;"> *      for struct sock and struct inet_timewait_sock.</span>
+<span style="color: #CDC673;"> */</span>
+
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock_common</span> {
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">skc_family</span>;
+	<span style="color: #FF1493;">volatile</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">skc_state</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">skc_reuse</span>;
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">skc_bound_dev_if</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">skc_node</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_node</span>       <span style="color: #FF8C00;">skc_bind_node</span>;
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">skc_refcnt</span>;
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">skc_hash</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span>    *<span style="color: #FF8C00;">skc_prot</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6dfa20c" class="outline-3">
+<h3 id="org6dfa20c"><span class="section-number-3">2.2</span> sock结构</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+sock结构是构成传输控制块的基础，跟具体的协议族无关，包含各协议族传输层协议的公共信息，因此不能直接作为传输层的控制块来使用，不同协议族的传输层在使用sock结构时都会对其进行扩展，使其适合各自的传输特性。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> {
+	<span style="color: #8B8878;">//</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock_common</span>      <span style="color: #FF8C00;">__sk_common</span>;
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_family</span>               __sk_common.skc_family
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_state</span>                __sk_common.skc_state
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_reuse</span>                __sk_common.skc_reuse
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_bound_dev_if</span> __sk_common.skc_bound_dev_if
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_node</span>         __sk_common.skc_node
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_bind_node</span>    __sk_common.skc_bind_node
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_refcnt</span>               __sk_common.skc_refcnt
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_hash</span>         __sk_common.skc_hash
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">sk_prot</span>         __sk_common.skc_prot
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#25509;&#21475;&#26631;&#24535;&#65292; RCV_SHUTDOWN SEND_SHUTDOWN SHUTDOWN_MASK</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">sk_shutdown</span> : 2,
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26159;&#21542;&#23545;RAW&#21644;UDP&#36827;&#34892;&#26657;&#39564;&#21644;&#65292;UDP_CSUM_NOXMIT UDP_CSU_NORCV  UDP_CSUM_DEFUALT</span>
+			    <span style="color: #FF8C00;">sk_no_check</span> : 2,
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#20256;&#36755;&#23618;&#29366;&#24577;</span>
+<span style="color: #8B8878;">        SOCK_SNDBUF_LOCK &#29992;&#25143;&#36890;&#36807;&#22871;&#25509;&#21475;&#36873;&#39033;&#35774;&#32622;&#20102;&#21457;&#36865;&#32531;&#20914;&#21306;&#22823;&#23567;</span>
+<span style="color: #8B8878;">        SOCK_RCVBUF_LOCK &#29992;&#25143;&#36890;&#36807;&#22871;&#25509;&#21475;&#36873;&#39033;&#35774;&#32622;&#20102;&#25509;&#25910;&#32531;&#20914;&#21306;&#22823;&#23567;</span>
+<span style="color: #8B8878;">        SOCK_SNDBUF_LOCK &#24050;&#32463;&#32465;&#23450;&#20102;&#26412;&#22320;&#22320;&#22336;</span>
+<span style="color: #8B8878;">        SOCK_SNDBUF_LOCK &#24050;&#32463;&#32465;&#23450;&#20102;&#26412;&#22320;&#31471;&#21475;</span><span style="color: #8B8878;"> */</span>
+			    <span style="color: #FF8C00;">sk_userlocks</span> : 4;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#21069;&#22495;&#20013;&#22871;&#25509;&#23383;&#25152;&#23646;&#30340;&#21327;&#35758;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">sk_protocol</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#31867;&#22411; &#65288;SOCK_STREAM SOCK_DGRAM&#65289;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>  <span style="color: #FF8C00;">sk_type</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#32531;&#20914;&#21306;&#22823;&#23567;&#30340;&#19978;&#38480;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">sk_rcvbuf</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#21516;&#27493;&#38145;&#65292;&#19968;&#26159;&#29992;&#20110;&#29992;&#25143;&#36827;&#31243;&#35835;&#21462;&#25968;&#25454;&#21644;&#32593;&#32476;&#23618;&#21521;&#20256;&#36755;&#23618;&#20256;&#36882;&#25968;&#25454;&#20043;&#38388;&#30340;&#21516;&#27493;&#38145;;</span>
+<span style="color: #8B8878;">        &#20108;&#26159;&#25511;&#21046;Linux&#19979;&#21322;&#37096;&#35775;&#38382;&#26412;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#21516;&#27493;&#38145;&#12290;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">socket_lock_t</span>   <span style="color: #FF8C00;">sk_lock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#31243;&#31561;&#24453;&#38431;&#21015;&#12290;&#36827;&#31243;&#31561;&#24453;&#36830;&#25509;&#12289;&#31561;&#24453;&#36755;&#20986;&#32531;&#23384;&#21306;&#12289;&#31561;&#24453;&#35835;&#25968;&#25454;&#26102;&#65292;&#37117;&#20250;&#23558;&#36827;&#31243;&#26242;&#23384;&#21040;&#27492;&#38431;&#21015;&#20013;&#12290;</span>
+	<span style="color: #5FD7FF;">wait_queue_head_t</span>       *<span style="color: #FF8C00;">sk_sleep</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#30446;&#30340;&#36335;&#30001;&#39033;&#32531;&#23384;&#12290;</span>
+<span style="color: #8B8878;">        &#19968;&#33324;&#22312;&#21019;&#24314;&#20256;&#36755;&#25511;&#21046;&#22359;&#21457;&#36865;&#25968;&#25454;&#25253;&#25991;&#26102;&#65292;&#20174;&#36335;&#30001;&#34920;&#25110;&#36335;&#30001;&#32531;&#23384;&#20013;&#26597;&#35810;&#21040;&#23545;&#24212;&#30340;&#36335;&#30001;&#39033;&#26469;&#35774;&#32622;&#65292;</span>
+<span style="color: #8B8878;">        &#21518;&#32493;&#25968;&#25454;&#30340;&#36755;&#20986;&#26080;&#38656;&#26597;&#25214;&#36335;&#30001;&#65292;&#20197;&#21152;&#36895;&#25968;&#25454;&#30340;&#36755;&#20986;&#12290;</span>
+<span style="color: #8B8878;">        &#26576;&#20123;&#24773;&#20917;&#19979;&#20250;&#21047;&#26032;&#27492;&#30446;&#30340;&#30340;&#36335;&#30001;&#32531;&#23384;&#65292;&#27604;&#22914;&#26029;&#24320;&#36830;&#25509;&#12289;&#37325;&#26032;&#36827;&#34892;&#36830;&#25509;&#12289;TCP&#37325;&#20256;&#12289;&#37325;&#26032;&#32465;&#23450;&#31471;&#21475;&#31561;&#25805;&#20316;&#12290;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dst_entry</span>        *<span style="color: #FF8C00;">sk_dst_cache</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">xfrm_policy</span>      *<span style="color: #FF8C00;">sk_policy</span>[2]; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">IPSec&#30456;&#20851;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25805;&#20316;&#30446;&#30340;&#36335;&#30001;&#32531;&#23384;&#30340;&#35835;&#20889;&#38145;</span>
+	<span style="color: #5FD7FF;">rwlock_t</span>                <span style="color: #FF8C00;">sk_dst_lock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#38431;&#21015;sk_receive_queue&#20013;&#25152;&#26377;&#25253;&#25991;&#25968;&#25454;&#30340;&#24635;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">sk_rmem_alloc</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25152;&#22312;&#20256;&#36755;&#25511;&#21046;&#22359;&#20013;&#65292;&#20026;&#21457;&#36865;&#32780;&#20998;&#37197;&#30340;&#25152;&#26377;SKB&#25968;&#25454;&#21306;&#30340;&#24635;&#22823;&#23567;&#12290;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">sk_wmem_alloc</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#36741;&#21161;&#32531;&#20914;&#21306;&#19978;&#38480;&#65292;&#36741;&#21161;&#25968;&#25454;&#21253;&#25324;&#36827;&#34892;&#35774;&#32622;&#36873;&#39033;&#12289;&#35774;&#32622;&#36807;&#28388;&#26102;&#20998;&#37197;&#30340;&#20869;&#23384;&#21644;&#32452;&#25773;&#35774;&#32622;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                <span style="color: #FF8C00;">sk_omem_alloc</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#38431;&#21015;&#65292;&#31561;&#24453;&#29992;&#25143;&#36827;&#31243;&#35835;&#21462;&#12290;TCP&#27604;&#36739;&#29305;&#21035;&#65292;&#24403;&#25509;&#25910;&#21040;&#30340;&#25968;&#25454;&#19981;&#33021;&#30452;&#25509;&#22797;&#21046;&#21040;&#29992;&#25143;&#31354;&#38388;&#26102;&#65292;&#25165;&#32531;&#23384;&#21040;&#35813;&#38431;&#21015;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">sk_receive_queue</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#38431;&#21015;&#12290;&#22312;TCP&#20013;&#65292;&#27492;&#38431;&#21015;&#21516;&#26102;&#20063;&#26159;&#37325;&#20256;&#38431;&#21015;&#65292; &#22312;sk_send_head&#20043;&#21069;&#20026;&#37325;&#20256;&#38431;&#21015;&#65292;&#20043;&#21518;&#20026;&#21457;&#36865;&#38431;&#21015;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">sk_write_queue</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19982;&#32593;&#32476;&#35774;&#22791;&#30340;DMA&#21439;&#23448;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>     <span style="color: #FF8C00;">sk_async_wait_queue</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#38431;&#21015;&#20013;&#25152;&#26377;&#25253;&#25991;&#25968;&#25454;&#30340;&#24635;&#38271;&#24230;&#65292;&#30446;&#21069;&#20043;&#29992;&#20110;TCP.</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">sk_wmem_queued</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19982;&#20998;&#37197;&#32531;&#23384;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">sk_forward_alloc</span>;
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#20869;&#23384;&#20998;&#37197;&#26041;&#24335;</span>
+<span style="color: #8B8878;">        __GFP_DMA  DMA&#20869;&#23384;&#21306;</span>
+<span style="color: #8B8878;">        __GFP_HIGHMEM &#20248;&#20808;&#39640;&#31471;&#20869;&#23384;&#21306;&#20998;&#37197;</span>
+<span style="color: #8B8878;">        __GFP_DMA32 &#22914;&#26524;&#31995;&#32479;&#25903;&#25345;32&#20026;DMA&#21306;&#22495;&#65292;&#21017;&#22312;&#35813;&#21306;&#22495;&#20998;&#37197;</span>
+<span style="color: #8B8878;">        __GFP_WAIT &#20998;&#37197;&#26102;&#65292;&#20801;&#35768;&#30561;&#30496;</span>
+<span style="color: #8B8878;">        __GFP_HIGH &#34920;&#31034;&#20102;&#19968;&#20010;&#39640;&#20248;&#20808;&#32423;&#35831;&#27714;&#65292;&#20801;&#35768;&#20351;&#29992;&#34987;&#20869;&#26680;&#20445;&#30041;&#32473;&#32039;&#24613;&#29366;&#20917;&#30340;&#26368;&#21518;&#20869;&#23384;&#39029;</span>
+<span style="color: #8B8878;">        __GFP_FS &#20801;&#35768;&#22312;&#25991;&#20214;&#23376;&#31995;&#32479;&#20013;&#36827;&#34892;&#20869;&#23384;&#30340;&#20998;&#37197;</span>
+<span style="color: #8B8878;">        __GFP_NOWRN &#24403;&#19968;&#20010;&#20998;&#37197;&#22833;&#36133;&#26102;&#65292;&#38459;&#27490;&#20869;&#26680;&#26469;&#21457;&#20986;&#35686;&#21578;</span>
+<span style="color: #8B8878;">        __GFP_REPEAT &#20998;&#37197;&#20869;&#23384;&#22833;&#36133;&#26102;&#65292;&#23613;&#21487;&#33021;&#22810;&#23581;&#35797;</span>
+<span style="color: #8B8878;">        __GFP_NORETRY &#20998;&#37197;&#22833;&#36133;&#65292;&#21017;&#19981;&#36827;&#34892;&#23581;&#35797;</span>
+<span style="color: #8B8878;">        __GFP_ZERO &#20998;&#37197;&#25104;&#21151;&#65292;&#21017;&#23558;&#20869;&#23384;&#28165;&#38646;</span>
+<span style="color: #8B8878;">        __GFP_NOMEMALLOC &#21363;&#20351;&#20998;&#37197;&#22833;&#36133;&#65292;&#20063;&#19981;&#20174;&#20869;&#26680;&#20445;&#30041;&#32473;&#32039;&#24613;&#29366;&#20917;&#30340;&#20869;&#23384;&#39029;&#20998;&#37197;</span>
+<span style="color: #8B8878;">        GFP_NOWAIT &#26080;&#35770;&#20998;&#37197;&#25104;&#21151;&#36824;&#26159;&#22833;&#36133;&#65292;&#37117;&#19981;&#20250;&#24341;&#36215;&#30561;&#30496;</span>
+<span style="color: #8B8878;">        GFP_ATOMIC &#31561;&#21516;&#20110; __GFP_HIGH,&#26080;&#35770;&#20998;&#37197;&#25104;&#21151;&#36824;&#26159;&#22833;&#36133;&#65292;&#37117;&#19981;&#20250;&#24341;&#36215;&#30561;&#30496;&#65292;&#19968;&#33324;&#29992;&#20110;&#20013;&#26029;&#19978;&#19979;&#25991;&#21644;&#19968;&#20123;&#19981;&#33021;&#30561;&#30496;&#30340;&#20195;&#30721;&#20013;&#20351;&#29992;</span>
+<span style="color: #8B8878;">        GFP_KERNEL &#20869;&#26680;&#20869;&#23384;&#30340;&#27491;&#24120;&#20998;&#37197;&#65292;&#21487;&#33021;&#30561;&#30496;</span>
+<span style="color: #8B8878;">        GFP_USER  &#29992;&#26469;&#20026;&#29992;&#25143;&#31354;&#38388;&#20998;&#37197;&#20869;&#23384;&#65292;&#21487;&#33021;&#30561;&#30496;&#12290;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #5FD7FF;">gfp_t</span>           <span style="color: #FF8C00;">sk_allocation</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#32531;&#20914;&#21306;&#38271;&#24230;&#30340;&#19978;&#38480;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">sk_sndbuf</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#36335;&#30001;&#32593;&#32476;&#35774;&#22791;&#30340;&#29305;&#24615;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">sk_route_caps</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#25903;&#25345;&#30340;GSO&#31867;&#22411;&#65292;&#20363;&#22914; SKB_GSO_TCPV4</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">sk_gso_type</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#32531;&#23384;&#30340;&#19979;&#38480;&#20540;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">sk_rcvlowat</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29366;&#24577;&#21644;&#26631;&#24535;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>       <span style="color: #FF8C00;">sk_flags</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#22871;&#25509;&#21475;&#21069;&#21457;&#36865;&#21097;&#20313;&#25968;&#25454;&#30340;&#26102;&#38388;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>       <span style="color: #FF8C00;">sk_lingertime</span>;
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * The backlog queue is special, it is always used with</span>
+<span style="color: #8B8878;">         * the per-socket spinlock held and requires low latency</span>
+<span style="color: #8B8878;">         * access. Therefore we special case it's implementation.</span>
+<span style="color: #8B8878;">         */</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21518;&#22791;&#25509;&#25910;&#38431;&#21015;</span>
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">head</span>;
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">tail</span>;
+	} <span style="color: #FF8C00;">sk_backlog</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38169;&#35823;&#38142;&#34920;&#65292;&#23384;&#25918;&#35814;&#32454;&#30340;&#20986;&#38169;&#20449;&#24687;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff_head</span>         <span style="color: #FF8C00;">sk_error_queue</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21407;&#22987;&#32593;&#32476;&#21327;&#35758;&#22359;&#30340;&#25351;&#38024;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span>            *<span style="color: #FF8C00;">sk_prot_creator</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#20445;&#20256;&#36755;&#25511;&#21046;&#22359;&#20013;&#19968;&#20123;&#25104;&#21592;&#21516;&#27493;&#35775;&#38382;&#30340;&#38145;</span>
+	<span style="color: #5FD7FF;">rwlock_t</span>                    <span style="color: #FF8C00;">sk_callback_lock</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35760;&#24405;&#24403;&#21069;&#20256;&#36755;&#23618;&#20013;&#21457;&#29983;&#30340;&#26368;&#21518;&#19968;&#27425;&#33268;&#21629;&#38169;&#35823;&#30340;&#38169;&#35823;&#30721;</span>
+	<span style="color: #5FD7FF;">int</span>                         <span style="color: #FF8C00;">sk_err</span>,
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35760;&#24405;&#38750;&#33268;&#21629;&#24615;&#38169;&#35823;</span>
+				    <span style="color: #FF8C00;">SK_err_soft</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#21069;&#24050;&#24314;&#31435;&#30340;&#36830;&#25509;&#25968;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">sk_ack_backlog</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36830;&#25509;&#38431;&#21015;&#38271;&#24230;&#30340;&#19978;&#38480;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>          <span style="color: #FF8C00;">sk_max_ack_backlog</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35774;&#32622;&#27492;&#22871;&#25509;&#21475;&#36755;&#20986;&#25968;&#25454;&#25253;&#30340;QoS&#31867;&#21035;&#12290;</span>
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">sk_priority</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;PF_UNIX&#21327;&#35758;&#26063;&#65292;&#36820;&#22238;&#36830;&#25509;&#33267;&#35813;&#22871;&#25509;&#23383;&#30340;&#22806;&#37096;&#36827;&#31243;&#30340;&#36523;&#20221;&#39564;&#35777;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ucred</span>            <span style="color: #FF8C00;">sk_peercred</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#23618;&#30340;&#25509;&#25910;&#36229;&#26102;&#26102;&#38388;</span>
+	<span style="color: #5FD7FF;">long</span>                    <span style="color: #FF8C00;">sk_rcvtimeo</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#23618;&#30340;&#21457;&#36865;&#36229;&#26102;&#26102;&#38388;</span>
+	<span style="color: #5FD7FF;">long</span>                    <span style="color: #FF8C00;">sk_sndtimeo</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#36807;&#28388;&#22120;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_filter</span>            *<span style="color: #FF8C00;">sk_filter</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#25511;&#21046;&#22359;&#23384;&#25918;&#31169;&#26377;&#25968;&#25454;&#30340;&#25351;&#38024;</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">sk_protinfo</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#36807;TCP&#30340;&#19981;&#21516;&#29366;&#24577;&#65292;&#26469;&#23454;&#29616;&#36830;&#25509;&#23450;&#26102;&#22120;&#12289;FIN_WAIT_2&#23450;&#26102;&#22120;&#20197;&#21450;TCP&#20445;&#27963;&#23450;&#26102;&#22120;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timer_list</span>           <span style="color: #FF8C00;">sk_timer</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26410;&#21551;&#29992;SOCK_RCVTSTAMP&#36873;&#39033;&#26102;&#65292;&#35760;&#24405;&#25509;&#25910;&#25968;&#25454;&#21040;&#24212;&#29992;&#23618;&#30340;&#26102;&#38388;&#25139;&#65292;&#21551;&#29992;&#26102;&#65292;&#26102;&#38388;&#25139;&#35760;&#24405;&#22312;SKB&#30340;tstamp</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timeval</span>          <span style="color: #FF8C00;">sk_stamp</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#22871;&#25509;&#21475;&#30340;&#25351;&#38024;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span>           *<span style="color: #FF8C00;">sk_socket</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">RPC&#23618;&#23384;&#25918;&#31169;&#26377;&#25968;&#25454;&#30340;&#25351;&#38024;</span>
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">sk_user_data</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#26412;&#20256;&#36755;&#25511;&#21046;&#22359;&#26368;&#36817;&#19968;&#27425;&#20998;&#37197;&#30340;&#39029;&#38754;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span>                 *<span style="color: #FF8C00;">sk_sndmsg_page</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;sk_write_queue&#38431;&#21015;&#20013;&#31532;&#19968;&#20010;&#26410;&#21457;&#36865;&#30340;&#32467;&#28857;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>          *<span style="color: #FF8C00;">sk_send_head</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34920;&#31034;&#25968;&#25454;&#23614;&#31471;&#22312;&#26368;&#21518;&#19968;&#39029;&#20998;&#29255;&#20869;&#30340;&#39029;&#20869;&#20559;&#31227;</span>
+	<span style="color: #5FD7FF;">__u32</span>                   <span style="color: #FF8C00;">sk_sndmsg_off</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26377;&#25968;&#25454;&#21363;&#23558;&#20889;&#20837;&#22871;&#25509;&#21475;</span>
+	<span style="color: #5FD7FF;">int</span>                         <span style="color: #FF8C00;">sk_write_pending</span>;
+	<span style="color: #5FD7FF;">void</span>                    *<span style="color: #FF8C00;">sk_security</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#25511;&#21046;&#22359;&#29366;&#24577;&#21457;&#29983;&#21464;&#21270;&#26102;&#65292;&#21796;&#37266;&#31561;&#24453;&#26412;&#22871;&#25509;&#21475;&#30340;&#36827;&#31243;&#65288;IPv4&#20026; sock_def_wakeup()&#65289;</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">sk_state_change</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#21040;&#25968;&#25454;&#26102;&#65292;&#21796;&#37266;&#25110;&#21457;&#36865;&#20449;&#21495;&#36890;&#30693;&#20934;&#22791;&#35835;&#21462;&#26412;&#22871;&#25509;&#21475;&#30340;&#36827;&#31243;&#65288;IPv4&#20026; sock_def_readable()&#65289;</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">sk_data_ready</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">bytes</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#32531;&#23384;&#22823;&#23567;&#21457;&#29983;&#21464;&#21270;&#25110;&#22871;&#25509;&#21475;&#34987;&#37322;&#25918;&#26102;&#65292;&#21796;&#37266;&#22240;&#31561;&#35813;&#35813;&#22871;&#25509;&#21475;&#32780;&#36827;&#20837;&#30561;&#30496;&#29366;&#24577;&#30340;&#36827;&#31243;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">IPv4&#20013;&#40664;&#35748;&#20026; sock_def_write_space()  TCP&#20013;&#20026; sk_stream_write_space()</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">sk_write_space</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25253;&#21578;&#38169;&#35823;&#30340;&#22238;&#35843;&#20989;&#25968;&#65292;IPv4&#20013;&#20026; sock_def_error_report()</span>
+	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">sk_error_report</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;TCP&#21644;PPPoE,TCP&#20013;&#29992;&#20110;&#25509;&#25910;&#39044;&#22791;&#38431;&#21015;&#21644;&#21518;&#22791;&#38431;&#21015;&#30340;TCP&#27573; &#65288;tcp_v4_do_rcv()&#65289;</span>
+	<span style="color: #5FD7FF;">int</span>                         (*<span style="color: #87D700;">sk_backlog_rcv</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+						  <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#38144;&#27585;&#20256;&#36755;&#25511;&#21046;&#22359;&#12290;</span>
+	<span style="color: #5FD7FF;">void</span>                        (*<span style="color: #87D700;">sk_destruct</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+};
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> sk_flags的取值</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">sk_flags标志位</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SOCK_DEAD</td>
+<td class="org-left">连接已经断开，套接口即将关闭</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_DONE</td>
+<td class="org-left">TCP会话即将结束，在手法哦FIN报文时设置</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_URGINLINE</td>
+<td class="org-left">带外数据放入正常数据流，在普通数据流中接收带外数据</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_KEEPOPEN</td>
+<td class="org-left">启用TCP传输层保活定时</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_LINGER</td>
+<td class="org-left">关闭套接口前，发送剩余数据的时间</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_DESTROY</td>
+<td class="org-left">协议控制块已经释放</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_BROADCAST</td>
+<td class="org-left">套接口支持收发广播报文</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_TIMESTAMP</td>
+<td class="org-left">标识是否使用段的接收时间作为时间戳</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_USE_WRITE_QUEUE</td>
+<td class="org-left">标识初始化了传输控制块的sk_write_space()指针</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_DBG</td>
+<td class="org-left">记录套接口的调试信息</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_RCVTSTAMP</td>
+<td class="org-left">以数据包的接收时间作为时间戳</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_LOCALROUTE</td>
+<td class="org-left">使用本地路由表还是策略路由表</td>
+</tr>
+
+<tr>
+<td class="org-left">SOCK_QUEUE_SHRUNK</td>
+<td class="org-left">发送队列的缓存区最近是否缩小过</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div id="outline-container-org547e1b3" class="outline-3">
+<h3 id="org547e1b3"><span class="section-number-3">2.3</span> inet_sock结构</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+inet_sock结构是IPv4协议专用的传输控制块，是对sock结构的扩展，在传输控制块的基本属性已经具备的基础上，进一步提供IPv4协议专有的属性，例如 TTL、组播列表、IP地址、端口等。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">sock&#32467;&#26500;&#26159;&#36890;&#29992;&#30340;&#32593;&#32476;&#23618;&#25551;&#36848;&#22359;&#65292;&#26500;&#25104;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#22522;&#30784;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span>             <span style="color: #FF8C00;">sk</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;IPv6&#25511;&#21046;&#22359;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ipv6_pinfo</span>       *<span style="color: #FF8C00;">pinet6</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;IP&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">daddr</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32465;&#23450;&#30340;&#26412;&#22320;IP&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">rcv_saddr</span>;
+	<span style="color: #5FD7FF;">__be16</span>          <span style="color: #FF8C00;">dport</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;&#31471;&#21475;</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">num</span>;    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20027;&#26426;&#23383;&#33410;&#24207;&#23384;&#20648;&#30340;&#26412;&#26426;&#31471;&#21475;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">saddr</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26412;&#22320;IP&#22320;&#22336;</span>
+	<span style="color: #5FD7FF;">__s16</span>           <span style="color: #FF8C00;">uc_ttl</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21333;&#25773;&#25253;&#25991;&#30340;TTL</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">cmsg_flags</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#25918;IPPROTO_IP&#32423;&#21035;&#30340;&#36873;&#39033;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_options</span>       *<span style="color: #FF8C00;">opt</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;IP&#25968;&#25454;&#25253;&#36873;&#39033;&#30340;&#25351;&#38024;</span>
+	<span style="color: #5FD7FF;">__be16</span>          <span style="color: #FF8C00;">sport</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;num&#36716;&#25442;&#25104;&#32593;&#32476;&#23383;&#33410;&#24207;&#30340;&#28304;&#31471;&#21475;</span>
+	<span style="color: #5FD7FF;">__u16</span>           <span style="color: #FF8C00;">id</span>;     <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21333;&#35843;&#36882;&#22686;&#20540;&#65292;&#29992;&#26469;&#32473;IP&#39318;&#37096;&#30340;id&#22495;</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">tos</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#35774;&#32622;IP&#25968;&#25454;&#25253;&#39318;&#37096;&#30340;TOS&#22495;</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">mc_ttl</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#22810;&#25773;&#25968;&#25454;&#21253;&#30340;TTL</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">pmtudisc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#22871;&#25509;&#21475;&#26159;&#21542;&#21551;&#29992;&#36335;&#24452;MTU&#21457;&#29616;&#21151;&#33021;</span>
+	<span style="color: #5FD7FF;">__u8</span>            <span style="color: #FF8C00;">recverr</span>:1,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#20801;&#35768;&#25509;&#25910;&#25193;&#23637;&#30340;&#21487;&#38752;&#38169;&#35823;&#20449;&#24687;</span>
+			    <span style="color: #FF8C00;">is_icsk</span>:1,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26159;&#21542;&#26159;&#22522;&#20110;&#36830;&#25509;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+			    <span style="color: #FF8C00;">freebind</span>:1, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#20801;&#35768;&#32465;&#23450;&#38750;&#20027;&#26426;&#22320;&#22336;</span>
+			    <span style="color: #FF8C00;">hdrincl</span>:1,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;IP&#39318;&#37096;&#26159;&#21542;&#30001;&#29992;&#25143;&#25968;&#25454;&#26500;&#24314;&#65288;&#20043;&#29992;&#20110;RAW&#65289;</span>
+			    <span style="color: #FF8C00;">mc_loop</span>:1;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32452;&#25773;&#26159;&#21542;&#21457;&#21521;&#22238;&#36335;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">mc_index</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#32452;&#25773;&#25253;&#25991;&#30340;&#32593;&#32476;&#35774;&#22791;&#32034;&#24341;&#21495;</span>
+	<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">mc_addr</span>;    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#32452;&#25773;&#25253;&#25991;&#30340;&#28304;&#22320;&#22336;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_mc_socklist</span> *<span style="color: #FF8C00;">mc_list</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#21152;&#20837;&#30340;&#32452;&#25773;&#22320;&#22336;&#21015;&#34920;</span>
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">UDP&#25110;&#21407;&#22987;IP&#22312;&#27599;&#27425;&#21457;&#36865;&#26102;&#65292;&#32531;&#23384;&#30340;&#20020;&#26102;&#20449;&#24687;</span>
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">flags</span>;
+		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">fragsize</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">UDP&#25968;&#25454;&#25253;&#25110;&#32773;&#21407;&#22987;IP&#25968;&#25454;&#25253;&#20998;&#29255;&#22823;&#23567;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ip_options</span>       *<span style="color: #FF8C00;">opt</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#27492;&#27425;&#21457;&#36865;&#25968;&#25454;&#25253;&#30340;IP&#36873;&#39033;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rtable</span>   *<span style="color: #FF8C00;">rt</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#25968;&#25454;&#25253;&#20351;&#29992;&#30340;&#36755;&#20986;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+		<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">length</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#21069;&#21457;&#36865;&#30340;&#25968;&#25454;&#25253;&#30340;&#25968;&#25454;&#38271;&#24230;</span>
+		<span style="color: #5FD7FF;">__be32</span>          <span style="color: #FF8C00;">addr</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;IP&#25968;&#25454;&#25253;&#30340;&#30446;&#30340;&#22320;&#22336;</span>
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;flowi&#32467;&#26500;&#26469;&#32531;&#23384;&#30446;&#30340;&#22320;&#22336;&#12289;&#30446;&#30340;&#31471;&#21475;&#12289;&#28304;&#22320;&#22336;&#12289;&#28304;&#31471;&#21475;&#65292;&#29992;&#20197;&#26500;&#36896;UDP&#25253;&#25991;</span>
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">flowi</span>    <span style="color: #FF8C00;">fl</span>;
+	} <span style="color: #FF8C00;">cork</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge0832ba" class="outline-2">
+<h2 id="orge0832ba"><span class="section-number-2">3</span> proto结构</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+proto结构中的操作实现传输层的操作和从传输层到网络层调用的跳转，在proto结构中的某些成员与proto_ops结构中的成员对应。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> {
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">close</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+					<span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeout</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">connect</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+					<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">disconnect</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *   (*<span style="color: #87D700;">accept</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">err</span>);
+
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">ioctl</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>,
+					 <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#21021;&#22987;&#21270;&#25509;&#21475;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">init</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20851;&#38381;&#22871;&#25509;&#21475;&#26102;&#35843;&#29992;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">destroy</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">shutdown</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *option);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">compat_setsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">compat_getsockopt</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>, <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *option);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">sendmsg</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+					   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">recvmsg</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+					   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>,
+					<span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">noblock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>,
+					<span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">addr_len</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">sendpage</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>,
+					<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">offset</span>, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flags</span>);
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">bind</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+					<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#25509;&#25910;&#39044;&#22791;&#38431;&#21015;&#21644;&#21518;&#22791;&#38431;&#21015;&#20013;&#30340;TCP&#27573;</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">backlog_rcv</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+						<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#23558;&#20256;&#36755;&#25511;&#21046;&#22359;&#28155;&#21152;&#21040;&#25955;&#21015;&#34920;&#30340;&#25509;&#21475;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">hash</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#23558;&#20256;&#36755;&#25511;&#21046;&#22359;&#20174;&#25955;&#21015;&#34920;&#21024;&#38500;</span><span style="color: #8B8878;">*/</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">unhash</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>);
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23454;&#29616;&#22320;&#22336;&#21644;&#31471;&#21475;&#30340;&#32465;&#23450;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">get_port</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">snum</span>);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#20351;&#29992;&#65292;&#24403;&#25972;&#20010;TCP&#20256;&#36755;&#23618;&#20013;&#20026;&#32531;&#20914;&#21306;&#20998;&#37197;&#30340;&#20869;&#23384;&#36229;&#36807;tcp_mem[1],&#21017;&#36890;&#36807;&#35813;&#25509;&#21475;&#35774;&#32622;&#24182;&#36827;&#20837;&#21578;&#35686;&#29366;&#24577;</span>
+	<span style="color: #5FD7FF;">void</span>            (*<span style="color: #87D700;">enter_memory_pressure</span>)(<span style="color: #5FD7FF;">void</span>);
+	    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21482;&#26377;tcp&#20351;&#29992;&#65292;tcp&#20256;&#36755;&#23618;&#20013;&#20026;&#32531;&#20914;&#21306;&#20998;&#37197;&#30340;&#20869;&#23384;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                *<span style="color: #FF8C00;">memory_allocated</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21482;&#26377;tcp&#20351;&#29992;&#65292;&#34920;&#31034;&#24403;&#21069;&#25972;&#20010;TCP&#20256;&#36755;&#23618;&#24050;&#32463;&#21019;&#24314;&#30340;&#22871;&#25509;&#21475;&#25968;&#30446;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                *<span style="color: #FF8C00;">sockets_allocated</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#20351;&#29992;&#65292;TCP&#20256;&#36755;&#23618;&#20013;&#32531;&#20914;&#22823;&#23567;&#36827;&#20837;&#21578;&#35686;&#29366;&#24577;&#26102;&#65292;&#32622;1</span>
+	<span style="color: #5FD7FF;">int</span>                     *<span style="color: #FF8C00;">memory_pressure</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;sysctl_tcp_mem&#25968;&#32452;&#65288;tcp_mem&#31995;&#32479;&#21442;&#25968;&#65289;</span>
+	<span style="color: #5FD7FF;">int</span>                     *<span style="color: #FF8C00;">sysctl_mem</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;sysctl_tcp_wmem&#25968;&#32452;&#65288;tcp_wmem&#31995;&#32479;&#21442;&#25968;&#65289;</span>
+	<span style="color: #5FD7FF;">int</span>                     *<span style="color: #FF8C00;">sysctl_wmem</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;sysctl_tcp_rmem&#25968;&#32452;&#65288;tcp_rmem&#31995;&#32479;&#21442;&#25968;&#65289;</span>
+	<span style="color: #5FD7FF;">int</span>                     *<span style="color: #FF8C00;">sysctl_rmem</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">tcp&#20351;&#29992;&#65292;TCP&#39318;&#37096;&#30340;&#26368;&#22823;&#38271;&#24230;</span>
+	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">max_header</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#20998;&#37197;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;slab&#39640;&#36895;&#32531;&#23384;&#65288;&#22312;&#27880;&#20876;&#23545;&#24212;&#20256;&#36755;&#23618;&#21327;&#35758;&#26102;&#24314;&#31435;&#65289;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kmem_cache</span>       *<span style="color: #FF8C00;">slab</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#22823;&#23567;&#65292;&#22914;&#26524;&#21021;&#22987;&#21270;&#24314;&#31435;slab&#32531;&#23384;&#22833;&#36133;&#26102;&#65292;&#36890;&#36807;kmalloc&#20998;&#37197;obj_size&#22823;&#23567;&#30340;&#31354;&#38388;&#26469;&#23436;&#25104;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#20998;&#37197;&#12290;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span>    <span style="color: #FF8C00;">obj_size</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#20351;&#29992;&#65292;&#34920;&#31034;&#25972;&#20010;TCP&#20256;&#36755;&#23618;&#20013;&#24453;&#38144;&#27585;&#30340;&#22871;&#25509;&#21475;&#30340;&#25968;&#30446;</span>
+	<span style="color: #5FD7FF;">atomic_t</span>                *<span style="color: #FF8C00;">orphan_count</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#20351;&#29992;&#65292;&#25351;&#21521;&#36830;&#25509;&#35831;&#27714;&#22788;&#29702;&#25509;&#21475;&#30340;&#38598;&#21512;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_sock_ops</span> *<span style="color: #FF8C00;">rsk_prot</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#20351;&#29992;&#65292;&#25351;&#21521;timewait&#25511;&#21046;&#22359;&#25805;&#20316;&#25509;&#21475;&#65292;&#25351;&#21521; tcp_timewait_sock_ops</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timewait_sock_ops</span> *<span style="color: #FF8C00;">twsk_prot</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#21517;&#31216; &#8220;TCP&#8221; &#8220;UDP&#8221;</span>
+	<span style="color: #5FD7FF;">char</span>            <span style="color: #FF8C00;">name</span>[32];
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21033;&#29992;&#35813;&#25104;&#21592;&#27880;&#20876;&#21040;proto_list&#20013;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span>        <span style="color: #FF8C00;">node</span>;
+	<span style="color: #FF1493;">struct</span> {
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">inuse</span>;
+		<span style="color: #5FD7FF;">u8</span>  <span style="color: #FF8C00;">__pad</span>[SMP_CACHE_BYTES - <span style="color: #FF1493;">sizeof</span>(<span style="color: #5FD7FF;">int</span>)];
+	} <span style="color: #FF8C00;">stats</span>[NR_CPUS]; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32479;&#35745;&#27599;&#20010;CPU&#30340;proto&#29366;&#24577;</span>
+};
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org5940731" class="outline-3">
+<h3 id="org5940731"><span class="section-number-3">3.1</span> proto实例组织结构</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+传输层协议对应proto结构的实例，网络模块初始化时，通过proto_registe()注册到proto_list链表。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">     +----------+     +--------+     +--------+      +--------+
+----&gt;|proto_list|&lt;---&gt;|tcp_prot|&lt;---&gt;|udp_prot|&lt;----&gt;|raw_prot|&lt;--------
+|    +----------+     +--------+     +--------+      +--------+        |
+|                                                                      |
+|----------------------------------------------------------------------|
+</pre>
+</div>
+
+<p>
+通过命令 <code>cat /proc/net/protocols</code>  命令可以查查不同协议续的传输层协议。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org04cdaeb" class="outline-3">
+<h3 id="org04cdaeb"><span class="section-number-3">3.2</span> proto_register()</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">proto_register</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> *<span style="color: #FF8C00;">prot</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#27880;&#20876;&#30340;proto&#23454;&#20363;</span>
+		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">alloc_slab</span>)<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#21019;&#24314;&#29992;&#20110;&#20998;&#37197;&#25511;&#21046;&#22359;&#30340;slab&#32531;&#23384;</span>
+{
+	<span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">request_sock_slab_name</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">timewait_sock_slab_name</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rc</span> = -ENOBUFS;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#21019;&#24314;&#29992;&#20110;&#20998;&#37197;&#25511;&#21046;&#22359;&#30340;slab&#32531;&#23384;</span>
+	<span style="color: #FF1493;">if</span> (alloc_slab) {
+		prot-&gt;slab = kmem_cache_create(prot-&gt;name, prot-&gt;obj_size, 0,
+					       SLAB_HWCACHE_ALIGN, <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+		<span style="color: #FF1493;">if</span> (prot-&gt;slab == <span style="color: #AF87FF;">NULL</span>) {
+			printk(KERN_CRIT <span style="color: #CDC673;">"%s: Can't create sock SLAB cache!\n"</span>,
+			       prot-&gt;name);
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#20102;&#36830;&#25509;&#35831;&#27714;&#22788;&#29702;&#25509;&#21475;&#65292;&#21017;&#21021;&#22987;&#21270;&#29992;&#20110;&#20998;&#37197;&#36830;&#25509;&#35831;&#27714;&#22359;&#30340;slab&#32531;&#23384;</span>
+		<span style="color: #FF1493;">if</span> (prot-&gt;rsk_prot != <span style="color: #AF87FF;">NULL</span>) {
+			<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">mask</span>[] = <span style="color: #CDC673;">"request_sock_%s"</span>;
+			request_sock_slab_name = kmalloc(strlen(prot-&gt;name) + <span style="color: #FF1493;">sizeof</span>(mask) - 1, GFP_KERNEL);
+			<span style="color: #FF1493;">if</span> (request_sock_slab_name == <span style="color: #AF87FF;">NULL</span>)
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_free_sock_slab</span>;
+			sprintf(request_sock_slab_name, mask, prot-&gt;name);
+			prot-&gt;rsk_prot-&gt;slab = kmem_cache_create(request_sock_slab_name,
+								 prot-&gt;rsk_prot-&gt;obj_size, 0,
+								 SLAB_HWCACHE_ALIGN, <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+			<span style="color: #FF1493;">if</span> (prot-&gt;rsk_prot-&gt;slab == <span style="color: #AF87FF;">NULL</span>) {
+				printk(KERN_CRIT <span style="color: #CDC673;">"%s: Can't create request sock SLAB cache!\n"</span>,
+				       prot-&gt;name);
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_free_request_sock_slab_name</span>;
+			}
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#20102;timewait&#25511;&#21046;&#22359;&#25805;&#20316;&#25509;&#21475;&#65292;&#21017;&#21019;&#24314;timewait&#25511;&#21046;&#22359;&#30340;slab&#32531;&#23384;</span>
+		<span style="color: #FF1493;">if</span> (prot-&gt;twsk_prot != <span style="color: #AF87FF;">NULL</span>) {
+			<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">mask</span>[] = <span style="color: #CDC673;">"tw_sock_%s"</span>;
+
+			timewait_sock_slab_name = kmalloc(strlen(prot-&gt;name) + <span style="color: #FF1493;">sizeof</span>(mask) - 1, GFP_KERNEL);
+
+			<span style="color: #FF1493;">if</span> (timewait_sock_slab_name == <span style="color: #AF87FF;">NULL</span>)
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_free_request_sock_slab</span>;
+
+			sprintf(timewait_sock_slab_name, mask, prot-&gt;name);
+			prot-&gt;twsk_prot-&gt;twsk_slab =
+				kmem_cache_create(timewait_sock_slab_name,
+						  prot-&gt;twsk_prot-&gt;twsk_obj_size,
+						  0, SLAB_HWCACHE_ALIGN,
+						  <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+			<span style="color: #FF1493;">if</span> (prot-&gt;twsk_prot-&gt;twsk_slab == <span style="color: #AF87FF;">NULL</span>)
+				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_free_timewait_sock_slab_name</span>;
+		}
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28155;&#21152;proto&#23454;&#20363;&#21040; proto_list &#38142;&#34920;</span>
+	write_lock(&amp;proto_list_lock);
+	list_add(&amp;prot-&gt;node, &amp;proto_list);
+	write_unlock(&amp;proto_list_lock);
+	rc = 0;
+<span style="color: #AF87FF;">out</span>:
+	<span style="color: #FF1493;">return</span> rc;
+<span style="color: #AF87FF;">out_free_timewait_sock_slab_name</span>:
+	kfree(timewait_sock_slab_name);
+<span style="color: #AF87FF;">out_free_request_sock_slab</span>:
+	<span style="color: #FF1493;">if</span> (prot-&gt;rsk_prot &amp;&amp; prot-&gt;rsk_prot-&gt;slab) {
+		kmem_cache_destroy(prot-&gt;rsk_prot-&gt;slab);
+		prot-&gt;rsk_prot-&gt;slab = <span style="color: #AF87FF;">NULL</span>;
+	}
+<span style="color: #AF87FF;">out_free_request_sock_slab_name</span>:
+	kfree(request_sock_slab_name);
+<span style="color: #AF87FF;">out_free_sock_slab</span>:
+	kmem_cache_destroy(prot-&gt;slab);
+	prot-&gt;slab = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org62e49b1" class="outline-3">
+<h3 id="org62e49b1"><span class="section-number-3">3.3</span> proto_unregister()</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+该函数删除已经注册到proto_list链表中的proto实例。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">proto_unregister</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> *<span style="color: #FF8C00;">prot</span>)
+{
+	write_lock(&amp;proto_list_lock);
+	list_del(&amp;prot-&gt;node); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#38142;&#34920;&#21024;&#38500;proto&#23454;&#20363;</span>
+	write_unlock(&amp;proto_list_lock);
+
+	<span style="color: #FF1493;">if</span> (prot-&gt;slab != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#20256;&#36755;&#25511;&#21046;&#22359;slab&#32531;&#23384;</span>
+		kmem_cache_destroy(prot-&gt;slab);
+		prot-&gt;slab = <span style="color: #AF87FF;">NULL</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#36830;&#25509;&#35831;&#27714;&#22359;slab&#32531;&#23384;</span>
+	<span style="color: #FF1493;">if</span> (prot-&gt;rsk_prot != <span style="color: #AF87FF;">NULL</span> &amp;&amp; prot-&gt;rsk_prot-&gt;slab != <span style="color: #AF87FF;">NULL</span>) {
+		<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span> = kmem_cache_name(prot-&gt;rsk_prot-&gt;slab);
+
+		kmem_cache_destroy(prot-&gt;rsk_prot-&gt;slab);
+		kfree(name);
+		prot-&gt;rsk_prot-&gt;slab = <span style="color: #AF87FF;">NULL</span>;
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;timewait&#25511;&#21046;&#22359;slab&#32531;&#23384;</span>
+	<span style="color: #FF1493;">if</span> (prot-&gt;twsk_prot != <span style="color: #AF87FF;">NULL</span> &amp;&amp; prot-&gt;twsk_prot-&gt;twsk_slab != <span style="color: #AF87FF;">NULL</span>) {
+		<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span> = kmem_cache_name(prot-&gt;twsk_prot-&gt;twsk_slab);
+
+		kmem_cache_destroy(prot-&gt;twsk_prot-&gt;twsk_slab);
+		kfree(name);
+		prot-&gt;twsk_prot-&gt;twsk_slab = <span style="color: #AF87FF;">NULL</span>;
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org056d1be" class="outline-2">
+<h2 id="org056d1be"><span class="section-number-2">4</span> 传输控制块的内存管理</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org1235443" class="outline-3">
+<h3 id="org1235443"><span class="section-number-3">4.1</span> 传输控制块的分配和释放</h3>
+<div class="outline-text-3" id="text-4-1">
+</div>
+<div id="outline-container-org7fc737d" class="outline-4">
+<h4 id="org7fc737d"><span class="section-number-4">4.1.1</span> sk_alloc()</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<p>
+创建套接口时，TCP、UDP、原始IP会分配一个传输控制块，通过 sk_alloc()执行分配。 sk_free() 用来释放传输控制块。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> *      sk_alloc - All socket objects are allocated here</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@family</span><span style="color: #CDC673;">: &#21327;&#35758;&#26063;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@priority</span><span style="color: #CDC673;">: &#20869;&#23384;&#20998;&#37197;&#26041;&#24335; (&#20363;&#22914; </span><span style="color: #AF87FF;">%GFP_KERNEL</span><span style="color: #CDC673;">, </span><span style="color: #AF87FF;">%GFP_ATOMIC</span><span style="color: #CDC673;">)</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@prot</span><span style="color: #CDC673;">: &#19982;&#20043;&#20851;&#32852;&#30340;&#32593;&#32476;&#21327;&#35758;&#25511;&#21046;&#22359;</span>
+<span style="color: #CDC673;"> *      </span><span style="color: #AF87FF;">@zero_it</span><span style="color: #CDC673;">: &#26159;&#21542;&#23558;&#20256;&#36755;&#25511;&#21046;&#22359;&#28165;&#38646;&#24182;&#21021;&#22987;&#21270;&#37096;&#20998;&#25104;&#21592;</span>
+<span style="color: #CDC673;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #87D700;">sk_alloc</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">family</span>, <span style="color: #5FD7FF;">gfp_t</span> <span style="color: #FF8C00;">priority</span>,
+		      <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> *<span style="color: #FF8C00;">prot</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">zero_it</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = <span style="color: #AF87FF;">NULL</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kmem_cache</span> *<span style="color: #FF8C00;">slab</span> = prot-&gt;slab;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;slab&#32531;&#23384;&#65292;&#21017;&#20174;slab&#20998;&#37197;&#65292;&#21542;&#21017;&#36890;&#36807;kmalloc&#20998;&#37197;</span>
+	<span style="color: #FF1493;">if</span> (slab != <span style="color: #AF87FF;">NULL</span>)
+		sk = kmem_cache_alloc(slab, priority);
+	<span style="color: #FF1493;">else</span>
+		sk = kmalloc(prot-&gt;obj_size, priority);
+
+	<span style="color: #FF1493;">if</span> (sk) {
+		<span style="color: #FF1493;">if</span> (zero_it) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#28165;&#38646;&#65292;&#24182;&#21021;&#22987;&#21270;&#37096;&#20998;&#25104;&#21592;</span>
+			memset(sk, 0, prot-&gt;obj_size);
+			sk-&gt;sk_family = family;
+			sk-&gt;sk_prot = sk-&gt;sk_prot_creator = prot;
+			sock_lock_init(sk);
+		}
+
+		<span style="color: #FF1493;">if</span> (security_sk_alloc(sk, family, priority))
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_free</span>;
+
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>try_module_get(prot-&gt;owner))
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_free</span>;
+	}
+	<span style="color: #FF1493;">return</span> sk;
+
+<span style="color: #AF87FF;">out_free</span>:
+	<span style="color: #FF1493;">if</span> (slab != <span style="color: #AF87FF;">NULL</span>)
+		kmem_cache_free(slab, sk);
+	<span style="color: #FF1493;">else</span>
+		kfree(sk);
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1445460" class="outline-4">
+<h4 id="org1445460"><span class="section-number-4">4.1.2</span> sk_clone()</h4>
+<div class="outline-text-4" id="text-4-1-2">
+<p>
+根据指定的传输控制块克隆一个新的传输控制块。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2951c07" class="outline-4">
+<h4 id="org2951c07"><span class="section-number-4">4.1.3</span> sk_free()</h4>
+<div class="outline-text-4" id="text-4-1-3">
+<p>
+释放指定的传输控制块，通常通过sock_put()调用，当指定传输控制块的引用计数为0时，执行释放。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sk_free</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_filter</span> *<span style="color: #FF8C00;">filter</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span> = sk-&gt;sk_prot_creator-&gt;owner;
+
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_destruct) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#38144;&#27585;&#25509;&#21475;</span>
+		sk-&gt;sk_destruct(sk);
+
+	filter = rcu_dereference(sk-&gt;sk_filter);
+	<span style="color: #FF1493;">if</span> (filter) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#24050;&#32463;&#23433;&#35013;&#30340;&#22871;&#25509;&#21475;&#36807;&#28388;&#22120;</span>
+		sk_filter_release(sk, filter);
+		rcu_assign_pointer(sk-&gt;sk_filter, <span style="color: #AF87FF;">NULL</span>);
+	}
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#21551;&#29992;&#20102;&#25968;&#25454;&#21253;&#30340;&#25509;&#25910;&#26102;&#38388;&#20316;&#20026;&#26102;&#38388;&#25139;&#65292;&#21017;&#23558;&#20854;&#20851;&#38381;</span>
+	sock_disable_timestamp(sk);
+	<span style="color: #FF1493;">if</span> (atomic_read(&amp;sk-&gt;sk_omem_alloc))
+		printk(KERN_DEBUG <span style="color: #CDC673;">"%s: optmem leakage (%d bytes) detected.\n"</span>,
+		       __FUNCTION__, atomic_read(&amp;sk-&gt;sk_omem_alloc));
+	security_sk_free(sk);
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_prot_creator-&gt;slab != <span style="color: #AF87FF;">NULL</span>)
+		kmem_cache_free(sk-&gt;sk_prot_creator-&gt;slab, sk);
+	<span style="color: #FF1493;">else</span>
+		kfree(sk);
+	module_put(owner);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge534870" class="outline-4">
+<h4 id="orge534870"><span class="section-number-4">4.1.4</span> sock_put()</h4>
+<div class="outline-text-4" id="text-4-1-4">
+<p>
+当传输控制块的引用计数为0时，调用 sk_free() 执行释放。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_put</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">if</span> (atomic_dec_and_test(&amp;sk-&gt;sk_refcnt))
+		sk_free(sk);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org33535ea" class="outline-3">
+<h3 id="org33535ea"><span class="section-number-3">4.2</span> 普通的发送缓存区的分配</h3>
+<div class="outline-text-3" id="text-4-2">
+</div>
+<div id="outline-container-org4990f19" class="outline-4">
+<h4 id="org4990f19"><span class="section-number-4">4.2.1</span> sock_alloc_send_skb()</h4>
+<div class="outline-text-4" id="text-4-2-1">
+<p>
+该函数主要为 UDP和RAW 套接口分配用于输出的SKB。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">sock_alloc_send_skb</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#20998;&#37197;SKB&#30340;&#23487;&#20027;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">size</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#20998;&#37197;SKB&#30340;&#22823;&#23567;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">noblock</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;SKB&#26102;&#26159;&#21542;&#20801;&#35768;&#38459;&#22622;</span>
+	<span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">errcode</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36820;&#22238;&#25805;&#20316;&#30340;&#38169;&#35823;&#21527;</span>
+{
+	<span style="color: #FF1493;">return</span> sock_alloc_send_pskb(sk, size, 0, noblock, errcode);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org42e12e2" class="outline-4">
+<h4 id="org42e12e2"><span class="section-number-4">4.2.2</span> sock_alloc_send_pskb()</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+该函数由sock_alloc_send_skb()调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      Generic send/receive buffer handlers</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">sock_alloc_send_pskb</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">header_len</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#20998;&#37197;SKB&#32447;&#24615;&#25968;&#25454;&#21306;&#30340;&#22823;&#23567;&#12290;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">data_len</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#20998;&#37197;SKB&#30340;SG&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O&#30340;&#25968;&#25454;&#21306;&#30340;&#22823;&#23567;&#12290;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">noblock</span>,
+	<span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">errcode</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
+	<span style="color: #5FD7FF;">gfp_t</span> <span style="color: #FF8C00;">gfp_mask</span>;
+	<span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeo</span>;
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
+
+	gfp_mask = sk-&gt;sk_allocation;
+	<span style="color: #FF1493;">if</span> (gfp_mask &amp; __GFP_WAIT) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20869;&#23384;&#20998;&#37197;&#20801;&#35768;&#30561;&#30496;&#65292;&#21017;&#28155;&#21152;__GFP_REPEAT&#26631;&#24535;</span>
+		gfp_mask |= __GFP_REPEAT;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#20801;&#35768;&#25805;&#20316;&#30340;&#36229;&#26102;&#26102;&#38388;&#12290;</span>
+	timeo = sock_sndtimeo(sk, noblock);
+	<span style="color: #FF1493;">while</span> (1) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24490;&#29615;&#22788;&#29702;&#65292;&#30452;&#21040;&#25104;&#21151;&#25110;&#32773;&#36229;&#26102;</span>
+		err = sock_error(sk);
+		<span style="color: #FF1493;">if</span> (err != 0) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20986;&#38169;&#65292;&#21017;&#32467;&#26463;&#20998;&#37197;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">failure</span>;
+
+		err = -EPIPE;
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_shutdown &amp; SEND_SHUTDOWN) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#20851;&#38381;&#20102;&#36755;&#20986;&#36890;&#36947;&#65292;&#21017;&#32467;&#26463;&#20998;&#37197;&#12290;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">failure</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25152;&#26377;&#30340;&#21457;&#36865;SKB&#25968;&#25454;&#21306;&#26410;&#36798;&#21040;&#19978;&#38480;&#65292;&#25165;&#33021;&#32487;&#32493;&#20998;&#37197;</span>
+		<span style="color: #FF1493;">if</span> (atomic_read(&amp;sk-&gt;sk_wmem_alloc) &lt; sk-&gt;sk_sndbuf) {
+			skb = alloc_skb(header_len, gfp_mask);
+			<span style="color: #FF1493;">if</span> (skb) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;SKB&#25104;&#21151;&#65292;&#36824;&#38656;&#35201;&#32487;&#32493;&#20998;&#37197;SG&#31867;&#22411;&#32858;&#21512;&#20998;&#25955;I/O&#25968;&#25454;&#21306;</span>
+				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">npages</span>;
+				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
+
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">No pages, we're done...</span><span style="color: #8B8878;"> */</span>
+				<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>data_len)
+					<span style="color: #FF1493;">break</span>;
+
+				npages = (data_len + (PAGE_SIZE - 1)) &gt;&gt; PAGE_SHIFT;
+				skb-&gt;truesize += data_len;
+				skb_shinfo(skb)-&gt;nr_frags = npages;
+				<span style="color: #FF1493;">for</span> (i = 0; i &lt; npages; i++) {
+					<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">page</span> *<span style="color: #FF8C00;">page</span>;
+					<span style="color: #5FD7FF;">skb_frag_t</span> *<span style="color: #FF8C00;">frag</span>;
+
+					page = alloc_pages(sk-&gt;sk_allocation, 0);
+					<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>page) {
+						err = -ENOBUFS;
+						skb_shinfo(skb)-&gt;nr_frags = i;
+						kfree_skb(skb);
+						<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">failure</span>;
+					}
+
+					frag = &amp;skb_shinfo(skb)-&gt;frags[i];
+					frag-&gt;page = page;
+					frag-&gt;page_offset = 0;
+					frag-&gt;size = (data_len &gt;= PAGE_SIZE ?
+						      PAGE_SIZE :
+						      data_len);
+					data_len -= PAGE_SIZE;
+				}
+
+				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Full success...</span><span style="color: #8B8878;"> */</span>
+				<span style="color: #FF1493;">break</span>;
+			}
+			err = -ENOBUFS; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;SKB&#22833;&#36133;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">failure</span>;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;&#20110;&#20998;&#37197;&#30340;&#25152;&#26377;&#21457;&#36865;SKB&#30340;&#24635;&#22823;&#23567;&#36229;&#36807;&#38480;&#21046;&#65292;&#26242;&#26102;&#19981;&#33021;&#20998;&#37197;SKB</span>
+		set_bit(SOCK_ASYNC_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags);
+		set_bit(SOCK_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags);
+		err = -EAGAIN;
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>timeo) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#37197;&#36229;&#26102;&#65292;&#20572;&#27490;&#20998;&#37197;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">failure</span>;
+		<span style="color: #FF1493;">if</span> (signal_pending(current))<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25910;&#21040;&#20449;&#21495;&#65292;&#20572;&#27490;&#20998;&#37197;</span>
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">interrupted</span>;
+		timeo = sock_wait_for_wmem(sk, timeo);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#36229;&#26102;&#65292;&#32487;&#32493;&#31561;&#24453;&#20998;&#37197;</span>
+	}
+
+	skb_set_owner_w(skb, sk);
+	<span style="color: #FF1493;">return</span> skb;
+
+<span style="color: #AF87FF;">interrupted</span>:
+	err = sock_intr_errno(timeo);
+<span style="color: #AF87FF;">failure</span>:
+	*errcode = err;
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org99bd769" class="outline-4">
+<h4 id="org99bd769"><span class="section-number-4">4.2.3</span> sock_wait_for_wmem()</h4>
+<div class="outline-text-4" id="text-4-2-3">
+<p>
+该函数用于等待分配可用于输出的内存。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">It is almost wait_for_tcp_memory minus release_sock/lock_sock.</span>
+<span style="color: #8B8878;">   I think, these locks should be removed for datagram sockets.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sock_wait_for_wmem</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> * <span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeo</span>)
+{
+	DEFINE_WAIT(wait);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28165;&#38500;SOCK_ASYNC_NOSPACE&#26631;&#24535;</span>
+	clear_bit(SOCK_ASYNC_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags);
+	<span style="color: #FF1493;">for</span> (;;) {
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>timeo) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25805;&#20316;&#36229;&#26102;</span>
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #FF1493;">if</span> (signal_pending(current)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25910;&#21040;&#20449;&#21495;</span>
+			<span style="color: #FF1493;">break</span>;
+		set_bit(SOCK_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags);
+		prepare_to_wait(sk-&gt;sk_sleep, &amp;wait, TASK_INTERRUPTIBLE);
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#21457;&#36865;&#20998;&#37197;&#30340;SKB&#24635;&#22823;&#23567;&#20302;&#20110;&#19978;&#38480;</span>
+		<span style="color: #FF1493;">if</span> (atomic_read(&amp;sk-&gt;sk_wmem_alloc) &lt; sk-&gt;sk_sndbuf)
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#36890;&#36947;&#20851;&#38381;&#65288;shutdown()&#65289;</span>
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_shutdown &amp; SEND_SHUTDOWN)
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_err) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#29983;&#33268;&#21629;&#38169;&#35823;</span>
+			<span style="color: #FF1493;">break</span>;
+		timeo = schedule_timeout(timeo);
+	}
+	finish_wait(sk-&gt;sk_sleep, &amp;wait);
+	<span style="color: #FF1493;">return</span> timeo;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org56a2921" class="outline-3">
+<h3 id="org56a2921"><span class="section-number-3">4.3</span> 发送缓存的分配和释放</h3>
+<div class="outline-text-3" id="text-4-3">
+</div>
+<div id="outline-container-orged7b4f2" class="outline-4">
+<h4 id="orged7b4f2"><span class="section-number-4">4.3.1</span> sock_wmalloc()</h4>
+<div class="outline-text-4" id="text-4-3-1">
+<p>
+该函数的作用也是分配发送缓存，TCP中，在构造SYN+ACK时使用该接口分配， 而在发送用户数据时，通常使用 sk_stream_alloc_pskb()分配发送缓存。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Allocate a skb from the socket's send buffer.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">sock_wmalloc</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23487;&#20027;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">size</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#20998;&#37197;SKB&#22823;&#23567;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">force</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#24378;&#21046;&#20998;&#37197;</span>
+	<span style="color: #5FD7FF;">gfp_t</span> <span style="color: #FF8C00;">priority</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20869;&#23384;&#20998;&#37197;&#26041;&#24335;</span>
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#20102;&#24378;&#21046;&#20998;&#37197;&#65292;&#21363;&#20351;&#36229;&#36807;&#21457;&#36865;&#32531;&#23384;&#38480;&#21046;&#65292;&#20063;&#36827;&#34892;&#20998;&#37197;</span>
+	<span style="color: #FF1493;">if</span> (force || atomic_read(&amp;sk-&gt;sk_wmem_alloc) &lt; sk-&gt;sk_sndbuf) {
+		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> * <span style="color: #FF8C00;">skb</span> = alloc_skb(size, priority);
+		<span style="color: #FF1493;">if</span> (skb) {
+			skb_set_owner_w(skb, sk);
+			<span style="color: #FF1493;">return</span> skb;
+		}
+	}
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2eefa9f" class="outline-4">
+<h4 id="org2eefa9f"><span class="section-number-4">4.3.2</span> skb_set_owner_w()</h4>
+<div class="outline-text-4" id="text-4-3-2">
+<p>
+将输出的SKB关联到传输控制块，并设置SKB的销毁函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_set_owner_w</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	sock_hold(sk);
+	skb-&gt;sk = sk;
+	skb-&gt;destructor = sock_wfree;
+	atomic_add(skb-&gt;truesize, &amp;sk-&gt;sk_wmem_alloc);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc9639d8" class="outline-4">
+<h4 id="orgc9639d8"><span class="section-number-4">4.3.3</span> sock_wfree()</h4>
+<div class="outline-text-4" id="text-4-3-3">
+<p>
+通常用于输出SKB的销毁函数，当释放SKB时调用，更新所属传输控制块的发送SKB数据区总大小。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_wfree</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = skb-&gt;sk;
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">In case it might be waiting for more memory.</span><span style="color: #8B8878;"> */</span>
+	atomic_sub(skb-&gt;truesize, &amp;sk-&gt;sk_wmem_alloc);
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_flag(sk, SOCK_USE_WRITE_QUEUE))
+		sk-&gt;sk_write_space(sk);
+	sock_put(sk);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgabda5db" class="outline-3">
+<h3 id="orgabda5db"><span class="section-number-3">4.4</span> 接收缓存的分配和释放</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+用于输出的SKB都是在驱动层通过 dev_alloc_skb()或者 alloc_skb() 进行分配，在传递到传输层之前，并不属于任何传输控制块。在传递到传输层后，就需要设置SKB的宿主， 不同传输层设置SKB的方式也不同，例如 TCP通过sk_stream_set_owner_r()设置，UDP通过 skb_set_owner_r()设置。
+</p>
+</div>
+
+<div id="outline-container-org53b5022" class="outline-4">
+<h4 id="org53b5022"><span class="section-number-4">4.4.1</span> sk_stream_set_owner_r()和sk_stream_rfree()</h4>
+<div class="outline-text-4" id="text-4-4-1">
+<p>
+TCP段的SKB传递到TCP传输控制块中时，会调用 sk_stream_set_owner_r()设置该SKB的宿主，并设置SKB的销毁函数，更新接收队列中所有报文总长度等。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sk_stream_set_owner_r</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	skb-&gt;sk = sk;
+	skb-&gt;destructor = sk_stream_rfree;
+	atomic_add(skb-&gt;truesize, &amp;sk-&gt;sk_rmem_alloc);
+	sk-&gt;sk_forward_alloc -= skb-&gt;truesize;
+}
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sk_stream_rfree</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = skb-&gt;sk;
+
+	skb_truesize_check(skb);
+	atomic_sub(skb-&gt;truesize, &amp;sk-&gt;sk_rmem_alloc);
+	sk-&gt;sk_forward_alloc += skb-&gt;truesize;
+}
+</pre>
+</div>
+
+<p>
+sk_stream_free_skb()用于释放SKB。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org88453e8" class="outline-4">
+<h4 id="org88453e8"><span class="section-number-4">4.4.2</span> skb_set_owner_t()和skb_free_datagram()</h4>
+<div class="outline-text-4" id="text-4-4-2">
+<p>
+当UDP数据报的SKB传递并添加到UDP传输控制块的接收队列中时，便会调用skb_set_owner_r()设置SKB的宿主，并设置SKB的销毁函数，更新接收队列中多有报文数据的总长度。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_set_owner_r</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	skb-&gt;sk = sk;
+	skb-&gt;destructor = sock_rfree;
+	atomic_add(skb-&gt;truesize, &amp;sk-&gt;sk_rmem_alloc);
+}
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_rfree</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = skb-&gt;sk;
+	atomic_sub(skb-&gt;truesize, &amp;sk-&gt;sk_rmem_alloc);
+}
+</pre>
+</div>
+
+<p>
+skb_free_datagram()函数用于释放UDP传输控制块接收队列上的已经复制到用户空间的SKB。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">skb_free_datagram</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	kfree_skb(skb);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgce9f81c" class="outline-3">
+<h3 id="orgce9f81c"><span class="section-number-3">4.5</span> 辅助缓存的分配和释放</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+除了发送缓存和接收缓存，还有另外一些缓存，其中大部分和选项设置有关。
+</p>
+
+<p>
+sock结构的 sk_omem_alloc 成员 和系统控制参数 optmem_max 用于辅助缓存的管理。 sk_omem_alloc()用于统计所属传输控制块目前分配选项缓存的长度，optmem_max则用于控制传输控制块分配的选项缓存。
+</p>
+
+<ol class="org-ol">
+<li>sock_kmalloc()</li>
+</ol>
+
+<p>
+sock_kmalloc()用于分配和选项相关的缓存，例如 套接口过滤器、组播设置等等。分配前，会检查待分配的长度与该传输控制块一分配辅助缓存长度之和是否超过 optmem_max，超过则不进行分配。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Allocate a memory block from the socket's option memory buffer.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> *<span style="color: #87D700;">sock_kmalloc</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">size</span>, <span style="color: #5FD7FF;">gfp_t</span> <span style="color: #FF8C00;">priority</span>)
+{
+	<span style="color: #FF1493;">if</span> ((<span style="color: #5FD7FF;">unsigned</span>)size &lt;= sysctl_optmem_max &amp;&amp;
+	    atomic_read(&amp;sk-&gt;sk_omem_alloc) + size &lt; sysctl_optmem_max) {
+		<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">mem</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">First do the add, to avoid the race if kmalloc</span>
+<span style="color: #8B8878;">                 * might sleep.</span>
+<span style="color: #8B8878;">                 */</span>
+		atomic_add(size, &amp;sk-&gt;sk_omem_alloc);
+		mem = kmalloc(size, priority);
+		<span style="color: #FF1493;">if</span> (mem)
+			<span style="color: #FF1493;">return</span> mem;
+		atomic_sub(size, &amp;sk-&gt;sk_omem_alloc);
+	}
+	<span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+}
+</pre>
+</div>
+
+<ol class="org-ol">
+<li>sock_kfree_s()</li>
+</ol>
+
+<p>
+该函数用于释放由sock_kmalloc()分配的缓存。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> * Free an option memory block.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_kfree_s</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">mem</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">size</span>)
+{
+	kfree(mem);
+	atomic_sub(size, &amp;sk-&gt;sk_omem_alloc);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org96c6216" class="outline-2">
+<h2 id="org96c6216"><span class="section-number-2">5</span> 异步IO机制</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+尽管阻塞和非阻塞操作同select方法的结合对于查询设备在大多数情况下是有效的，但是某些请款下还不能完全有效的解决问题。
+</p>
+
+<p>
+例如一个进程，在低优先级上执行较长的计算循环，但是需要尽可能块的处理输入数据。如果这个进程通过响应外设获取数据，当新数据可用时它应当立刻知道。通常应用程序可能调用select()有规律的检查数据，但是，如果需要更迅速的处理外设数据，尽可以使用异步通知的方法，使应用程序接受一个信号，而不需要主动查询。
+</p>
+
+<p>
+用户程序必须执行两个步骤是能来自输入文件的异步通知：
+</p>
+<ol class="org-ol">
+<li>指定一个进程作为文件的拥有者。当进程使用fcntl系统调用发出F_SETOWN命令，这个拥有者进程的ID被保存在了filp-&gt;f_owner中供以后使用。通过这一步，内核便知道通知的对象了。</li>
+<li>通过fcntl的 F_SETFL 命令在设备中设置 FASYNC 标志。</li>
+</ol>
+
+<p>
+执行上述两个步骤后，处理异步IO的进程可接管SIGIO信号，此后，无论新数据何时到达，信号都会发送给存储于filp-&gt;f_owner中的进程。
+</p>
+
+<p>
+例如：以下代码实现了向当前进程发送标准输入文件的异步通知。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #87D700;">signal</span>(SIGIO, &amp;input_handler);
+<span style="color: #87D700;">fcntl</span>(STDIN_FILENO, F_SETOWN, <span style="color: #5FD7FF;">getpid</span>());
+oflags = fcntl(STDIN_FILENO, F_GETFL);
+<span style="color: #87D700;">fcntl</span>(STDIN_FILENO, F_SETFL, oflags | FASYNC);
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org97a6981" class="outline-3">
+<h3 id="org97a6981"><span class="section-number-3">5.1</span> sk_wake_async()</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+该函数用来将SIGIO或者SIGURG信号发送给在该套接口上的进程，通知该进程可以对该文件进行读或写。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sk_wake_async</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#30693;&#36827;&#31243;&#21487;&#20197;&#36827;&#34892;IO&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>, <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#36890;&#30693;&#36827;&#31243;&#30340;&#26041;&#24335;</span>
+<span style="color: #8B8878;">        0       &#26816;&#27979;&#26631;&#35782;&#24212;&#29992;&#31243;&#24207;&#36890;&#36807;recv&#31561;&#35843;&#29992;&#26102;&#65292;&#26159;&#21542;&#22312;&#31561;&#24453;&#25968;&#25454;&#30340;&#25509;&#25910;</span>
+<span style="color: #8B8878;">        1       &#26816;&#27979;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#21457;&#36865;&#38431;&#21015;&#26159;&#21542;&#26366;&#32463;&#36798;&#21040;&#19978;&#38480;</span>
+<span style="color: #8B8878;">        2       &#19981;&#20570;&#20219;&#20309;&#26816;&#27979;&#65292;&#30452;&#25509;&#21521;&#31561;&#24453;&#36827;&#31243;&#21457;&#36865;SIGIO&#20449;&#21495;</span>
+<span style="color: #8B8878;">        3       &#21521;&#31561;&#24453;&#36827;&#31243;&#21457;&#36865;SIGURG&#20449;&#21495;</span>
+<span style="color: #8B8878;">        */</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">band</span>) <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36890;&#30693;&#36827;&#31243;&#30340;IO&#35835;&#20889;&#31867;&#22411;</span>
+<span style="color: #8B8878;">        POLL_IN         &#26377;&#36755;&#20837;&#25968;&#25454;&#21487;&#35835;</span>
+<span style="color: #8B8878;">        POLL_OUT        &#36755;&#20986;&#32531;&#20914;&#21306;&#21487;&#20889;</span>
+<span style="color: #8B8878;">        POLL_MSG        &#26377;&#36755;&#20837;&#28040;&#24687;&#21487;&#35835;</span>
+<span style="color: #8B8878;">        POLL_ERR        I/O&#24322;&#24120;</span>
+<span style="color: #8B8878;">        POLL_PRI        &#39640;&#20248;&#20808;&#32423;&#30340;&#36755;&#20837;&#25968;&#25454;&#21487;&#35835;</span>
+<span style="color: #8B8878;">        POLL_HUP        &#35774;&#22791;&#25346;&#36215;&#25110;&#25991;&#20214;&#24050;&#20851;&#38381;&#65292;&#26080;&#27861;&#32487;&#32493;&#35835;&#20889;</span>
+<span style="color: #8B8878;">        */</span>
+{
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_socket &amp;&amp; sk-&gt;sk_socket-&gt;fasync_list)
+		sock_wake_async(sk-&gt;sk_socket, how, band);
+}
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This function may be called only under socket lock or callback_lock</span><span style="color: #8B8878;"> */</span>
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sock_wake_async</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">how</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">band</span>)
+{
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock || <span style="color: #CDC673; font-weight: bold;">!</span>sock-&gt;fasync_list) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#22871;&#25509;&#21475;&#30340;&#24322;&#27493;&#31561;&#24453;&#36890;&#30693;&#38431;&#21015;&#26159;&#21542;&#26377;&#25928;</span>
+		<span style="color: #FF1493;">return</span> -1;
+	<span style="color: #FF1493;">switch</span> (how) {
+	<span style="color: #FF1493;">case</span> 1:
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24212;&#29992;&#31243;&#24207;&#22914;&#26524;&#36890;&#36807;recv&#31561;&#35843;&#29992;&#26102;&#65292;&#26159;&#21542;&#22312;&#31561;&#24453;&#25968;&#25454;&#30340;&#25509;&#25910;&#65292;&#22914;&#26524;&#26159;&#65292;&#21017;&#19981;&#38656;&#35201;&#36890;&#30693;&#24212;&#29992;</span>
+		<span style="color: #FF1493;">if</span> (test_bit(SOCK_ASYNC_WAITDATA, &amp;sock-&gt;flags))
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">call_kill</span>;
+	<span style="color: #FF1493;">case</span> 2:
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27492;&#21069;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#21457;&#36865;&#38431;&#21015;&#36798;&#21040;&#36807;&#19978;&#38480;&#65292;&#21017;&#27492;&#26102;&#21487;&#33021;&#24050;&#32463;&#20302;&#20110;&#19978;&#38480;&#20102;&#12290;</span>
+		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>test_and_clear_bit(SOCK_ASYNC_NOSPACE, &amp;sock-&gt;flags))
+			<span style="color: #FF1493;">break</span>;
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">fall through</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">case</span> 0:
+<span style="color: #AF87FF;">call_kill</span>:
+		__kill_fasync(sock-&gt;fasync_list, SIGIO, band); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26222;&#36890;&#25968;&#25454;&#21457;&#36865;SIGIO&#20449;&#21495;</span>
+		<span style="color: #FF1493;">break</span>;
+	<span style="color: #FF1493;">case</span> 3:
+		__kill_fasync(sock-&gt;fasync_list, SIGURG, band);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24102;&#22806;&#25968;&#25454;&#65292;&#21457;&#36865;SIGURG&#20449;&#21495;</span>
+	}
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6879b34" class="outline-3">
+<h3 id="org6879b34"><span class="section-number-3">5.2</span> sock_def_wakeup()</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+该函数用于唤醒传输控制块的sk_sleep队列上的睡眠进程，是传输控制块默认的唤醒等待该套接口的函数。该函数设置到传输控制块的sk_state_change接口上，当传输控制块的状态变化时被调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      Default Socket Callbacks</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_def_wakeup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	read_lock(&amp;sk-&gt;sk_callback_lock);
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_sleep &amp;&amp; waitqueue_active(sk-&gt;sk_sleep))
+		wake_up_interruptible_all(sk-&gt;sk_sleep);
+	read_unlock(&amp;sk-&gt;sk_callback_lock);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3e753e5" class="outline-3">
+<h3 id="org3e753e5"><span class="section-number-3">5.3</span> sock_def_error_report()</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+该函数用于唤醒传输控制块的 sk_sleep 队列上的睡眠进程和通知套接口的 fasync_list 队列上的进程。该函数设置到传输控制块的sk_error_report接口上，通常当传输控制块发生错误时被调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_def_error_report</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	read_lock(&amp;sk-&gt;sk_callback_lock);
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_sleep &amp;&amp; waitqueue_active(sk-&gt;sk_sleep))
+		wake_up_interruptible(sk-&gt;sk_sleep);
+	sk_wake_async(sk,0,POLL_ERR);
+	read_unlock(&amp;sk-&gt;sk_callback_lock);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf090080" class="outline-3">
+<h3 id="orgf090080"><span class="section-number-3">5.4</span> sock_def_readable()</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+该函数用于唤醒传输控制块的 sk_sleep 队列上的睡眠进程和通知套接口的 fasync_list 队列上的进程。该函数设置到传输控制块的sk_data_ready接口上，当传输控制块接收到数据包，存在可读的数据后被调用。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_def_readable</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>)
+{
+	read_lock(&amp;sk-&gt;sk_callback_lock);
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_sleep &amp;&amp; waitqueue_active(sk-&gt;sk_sleep))
+		wake_up_interruptible(sk-&gt;sk_sleep);
+	sk_wake_async(sk,1,POLL_IN);
+	read_unlock(&amp;sk-&gt;sk_callback_lock);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2083d0e" class="outline-3">
+<h3 id="org2083d0e"><span class="section-number-3">5.5</span> sock_def_write_space()和sk_stream_write_space()</h3>
+<div class="outline-text-3" id="text-5-5">
+<p>
+这两个函数用来检测已经使用的发送缓存区的大小，如果达到指定值，则会唤醒传输控制块sk_sleep队列上的睡眠进程，并通知套接口的fasync_list队列上的进程。前者为默认的唤醒函数，后者是TCP中的唤醒函数。 这两个函数设置到传输控制块的sk_write_space接口上，当传输控制块的发送缓冲区长度的上限做了修改或者释放了接收队列上的SKB时被调用。
+</p>
+
+<p>
+sock_def_write_space()检测为发送而分配的所有SKB数据区的总大小是否小于上限的一半。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sock_def_write_space</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	read_lock(&amp;sk-&gt;sk_callback_lock);
+
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Do not wake up a writer until he can make "significant"</span>
+<span style="color: #8B8878;">         * progress.  --DaveM</span>
+<span style="color: #8B8878;">         */</span>
+	<span style="color: #FF1493;">if</span>((atomic_read(&amp;sk-&gt;sk_wmem_alloc) &lt;&lt; 1) &lt;= sk-&gt;sk_sndbuf) {
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_sleep &amp;&amp; waitqueue_active(sk-&gt;sk_sleep))
+			wake_up_interruptible(sk-&gt;sk_sleep);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Should agree with poll, otherwise some programs break</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (sock_writeable(sk))
+			sk_wake_async(sk, 2, POLL_OUT);
+	}
+
+	read_unlock(&amp;sk-&gt;sk_callback_lock);
+}
+</pre>
+</div>
+
+<p>
+sk_stream_write_space()检测可分配的空间是否达到发送缓冲区长度一半。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> * sk_stream_write_space - stream socket write_space callback.</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">@sk</span><span style="color: #CDC673;">: socket</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> * FIXME: write proper description</span>
+<span style="color: #CDC673;"> */</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sk_stream_write_space</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span> = sk-&gt;sk_socket;
+
+	<span style="color: #FF1493;">if</span> (sk_stream_wspace(sk) &gt;= sk_stream_min_wspace(sk) &amp;&amp; sock) {
+		clear_bit(SOCK_NOSPACE, &amp;sock-&gt;flags);
+
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_sleep &amp;&amp; waitqueue_active(sk-&gt;sk_sleep))
+			wake_up_interruptible(sk-&gt;sk_sleep);
+		<span style="color: #FF1493;">if</span> (sock-&gt;fasync_list &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>(sk-&gt;sk_shutdown &amp; SEND_SHUTDOWN))
+			sock_wake_async(sock, 2, POLL_OUT);
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1076f3f" class="outline-3">
+<h3 id="org1076f3f"><span class="section-number-3">5.6</span> sk_send_sigurg()</h3>
+<div class="outline-text-3" id="text-5-6">
+<p>
+当接收到带外数据之后，sk_send_sigurg()通知等待处理带外数据的套接口fasync_list队列上的进程。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">sk_send_sigurg</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_socket &amp;&amp; sk-&gt;sk_socket-&gt;file)
+		<span style="color: #FF1493;">if</span> (send_sigurg(&amp;sk-&gt;sk_socket-&gt;file-&gt;f_owner))
+			sk_wake_async(sk, 3, POLL_PRI);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgde10047" class="outline-3">
+<h3 id="orgde10047"><span class="section-number-3">5.7</span> 接收到FIN段后通知进程</h3>
+<div class="outline-text-3" id="text-5-7">
+<p>
+在TCP中还有些地方会通知套接口的fasync_list队列上的进程。比如，当TCP接收到FIN段后，如果此时套接口不是DEAD状态，则唤醒等待该套接口的进程。如果在发送接收方向都进行了关闭，或者此时该传输控制块处于CLOSE状态，则通知一部等待该高接口的进程，该连接已经终止，否则通知进程连接可以进行写操作。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_fin</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcphdr</span> *<span style="color: #FF8C00;">th</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_flag(sk, SOCK_DEAD)) {
+		sk-&gt;sk_state_change(sk);
+
+		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Do not send POLL_HUP for half duplex close.</span><span style="color: #8B8878;"> */</span>
+		<span style="color: #FF1493;">if</span> (sk-&gt;sk_shutdown == SHUTDOWN_MASK ||
+		    sk-&gt;sk_state == TCP_CLOSE)
+			sk_wake_async(sk, 1, POLL_HUP);
+		<span style="color: #FF1493;">else</span>
+			sk_wake_async(sk, 1, POLL_IN);
+	}
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf19b704" class="outline-3">
+<h3 id="orgf19b704"><span class="section-number-3">5.8</span> sock_fasync()</h3>
+<div class="outline-text-3" id="text-5-8">
+<p>
+该函数实现对套接口的异步通知队列增加和删除的更新操作。因为该函数在进程上下文或者软中断中被调用，因此在访问一部通知列表时需要上锁，对套接口上锁，对传输控制块上sk_callback_lock锁。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;"> *      Update the socket async list</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      Fasync_list locking strategy.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> *      1. fasync_list is modified only under process context socket lock</span>
+<span style="color: #8B8878;"> *         i.e. under semaphore.</span>
+<span style="color: #8B8878;"> *      2. fasync_list is used under read_lock(&amp;sk-&gt;sk_callback_lock)</span>
+<span style="color: #8B8878;"> *         or under socket lock.</span>
+<span style="color: #8B8878;"> *      3. fasync_list can be used from softirq context, so that</span>
+<span style="color: #8B8878;"> *         modification under socket lock have to be enhanced with</span>
+<span style="color: #8B8878;"> *         write_lock_bh(&amp;sk-&gt;sk_callback_lock).</span>
+<span style="color: #8B8878;"> *                                                      --ANK (990710)</span>
+<span style="color: #8B8878;"> */</span>
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sock_fasync</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#25551;&#36848;&#31526;&#65292;&#22312;&#22686;&#21152;&#19968;&#37096;&#36890;&#30693;&#21015;&#34920;&#39033;&#26102;&#20351;&#29992;&#65292;&#26159;&#32467;&#28857;&#20449;&#24687;&#30340;&#19968;&#37096;&#20998;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">filp</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#26469;&#33719;&#21462;&#30456;&#20851;&#30340;&#22871;&#25509;&#21475;&#21644;&#24453;&#25805;&#20316;&#25991;&#20214;&#25551;&#36848;&#31526;</span>
+	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">on</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26356;&#26032;&#26631;&#24535; 0&#26159;&#21024;&#38500; &#38750;0&#26159;&#22686;&#21152;</span>
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fasync_struct</span> *<span style="color: #FF8C00;">fa</span>, *<span style="color: #FF8C00;">fna</span> = <span style="color: #AF87FF;">NULL</span>, **<span style="color: #FF8C00;">prev</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>;
+
+	<span style="color: #FF1493;">if</span> (on) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#28155;&#21152;&#65292;&#21017;&#38656;&#35201;&#20998;&#37197; &#24322;&#27493;&#36890;&#30693;&#32467;&#28857;&#12290;</span>
+		fna = kmalloc(<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fasync_struct</span>), GFP_KERNEL);
+		<span style="color: #FF1493;">if</span> (fna == <span style="color: #AF87FF;">NULL</span>)
+			<span style="color: #FF1493;">return</span> -ENOMEM;
+	}
+
+	sock = filp-&gt;private_data; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#21644;&#25991;&#20214;&#30456;&#20851;&#30340;&#22871;&#25509;&#21475;</span>
+	sk = sock-&gt;sk; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	<span style="color: #FF1493;">if</span> (sk == <span style="color: #AF87FF;">NULL</span>) {
+		kfree(fna);
+		<span style="color: #FF1493;">return</span> -EINVAL;
+	}
+
+	lock_sock(sk);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#22871;&#25509;&#21475;&#30340;&#24322;&#27493;&#36890;&#30693;&#21015;&#34920;&#20013;&#26597;&#25214;&#19982;filp&#20851;&#32852;&#30340;&#32467;&#28857;&#65292;&#29992;&#20110;&#21024;&#38500;&#25110;&#20462;&#25913;&#32467;&#28857;</span>
+	prev = &amp;(sock-&gt;fasync_list);
+	<span style="color: #FF1493;">for</span> (fa = *prev; fa != <span style="color: #AF87FF;">NULL</span>; prev = &amp;fa-&gt;fa_next, fa = *prev)
+		<span style="color: #FF1493;">if</span> (fa-&gt;fa_file == filp)
+			<span style="color: #FF1493;">break</span>;
+
+	<span style="color: #FF1493;">if</span> (on) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#28155;&#21152;&#25805;&#20316;&#65292;</span>
+		<span style="color: #FF1493;">if</span> (fa != <span style="color: #AF87FF;">NULL</span>) {  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24182;&#19988;&#25214;&#21040;&#20851;&#32852;&#30340;&#32467;&#28857;&#65292; &#21017;&#36827;&#34892;&#20462;&#25913;&#25805;&#20316;</span>
+			write_lock_bh(&amp;sk-&gt;sk_callback_lock);
+			fa-&gt;fa_fd = fd;
+			write_unlock_bh(&amp;sk-&gt;sk_callback_lock);
+
+			kfree(fna);
+			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+		}
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#24322;&#27493;&#36890;&#30693;&#32467;&#28857;&#30340;&#20540;&#65292;&#24182;&#28155;&#21152;&#21040;&#24322;&#27493;&#36890;&#30693;&#21015;&#34920;&#12290;</span>
+		fna-&gt;fa_file = filp;
+		fna-&gt;fa_fd = fd;
+		fna-&gt;magic = FASYNC_MAGIC;
+		fna-&gt;fa_next = sock-&gt;fasync_list;
+		write_lock_bh(&amp;sk-&gt;sk_callback_lock);
+		sock-&gt;fasync_list = fna;
+		write_unlock_bh(&amp;sk-&gt;sk_callback_lock);
+	} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#25805;&#20316;</span>
+		<span style="color: #FF1493;">if</span> (fa != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#24322;&#27493;&#36890;&#30693;&#21015;&#34920;&#20013;&#25214;&#21040;&#20102;&#20851;&#32852;&#30340;&#32467;&#28857;&#65292;&#21017;&#25191;&#34892;&#21024;&#38500;&#25805;&#20316;&#12290;</span>
+			write_lock_bh(&amp;sk-&gt;sk_callback_lock);
+			*prev = fa-&gt;fa_next;
+			write_unlock_bh(&amp;sk-&gt;sk_callback_lock);
+			kfree(fa);
+		}
+	}
+
+<span style="color: #AF87FF;">out</span>:
+	release_sock(sock-&gt;sk);
+	<span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgffb63d4" class="outline-2">
+<h2 id="orgffb63d4"><span class="section-number-2">6</span> 传输控制块的同步锁</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-orge199db7" class="outline-3">
+<h3 id="orge199db7"><span class="section-number-3">6.1</span> socket_lock_t 结构</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+socket_lock_t结构用来实现控制用户进程与下半部之间的同步锁，以及下半部之间的同步锁。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23454;&#29616;&#19979;&#21322;&#37096;&#38388;&#30340;&#21516;&#27493;&#38145;&#65292;&#20063;&#29992;&#20110;&#20445;&#25252;&#23545;owner&#30340;&#20889;&#25805;&#20316;&#12290;</span>
+	<span style="color: #5FD7FF;">spinlock_t</span>              <span style="color: #FF8C00;">slock</span>;
+	<span style="color: #8B8878;">// </span><span style="color: #8B8878;">&#20026;0&#34920;&#31034;&#27809;&#26377;&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;&#65292;&#20026;1&#34920;&#31034;&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;&#12290;</span>
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock_iocb</span>        *<span style="color: #FF8C00;">owner</span>;
+	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#31561;&#24453;&#38431;&#21015;&#12290;&#24403;&#36827;&#31243;&#35843;&#29992;lock_sock()&#23545;&#20256;&#36755;&#25511;&#21046;&#22359;&#36827;&#34892;&#19978;&#38145;&#26102;&#65292;</span>
+<span style="color: #8B8878;">          &#22914;&#26524;&#27492;&#26102;&#20256;&#36755;&#25511;&#21046;&#22359;&#24050;&#32463;&#34987;&#36719;&#20013;&#26029;&#38145;&#23450;&#65292;&#21017;&#27492;&#26102;&#36827;&#31243;&#21482;&#33021;&#30561;&#30496;&#65292;</span>
+<span style="color: #8B8878;">          &#24182;&#23558;&#36827;&#31243;&#20449;&#24687;&#28155;&#21152;&#21040;&#27492;&#38431;&#21015;&#20013;&#65292;&#24403;&#36719;&#20013;&#26029;&#35299;&#38145;&#20256;&#36755;&#25511;&#21046;&#22359;&#26102;&#65292;</span>
+<span style="color: #8B8878;">          &#20250;&#21796;&#37266;&#27492;&#38431;&#21015;&#19978;&#30340;&#36827;&#31243;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #5FD7FF;">wait_queue_head_t</span>       <span style="color: #FF8C00;">wq</span>;
+} <span style="color: #5FD7FF;">socket_lock_t</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf0f4b40" class="outline-3">
+<h3 id="orgf0f4b40"><span class="section-number-3">6.2</span> 控制用户进程和下半部之间的同步锁</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+传输控制块通常在两种执行体中执行，即进程上下文和软中断上下文。而进程上下文和软中断上下文对传输控制块的访问完全是异步的，因此为了防止在访问传输控制块时产生冲突，加入了锁机制。
+</p>
+
+<p>
+在进程上下文中，访问传输控制块之间调用lock_sock()对其上锁，以免进程和软中断同时进行访问。访问结束后，在调用release_sock()对其解锁。例如用户进程在TCP套接口上调用sendmsg()发送数据时，在发送前对传输控制块上锁，完成后解锁。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_sendmsg</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">kiocb</span> *<span style="color: #FF8C00;">iocb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">msg</span>,
+		<span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">size</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> *<span style="color: #FF8C00;">iov</span>;
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	<span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeo</span>;
+	lock_sock(sk);
+	<span style="color: #FF1493;">while</span> (--iovlen &gt;= 0) {
+		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	}
+	release_sock(sk);
+	<span style="color: #FF1493;">return</span> copied;
+}
+</pre>
+</div>
+
+<p>
+软中断在访问传输控制块时需要通过sock_owned_by_user宏来检测该传输控制块是否已经被进程锁定，如果没有，则可直接访问而无需通过lock_sock()来上锁，因为软中断的优先级比进程的优先级高很多，软中断可以中断进程的执行，而进程绝不能中断软中断的执行。
+</p>
+
+<p>
+例如，在TCP段接收过程中，如果传输控制块没有被用户进程上锁，则将TCP段输入到接收队列中，否则接收到后备队列中。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_v4_rcv</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+{
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+<span style="color: #AF87FF;">process</span>:
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+	bh_lock_sock_nested(sk);
+	ret = 0;
+	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_owned_by_user(sk)) {
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+		{
+			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tcp_prequeue(sk, skb))
+			ret = tcp_v4_do_rcv(sk, skb);
+		}
+	} <span style="color: #FF1493;">else</span>
+		sk_add_backlog(sk, skb);
+	bh_unlock_sock(sk);
+
+	sock_put(sk);
+
+	<span style="color: #FF1493;">return</span> ret;
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org692d114" class="outline-4">
+<h4 id="org692d114"><span class="section-number-4">6.2.1</span> lock_sock()</h4>
+<div class="outline-text-4" id="text-6-2-1">
+<p>
+进程使用该函数来对传输控制块加锁。在进程调用网络相关的系统调用时，每当访问传输控制块前都会调用该函数加锁。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">lock_sock</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	lock_sock_nested(sk, 0);
+}
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">fastcall</span> lock_sock_nested(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">subclass</span>)
+{
+	might_sleep(); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#38656;&#35201;&#36827;&#31243;&#30561;&#30496;&#65292;&#21017;&#20808;&#30561;&#30496;</span>
+	spin_lock_bh(&amp;sk-&gt;sk_lock.slock); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19978;&#38145;slock&#65292;&#24182;&#31105;&#27490;&#36719;&#20013;&#26029;</span>
+	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#20934;&#22791;&#23545;owner&#36827;&#34892;&#20889;&#25805;&#20316;&#65292;&#22914;&#26524;owner&#34987;&#35774;&#32622;&#65292;&#21017;&#34920;&#31034;&#35813;&#20256;&#36755;&#25511;&#21046;&#22359;&#24050;&#32463;&#34987;&#20854;&#20182;&#36827;&#31243;&#38145;&#23450;</span><span style="color: #8B8878;"> */</span>
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_lock.owner)
+		__lock_sock(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31561;&#24453;&#38145;&#23450;&#35813;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#36827;&#31243;&#35299;&#38145;&#12290;</span>
+	sk-&gt;sk_lock.owner = (<span style="color: #5FD7FF;">void</span> *)1; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24403;&#21069;&#36827;&#31243;&#38145;&#23450;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+	spin_unlock(&amp;sk-&gt;sk_lock.slock); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35299;&#38145;slock</span>
+	mutex_acquire(&amp;sk-&gt;sk_lock.dep_map, subclass, 0, _RET_IP_);
+	local_bh_enable(); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24320;&#21551;&#36719;&#20013;&#26029;</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org312084b" class="outline-4">
+<h4 id="org312084b"><span class="section-number-4">6.2.2</span> release_sock()</h4>
+<div class="outline-text-4" id="text-6-2-2">
+<p>
+进程系统调用返回前，如果之前锁定了传输控制块，则此时需要调用 release_sock()解锁。解锁前，如果后备队列中存在数据包，则还需要处理这些数据包。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">fastcall</span> release_sock(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">         * The sk_lock has mutex_unlock() semantics:</span>
+<span style="color: #8B8878;">         */</span>
+	mutex_release(&amp;sk-&gt;sk_lock.dep_map, 1, _RET_IP_);
+	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19978;&#38145;slock&#65292;&#24182;&#31105;&#27490;&#36719;&#20013;&#26029;&#65292;&#20445;&#25252;&#23545;owner&#30340;&#20889;&#25805;&#20316;</span>
+	spin_lock_bh(&amp;sk-&gt;sk_lock.slock);
+	<span style="color: #FF1493;">if</span> (sk-&gt;sk_backlog.tail) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21518;&#22791;&#38431;&#21015;&#20013;&#23384;&#22312;&#25968;&#25454;&#21253;</span>
+		__release_sock(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22788;&#29702;&#21518;&#22791;&#38431;&#21015;&#65292;&#23558;&#25968;&#25454;&#22797;&#21046;&#21040;&#29992;&#25143;&#31354;&#38388;&#30340;&#32531;&#23384;&#21306;&#20013;&#25110;&#32773;&#28155;&#21152;&#21040;&#25509;&#25910;&#38431;&#21015;</span>
+	sk-&gt;sk_lock.owner = <span style="color: #AF87FF;">NULL</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#28040;&#26412;&#36827;&#31243;&#23545;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#38145;&#23450;</span>
+
+	<span style="color: #FF1493;">if</span> (waitqueue_active(&amp;sk-&gt;sk_lock.wq)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#31561;&#24453;&#38431;&#21015;&#26377;&#36827;&#31243;</span>
+		wake_up(&amp;sk-&gt;sk_lock.wq); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21796;&#37266;&#31561;&#24453;&#27492;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;&#36827;&#31243;&#12290;</span>
+	spin_unlock_bh(&amp;sk-&gt;sk_lock.slock); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35299;&#38145;slock,&#24182;&#24320;&#21551;&#36719;&#20013;&#26029;</span>
+}
+</pre>
+</div>
+
+<p>
+__release_sock()是对后备队列进行操作，如果后备队列存在SKB，则遍历后备队列，将后备队列中的SKB通过传输控制块的sk_backlog_rcv接口进行处理。由于是通过传输控制块的sk_bakclog_rcv接口进行处理，因此处理过程与不同的传输层协议相关。 例如TCP中会将数据复制到用户空间的缓存区中或添加到接收队列。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__release_sock</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+{
+	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span> = sk-&gt;sk_backlog.head;
+	<span style="color: #FF1493;">do</span> {
+		sk-&gt;sk_backlog.head = sk-&gt;sk_backlog.tail = <span style="color: #AF87FF;">NULL</span>;
+		bh_unlock_sock(sk);
+		<span style="color: #FF1493;">do</span> {
+			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">next</span> = skb-&gt;next;
+
+			skb-&gt;next = <span style="color: #AF87FF;">NULL</span>;
+			sk-&gt;sk_backlog_rcv(sk, skb);
+
+			<span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">                         * We are in process context here with softirqs</span>
+<span style="color: #8B8878;">                         * disabled, use cond_resched_softirq() to preempt.</span>
+<span style="color: #8B8878;">                         * This is safe to do because we've taken the backlog</span>
+<span style="color: #8B8878;">                         * queue private:</span>
+<span style="color: #8B8878;">                         */</span>
+			cond_resched_softirq();
+
+			skb = next;
+		} <span style="color: #FF1493;">while</span> (skb != <span style="color: #AF87FF;">NULL</span>);
+
+		bh_lock_sock(sk);
+	} <span style="color: #FF1493;">while</span>((skb = sk-&gt;sk_backlog.head) != <span style="color: #AF87FF;">NULL</span>);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2c4a53d" class="outline-4">
+<h4 id="org2c4a53d"><span class="section-number-4">6.2.3</span> sock_owned_by_user宏</h4>
+<div class="outline-text-4" id="text-6-2-3">
+<p>
+软中断和进程是不能同时访问接收队列的，因此在tcp_v4_rcv()中处理段时会调用sock_owned_by_user宏来检测传输控制块此时是否被进程锁定。如果传输控制块被进程锁定，则将数据包添加到后备队列中，否则可以进行正常处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Used by processes to "lock" a socket state, so that</span>
+<span style="color: #8B8878;"> * interrupts and bottom half handlers won't change it</span>
+<span style="color: #8B8878;"> * from under us. It essentially blocks any incoming</span>
+<span style="color: #8B8878;"> * packets, so that we won't get any new data or any</span>
+<span style="color: #8B8878;"> * packets that change the state of the socket.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * While locked, BH processing will add new packets to</span>
+<span style="color: #8B8878;"> * the backlog queue.  This queue is processed by the</span>
+<span style="color: #8B8878;"> * owner of the socket lock right before it is released.</span>
+<span style="color: #8B8878;"> *</span>
+<span style="color: #8B8878;"> * Since ~2.3.5 it is also exclusive sleep lock serializing</span>
+<span style="color: #8B8878;"> * accesses from user process context.</span>
+<span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">sock_owned_by_user</span>(<span style="color: #FF8C00;">sk</span>)  ((sk)-&gt;sk_lock.owner)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf008108" class="outline-3">
+<h3 id="orgf008108"><span class="section-number-3">6.3</span> 控制下半部之间的同步锁</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+虽然进程不能中断软中断的执行，但在SMB架构上，可能有多个软中断同时访问传输控制块，因此软中断之间还需要考虑同步。在软中断访问控制块时会先调用bh_lock_sock宏上锁，以免其他软中断对其进行访问，完成访问后调用bh_unlock_sock宏进行解锁。该锁是由自旋锁来实现的，因此在非SMP架构上，bh_lock_sock()和bh_unlock_sock()不会真正执行。
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2022-04-25 Mon 22:45</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
