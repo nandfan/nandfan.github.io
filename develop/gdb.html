@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-23 Tue 09:14 -->
+<!-- 2024-06-23 Sun 15:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>gdb</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,73 +191,74 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">gdb</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org77a8c1c">1. Linux Coredump文件</a>
+<li><a href="#org65e329d">1. Linux Coredump文件</a>
 <ul>
-<li><a href="#org3e3aeaa">1.1. coredump文件命名</a></li>
+<li><a href="#orgcc1ba3f">1.1. coredump文件命名</a></li>
 </ul>
 </li>
-<li><a href="#org9540e7f">2. gdb</a>
+<li><a href="#orgcd6df37">2. gdb</a>
 <ul>
-<li><a href="#org752e673">2.1. 指定从文件读取gdb命令</a></li>
-<li><a href="#org117f822">2.2. 调试在main函数之前运行的函数</a></li>
+<li><a href="#org81e3725">2.1. 指定从文件读取gdb命令</a></li>
+<li><a href="#org6802111">2.2. 调试在main函数之前运行的函数</a></li>
+<li><a href="#org5f4eb6f">2.3. 调试信号</a></li>
+<li><a href="#org177d513">2.4. info</a></li>
 </ul>
 </li>
+<li><a href="#orgff9f414">3. gdb全部命令</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org77a8c1c" class="outline-2">
-<h2 id="org77a8c1c"><span class="section-number-2">1</span> Linux Coredump文件</h2>
+<div id="outline-container-org65e329d" class="outline-2">
+<h2 id="org65e329d"><span class="section-number-2">1.</span> Linux Coredump文件</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 coredump文件时进程崩溃时产生的磁盘文件，包含了进程崩溃时内存的映像，该文件可以用调试器（例如gdb）来调试，用于查看进程崩溃时的状态信息。
 </p>
 </div>
 
-<div id="outline-container-org3e3aeaa" class="outline-3">
-<h3 id="org3e3aeaa"><span class="section-number-3">1.1</span> coredump文件命名</h3>
+<div id="outline-container-orgcc1ba3f" class="outline-3">
+<h3 id="orgcc1ba3f"><span class="section-number-3">1.1.</span> coredump文件命名</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 默认情况下coredump文件名为core，查询coredump文件路径：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat /proc/sys/kernel/core_pattern</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">cat /proc/sys/kernel/core_pattern</span>
 core
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">sysctl kernel.core_pattern</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">sysctl kernel.core_pattern</span>
 kernel.core_partern = core
 </pre>
 </div>
@@ -285,9 +287,9 @@ coredump文件模板配置：
 配置coredump文件模板示例：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">echo "/var/log/core_%e_%p" &gt; /proc/sys/kernel/core_pattern</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">echo "/var/log/core_%e_%p" &gt; /proc/sys/kernel/core_pattern</span>
 &#25110;&#32773;&#20351;&#29992;
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">sysctl -w kernel.core_patterm=/var/log/core_%e_%p</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">sysctl -w kernel.core_patterm=/var/log/core_%e_%p</span>
 </pre>
 </div>
 
@@ -295,25 +297,25 @@ coredump文件模板配置：
 要产生core文件，还需要设置RLIMIT_CORE限制，如果为0则不产生core文件。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ulimit -c</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">ulimit -c</span>
 0
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ulimit -c core&#25991;&#20214;&#22823;&#23567;&#38480;&#21046;      //&#35774;&#32622;core&#25991;&#20214;&#22823;&#23567;&#38480;&#21046;</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ulimit -c unlimited             //&#19981;&#38480;&#21046;core&#25991;&#20214;&#22823;&#23567;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">ulimit -c core&#25991;&#20214;&#22823;&#23567;&#38480;&#21046;      //&#35774;&#32622;core&#25991;&#20214;&#22823;&#23567;&#38480;&#21046;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">ulimit -c unlimited             //&#19981;&#38480;&#21046;core&#25991;&#20214;&#22823;&#23567;</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org9540e7f" class="outline-2">
-<h2 id="org9540e7f"><span class="section-number-2">2</span> gdb</h2>
+<div id="outline-container-orgcd6df37" class="outline-2">
+<h2 id="orgcd6df37"><span class="section-number-2">2.</span> gdb</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org752e673" class="outline-3">
-<h3 id="org752e673"><span class="section-number-3">2.1</span> 指定从文件读取gdb命令</h3>
+<div id="outline-container-org81e3725" class="outline-3">
+<h3 id="org81e3725"><span class="section-number-3">2.1.</span> 指定从文件读取gdb命令</h3>
 <div class="outline-text-3" id="text-2-1">
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">gdb --command=gdb-command-file -p pid</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">gdb --command=gdb-command-file -p pid</span>
 </pre>
 </div>
 
@@ -323,14 +325,14 @@ coredump文件模板配置：
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">gdb nginx --command=nginx.gdb</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">gdb nginx --command=nginx.gdb</span>
 
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat nginx.gdb</span>
-<span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">set enviroment NAME=VALUE&#21487;&#20197;&#29992;&#26469;&#35774;&#32622;&#36827;&#31243;&#30340;&#29615;&#22659;&#21464;&#37327;</span>
-<span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">set arg &#21487;&#20197;&#29992;&#26469;&#35774;&#32622;&#36827;&#31243;&#21551;&#21160;&#21442;&#25968;</span>
-<span style="color: #FF1493;">set</span> follow-fork-mode child  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#35774;&#32622;&#36319;&#36394;&#23376;&#36827;&#31243;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">cat nginx.gdb</span>
+<span style="color: #75715E;">#</span><span style="color: #75715E;">set enviroment NAME=VALUE&#21487;&#20197;&#29992;&#26469;&#35774;&#32622;&#36827;&#31243;&#30340;&#29615;&#22659;&#21464;&#37327;</span>
+<span style="color: #75715E;">#</span><span style="color: #75715E;">set arg &#21487;&#20197;&#29992;&#26469;&#35774;&#32622;&#36827;&#31243;&#21551;&#21160;&#21442;&#25968;</span>
+<span style="color: #F92672;">set</span> follow-fork-mode child  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#35774;&#32622;&#36319;&#36394;&#23376;&#36827;&#31243;</span>
 
-b ngx_event_pipe_write_to_downstream   <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#26029;&#28857;</span>
+b ngx_event_pipe_write_to_downstream   <span style="color: #75715E;">#</span><span style="color: #75715E;">&#26029;&#28857;</span>
 b ngx_http_upstream_process_downstream
 b ngx_http_upstream_process_upstream
 </pre>
@@ -340,24 +342,1663 @@ b ngx_http_upstream_process_upstream
 快速调试进程的脚本，（以下用nginx worker进程示例）：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">! /bin/</span><span style="color: #FF1493;">bash</span>
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">! /bin/</span><span style="color: #F92672;">bash</span>
 
-<span style="color: #FF8C00; font-weight: bold;">ngx_pid</span>=<span style="color: #AF87FF; font-weight: bold;">`ps axjf | grep "nginx: worker process" | grep -m 1 -v "grep" | awk '{ print $2 }'`</span>
-gdb -p $<span style="color: #FF8C00; font-weight: bold;">ngx_pid</span> --command=nginx.gdb
+<span style="color: #FD971F;">ngx_pid</span>=<span style="color: #AE81FF; font-weight: bold;">`ps axjf | grep "nginx: worker process" | grep -m 1 -v "grep" | awk '{ print $2 }'`</span>
+gdb -p $<span style="color: #FD971F;">ngx_pid</span> --command=nginx.gdb
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org117f822" class="outline-3">
-<h3 id="org117f822"><span class="section-number-3">2.2</span> 调试在main函数之前运行的函数</h3>
+<div id="outline-container-org6802111" class="outline-3">
+<h3 id="org6802111"><span class="section-number-3">2.2.</span> 调试在main函数之前运行的函数</h3>
+</div>
+
+
+<div id="outline-container-org5f4eb6f" class="outline-3">
+<h3 id="org5f4eb6f"><span class="section-number-3">2.3.</span> 调试信号</h3>
+<div class="outline-text-3" id="text-2-3">
+<div class="org-src-container">
+<pre class="src src-shell">(gdb) p $<span style="color: #FD971F;">_siginfo</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org177d513" class="outline-3">
+<h3 id="org177d513"><span class="section-number-3">2.4.</span> info</h3>
+<div class="outline-text-3" id="text-2-4">
+<dl class="org-dl">
+<dt><code>info address</code></dt><dd>显示符号的存储位置</dd>
+<dt><code>info all-registers</code></dt><dd>列出当前栈帧所有寄存器以及其内容</dd>
+<dt><code>info args</code></dt><dd>当前栈帧的参数变量或者对应的变量</dd>
+<dt><code>info auto-load</code></dt><dd>列出自动加载的文件</dd>
+<dt><code>info auxv</code></dt><dd>Display the inferior's auxiliary vector.</dd>
+<dt><code>info bookmarks</code></dt><dd>设置的书签信息</dd>
+<dt><code>info breakpoints, info b</code></dt><dd>全部或者指定的断点信息</dd>
+<dt><code>info checkpoints</code></dt><dd>当前已知的检查点信息</dd>
+<dt><code>info classes</code></dt><dd>All Objective-C classes, or those matching REGEXP.</dd>
+<dt><code>info common</code></dt><dd>Print out the values contained in a Fortran COMMON block.</dd>
+<dt><code>info connections</code></dt><dd>Target connections in use.</dd>
+<dt><code>info copying</code></dt><dd>Conditions for redistributing copies of GDB.</dd>
+<dt><code>info dcache</code></dt><dd>Print information on the dcache performance.</dd>
+<dt><code>info display</code></dt><dd>Expressions to display when program stops, with code numbers.</dd>
+<dt><code>info exceptions</code></dt><dd>List all Ada exception names.</dd>
+<dt><code>info extensions</code></dt><dd>All filename extensions associated with a source language.</dd>
+<dt><code>info files</code></dt><dd>Names of targets and files being debugged.</dd>
+<dt><code>info float</code></dt><dd>Print the status of the floating point unit.</dd>
+<dt><code>info frame, info f</code></dt><dd>All about the selected stack frame.</dd>
+<dt><code>info frame-filter</code></dt><dd>List all registered Python frame-filters.</dd>
+<dt><code>info functions</code></dt><dd>All function names or those matching REGEXPs.</dd>
+<dt><code>info guile, info gu</code></dt><dd>Prefix command for Guile info displays.</dd>
+<dt><code>info inferiors</code></dt><dd>Print a list of inferiors being managed.</dd>
+<dt><code>info line</code></dt><dd>Core addresses of the code for a source line.</dd>
+<dt><code>info locals</code></dt><dd>All local variables of current stack frame or those matching REGEXPs.</dd>
+<dt><code>info macro</code></dt><dd>Show the definition of MACRO, and it's source location.</dd>
+<dt><code>info macros</code></dt><dd>Show the definitions of all macros at LINESPEC, or the current source location.</dd>
+<dt><code>info mem</code></dt><dd>Memory region attributes.</dd>
+<dt><code>info module</code></dt><dd>Print information about modules.</dd>
+<dt><code>info modules</code></dt><dd>All module names, or those matching REGEXP.</dd>
+<dt><code>info os</code></dt><dd>Show OS data ARG.</dd>
+<dt><code>info pretty-printer</code></dt><dd>GDB command to list all registered pretty-printers.</dd>
+<dt><code>info probes</code></dt><dd>Show available static probes.</dd>
+<dt><code>info proc</code></dt><dd>Show additional information about a process.</dd>
+
+<dt><code>info proc all</code></dt><dd>List all available info about the specified process.</dd>
+<dt><code>info proc cmdline</code></dt><dd>List command line arguments of the specified process.</dd>
+<dt><code>info proc cwd</code></dt><dd>List current working directory of the specified process.</dd>
+<dt><code>info proc exe</code></dt><dd>List absolute filename for executable of the specified process.</dd>
+<dt><code>info proc files</code></dt><dd>List files opened by the specified process.</dd>
+<dt><code>info proc mappings</code></dt><dd>List memory regions mapped by the specified process.</dd>
+<dt><code>info proc stat</code></dt><dd>List process info from /proc/PID/stat.</dd>
+<dt><code>info proc status</code></dt><dd>List process info from /proc/PID/status.</dd>
+
+<dt><code>info program</code></dt><dd>Execution status of the program.</dd>
+<dt><code>info record, info rec</code></dt><dd>Info record options.</dd>
+<dt><code>info registers, info r</code></dt><dd>List of integer registers and their contents, for selected stack frame.</dd>
+<dt><code>info scope</code></dt><dd>List the variables local to a scope.</dd>
+<dt><code>info selectors</code></dt><dd>All Objective-C selectors, or those matching REGEXP.</dd>
+<dt><code>info sharedlibrary, info dll</code></dt><dd>Status of loaded shared object libraries.</dd>
+<dt><code>info signals, info handle</code></dt><dd>What debugger does when program gets various signals.</dd>
+<dt><code>info skip</code></dt><dd>Display the status of skips.</dd>
+<dt><code>info source</code></dt><dd>Information about the current source file.</dd>
+<dt><code>info sources</code></dt><dd>All source files in the program or those matching REGEXP.</dd>
+<dt><code>info stack, info s</code></dt><dd>Backtrace of the stack, or innermost COUNT frames.</dd>
+<dt><code>info static-tracepoint-markers</code></dt><dd>List target static tracepoints markers.</dd>
+<dt><code>info symbol</code></dt><dd>Describe what symbol is at location ADDR.</dd>
+<dt><code>info target</code></dt><dd>Names of targets and files being debugged.</dd>
+<dt><code>info tasks</code></dt><dd>Provide information about all known Ada tasks.</dd>
+<dt><code>info terminal</code></dt><dd>Print inferior's saved terminal status.</dd>
+<dt><code>info threads</code></dt><dd>Display currently known threads.</dd>
+<dt><code>info tracepoints, info tp</code></dt><dd>Status of specified tracepoints (all tracepoints if no argument).</dd>
+<dt><code>info tvariables</code></dt><dd>Status of trace state variables and their values.</dd>
+<dt><code>info type-printers</code></dt><dd>GDB command to list all registered type-printers.</dd>
+<dt><code>info types</code></dt><dd>All type names, or those matching REGEXP.</dd>
+<dt><code>info unwinder</code></dt><dd>GDB command to list unwinders.</dd>
+<dt><code>info variables</code></dt><dd>All global and static variable names or those matching REGEXPs.</dd>
+<dt><code>info vector</code></dt><dd>Print the status of the vector unit.</dd>
+<dt><code>info vtbl</code></dt><dd>Show the virtual function table for a C++ object.</dd>
+<dt><code>info warranty</code></dt><dd>Various kinds of warranty you do not have.</dd>
+<dt><code>info watchpoints</code></dt><dd>Status of specified watchpoints (all watchpoints if no argument).</dd>
+<dt><code>info win</code></dt><dd>List of all displayed windows.</dd>
+<dt><code>info xmethod</code></dt><dd>GDB command to list registered xmethod matchers.</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orgff9f414" class="outline-2">
+<h2 id="orgff9f414"><span class="section-number-2">3.</span> gdb全部命令</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+List of classes of commands:
+</p>
+
+<p>
+aliases &#x2013; User-defined aliases of other commands.
+breakpoints &#x2013; Making program stop at certain points.
+data &#x2013; Examining data.
+files &#x2013; Specifying and examining files.
+internals &#x2013; Maintenance commands.
+obscure &#x2013; Obscure features.
+running &#x2013; Running the program.
+stack &#x2013; Examining the stack.
+status &#x2013; Status inquiries.
+support &#x2013; Support facilities.
+text-user-interface &#x2013; TUI is the GDB text based interface.
+tracepoints &#x2013; Tracing of program execution without stopping the program.
+user-defined &#x2013; User-defined commands.
+</p>
+
+<p>
+Type "help" followed by a class name for a list of commands in that class.
+Type "help all" for the list of all commands.
+Type "help" followed by command name for full documentation.
+Type "apropos word" to search for commands related to "word".
+Type "apropos -v word" for full documentation of commands related to "word".
+Command name abbreviations are allowed if unambiguous.
+(gdb) help all
+</p>
+
+<p>
+Command class: aliases
+</p>
+
+
+<p>
+Command class: breakpoints
+</p>
+
+<p>
+awatch &#x2013; Set a watchpoint for an expression.
+break, brea, bre, br, b &#x2013; Set breakpoint at specified location.
+break-range &#x2013; Set a breakpoint for an address range.
+catch &#x2013; Set catchpoints to catch events.
+catch assert &#x2013; Catch failed Ada assertions, when raised.
+catch catch &#x2013; Catch an exception, when caught.
+catch exception &#x2013; Catch Ada exceptions, when raised.
+catch exec &#x2013; Catch calls to exec.
+catch fork &#x2013; Catch calls to fork.
+catch handlers &#x2013; Catch Ada exceptions, when handled.
+catch load &#x2013; Catch loads of shared libraries.
+catch rethrow &#x2013; Catch an exception, when rethrown.
+catch signal &#x2013; Catch signals by their names and/or numbers.
+catch syscall &#x2013; Catch system calls by their names, groups and/or numbers.
+catch throw &#x2013; Catch an exception, when thrown.
+catch unload &#x2013; Catch unloads of shared libraries.
+catch vfork &#x2013; Catch calls to vfork.
+clear, cl &#x2013; Clear breakpoint at specified location.
+commands &#x2013; Set commands to be executed when the given breakpoints are hit.
+condition &#x2013; Specify breakpoint number N to break only if COND is true.
+delete, del, d &#x2013; Delete all or some breakpoints.
+delete bookmark &#x2013; Delete a bookmark from the bookmark list.
+delete breakpoints &#x2013; Delete all or some breakpoints or auto-display expressions.
+delete checkpoint &#x2013; Delete a checkpoint (experimental).
+delete display &#x2013; Cancel some expressions to be displayed when program stops.
+delete mem &#x2013; Delete memory region.
+delete tracepoints, delete tr &#x2013; Delete specified tracepoints.
+delete tvariable &#x2013; Delete one or more trace state variables.
+disable, disa, dis &#x2013; Disable all or some breakpoints.
+disable breakpoints &#x2013; Disable all or some breakpoints.
+disable display &#x2013; Disable some expressions to be displayed when program stops.
+disable frame-filter &#x2013; GDB command to disable the specified frame-filter.
+disable mem &#x2013; Disable memory region.
+disable pretty-printer &#x2013; GDB command to disable the specified pretty-printer.
+disable probes &#x2013; Disable probes.
+disable type-printer &#x2013; GDB command to disable the specified type-printer.
+disable unwinder &#x2013; GDB command to disable the specified unwinder.
+disable xmethod &#x2013; GDB command to disable a specified (group of) xmethod(s).
+dprintf &#x2013; Set a dynamic printf at specified location.
+enable, en &#x2013; Enable all or some breakpoints.
+enable breakpoints &#x2013; Enable all or some breakpoints.
+enable breakpoints count &#x2013; Enable some breakpoints for COUNT hits.
+enable breakpoints delete &#x2013; Enable some breakpoints and delete when hit.
+enable breakpoints once &#x2013; Enable some breakpoints for one hit.
+enable count &#x2013; Enable some breakpoints for COUNT hits.
+enable delete &#x2013; Enable some breakpoints and delete when hit.
+enable display &#x2013; Enable some expressions to be displayed when program stops.
+enable frame-filter &#x2013; GDB command to enable the specified frame-filter.
+enable mem &#x2013; Enable memory region.
+enable once &#x2013; Enable some breakpoints for one hit.
+enable pretty-printer &#x2013; GDB command to enable the specified pretty-printer.
+enable probes &#x2013; Enable probes.
+enable type-printer &#x2013; GDB command to enable the specified type printer.
+enable unwinder &#x2013; GDB command to enable unwinders.
+enable xmethod &#x2013; GDB command to enable a specified (group of) xmethod(s).
+ftrace &#x2013; Set a fast tracepoint at specified location.
+hbreak &#x2013; Set a hardware assisted breakpoint.
+ignore &#x2013; Set ignore-count of breakpoint number N to COUNT.
+rbreak &#x2013; Set a breakpoint for all functions matching REGEXP.
+rwatch &#x2013; Set a read watchpoint for an expression.
+save &#x2013; Save breakpoint definitions as a script.
+save breakpoints &#x2013; Save current breakpoint definitions as a script.
+save gdb-index &#x2013; Save a gdb-index file.
+save tracepoints, save-tracepoints &#x2013; Save current tracepoint definitions as a script.
+skip &#x2013; Ignore a function while stepping.
+skip delete &#x2013; Delete skip entries.
+skip disable &#x2013; Disable skip entries.
+skip enable &#x2013; Enable skip entries.
+skip file &#x2013; Ignore a file while stepping.
+skip function &#x2013; Ignore a function while stepping.
+strace &#x2013; Set a static tracepoint at location or marker.
+tbreak &#x2013; Set a temporary breakpoint.
+tcatch &#x2013; Set temporary catchpoints to catch events.
+tcatch assert &#x2013; Catch failed Ada assertions, when raised.
+tcatch catch &#x2013; Catch an exception, when caught.
+tcatch exception &#x2013; Catch Ada exceptions, when raised.
+tcatch exec &#x2013; Catch calls to exec.
+tcatch fork &#x2013; Catch calls to fork.
+tcatch handlers &#x2013; Catch Ada exceptions, when handled.
+tcatch load &#x2013; Catch loads of shared libraries.
+tcatch rethrow &#x2013; Catch an exception, when rethrown.
+tcatch signal &#x2013; Catch signals by their names and/or numbers.
+tcatch syscall &#x2013; Catch system calls by their names, groups and/or numbers.
+tcatch throw &#x2013; Catch an exception, when thrown.
+tcatch unload &#x2013; Catch unloads of shared libraries.
+tcatch vfork &#x2013; Catch calls to vfork.
+thbreak &#x2013; Set a temporary hardware assisted breakpoint.
+trace, trac, tra, tr, tp &#x2013; Set a tracepoint at specified location.
+watch &#x2013; Set a watchpoint for an expression.
+</p>
+
+<p>
+Command class: data
+</p>
+
+<p>
+agent-printf &#x2013; Target agent only formatted printing, like the C "printf" function.
+append &#x2013; Append target code/data to a local file.
+append binary &#x2013; Append target code/data to a raw binary file.
+append binary memory &#x2013; Append contents of memory to a raw binary file.
+append binary value &#x2013; Append the value of an expression to a raw binary file.
+append memory &#x2013; Append contents of memory to a raw binary file.
+append value &#x2013; Append the value of an expression to a raw binary file.
+call &#x2013; Call a function in the program.
+disassemble &#x2013; Disassemble a specified section of memory.
+display &#x2013; Print value of expression EXP each time the program stops.
+dump &#x2013; Dump target code/data to a local file.
+dump binary &#x2013; Write target code/data to a raw binary file.
+dump binary memory &#x2013; Write contents of memory to a raw binary file.
+dump binary value &#x2013; Write the value of an expression to a raw binary file.
+dump ihex &#x2013; Write target code/data to an intel hex file.
+dump ihex memory &#x2013; Write contents of memory to an ihex file.
+dump ihex value &#x2013; Write the value of an expression to an ihex file.
+dump memory &#x2013; Write contents of memory to a raw binary file.
+dump srec &#x2013; Write target code/data to an srec file.
+dump srec memory &#x2013; Write contents of memory to an srec file.
+dump srec value &#x2013; Write the value of an expression to an srec file.
+dump tekhex &#x2013; Write target code/data to a tekhex file.
+dump tekhex memory &#x2013; Write contents of memory to a tekhex file.
+dump tekhex value &#x2013; Write the value of an expression to a tekhex file.
+dump value &#x2013; Write the value of an expression to a raw binary file.
+dump verilog &#x2013; Write target code/data to a verilog hex file.
+dump verilog memory &#x2013; Write contents of memory to a verilog hex file.
+dump verilog value &#x2013; Write the value of an expression to a verilog hex file.
+explore &#x2013; Explore a value or a type valid in the current context.
+explore type &#x2013; Explore a type or the type of an expression.
+explore value &#x2013; Explore value of an expression valid in the current context.
+find &#x2013; Search memory for a sequence of bytes.
+init-if-undefined &#x2013; Initialize a convenience variable if necessary.
+mem &#x2013; Define attributes for memory region or reset memory region handling to target-based.
+output &#x2013; Like "print" but don't put in value history and don't print newline.
+print, inspect, p &#x2013; Print value of expression EXP.
+print-object, po &#x2013; Ask an Objective-C object to print itself.
+printf &#x2013; Formatted printing, like the C "printf" function.
+ptype &#x2013; Print definition of type TYPE.
+restore &#x2013; Restore the contents of FILE to target memory.
+set &#x2013; Evaluate expression EXP and assign result to variable VAR.
+set ada &#x2013; Prefix command for changing Ada-specific settings.
+set ada print-signatures &#x2013; Enable or disable the output of formal and return types for functions in the overloads selection menu.
+set ada trust-PAD-over-XVS &#x2013; Enable or disable an optimization trusting PAD types over XVS types.
+set agent &#x2013; Set debugger's willingness to use agent as a helper.
+set annotate &#x2013; Set annotation_level.
+set architecture, set processor &#x2013; Set architecture of target.
+set args &#x2013; Set argument list to give program being debugged when it is started.
+set auto-connect-native-target &#x2013; Set whether GDB may automatically connect to the native target.
+set auto-load &#x2013; Auto-loading specific settings.
+set auto-load gdb-scripts &#x2013; Enable or disable auto-loading of canned sequences of commands scripts.
+set auto-load libthread-db &#x2013; Enable or disable auto-loading of inferior specific libthread_db.
+set auto-load local-gdbinit &#x2013; Enable or disable auto-loading of .gdbinit script in current directory.
+set auto-load python-scripts &#x2013; Set the debugger's behaviour regarding auto-loaded Python scripts.
+set auto-load safe-path &#x2013; Set the list of files and directories that are safe for auto-loading.
+set auto-load scripts-directory &#x2013; Set the list of directories from which to load auto-loaded scripts.
+set auto-solib-add &#x2013; Set autoloading of shared library symbols.
+set backtrace &#x2013; Set backtrace specific variables.
+set backtrace limit &#x2013; Set an upper bound on the number of backtrace levels.
+set backtrace past-entry &#x2013; Set whether backtraces should continue past the entry point of a program.
+set backtrace past-main &#x2013; Set whether backtraces should continue past "main".
+set basenames-may-differ &#x2013; Set whether a source file may have multiple base names.
+set breakpoint &#x2013; Breakpoint specific settings.
+set breakpoint always-inserted &#x2013; Set mode for inserting breakpoints.
+set breakpoint auto-hw &#x2013; Set automatic usage of hardware breakpoints.
+set breakpoint condition-evaluation &#x2013; Set mode of breakpoint condition evaluation.
+set breakpoint pending &#x2013; Set debugger's behavior regarding pending breakpoints.
+set can-use-hw-watchpoints &#x2013; Set debugger's willingness to use watchpoint hardware.
+set case-sensitive &#x2013; Set case sensitivity in name search (on/off/auto).
+set charset &#x2013; Set the host and target character sets.
+set check, set ch, set c &#x2013; Set the status of the type/range checker.
+set check range &#x2013; Set range checking (on/warn/off/auto).
+set check type &#x2013; Set strict type checking.
+set circular-trace-buffer &#x2013; Set target's use of circular trace buffer.
+set code-cache &#x2013; Set cache use for code segment access.
+set coerce-float-to-double &#x2013; Set coercion of floats to doubles when calling functions.
+set compile-args &#x2013; Set compile command GCC command-line arguments.
+set compile-gcc &#x2013; Set compile command GCC driver filename.
+set complaints &#x2013; Set max number of complaints about incorrect symbols.
+set confirm &#x2013; Set whether to confirm potentially dangerous operations.
+set cp-abi &#x2013; Set the ABI used for inspecting C++ objects.
+set cwd &#x2013; Set the current working directory to be used when the inferior is started.
+set data-directory &#x2013; Set GDB's data directory.
+set dcache &#x2013; Use this command to set number of lines in dcache and line-size.
+set dcache line-size &#x2013; Set dcache line size in bytes (must be power of 2).
+set dcache size &#x2013; Set number of dcache lines.
+set debug &#x2013; Generic command for setting gdb debugging flags.
+set debug arch &#x2013; Set architecture debugging.
+set debug auto-load &#x2013; Set auto-load verifications debugging.
+set debug bfd-cache &#x2013; Set bfd cache debugging.
+set debug check-physname &#x2013; Set cross-checking of "physname" code against demangler.
+set debug coff-pe-read &#x2013; Set coff PE read debugging.
+set debug compile &#x2013; Set compile command debugging.
+set debug compile-cplus-scopes &#x2013; Set debugging of C++ compile scopes.
+set debug compile-cplus-types &#x2013; Set debugging of C++ compile type conversion.
+set debug displaced &#x2013; Set displaced stepping debugging.
+set debug dwarf-die &#x2013; Set debugging of the DWARF DIE reader.
+set debug dwarf-line &#x2013; Set debugging of the dwarf line reader.
+set debug dwarf-read &#x2013; Set debugging of the DWARF reader.
+set debug entry-values &#x2013; Set entry values and tail call frames debugging.
+set debug expression &#x2013; Set expression debugging.
+set debug frame &#x2013; Set frame debugging.
+set debug index-cache &#x2013; Set display of index-cache debug messages.
+set debug infrun &#x2013; Set inferior debugging.
+set debug jit &#x2013; Set JIT debugging.
+set debug libthread-db &#x2013; Set libthread-db debugging.
+set debug lin-lwp &#x2013; Set debugging of GNU/Linux lwp module.
+set debug linux-namespaces &#x2013; Set debugging of GNU/Linux namespaces module.
+set debug notification &#x2013; Set debugging of async remote notification.
+set debug observer &#x2013; Set observer debugging.
+set debug overload &#x2013; Set debugging of C++ overloading.
+set debug parser &#x2013; Set parser debugging.
+set debug py-unwind &#x2013; Set Python unwinder debugging.
+set debug record &#x2013; Set debugging of record/replay feature.
+set debug remote &#x2013; Set debugging of remote protocol.
+set debug remote-packet-max-chars &#x2013; Set the maximum number of characters to display for each remote packet.
+set debug separate-debug-file &#x2013; Set printing of separate debug info file search debug.
+set debug serial &#x2013; Set serial debugging.
+set debug skip &#x2013; Set whether to print the debug output about skipping files and functions.
+set debug stap-expression &#x2013; Set SystemTap expression debugging.
+set debug symbol-lookup &#x2013; Set debugging of symbol lookup.
+set debug symfile &#x2013; Set debugging of the symfile functions.
+set debug symtab-create &#x2013; Set debugging of symbol table creation.
+set debug target &#x2013; Set target debugging.
+set debug timestamp &#x2013; Set timestamping of debugging messages.
+set debug varobj &#x2013; Set varobj debugging.
+set debug xml &#x2013; Set XML parser debugging.
+set debug-file-directory &#x2013; Set the directories where separate debug symbols are searched for.
+set default-collect &#x2013; Set the list of expressions to collect by default.
+set demangle-style &#x2013; Set the current C++ demangling style.
+set detach-on-fork &#x2013; Set whether gdb will detach the child of a fork.
+set directories &#x2013; Set the search path for finding source files.
+set disable-randomization &#x2013; Set disabling of debuggee's virtual address space randomization.
+set disassemble-next-line &#x2013; Set whether to disassemble next source line or insn when execution stops.
+set disassembler-options &#x2013; Set the disassembler options.
+set disassembly-flavor &#x2013; Set the disassembly flavor.
+set disconnected-dprintf &#x2013; Set whether dprintf continues after GDB disconnects.
+set disconnected-tracing &#x2013; Set whether tracing continues after GDB disconnects.
+set displaced-stepping &#x2013; Set debugger's willingness to use displaced stepping.
+set dprintf-channel &#x2013; Set the channel to use for dynamic printf.
+set dprintf-function &#x2013; Set the function to use for dynamic printf.
+set dprintf-style &#x2013; Set the style of usage for dynamic printf.
+set dump-excluded-mappings &#x2013; Set whether gcore should dump mappings marked with the VM_DONTDUMP flag.
+set editing &#x2013; Set editing of command lines as they are typed.
+set endian &#x2013; Set endianness of target.
+set environment &#x2013; Set environment variable value to give the program.
+set exec-direction &#x2013; Set direction of execution.
+set exec-done-display &#x2013; Set notification of completion for asynchronous execution commands.
+set exec-file-mismatch &#x2013; Set exec-file-mismatch handling (ask|warn|off).
+set exec-wrapper &#x2013; Set a wrapper for running programs.
+set extended-prompt &#x2013; Set the extended prompt.
+set extension-language &#x2013; Set mapping between filename extension and source language.
+set filename-display &#x2013; Set how to display filenames.
+set follow-exec-mode &#x2013; Set debugger response to a program call of exec.
+set follow-fork-mode &#x2013; Set debugger response to a program call of fork or vfork.
+set frame-filter &#x2013; Prefix command for 'set' frame-filter related operations.
+set frame-filter priority &#x2013; GDB command to set the priority of the specified frame-filter.
+set gnutarget, set g &#x2013; Set the current BFD target.
+set guile, set gu &#x2013; Prefix command for Guile preference settings.
+set guile print-stack &#x2013; Set mode for Guile exception printing on error.
+set height &#x2013; Set number of lines in a page for GDB output pagination.
+set history &#x2013; Generic command for setting command history parameters.
+set history expansion &#x2013; Set history expansion on command input.
+set history filename &#x2013; Set the filename in which to record the command history.
+set history remove-duplicates &#x2013; Set how far back in history to look for and remove duplicate entries.
+set history save &#x2013; Set saving of the history record on exit.
+set history size &#x2013; Set the size of the command history.
+set host-charset &#x2013; Set the host character set.
+set index-cache &#x2013; Set index-cache options.
+set index-cache directory &#x2013; Set the directory of the index cache.
+set index-cache off &#x2013; Disable the index cache.
+set index-cache on &#x2013; Enable the index cache.
+set inferior-tty, tty &#x2013; Set terminal for future runs of program being debugged.
+set input-radix &#x2013; Set default input radix for entering numbers.
+set interactive-mode &#x2013; Set whether GDB's standard input is a terminal.
+set language &#x2013; Set the current source language.
+set libthread-db-search-path &#x2013; Set search path for libthread_db.
+set listsize &#x2013; Set number of source lines gdb will list by default.
+set logging &#x2013; Set logging options.
+set logging debugredirect &#x2013; Set the logging debug output mode.
+set logging file &#x2013; Set the current logfile.
+set logging off &#x2013; Disable logging.
+set logging on &#x2013; Enable logging.
+set logging overwrite &#x2013; Set whether logging overwrites or appends to the log file.
+set logging redirect &#x2013; Set the logging output mode.
+set max-completions &#x2013; Set maximum number of completion candidates.
+set max-user-call-depth &#x2013; Set the max call depth for non-python/scheme user-defined commands.
+set max-value-size &#x2013; Set maximum sized value gdb will load from the inferior.
+set may-call-functions &#x2013; Set permission to call functions in the program.
+set may-insert-breakpoints &#x2013; Set permission to insert breakpoints in the target.
+set may-insert-fast-tracepoints &#x2013; Set permission to insert fast tracepoints in the target.
+set may-insert-tracepoints &#x2013; Set permission to insert tracepoints in the target.
+set may-interrupt &#x2013; Set permission to interrupt or signal the target.
+set may-write-memory &#x2013; Set permission to write into target memory.
+set may-write-registers &#x2013; Set permission to write into registers.
+set mem &#x2013; Memory regions settings.
+set mem inaccessible-by-default &#x2013; Set handling of unknown memory regions.
+set mi-async, set target-async &#x2013; Set whether MI asynchronous mode is enabled.
+set mpx &#x2013; Set Intel Memory Protection Extensions specific variables.
+set mpx bound &#x2013; Set the memory bounds for a given array/pointer storage in the bound table.
+set multiple-symbols &#x2013; Set how the debugger handles ambiguities in expressions.
+set non-stop &#x2013; Set whether gdb controls the inferior in non-stop mode.
+set observer &#x2013; Set whether gdb controls the inferior in observer mode.
+set opaque-type-resolution &#x2013; Set resolution of opaque struct/class/union types (if set before loading symbols).
+set osabi &#x2013; Set OS ABI of target.
+set output-radix &#x2013; Set default output radix for printing of values.
+set overload-resolution &#x2013; Set overload resolution in evaluating C++ functions.
+set pagination &#x2013; Set state of GDB output pagination.
+set print, set pr, set p &#x2013; Generic command for setting how things print.
+set print address &#x2013; Set printing of addresses.
+set print array &#x2013; Set pretty formatting of arrays.
+set print array-indexes &#x2013; Set printing of array indexes.
+set print asm-demangle &#x2013; Set demangling of C++/ObjC names in disassembly listings.
+set print demangle &#x2013; Set demangling of encoded C++/ObjC names when displaying symbols.
+set print elements &#x2013; Set limit on string chars or array elements to print.
+set print entry-values &#x2013; Set printing of function arguments at function entry.
+set print finish &#x2013; Set whether `finish' prints the return value.
+set print frame-arguments &#x2013; Set printing of non-scalar frame arguments.
+set print frame-info &#x2013; Set printing of frame information.
+set print inferior-events &#x2013; Set printing of inferior events (such as inferior start and exit).
+set print max-depth &#x2013; Set maximum print depth for nested structures, unions and arrays.
+set print max-symbolic-offset &#x2013; Set the largest offset that will be printed in &lt;SYMBOL+1234&gt; form.
+set print null-stop &#x2013; Set printing of char arrays to stop at first null char.
+set print object &#x2013; Set printing of C++ virtual function tables.
+set print pascal_static-members &#x2013; Set printing of pascal static members.
+set print pretty &#x2013; Set pretty formatting of structures.
+set print raw-frame-arguments &#x2013; Set whether to print frame arguments in raw form.
+set print raw-values &#x2013; Set whether to print values in raw form.
+set print repeats &#x2013; Set threshold for repeated print elements.
+set print sevenbit-strings &#x2013; Set printing of 8-bit characters in strings as \nnn.
+set print static-members &#x2013; Set printing of C++ static members.
+set print symbol &#x2013; Set printing of symbol names when printing pointers.
+set print symbol-filename &#x2013; Set printing of source filename and line number with &lt;SYMBOL&gt;.
+set print symbol-loading &#x2013; Set printing of symbol loading messages.
+set print thread-events &#x2013; Set printing of thread events (such as thread start and exit).
+set print type &#x2013; Generic command for setting how types print.
+set print type methods &#x2013; Set printing of methods defined in classes.
+set print type nested-type-limit &#x2013; Set the number of recursive nested type definitions to print ("unlimited" or -1 to show all).
+set print type typedefs &#x2013; Set printing of typedefs defined in classes.
+set print union &#x2013; Set printing of unions interior to structures.
+set print vtbl &#x2013; Set printing of C++ virtual function tables.
+set prompt &#x2013; Set gdb's prompt.
+set python &#x2013; Prefix command for python preference settings.
+set python print-stack &#x2013; Set mode for Python stack dump on error.
+set radix &#x2013; Set default input and output number radices.
+set range-stepping &#x2013; Enable or disable range stepping.
+set record, set rec &#x2013; Set record options.
+set record btrace &#x2013; Set record options.
+set record btrace bts &#x2013; Set record btrace bts options.
+set record btrace bts buffer-size &#x2013; Set the record/replay bts buffer size.
+set record btrace cpu &#x2013; Set the cpu to be used for trace decode.
+set record btrace cpu auto &#x2013; Automatically determine the cpu to be used for trace decode.
+set record btrace cpu none &#x2013; Do not enable errata workarounds for trace decode.
+set record btrace pt &#x2013; Set record btrace pt options.
+set record btrace pt buffer-size &#x2013; Set the record/replay pt buffer size.
+set record btrace replay-memory-access &#x2013; Set what memory accesses are allowed during replay.
+set record full &#x2013; Set record options.
+set record full insn-number-max, set record insn-number-max &#x2013; Set record/replay buffer limit.
+set record full memory-query,
+   set record memory-query &#x2013; Set whether query if PREC cannot record memory change of next instruction.
+set record full stop-at-limit,
+   set record stop-at-limit &#x2013; Set whether record/replay stops when record/replay buffer becomes full.
+set record function-call-history-size &#x2013; Set number of function to print in "record function-call-history".
+set record instruction-history-size &#x2013; Set number of instructions to print in "record instruction-history".
+set remote &#x2013; Remote protocol specific variables.
+set remote TracepointSource-packet &#x2013; Set use of remote protocol `TracepointSource' (TracepointSource) packet.
+set remote Z-packet &#x2013; Set use of remote protocol `Z' packets.
+set remote access-watchpoint-packet &#x2013; Set use of remote protocol `Z4' (access-watchpoint) packet.
+set remote agent-packet &#x2013; Set use of remote protocol `QAgent' (agent) packet.
+set remote allow-packet &#x2013; Set use of remote protocol `QAllow' (allow) packet.
+set remote attach-packet &#x2013; Set use of remote protocol `vAttach' (attach) packet.
+set remote binary-download-packet, set remote X-packet &#x2013; Set use of remote protocol `X' (binary-download) packet.
+set remote breakpoint-commands-packet &#x2013; Set use of remote protocol `BreakpointCommands' (breakpoint-commands) packet.
+set remote btrace-conf-bts-size-packet &#x2013; Set use of remote protocol `Qbtrace-conf:bts:size' (btrace-conf-bts-size) packet.
+set remote btrace-conf-pt-size-packet &#x2013; Set use of remote protocol `Qbtrace-conf:pt:size' (btrace-conf-pt-size) packet.
+set remote catch-syscalls-packet &#x2013; Set use of remote protocol `QCatchSyscalls' (catch-syscalls) packet.
+set remote conditional-breakpoints-packet &#x2013; Set use of remote protocol `ConditionalBreakpoints' (conditional-breakpoints) packet.
+set remote conditional-tracepoints-packet &#x2013; Set use of remote protocol `ConditionalTracepoints' (conditional-tracepoints) packet.
+set remote ctrl-c-packet &#x2013; Set use of remote protocol `vCtrlC' (ctrl-c) packet.
+set remote disable-btrace-packet &#x2013; Set use of remote protocol `Qbtrace:off' (disable-btrace) packet.
+set remote disable-randomization-packet &#x2013; Set use of remote protocol `QDisableRandomization' (disable-randomization) packet.
+set remote enable-btrace-bts-packet &#x2013; Set use of remote protocol `Qbtrace:bts' (enable-btrace-bts) packet.
+set remote enable-btrace-pt-packet &#x2013; Set use of remote protocol `Qbtrace:pt' (enable-btrace-pt) packet.
+set remote environment-hex-encoded-packet &#x2013; Set use of remote protocol `QEnvironmentHexEncoded' (environment-hex-encoded) packet.
+set remote environment-reset-packet &#x2013; Set use of remote protocol `QEnvironmentReset' (environment-reset) packet.
+set remote environment-unset-packet &#x2013; Set use of remote protocol `QEnvironmentUnset' (environment-unset) packet.
+set remote exec-event-feature-packet &#x2013; Set use of remote protocol `exec-event-feature' (exec-event-feature) packet.
+set remote exec-file &#x2013; Set the remote pathname for "run".
+set remote fast-tracepoints-packet &#x2013; Set use of remote protocol `FastTracepoints' (fast-tracepoints) packet.
+set remote fetch-register-packet, set remote p-packet &#x2013; Set use of remote protocol `p' (fetch-register) packet.
+set remote fork-event-feature-packet &#x2013; Set use of remote protocol `fork-event-feature' (fork-event-feature) packet.
+set remote get-thread-information-block-address-packet &#x2013; Set use of remote protocol `qGetTIBAddr' (get-thread-information-block-address) packet.
+set remote get-thread-local-storage-address-packet &#x2013; Set use of remote protocol `qGetTLSAddr' (get-thread-local-storage-address) packet.
+set remote hardware-breakpoint-limit &#x2013; Set the maximum number of target hardware breakpoints.
+set remote hardware-breakpoint-packet &#x2013; Set use of remote protocol `Z1' (hardware-breakpoint) packet.
+set remote hardware-watchpoint-length-limit &#x2013; Set the maximum length (in bytes) of a target hardware watchpoint.
+set remote hardware-watchpoint-limit &#x2013; Set the maximum number of target hardware watchpoints.
+set remote hostio-close-packet &#x2013; Set use of remote protocol `vFile:close' (hostio-close) packet.
+set remote hostio-fstat-packet &#x2013; Set use of remote protocol `vFile:fstat' (hostio-fstat) packet.
+set remote hostio-open-packet &#x2013; Set use of remote protocol `vFile:open' (hostio-open) packet.
+set remote hostio-pread-packet &#x2013; Set use of remote protocol `vFile:pread' (hostio-pread) packet.
+set remote hostio-pwrite-packet &#x2013; Set use of remote protocol `vFile:pwrite' (hostio-pwrite) packet.
+set remote hostio-readlink-packet &#x2013; Set use of remote protocol `vFile:readlink' (hostio-readlink) packet.
+set remote hostio-setfs-packet &#x2013; Set use of remote protocol `vFile:setfs' (hostio-setfs) packet.
+set remote hostio-unlink-packet &#x2013; Set use of remote protocol `vFile:unlink' (hostio-unlink) packet.
+set remote hwbreak-feature-packet &#x2013; Set use of remote protocol `hwbreak-feature' (hwbreak-feature) packet.
+set remote install-in-trace-packet &#x2013; Set use of remote protocol `InstallInTrace' (install-in-trace) packet.
+set remote interrupt-on-connect &#x2013; Set whether interrupt-sequence is sent to remote target when gdb connects to.
+set remote interrupt-sequence &#x2013; Set interrupt sequence to remote target.
+set remote kill-packet &#x2013; Set use of remote protocol `vKill' (kill) packet.
+set remote library-info-packet &#x2013; Set use of remote protocol `qXfer:libraries:read' (library-info) packet.
+set remote library-info-svr4-packet &#x2013; Set use of remote protocol `qXfer:libraries-svr4:read' (library-info-svr4) packet.
+set remote memory-map-packet &#x2013; Set use of remote protocol `qXfer:memory-map:read' (memory-map) packet.
+set remote memory-read-packet-size &#x2013; Set the maximum number of bytes per memory-read packet.
+set remote memory-write-packet-size &#x2013; Set the maximum number of bytes per memory-write packet.
+set remote multiprocess-feature-packet &#x2013; Set use of remote protocol `multiprocess-feature' (multiprocess-feature) packet.
+set remote no-resumed-stop-reply-packet &#x2013; Set use of remote protocol `N stop reply' (no-resumed-stop-reply) packet.
+set remote noack-packet &#x2013; Set use of remote protocol `QStartNoAckMode' (noack) packet.
+set remote osdata-packet &#x2013; Set use of remote protocol `qXfer:osdata:read' (osdata) packet.
+set remote pass-signals-packet &#x2013; Set use of remote protocol `QPassSignals' (pass-signals) packet.
+set remote pid-to-exec-file-packet &#x2013; Set use of remote protocol `qXfer:exec-<a href="read">read</a>' (pid-to-exec-file) packet.
+set remote program-signals-packet &#x2013; Set use of remote protocol `QProgramSignals' (program-signals) packet.
+set remote query-attached-packet &#x2013; Set use of remote protocol `qAttached' (query-attached) packet.
+set remote read-aux-vector-packet &#x2013; Set use of remote protocol `qXfer:auxv:read' (read-aux-vector) packet.
+set remote read-btrace-conf-packet &#x2013; Set use of remote protocol `qXfer:btrace-conf' (read-btrace-conf) packet.
+set remote read-btrace-packet &#x2013; Set use of remote protocol `qXfer:btrace' (read-btrace) packet.
+set remote read-fdpic-loadmap-packet &#x2013; Set use of remote protocol `qXfer:fdpic:read' (read-fdpic-loadmap) packet.
+set remote read-sdata-object-packet &#x2013; Set use of remote protocol `qXfer:statictrace:read' (read-sdata-object) packet.
+set remote read-siginfo-object-packet &#x2013; Set use of remote protocol `qXfer:siginfo:read' (read-siginfo-object) packet.
+set remote read-watchpoint-packet &#x2013; Set use of remote protocol `Z3' (read-watchpoint) packet.
+set remote reverse-continue-packet &#x2013; Set use of remote protocol `bc' (reverse-continue) packet.
+set remote reverse-step-packet &#x2013; Set use of remote protocol `bs' (reverse-step) packet.
+set remote run-packet &#x2013; Set use of remote protocol `vRun' (run) packet.
+set remote search-memory-packet &#x2013; Set use of remote protocol `qSearch:memory' (search-memory) packet.
+set remote set-register-packet, set remote P-packet &#x2013; Set use of remote protocol `P' (set-register) packet.
+set remote set-working-dir-packet &#x2013; Set use of remote protocol `QSetWorkingDir' (set-working-dir) packet.
+set remote software-breakpoint-packet &#x2013; Set use of remote protocol `Z0' (software-breakpoint) packet.
+set remote startup-with-shell-packet &#x2013; Set use of remote protocol `QStartupWithShell' (startup-with-shell) packet.
+set remote static-tracepoints-packet &#x2013; Set use of remote protocol `StaticTracepoints' (static-tracepoints) packet.
+set remote supported-packets-packet &#x2013; Set use of remote protocol `qSupported' (supported-packets) packet.
+set remote swbreak-feature-packet &#x2013; Set use of remote protocol `swbreak-feature' (swbreak-feature) packet.
+set remote symbol-lookup-packet &#x2013; Set use of remote protocol `qSymbol' (symbol-lookup) packet.
+set remote system-call-allowed &#x2013; Set if the host system(3) call is allowed for the target.
+set remote target-features-packet &#x2013; Set use of remote protocol `qXfer:features:read' (target-features) packet.
+set remote thread-events-packet &#x2013; Set use of remote protocol `QThreadEvents' (thread-events) packet.
+set remote threads-packet &#x2013; Set use of remote protocol `qXfer:threads:read' (threads) packet.
+set remote trace-buffer-size-packet &#x2013; Set use of remote protocol `QTBuffer:size' (trace-buffer-size) packet.
+set remote trace-status-packet &#x2013; Set use of remote protocol `qTStatus' (trace-status) packet.
+set remote traceframe-info-packet &#x2013; Set use of remote protocol `qXfer:traceframe-<a href="read.html#Top">read</a>' (traceframe-info) packet.
+set remote unwind-info-block-packet &#x2013; Set use of remote protocol `qXfer:uib:read' (unwind-info-block) packet.
+set remote verbose-resume-packet &#x2013; Set use of remote protocol `vCont' (verbose-resume) packet.
+set remote verbose-resume-supported-packet &#x2013; Set use of remote protocol `vContSupported' (verbose-resume-supported) packet.
+set remote vfork-event-feature-packet &#x2013; Set use of remote protocol `vfork-event-feature' (vfork-event-feature) packet.
+set remote write-siginfo-object-packet &#x2013; Set use of remote protocol `qXfer:siginfo:write' (write-siginfo-object) packet.
+set remote write-watchpoint-packet &#x2013; Set use of remote protocol `Z2' (write-watchpoint) packet.
+set remoteaddresssize &#x2013; Set the maximum size of the address (in bits) in a memory packet.
+set remotecache &#x2013; Set cache use for remote targets.
+set remoteflow &#x2013; Set use of hardware flow control for remote serial I/O.
+set remotelogbase &#x2013; Set numerical base for remote session logging.
+set remotelogfile &#x2013; Set filename for remote session recording.
+set remotetimeout &#x2013; Set timeout limit to wait for target to respond.
+set remotewritesize &#x2013; Set the maximum number of bytes per memory write packet (deprecated).
+set schedule-multiple &#x2013; Set mode for resuming threads of all processes.
+set scheduler-locking &#x2013; Set mode for locking scheduler during execution.
+set script-extension &#x2013; Set mode for script filename extension recognition.
+set serial &#x2013; Set default serial/parallel port configuration.
+set serial baud &#x2013; Set baud rate for remote serial I/O.
+set serial parity &#x2013; Set parity for remote serial I/O.
+set solib-search-path &#x2013; Set the search path for loading non-absolute shared library symbol files.
+set stack-cache &#x2013; Set cache use for stack access.
+set startup-with-shell &#x2013; Set use of shell to start subprocesses.  The default is on.
+set step-mode &#x2013; Set mode of the step operation.
+set stop-on-solib-events &#x2013; Set stopping for shared library events.
+set struct-convention &#x2013; Set the convention for returning small structs.
+set style &#x2013; Style-specific settings.
+set style address &#x2013; Address display styling.
+set style address background &#x2013; Set the background color for this property.
+set style address foreground &#x2013; Set the foreground color for this property.
+set style address intensity &#x2013; Set the display intensity for this property.
+set style enabled &#x2013; Set whether CLI styling is enabled.
+set style filename &#x2013; Filename display styling.
+set style filename background &#x2013; Set the background color for this property.
+set style filename foreground &#x2013; Set the foreground color for this property.
+set style filename intensity &#x2013; Set the display intensity for this property.
+set style function &#x2013; Function name display styling.
+set style function background &#x2013; Set the background color for this property.
+set style function foreground &#x2013; Set the foreground color for this property.
+set style function intensity &#x2013; Set the display intensity for this property.
+set style highlight &#x2013; Highlight display styling.
+set style highlight background &#x2013; Set the background color for this property.
+set style highlight foreground &#x2013; Set the foreground color for this property.
+set style highlight intensity &#x2013; Set the display intensity for this property.
+set style metadata &#x2013; Metadata display styling.
+set style metadata background &#x2013; Set the background color for this property.
+set style metadata foreground &#x2013; Set the foreground color for this property.
+set style metadata intensity &#x2013; Set the display intensity for this property.
+set style sources &#x2013; Set whether source code styling is enabled.
+set style title &#x2013; Title display styling.
+set style title background &#x2013; Set the background color for this property.
+set style title foreground &#x2013; Set the foreground color for this property.
+set style title intensity &#x2013; Set the display intensity for this property.
+set style tui-active-border &#x2013; TUI active border display styling.
+set style tui-active-border background &#x2013; Set the background color for this property.
+set style tui-active-border foreground &#x2013; Set the foreground color for this property.
+set style tui-border &#x2013; TUI border display styling.
+set style tui-border background &#x2013; Set the background color for this property.
+set style tui-border foreground &#x2013; Set the foreground color for this property.
+set style variable &#x2013; Variable name display styling.
+set style variable background &#x2013; Set the background color for this property.
+set style variable foreground &#x2013; Set the foreground color for this property.
+set style variable intensity &#x2013; Set the display intensity for this property.
+set substitute-path &#x2013; Add a substitution rule to rewrite the source directories.
+set sysroot, set solib-absolute-prefix &#x2013; Set an alternate system root.
+set target-charset &#x2013; Set the target character set.
+set target-file-system-kind &#x2013; Set assumed file system kind for target reported file names.
+set target-wide-charset &#x2013; Set the target wide character set.
+set tcp &#x2013; TCP protocol specific variables.
+set tcp auto-retry &#x2013; Set auto-retry on socket connect.
+set tcp connect-timeout &#x2013; Set timeout limit in seconds for socket connection.
+set tdesc &#x2013; Set target description specific variables.
+set tdesc filename &#x2013; Set the file to read for an XML target description.
+set trace-buffer-size &#x2013; Set requested size of trace buffer.
+set trace-commands &#x2013; Set tracing of GDB CLI commands.
+set trace-notes &#x2013; Set notes string to use for current and future trace runs.
+set trace-stop-notes &#x2013; Set notes string to use for future tstop commands.
+set trace-user &#x2013; Set the user name to use for current and future trace runs.
+set trust-readonly-sections &#x2013; Set mode for reading from readonly sections.
+set tui &#x2013; TUI configuration variables.
+set tui active-border-mode &#x2013; Set the attribute mode to use for the active TUI window border.
+set tui border-kind &#x2013; Set the kind of border for TUI windows.
+set tui border-mode &#x2013; Set the attribute mode to use for the TUI window borders.
+set tui compact-source &#x2013; Set whether the TUI source window is compact.
+set tui tab-width &#x2013; Set the tab width, in characters, for the TUI.
+set unwind-on-terminating-exception &#x2013; Set unwinding of stack if std::terminate is called while in call dummy.
+set unwindonsignal &#x2013; Set unwinding of stack if a signal is received while in a call dummy.
+set use-coredump-filter &#x2013; Set whether gcore should consider /proc/PID/coredump_filter.
+set use-deprecated-index-sections &#x2013; Set whether to use deprecated gdb_index sections.
+set variable, set var &#x2013; Evaluate expression EXP and assign result to variable VAR.
+set varsize-limit &#x2013; Set the maximum number of bytes allowed in a variable-size object.
+set verbose &#x2013; Set verbosity.
+set watchdog &#x2013; Set watchdog timer.
+set width &#x2013; Set number of characters where GDB should wrap lines of its output.
+set write &#x2013; Set writing into executable and core files.
+undisplay &#x2013; Cancel some expressions to be displayed when program stops.
+whatis &#x2013; Print data type of expression EXP.
+with, w &#x2013; Temporarily set SETTING to VALUE, run COMMAND, and restore SETTING.
+x &#x2013; Examine memory: x/FMT ADDRESS.
+</p>
+
+<p>
+Command class: files
+</p>
+
+<p>
+add-symbol-file &#x2013; Load symbols from FILE, assuming FILE has been dynamically loaded.
+add-symbol-file-from-memory &#x2013; Load the symbols out of memory from a dynamically loaded object file.
+cd &#x2013; Set working directory to DIR for debugger.
+core-file &#x2013; Use FILE as core dump for examining memory and registers.
+directory &#x2013; Add directory DIR to beginning of search path for source files.
+edit &#x2013; Edit specified file or function.
+exec-file &#x2013; Use FILE as program for getting contents of pure memory.
+file &#x2013; Use FILE as program to be debugged.
+forward-search, fo, search &#x2013; Search for regular expression (see regex(3)) from last line listed.
+generate-core-file, gcore &#x2013; Save a core file with the current state of the debugged process.
+list, l &#x2013; List specified function or line.
+load &#x2013; Dynamically load FILE into the running program.
+nosharedlibrary &#x2013; Unload all shared object library symbols.
+path &#x2013; Add directory DIR(s) to beginning of search path for object files.
+pwd &#x2013; Print working directory.
+remote &#x2013; Manipulate files on the remote system.
+remote delete &#x2013; Delete a remote file.
+remote get &#x2013; Copy a remote file to the local system.
+remote put &#x2013; Copy a local file to the remote system.
+remove-symbol-file &#x2013; Remove a symbol file added via the add-symbol-file command.
+reverse-search, rev &#x2013; Search backward for regular expression (see regex(3)) from last line listed.
+section &#x2013; Change the base address of section SECTION of the exec file to ADDR.
+sharedlibrary &#x2013; Load shared object library symbols for files matching REGEXP.
+symbol-file &#x2013; Load symbol table from executable file FILE.
+</p>
+
+<p>
+Command class: internals
+</p>
+
+<p>
+flushregs &#x2013; Force gdb to flush its register cache (maintainer command).
+maintenance, mt &#x2013; Commands for use by GDB maintainers.
+maintenance agent &#x2013; Translate an expression into remote agent bytecode for tracing.
+maintenance agent-eval &#x2013; Translate an expression into remote agent bytecode for evaluation.
+maintenance agent-printf &#x2013; Translate an expression into remote agent bytecode for evaluation and display the bytecodes.
+maintenance btrace &#x2013; Branch tracing maintenance commands.
+maintenance btrace clear &#x2013; Clears the branch tracing data.
+maintenance btrace clear-packet-history &#x2013; Clears the branch tracing packet history.
+maintenance btrace packet-history &#x2013; Print the raw branch tracing data.
+maintenance check &#x2013; Commands for checking internal gdb state.
+maintenance check libthread-db &#x2013; Run integrity checks on the current inferior's libthread_db.
+maintenance check xml-descriptions &#x2013; Check equality of GDB target descriptions and XML created descriptions.
+maintenance check-psymtabs &#x2013; Check consistency of currently expanded psymtabs versus symtabs.
+maintenance check-symtabs &#x2013; Check consistency of currently expanded symtabs.
+maintenance cplus, maintenance cp &#x2013; C++ maintenance commands.
+maintenance cplus first_component &#x2013; Print the first class/namespace component of NAME.
+maintenance demangler-warning &#x2013; Give GDB a demangler warning.
+maintenance deprecate &#x2013; Deprecate a command (for testing purposes).
+maintenance dump-me &#x2013; Get fatal error; make debugger dump its core.
+maintenance expand-symtabs &#x2013; Expand symbol tables.
+maintenance flush-symbol-cache &#x2013; Flush the symbol cache for each program space.
+maintenance info, maintenance i &#x2013; Commands for showing internal info about the program being debugged.
+maintenance info bfds &#x2013; List the BFDs that are currently open.
+maintenance info breakpoints &#x2013; Status of all breakpoints, or breakpoint number NUMBER.
+maintenance info btrace &#x2013; Info about branch tracing data.
+maintenance info line-table &#x2013; List the contents of all line tables, from all symbol tables.
+maintenance info program-spaces &#x2013; Info about currently known program spaces.
+maintenance info psymtabs &#x2013; List the partial symbol tables for all object files.
+maintenance info sections &#x2013; List the BFD sections of the exec and core files.
+maintenance info selftests &#x2013; List the registered selftests.
+maintenance info symtabs &#x2013; List the full symbol tables for all object files.
+maintenance internal-error &#x2013; Give GDB an internal error.
+maintenance internal-warning &#x2013; Give GDB an internal warning.
+maintenance packet &#x2013; Send an arbitrary packet to a remote target.
+maintenance print &#x2013; Maintenance command for printing GDB internal state.
+maintenance print architecture &#x2013; Print the internal architecture configuration.
+maintenance print c-tdesc &#x2013; Print the current target description as a C source file.
+maintenance print cooked-registers &#x2013; Print the internal register configuration including cooked values.
+maintenance print core-file-backed-mappings &#x2013; Print core file's file-backed mappings.
+maintenance print dummy-frames &#x2013; Print the contents of the internal dummy-frame stack.
+maintenance print msymbols &#x2013; Print dump of current minimal symbol definitions.
+maintenance print objfiles &#x2013; Print dump of current object file definitions.
+maintenance print psymbols &#x2013; Print dump of current partial symbol definitions.
+maintenance print raw-registers &#x2013; Print the internal register configuration including raw values.
+maintenance print reggroups &#x2013; Print the internal register group names.
+maintenance print register-groups &#x2013; Print the internal register configuration including each register's group.
+maintenance print registers &#x2013; Print the internal register configuration.
+maintenance print remote-registers &#x2013; Print the internal register configuration including remote register number and g/G packets offset.
+maintenance print statistics &#x2013; Print statistics about internal gdb state.
+maintenance print symbol-cache &#x2013; Dump the symbol cache for each program space.
+maintenance print symbol-cache-statistics &#x2013; Print symbol cache statistics for each program space.
+maintenance print symbols &#x2013; Print dump of current symbol definitions.
+maintenance print target-stack &#x2013; Print the name of each layer of the internal target stack.
+maintenance print type &#x2013; Print a type chain for a given symbol.
+maintenance print user-registers &#x2013; List the names of the current user registers.
+maintenance print xml-tdesc &#x2013; Print the current target description as an XML file.
+maintenance selftest &#x2013; Run gdb's unit tests.
+maintenance set &#x2013; Set GDB internal variables used by the GDB maintainer.
+maintenance set ada &#x2013; Set Ada maintenance-related variables.
+maintenance set ada ignore-descriptive-types &#x2013; Set whether descriptive types generated by GNAT should be ignored.
+maintenance set bfd-sharing &#x2013; Set whether gdb will share bfds that appear to be the same file.
+maintenance set btrace &#x2013; Set branch tracing specific variables.
+maintenance set btrace pt &#x2013; Set Intel Processor Trace specific variables.
+maintenance set btrace pt skip-pad &#x2013; Set whether PAD packets should be skipped in the btrace packet history.
+maintenance set catch-demangler-crashes &#x2013; Set whether to attempt to catch demangler crashes.
+maintenance set check-libthread-db &#x2013; Set whether to check libthread_db at load time.
+maintenance set demangler-warning &#x2013; Configure what GDB does when demangler-warning is detected.
+maintenance set demangler-warning quit &#x2013; Set whether GDB should quit when an demangler-warning is detected.
+maintenance set dwarf &#x2013; Set DWARF specific variables.
+maintenance set dwarf always-disassemble &#x2013; Set whether `info address' always disassembles DWARF expressions.
+maintenance set dwarf max-cache-age &#x2013; Set the upper bound on the age of cached DWARF compilation units.
+maintenance set dwarf unwinders &#x2013; Set whether the DWARF stack frame unwinders are used.
+maintenance set internal-error &#x2013; Configure what GDB does when internal-error is detected.
+maintenance set internal-error corefile &#x2013; Set whether GDB should create a core file of GDB when internal-error is detected.
+maintenance set internal-error quit &#x2013; Set whether GDB should quit when an internal-error is detected.
+maintenance set internal-warning &#x2013; Configure what GDB does when internal-warning is detected.
+maintenance set internal-warning corefile &#x2013; Set whether GDB should create a core file of GDB when internal-warning is detected.
+maintenance set internal-warning quit &#x2013; Set whether GDB should quit when an internal-warning is detected.
+maintenance set per-command &#x2013; Per-command statistics settings.
+maintenance set per-command space &#x2013; Set whether to display per-command space usage.
+maintenance set per-command symtab &#x2013; Set whether to display per-command symtab statistics.
+maintenance set per-command time &#x2013; Set whether to display per-command execution time.
+maintenance set profile &#x2013; Set internal profiling.
+maintenance set show-debug-regs &#x2013; Set whether to show variables that mirror the x86 debug registers.
+maintenance set symbol-cache-size &#x2013; Set the size of the symbol cache.
+maintenance set target-async &#x2013; Set whether gdb controls the inferior in asynchronous mode.
+maintenance set target-non-stop &#x2013; Set whether gdb always controls the inferior in non-stop mode.
+maintenance set test-settings &#x2013; Set GDB internal variables used for set/show command infrastructure testing.
+maintenance set test-settings auto-boolean &#x2013; command used for internal testing.
+maintenance set test-settings boolean &#x2013; command used for internal testing.
+maintenance set test-settings enum &#x2013; command used for internal testing.
+maintenance set test-settings filename &#x2013; command used for internal testing.
+maintenance set test-settings integer &#x2013; command used for internal testing.
+maintenance set test-settings optional-filename &#x2013; command used for internal testing.
+maintenance set test-settings string &#x2013; command used for internal testing.
+maintenance set test-settings string-noescape &#x2013; command used for internal testing.
+maintenance set test-settings uinteger &#x2013; command used for internal testing.
+maintenance set test-settings zinteger &#x2013; command used for internal testing.
+maintenance set test-settings zuinteger &#x2013; command used for internal testing.
+maintenance set test-settings zuinteger-unlimited &#x2013; command used for internal testing.
+maintenance set tui-resize-message &#x2013; Set TUI resize messaging.
+maintenance set worker-threads &#x2013; Set the number of worker threads GDB can use.
+maintenance show &#x2013; Show GDB internal variables used by the GDB maintainer.
+maintenance show ada &#x2013; Show Ada maintenance-related variables.
+maintenance show ada ignore-descriptive-types &#x2013; Show whether descriptive types generated by GNAT should be ignored.
+maintenance show bfd-sharing &#x2013; Show whether gdb will share bfds that appear to be the same file.
+maintenance show btrace &#x2013; Show branch tracing specific variables.
+maintenance show btrace pt &#x2013; Show Intel Processor Trace specific variables.
+maintenance show btrace pt skip-pad &#x2013; Show whether PAD packets should be skipped in the btrace packet history.
+maintenance show catch-demangler-crashes &#x2013; Show whether to attempt to catch demangler crashes.
+maintenance show check-libthread-db &#x2013; Show whether to check libthread_db at load time.
+maintenance show demangler-warning &#x2013; Show what GDB does when demangler-warning is detected.
+maintenance show demangler-warning quit &#x2013; Show whether GDB will quit when an demangler-warning is detected.
+maintenance show dwarf &#x2013; Show DWARF specific variables.
+maintenance show dwarf always-disassemble &#x2013; Show whether `info address' always disassembles DWARF expressions.
+maintenance show dwarf max-cache-age &#x2013; Show the upper bound on the age of cached DWARF compilation units.
+maintenance show dwarf unwinders &#x2013; Show whether the DWARF stack frame unwinders are used.
+maintenance show internal-error &#x2013; Show what GDB does when internal-error is detected.
+maintenance show internal-error corefile &#x2013; Show whether GDB will create a core file of GDB when internal-error is detected.
+maintenance show internal-error quit &#x2013; Show whether GDB will quit when an internal-error is detected.
+maintenance show internal-warning &#x2013; Show what GDB does when internal-warning is detected.
+maintenance show internal-warning corefile &#x2013; Show whether GDB will create a core file of GDB when internal-warning is detected.
+maintenance show internal-warning quit &#x2013; Show whether GDB will quit when an internal-warning is detected.
+maintenance show per-command &#x2013; Show per-command statistics settings.
+maintenance show per-command space &#x2013; Show whether to display per-command space usage.
+maintenance show per-command symtab &#x2013; Show whether to display per-command symtab statistics.
+maintenance show per-command time &#x2013; Show whether to display per-command execution time.
+maintenance show profile &#x2013; Show internal profiling.
+maintenance show show-debug-regs &#x2013; Show whether to show variables that mirror the x86 debug registers.
+maintenance show symbol-cache-size &#x2013; Show the size of the symbol cache.
+maintenance show target-async &#x2013; Show whether gdb controls the inferior in asynchronous mode.
+maintenance show target-non-stop &#x2013; Show whether gdb always controls the inferior in non-stop mode.
+maintenance show test-options-completion-result &#x2013; Show maintenance test-options completion result.
+maintenance show test-settings &#x2013; Show GDB internal variables used for set/show command infrastructure testing.
+maintenance show test-settings auto-boolean &#x2013; command used for internal testing.
+maintenance show test-settings boolean &#x2013; command used for internal testing.
+maintenance show test-settings enum &#x2013; command used for internal testing.
+maintenance show test-settings filename &#x2013; command used for internal testing.
+maintenance show test-settings integer &#x2013; command used for internal testing.
+maintenance show test-settings optional-filename &#x2013; command used for internal testing.
+maintenance show test-settings string &#x2013; command used for internal testing.
+maintenance show test-settings string-noescape &#x2013; command used for internal testing.
+maintenance show test-settings uinteger &#x2013; command used for internal testing.
+maintenance show test-settings zinteger &#x2013; command used for internal testing.
+maintenance show test-settings zuinteger &#x2013; command used for internal testing.
+maintenance show test-settings zuinteger-unlimited &#x2013; command used for internal testing.
+maintenance show tui-resize-message &#x2013; Show TUI resize messaging.
+maintenance show worker-threads &#x2013; Show the number of worker threads GDB can use.
+maintenance space &#x2013; Set the display of space usage.
+maintenance test-options &#x2013; Generic command for testing the options infrastructure.
+maintenance test-options require-delimiter &#x2013; Command used for testing options processing.
+maintenance test-options unknown-is-error &#x2013; Command used for testing options processing.
+maintenance test-options unknown-is-operand &#x2013; Command used for testing options processing.
+maintenance time &#x2013; Set the display of time usage.
+maintenance translate-address &#x2013; Translate a section name and address to a symbol.
+maintenance undeprecate &#x2013; Undeprecate a command (for testing purposes).
+maintenance with &#x2013; Like "with", but works with "maintenance set" variables.
+</p>
+
+<p>
+Command class: obscure
+</p>
+
+<p>
+checkpoint &#x2013; Fork a duplicate process (experimental).
+compare-sections &#x2013; Compare section data on target to the exec file.
+compile, expression &#x2013; Command to compile source code and inject it into the inferior.
+compile code &#x2013; Compile, inject, and execute code.
+compile file &#x2013; Evaluate a file containing source code.
+compile print &#x2013; Evaluate EXPR by using the compiler and print result.
+complete &#x2013; List the completions for the rest of the line as a command.
+guile, gu &#x2013; Evaluate a Guile expression.
+guile-repl, gr &#x2013; Start a Guile interactive prompt.
+monitor &#x2013; Send a command to the remote monitor (remote targets only).
+python, py &#x2013; Evaluate a Python command.
+python-interactive, pi &#x2013; Start an interactive Python prompt.
+record, rec &#x2013; Start recording.
+record btrace, record b &#x2013; Start branch trace recording.
+record btrace bts, record bts &#x2013; Start branch trace recording in Branch Trace Store (BTS) format.
+record btrace pt, record pt &#x2013; Start branch trace recording in Intel Processor Trace format.
+record delete, record del, record d &#x2013; Delete the rest of execution log and start recording it anew.
+record full &#x2013; Start full execution recording.
+record full restore, record restore &#x2013; Restore the execution log from a file.
+record function-call-history &#x2013; Prints the execution history at function granularity.
+record goto &#x2013; Restore the program to its state at instruction number N.
+record goto begin, record goto start &#x2013; Go to the beginning of the execution log.
+record goto end &#x2013; Go to the end of the execution log.
+record instruction-history &#x2013; Print disassembled instructions stored in the execution log.
+record save &#x2013; Save the execution log to a file.
+record stop, record s &#x2013; Stop the record/replay target.
+restart &#x2013; Restore program context from a checkpoint.
+stop &#x2013; There is no `stop' command, but you can set a hook on `stop'.
+</p>
+
+<p>
+Command class: running
+</p>
+
+<p>
+advance &#x2013; Continue the program up to the given location (same form as args for break command).
+attach &#x2013; Attach to a process or file outside of GDB.
+continue, fg, c &#x2013; Continue program being debugged, after signal or breakpoint.
+detach &#x2013; Detach a process or file previously attached.
+detach checkpoint &#x2013; Detach from a checkpoint (experimental).
+detach inferiors &#x2013; Detach from inferior ID (or list of IDS).
+disconnect &#x2013; Disconnect from a target.
+finish, fin &#x2013; Execute until selected stack frame returns.
+handle &#x2013; Specify how to handle signals.
+inferior &#x2013; Use this command to switch between inferiors.
+interrupt &#x2013; Interrupt the execution of the debugged program.
+jump, j &#x2013; Continue program being debugged at specified line or address.
+kill &#x2013; Kill execution of program being debugged.
+kill inferiors &#x2013; Kill inferior ID (or list of IDs).
+next, n &#x2013; Step program, proceeding through subroutine calls.
+nexti, ni &#x2013; Step one instruction, but proceed through subroutine calls.
+queue-signal &#x2013; Queue a signal to be delivered to the current thread when it is resumed.
+reverse-continue, rc &#x2013; Continue program being debugged but run it in reverse.
+reverse-finish &#x2013; Execute backward until just before selected stack frame is called.
+reverse-next, rn &#x2013; Step program backward, proceeding through subroutine calls.
+reverse-nexti, rni &#x2013; Step backward one instruction, but proceed through called subroutines.
+reverse-step, rs &#x2013; Step program backward until it reaches the beginning of another source line.
+reverse-stepi, rsi &#x2013; Step backward exactly one instruction.
+run, r &#x2013; Start debugged program.
+signal &#x2013; Continue program with the specified signal.
+start &#x2013; Start the debugged program stopping at the beginning of the main procedure.
+starti &#x2013; Start the debugged program stopping at the first instruction.
+step, s &#x2013; Step program until it reaches a different source line.
+stepi, si &#x2013; Step one instruction exactly.
+taas &#x2013; Apply a command to all threads (ignoring errors and empty output).
+target &#x2013; Connect to a target machine or process.
+target core &#x2013; Use a core file as a target.
+target ctf &#x2013; (Use a CTF directory as a target.
+target exec &#x2013; Use an executable file as a target.
+target extended-remote &#x2013; Use a remote computer via a serial line, using a gdb-specific protocol.
+target native &#x2013; Native process (started by the "run" command).
+target record-btrace &#x2013; Collect control-flow trace and provide the execution history.
+target record-core &#x2013; Log program while executing and replay execution from log.
+target record-full &#x2013; Log program while executing and replay execution from log.
+target remote &#x2013; Use a remote computer via a serial line, using a gdb-specific protocol.
+target tfile &#x2013; Use a trace file as a target.
+task &#x2013; Use this command to switch between Ada tasks.
+tfaas &#x2013; Apply a command to all frames of all threads (ignoring errors and empty output).
+thread, t &#x2013; Use this command to switch between threads.
+thread apply &#x2013; Apply a command to a list of threads.
+thread apply all &#x2013; Apply a command to all threads.
+thread find &#x2013; Find threads that match a regular expression.
+thread name &#x2013; Set the current thread's name.
+until, u &#x2013; Execute until past the current line or past a LOCATION.
+</p>
+
+<p>
+Command class: stack
+</p>
+
+<p>
+backtrace, where, bt &#x2013; Print backtrace of all stack frames, or innermost COUNT frames.
+down, dow, do &#x2013; Select and print stack frame called by this one.
+faas &#x2013; Apply a command to all frames (ignoring errors and empty output).
+frame, f &#x2013; Select and print a stack frame.
+frame address &#x2013; Select and print a stack frame by stack address.
+frame apply &#x2013; Apply a command to a number of frames.
+frame apply all &#x2013; Apply a command to all frames.
+frame apply level &#x2013; Apply a command to a list of frames.
+frame function &#x2013; Select and print a stack frame by function name.
+frame level &#x2013; Select and print a stack frame by level.
+frame view &#x2013; View a stack frame that might be outside the current backtrace.
+return &#x2013; Make selected stack frame return to its caller.
+select-frame &#x2013; Select a stack frame without printing anything.
+select-frame address &#x2013; Select a stack frame by stack address.
+select-frame function &#x2013; Select a stack frame by function name.
+select-frame level &#x2013; Select a stack frame by level.
+select-frame view &#x2013; Select a stack frame that might be outside the current backtrace.
+up &#x2013; Select and print stack frame that called this one.
+</p>
+
+<p>
+Command class: status
+</p>
+
+<p>
+info, inf, i &#x2013; Generic command for showing things about the program being debugged.
+info address &#x2013; Describe where symbol SYM is stored.
+info all-registers &#x2013; List of all registers and their contents, for selected stack frame.
+info args &#x2013; All argument variables of current stack frame or those matching REGEXPs.
+info auto-load &#x2013; Print current status of auto-loaded files.
+info auto-load gdb-scripts &#x2013; Print the list of automatically loaded sequences of commands.
+info auto-load libthread-db &#x2013; Print the list of loaded inferior specific libthread_db.
+info auto-load local-gdbinit &#x2013; Print whether current directory .gdbinit file has been loaded.
+info auto-load python-scripts &#x2013; Print the list of automatically loaded Python scripts.
+info auxv &#x2013; Display the inferior's auxiliary vector.
+info bookmarks &#x2013; Status of user-settable bookmarks.
+info breakpoints, info b &#x2013; Status of specified breakpoints (all user-settable breakpoints if no argument).
+info checkpoints &#x2013; IDs of currently known checkpoints.
+info classes &#x2013; All Objective-C classes, or those matching REGEXP.
+info common &#x2013; Print out the values contained in a Fortran COMMON block.
+info connections &#x2013; Target connections in use.
+info copying &#x2013; Conditions for redistributing copies of GDB.
+info dcache &#x2013; Print information on the dcache performance.
+info display &#x2013; Expressions to display when program stops, with code numbers.
+info exceptions &#x2013; List all Ada exception names.
+info extensions &#x2013; All filename extensions associated with a source language.
+info files &#x2013; Names of targets and files being debugged.
+info float &#x2013; Print the status of the floating point unit.
+info frame, info f &#x2013; All about the selected stack frame.
+info frame address &#x2013; Print information about a stack frame selected by stack address.
+info frame function &#x2013; Print information about a stack frame selected by function name.
+info frame level &#x2013; Print information about a stack frame selected by level.
+info frame view &#x2013; Print information about a stack frame outside the current backtrace.
+info frame-filter &#x2013; List all registered Python frame-filters.
+info functions &#x2013; All function names or those matching REGEXPs.
+info guile, info gu &#x2013; Prefix command for Guile info displays.
+info inferiors &#x2013; Print a list of inferiors being managed.
+info line &#x2013; Core addresses of the code for a source line.
+info locals &#x2013; All local variables of current stack frame or those matching REGEXPs.
+info macro &#x2013; Show the definition of MACRO, and it's source location.
+info macros &#x2013; Show the definitions of all macros at LINESPEC, or the current source location.
+info mem &#x2013; Memory region attributes.
+info module &#x2013; Print information about modules.
+info module functions &#x2013; Display functions arranged by modules.
+info module variables &#x2013; Display variables arranged by modules.
+info modules &#x2013; All module names, or those matching REGEXP.
+info os &#x2013; Show OS data ARG.
+info pretty-printer &#x2013; GDB command to list all registered pretty-printers.
+info probes &#x2013; Show available static probes.
+info probes all &#x2013; Show information about all type of probes.
+info probes dtrace &#x2013; Show information about DTrace static probes.
+info probes stap &#x2013; Show information about SystemTap static probes.
+info proc &#x2013; Show additional information about a process.
+info proc all &#x2013; List all available info about the specified process.
+info proc cmdline &#x2013; List command line arguments of the specified process.
+info proc cwd &#x2013; List current working directory of the specified process.
+info proc exe &#x2013; List absolute filename for executable of the specified process.
+info proc files &#x2013; List files opened by the specified process.
+info proc mappings &#x2013; List memory regions mapped by the specified process.
+info proc stat &#x2013; List process info from /proc/PID/stat.
+info proc status &#x2013; List process info from /proc/PID/status.
+info program &#x2013; Execution status of the program.
+info record, info rec &#x2013; Info record options.
+info registers, info r &#x2013; List of integer registers and their contents, for selected stack frame.
+info scope &#x2013; List the variables local to a scope.
+info selectors &#x2013; All Objective-C selectors, or those matching REGEXP.
+info sharedlibrary, info dll &#x2013; Status of loaded shared object libraries.
+info signals, info handle &#x2013; What debugger does when program gets various signals.
+info skip &#x2013; Display the status of skips.
+info source &#x2013; Information about the current source file.
+info sources &#x2013; All source files in the program or those matching REGEXP.
+info stack, info s &#x2013; Backtrace of the stack, or innermost COUNT frames.
+info static-tracepoint-markers &#x2013; List target static tracepoints markers.
+info symbol &#x2013; Describe what symbol is at location ADDR.
+info target &#x2013; Names of targets and files being debugged.
+info tasks &#x2013; Provide information about all known Ada tasks.
+info terminal &#x2013; Print inferior's saved terminal status.
+info threads &#x2013; Display currently known threads.
+info tracepoints, info tp &#x2013; Status of specified tracepoints (all tracepoints if no argument).
+info tvariables &#x2013; Status of trace state variables and their values.
+info type-printers &#x2013; GDB command to list all registered type-printers.
+info types &#x2013; All type names, or those matching REGEXP.
+info unwinder &#x2013; GDB command to list unwinders.
+info variables &#x2013; All global and static variable names or those matching REGEXPs.
+info vector &#x2013; Print the status of the vector unit.
+info vtbl &#x2013; Show the virtual function table for a C++ object.
+info warranty &#x2013; Various kinds of warranty you do not have.
+info watchpoints &#x2013; Status of specified watchpoints (all watchpoints if no argument).
+info win &#x2013; List of all displayed windows.
+info xmethod &#x2013; GDB command to list registered xmethod matchers.
+macro &#x2013; Prefix for commands dealing with C preprocessor macros.
+macro define &#x2013; Define a new C/C++ preprocessor macro.
+macro expand, macro exp &#x2013; Fully expand any C/C++ preprocessor macro invocations in EXPRESSION.
+macro expand-once, macro exp1 &#x2013; Expand C/C++ preprocessor macro invocations appearing directly in EXPRESSION.
+macro list &#x2013; List all the macros defined using the `macro define' command.
+macro undef &#x2013; Remove the definition of the C/C++ preprocessor macro with the given name.
+show, info set &#x2013; Generic command for showing things about the debugger.
+show ada &#x2013; Generic command for showing Ada-specific settings.
+show ada print-signatures &#x2013; Show whether the output of formal and return types for functions in the overloads selection menu is activated.
+show ada trust-PAD-over-XVS &#x2013; Show whether an optimization trusting PAD types over XVS types is activated.
+show agent &#x2013; Show debugger's willingness to use agent as a helper.
+show annotate &#x2013; Show annotation_level.
+show architecture &#x2013; Show architecture of target.
+show args &#x2013; Show argument list to give program being debugged when it is started.
+show auto-connect-native-target &#x2013; Show whether GDB may automatically connect to the native target.
+show auto-load &#x2013; Show auto-loading specific settings.
+show auto-load gdb-scripts &#x2013; Show whether auto-loading of canned sequences of commands scripts is enabled.
+show auto-load libthread-db &#x2013; Show whether auto-loading inferior specific libthread_db is enabled.
+show auto-load local-gdbinit &#x2013; Show whether auto-loading .gdbinit script in current directory is enabled.
+show auto-load python-scripts &#x2013; Show the debugger's behaviour regarding auto-loaded Python scripts.
+show auto-load safe-path &#x2013; Show the list of files and directories that are safe for auto-loading.
+show auto-load scripts-directory &#x2013; Show the list of directories from which to load auto-loaded scripts.
+show auto-solib-add &#x2013; Show autoloading of shared library symbols.
+show backtrace &#x2013; Show backtrace specific variables.
+show backtrace limit &#x2013; Show the upper bound on the number of backtrace levels.
+show backtrace past-entry &#x2013; Show whether backtraces should continue past the entry point of a program.
+show backtrace past-main &#x2013; Show whether backtraces should continue past "main".
+show basenames-may-differ &#x2013; Show whether a source file may have multiple base names.
+show breakpoint &#x2013; Breakpoint specific settings.
+show breakpoint always-inserted &#x2013; Show mode for inserting breakpoints.
+show breakpoint auto-hw &#x2013; Show automatic usage of hardware breakpoints.
+show breakpoint condition-evaluation &#x2013; Show mode of breakpoint condition evaluation.
+show breakpoint pending &#x2013; Show debugger's behavior regarding pending breakpoints.
+show can-use-hw-watchpoints &#x2013; Show debugger's willingness to use watchpoint hardware.
+show case-sensitive &#x2013; Show case sensitivity in name search (on/off/auto).
+show charset &#x2013; Show the host and target character sets.
+show check, show ch, show c &#x2013; Show the status of the type/range checker.
+show check range &#x2013; Show range checking (on/warn/off/auto).
+show check type &#x2013; Show strict type checking.
+show circular-trace-buffer &#x2013; Show target's use of circular trace buffer.
+show code-cache &#x2013; Show cache use for code segment access.
+show coerce-float-to-double &#x2013; Show coercion of floats to doubles when calling functions.
+show commands &#x2013; Show the history of commands you typed.
+show compile-args &#x2013; Show compile command GCC command-line arguments.
+show compile-gcc &#x2013; Show compile command GCC driver filename.
+show complaints &#x2013; Show max number of complaints about incorrect symbols.
+show configuration &#x2013; Show how GDB was configured at build time.
+show confirm &#x2013; Show whether to confirm potentially dangerous operations.
+show convenience, show conv &#x2013; Debugger convenience ("$foo") variables and functions.
+show copying &#x2013; Conditions for redistributing copies of GDB.
+show cp-abi &#x2013; Show the ABI used for inspecting C++ objects.
+show cwd &#x2013; Show the current working directory that is used when the inferior is started.
+show data-directory &#x2013; Show GDB's data directory.
+show dcache &#x2013; Show dcachesettings.
+show dcache line-size &#x2013; Show dcache line size.
+show dcache size &#x2013; Show number of dcache lines.
+show debug &#x2013; Generic command for showing gdb debugging flags.
+show debug arch &#x2013; Show architecture debugging.
+show debug auto-load &#x2013; Show auto-load verifications debugging.
+show debug bfd-cache &#x2013; Show bfd cache debugging.
+show debug check-physname &#x2013; Show cross-checking of "physname" code against demangler.
+show debug coff-pe-read &#x2013; Show coff PE read debugging.
+show debug compile &#x2013; Show compile command debugging.
+show debug compile-cplus-scopes &#x2013; Show debugging of C++ compile scopes.
+show debug compile-cplus-types &#x2013; Show debugging of C++ compile type conversion.
+show debug displaced &#x2013; Show displaced stepping debugging.
+show debug dwarf-die &#x2013; Show debugging of the DWARF DIE reader.
+show debug dwarf-line &#x2013; Show debugging of the dwarf line reader.
+show debug dwarf-read &#x2013; Show debugging of the DWARF reader.
+show debug entry-values &#x2013; Show entry values and tail call frames debugging.
+show debug expression &#x2013; Show expression debugging.
+show debug frame &#x2013; Show frame debugging.
+show debug index-cache &#x2013; Show display of index-cache debug messages.
+show debug infrun &#x2013; Show inferior debugging.
+show debug jit &#x2013; Show JIT debugging.
+show debug libthread-db &#x2013; Show libthread-db debugging.
+show debug lin-lwp &#x2013; Show debugging of GNU/Linux lwp module.
+show debug linux-namespaces &#x2013; Show debugging of GNU/Linux namespaces module.
+show debug notification &#x2013; Show debugging of async remote notification.
+show debug observer &#x2013; Show observer debugging.
+show debug overload &#x2013; Show debugging of C++ overloading.
+show debug parser &#x2013; Show parser debugging.
+show debug py-unwind &#x2013; Show Python unwinder debugging.
+show debug record &#x2013; Show debugging of record/replay feature.
+show debug remote &#x2013; Show debugging of remote protocol.
+show debug remote-packet-max-chars &#x2013; Show the maximum number of characters to display for each remote packet.
+show debug separate-debug-file &#x2013; Show printing of separate debug info file search debug.
+show debug serial &#x2013; Show serial debugging.
+show debug skip &#x2013; Show whether the debug output about skipping files and functions is printed.
+show debug stap-expression &#x2013; Show SystemTap expression debugging.
+show debug symbol-lookup &#x2013; Show debugging of symbol lookup.
+show debug symfile &#x2013; Show debugging of the symfile functions.
+show debug symtab-create &#x2013; Show debugging of symbol table creation.
+show debug target &#x2013; Show target debugging.
+show debug timestamp &#x2013; Show timestamping of debugging messages.
+show debug varobj &#x2013; Show varobj debugging.
+show debug xml &#x2013; Show XML parser debugging.
+show debug-file-directory &#x2013; Show the directories where separate debug symbols are searched for.
+show default-collect &#x2013; Show the list of expressions to collect by default.
+show demangle-style &#x2013; Show the current C++ demangling style.
+show detach-on-fork &#x2013; Show whether gdb will detach the child of a fork.
+show directories &#x2013; Show the search path for finding source files.
+show disable-randomization &#x2013; Show disabling of debuggee's virtual address space randomization.
+show disassemble-next-line &#x2013; Show whether to disassemble next source line or insn when execution stops.
+show disassembler-options &#x2013; Show the disassembler options.
+show disassembly-flavor &#x2013; Show the disassembly flavor.
+show disconnected-dprintf &#x2013; Show whether dprintf continues after GDB disconnects.
+show disconnected-tracing &#x2013; Show whether tracing continues after GDB disconnects.
+show displaced-stepping &#x2013; Show debugger's willingness to use displaced stepping.
+show dprintf-channel &#x2013; Show the channel to use for dynamic printf.
+show dprintf-function &#x2013; Show the function to use for dynamic printf.
+show dprintf-style &#x2013; Show the style of usage for dynamic printf.
+show dump-excluded-mappings &#x2013; Show whether gcore should dump mappings marked with the VM_DONTDUMP flag.
+show editing &#x2013; Show editing of command lines as they are typed.
+show endian &#x2013; Show endianness of target.
+show environment &#x2013; The environment to give the program, or one variable's value.
+show exec-direction &#x2013; Show direction of execution (forward/reverse).
+show exec-done-display &#x2013; Show notification of completion for asynchronous execution commands.
+show exec-file-mismatch &#x2013; Show exec-file-mismatch handling (ask|warn|off).
+show exec-wrapper &#x2013; Show the wrapper for running programs.
+show extended-prompt &#x2013; Show the extended prompt.
+show extension-language &#x2013; Show mapping between filename extension and source language.
+show filename-display &#x2013; Show how to display filenames.
+show follow-exec-mode &#x2013; Show debugger response to a program call of exec.
+show follow-fork-mode &#x2013; Show debugger response to a program call of fork or vfork.
+show frame-filter &#x2013; Prefix command for 'show' frame-filter related operations.
+show frame-filter priority &#x2013; GDB command to show the priority of the specified frame-filter.
+show gnutarget &#x2013; Show the current BFD target.
+show guile, show gu &#x2013; Prefix command for Guile preference settings.
+show guile print-stack &#x2013; Show the mode of Guile exception printing on error.
+show height &#x2013; Show number of lines in a page for GDB output pagination.
+show history &#x2013; Generic command for showing command history parameters.
+show history expansion &#x2013; Show history expansion on command input.
+show history filename &#x2013; Show the filename in which to record the command history.
+show history remove-duplicates &#x2013; Show how far back in history to look for and remove duplicate entries.
+show history save &#x2013; Show saving of the history record on exit.
+show history size &#x2013; Show the size of the command history.
+show host-charset &#x2013; Show the host character set.
+show index-cache &#x2013; Show index-cache options.
+show index-cache directory &#x2013; Show the directory of the index cache.
+show index-cache stats &#x2013; Show some stats about the index cache.
+show inferior-tty &#x2013; Show terminal for future runs of program being debugged.
+show input-radix &#x2013; Show default input radix for entering numbers.
+show interactive-mode &#x2013; Show whether GDB's standard input is a terminal.
+show language &#x2013; Show the current source language.
+show libthread-db-search-path &#x2013; Show the current search path or libthread_db.
+show listsize &#x2013; Show number of source lines gdb will list by default.
+show logging &#x2013; Show logging options.
+show logging debugredirect &#x2013; Show the logging debug output mode.
+show logging file &#x2013; Show the current logfile.
+show logging overwrite &#x2013; Show whether logging overwrites or appends to the log file.
+show logging redirect &#x2013; Show the logging output mode.
+show max-completions &#x2013; Show maximum number of completion candidates.
+show max-user-call-depth &#x2013; Show the max call depth for non-python/scheme user-defined commands.
+show max-value-size &#x2013; Show maximum sized value gdb will load from the inferior.
+show may-call-functions &#x2013; Show permission to call functions in the program.
+show may-insert-breakpoints &#x2013; Show permission to insert breakpoints in the target.
+show may-insert-fast-tracepoints &#x2013; Show permission to insert fast tracepoints in the target.
+show may-insert-tracepoints &#x2013; Show permission to insert tracepoints in the target.
+show may-interrupt &#x2013; Show permission to interrupt or signal the target.
+show may-write-memory &#x2013; Show permission to write into target memory.
+show may-write-registers &#x2013; Show permission to write into registers.
+show mem &#x2013; Memory regions settings.
+show mem  inaccessible-by-default &#x2013; Show handling of unknown memory regions.
+show mi-async, show target-async &#x2013; Show whether MI asynchronous mode is enabled.
+show mpx &#x2013; Show Intel Memory Protection Extensions specific variables.
+show mpx bound &#x2013; Show the memory bounds for a given array/pointer storage in the bound table.
+show multiple-symbols &#x2013; Show how the debugger handles ambiguities in expressions.
+show non-stop &#x2013; Show whether gdb controls the inferior in non-stop mode.
+show observer &#x2013; Show whether gdb controls the inferior in observer mode.
+show opaque-type-resolution &#x2013; Show resolution of opaque struct/class/union types (if set before loading symbols).
+show osabi &#x2013; Show OS ABI of target.
+show output-radix &#x2013; Show default output radix for printing of values.
+show overload-resolution &#x2013; Show overload resolution in evaluating C++ functions.
+show pagination &#x2013; Show state of GDB output pagination.
+show paths &#x2013; Current search path for finding object files.
+show print, show pr, show p &#x2013; Generic command for showing print settings.
+show print address &#x2013; Show printing of addresses.
+show print array &#x2013; Show pretty formatting of arrays.
+show print array-indexes &#x2013; Show printing of array indexes.
+show print asm-demangle &#x2013; Show demangling of C++/ObjC names in disassembly listings.
+show print demangle &#x2013; Show demangling of encoded C++/ObjC names when displaying symbols.
+show print elements &#x2013; Show limit on string chars or array elements to print.
+show print entry-values &#x2013; Show printing of function arguments at function entry.
+show print finish &#x2013; Show whether `finish' prints the return value.
+show print frame-arguments &#x2013; Show printing of non-scalar frame arguments.
+show print frame-info &#x2013; Show printing of frame information.
+show print inferior-events &#x2013; Show printing of inferior events (such as inferior start and exit).
+show print max-depth &#x2013; Show maximum print depth for nested structures, unions, and arrays.
+show print max-symbolic-offset &#x2013; Show the largest offset that will be printed in &lt;SYMBOL+1234&gt; form.
+show print null-stop &#x2013; Show printing of char arrays to stop at first null char.
+show print object &#x2013; Show printing of C++ virtual function tables.
+show print pascal_static-members &#x2013; Show printing of pascal static members.
+show print pretty &#x2013; Show pretty formatting of structures.
+show print raw-frame-arguments &#x2013; Show whether to print frame arguments in raw form.
+show print raw-values &#x2013; Show whether to print values in raw form.
+show print repeats &#x2013; Show threshold for repeated print elements.
+show print sevenbit-strings &#x2013; Show printing of 8-bit characters in strings as \nnn.
+show print static-members &#x2013; Show printing of C++ static members.
+show print symbol &#x2013; Show printing of symbol names when printing pointers.
+show print symbol-filename &#x2013; Show printing of source filename and line number with &lt;SYMBOL&gt;.
+show print symbol-loading &#x2013; Show printing of symbol loading messages.
+show print thread-events &#x2013; Show printing of thread events (such as thread start and exit).
+show print type &#x2013; Generic command for showing type-printing settings.
+show print type methods &#x2013; Show printing of methods defined in classes.
+show print type nested-type-limit &#x2013; Show the number of recursive nested type definitions to print.
+show print type typedefs &#x2013; Show printing of typedefs defined in classes.
+show print union &#x2013; Show printing of unions interior to structures.
+show print vtbl &#x2013; Show printing of C++ virtual function tables.
+show prompt &#x2013; Show gdb's prompt.
+show python &#x2013; Prefix command for python preference settings.
+show python print-stack &#x2013; Show the mode of Python stack printing on error.
+show radix &#x2013; Show the default input and output number radices.
+show range-stepping &#x2013; Show whether target-assisted range stepping is enabled.
+show record, show rec &#x2013; Show record options.
+show record btrace &#x2013; Show record options.
+show record btrace bts &#x2013; Show record btrace bts options.
+show record btrace bts buffer-size &#x2013; Show the record/replay bts buffer size.
+show record btrace cpu &#x2013; Show the cpu to be used for trace decode.
+show record btrace pt &#x2013; Show record btrace pt options.
+show record btrace pt buffer-size &#x2013; Show the record/replay pt buffer size.
+show record btrace replay-memory-access &#x2013; Show what memory accesses are allowed during replay.
+show record full &#x2013; Show record options.
+show record full insn-number-max, show record insn-number-max &#x2013; Show record/replay buffer limit.
+show record full memory-query,
+   show record memory-query &#x2013; Show whether query if PREC cannot record memory change of next instruction.
+show record full stop-at-limit,
+   show record stop-at-limit &#x2013; Show whether record/replay stops when record/replay buffer becomes full.
+show record function-call-history-size &#x2013; Show number of functions to print in "record function-call-history".
+show record instruction-history-size &#x2013; Show number of instructions to print in "record instruction-history".
+show remote &#x2013; Remote protocol specific variables.
+show remote TracepointSource-packet &#x2013; Show current use of remote protocol `TracepointSource' (TracepointSource) packet.
+show remote Z-packet &#x2013; Show use of remote protocol `Z' packets.
+show remote access-watchpoint-packet &#x2013; Show current use of remote protocol `Z4' (access-watchpoint) packet.
+show remote agent-packet &#x2013; Show current use of remote protocol `QAgent' (agent) packet.
+show remote allow-packet &#x2013; Show current use of remote protocol `QAllow' (allow) packet.
+show remote attach-packet &#x2013; Show current use of remote protocol `vAttach' (attach) packet.
+show remote binary-download-packet,
+   show remote X-packet &#x2013; Show current use of remote protocol `X' (binary-download) packet.
+show remote breakpoint-commands-packet &#x2013; Show current use of remote protocol `BreakpointCommands' (breakpoint-commands) packet.
+show remote btrace-conf-bts-size-packet &#x2013; Show current use of remote protocol `Qbtrace-conf:bts:size' (btrace-conf-bts-size) packet.
+show remote btrace-conf-pt-size-packet &#x2013; Show current use of remote protocol `Qbtrace-conf:pt:size' (btrace-conf-pt-size) packet.
+show remote catch-syscalls-packet &#x2013; Show current use of remote protocol `QCatchSyscalls' (catch-syscalls) packet.
+show remote conditional-breakpoints-packet &#x2013; Show current use of remote protocol `ConditionalBreakpoints' (conditional-breakpoints) packet.
+show remote conditional-tracepoints-packet &#x2013; Show current use of remote protocol `ConditionalTracepoints' (conditiona&#x2013;Type &lt;RET&gt; for more, q to quit, c to continue without paging&#x2013;
+l-tracepoints) packet.
+show remote ctrl-c-packet &#x2013; Show current use of remote protocol `vCtrlC' (ctrl-c) packet.
+show remote disable-btrace-packet &#x2013; Show current use of remote protocol `Qbtrace:off' (disable-btrace) packet.
+show remote disable-randomization-packet &#x2013; Show current use of remote protocol `QDisableRandomization' (disable-randomization) packet.
+show remote enable-btrace-bts-packet &#x2013; Show current use of remote protocol `Qbtrace:bts' (enable-btrace-bts) packet.
+show remote enable-btrace-pt-packet &#x2013; Show current use of remote protocol `Qbtrace:pt' (enable-btrace-pt) packet.
+show remote environment-hex-encoded-packet &#x2013; Show current use of remote protocol `QEnvironmentHexEncoded' (environment-hex-encoded) packet.
+show remote environment-reset-packet &#x2013; Show current use of remote protocol `QEnvironmentReset' (environment-reset) packet.
+show remote environment-unset-packet &#x2013; Show current use of remote protocol `QEnvironmentUnset' (environment-unset) packet.
+show remote exec-event-feature-packet &#x2013; Show current use of remote protocol `exec-event-feature' (exec-event-feature) packet.
+show remote exec-file &#x2013; Show the remote pathname for "run".
+show remote fast-tracepoints-packet &#x2013; Show current use of remote protocol `FastTracepoints' (fast-tracepoints) packet.
+show remote fetch-register-packet,
+   show remote p-packet &#x2013; Show current use of remote protocol `p' (fetch-register) packet.
+show remote fork-event-feature-packet &#x2013; Show current use of remote protocol `fork-event-feature' (fork-event-feature) packet.
+show remote get-thread-information-block-address-packet &#x2013; Show current use of remote protocol `qGetTIBAddr' (get-thread-information-block-address) packet.
+show remote get-thread-local-storage-address-packet &#x2013; Show current use of remote protocol `qGetTLSAddr' (get-thread-local-storage-address) packet.
+show remote hardware-breakpoint-limit &#x2013; Show the maximum number of target hardware breakpoints.
+show remote hardware-breakpoint-packet &#x2013; Show current use of remote protocol `Z1' (hardware-breakpoint) packet.
+show remote hardware-watchpoint-length-limit &#x2013; Show the maximum length (in bytes) of a target hardware watchpoint.
+show remote hardware-watchpoint-limit &#x2013; Show the maximum number of target hardware watchpoints.
+show remote hostio-close-packet &#x2013; Show current use of remote protocol `vFile:close' (hostio-close) packet.
+show remote hostio-fstat-packet &#x2013; Show current use of remote protocol `vFile:fstat' (hostio-fstat) packet.
+show remote hostio-open-packet &#x2013; Show current use of remote protocol `vFile:open' (hostio-open) packet.
+show remote hostio-pread-packet &#x2013; Show current use of remote protocol `vFile:pread' (hostio-pread) packet.
+show remote hostio-pwrite-packet &#x2013; Show current use of remote protocol `vFile:pwrite' (hostio-pwrite) packet.
+show remote hostio-readlink-packet &#x2013; Show current use of remote protocol `vFile:readlink' (hostio-readlink) packet.
+show remote hostio-setfs-packet &#x2013; Show current use of remote protocol `vFile:setfs' (hostio-setfs) packet.
+show remote hostio-unlink-packet &#x2013; Show current use of remote protocol `vFile:unlink' (hostio-unlink) packet.
+show remote hwbreak-feature-packet &#x2013; Show current use of remote protocol `hwbreak-feature' (hwbreak-feature) packet.
+show remote install-in-trace-packet &#x2013; Show current use of remote protocol `InstallInTrace' (install-in-trace) packet.
+show remote interrupt-on-connect &#x2013; Show whether interrupt-sequence is sent to remote target when gdb connects to.
+show remote interrupt-sequence &#x2013; Show interrupt sequence to remote target.
+show remote kill-packet &#x2013; Show current use of remote protocol `vKill' (kill) packet.
+show remote library-info-packet &#x2013; Show current use of remote protocol `qXfer:libraries:read' (library-info) packet.
+show remote library-info-svr4-packet &#x2013; Show current use of remote protocol `qXfer:libraries-svr4:read' (library-info-svr4) packet.
+show remote memory-map-packet &#x2013; Show current use of remote protocol `qXfer:memory-map:read' (memory-map) packet.
+show remote memory-read-packet-size &#x2013; Show the maximum number of bytes per memory-read packet.
+show remote memory-write-packet-size &#x2013; Show the maximum number of bytes per memory-write packet.
+show remote multiprocess-feature-packet &#x2013; Show current use of remote protocol `multiprocess-feature' (multiprocess-feature) packet.
+show remote no-resumed-stop-reply-packet &#x2013; Show current use of remote protocol `N stop reply' (no-resumed-stop-reply) packet.
+show remote noack-packet &#x2013; Show current use of remote protocol `QStartNoAckMode' (noack) packet.
+show remote osdata-packet &#x2013; Show current use of remote protocol `qXfer:osdata:read' (osdata) packet.
+show remote pass-signals-packet &#x2013; Show current use of remote protocol `QPassSignals' (pass-signals) packet.
+show remote pid-to-exec-file-packet &#x2013; Show current use of remote protocol `qXfer:exec-<a href="read">read</a>' (pid-to-exec-file) packet.
+show remote program-signals-packet &#x2013; Show current use of remote protocol `QProgramSignals' (program-signals) packet.
+show remote query-attached-packet &#x2013; Show current use of remote protocol `qAttached' (query-attached) packet.
+show remote read-aux-vector-packet &#x2013; Show current use of remote protocol `qXfer:auxv:read' (read-aux-vector) packet.
+show remote read-btrace-conf-packet &#x2013; Show current use of remote protocol `qXfer:btrace-conf' (read-btrace-conf) packet.
+show remote read-btrace-packet &#x2013; Show current use of remote protocol `qXfer:btrace' (read-btrace) packet.
+show remote read-fdpic-loadmap-packet &#x2013; Show current use of remote protocol `qXfer:fdpic:read' (read-fdpic-loadmap) packet.
+show remote read-sdata-object-packet &#x2013; Show current use of remote protocol `qXfer:statictrace:read' (read-sdata-object) packet.
+show remote read-siginfo-object-packet &#x2013; Show current use of remote protocol `qXfer:siginfo:read' (read-siginfo-object) packet.
+show remote read-watchpoint-packet &#x2013; Show current use of remote protocol `Z3' (read-watchpoint) packet.
+show remote reverse-continue-packet &#x2013; Show current use of remote protocol `bc' (reverse-continue) packet.
+show remote reverse-step-packet &#x2013; Show current use of remote protocol `bs' (reverse-step) packet.
+show remote run-packet &#x2013; Show current use of remote protocol `vRun' (run) packet.
+show remote search-memory-packet &#x2013; Show current use of remote protocol `qSearch:memory' (search-memory) packet.
+show remote set-register-packet,
+   show remote P-packet &#x2013; Show current use of remote protocol `P' (set-register) packet.
+show remote set-working-dir-packet &#x2013; Show current use of remote protocol `QSetWorkingDir' (set-working-dir) packet.
+show remote software-breakpoint-packet &#x2013; Show current use of remote protocol `Z0' (software-breakpoint) packet.
+show remote startup-with-shell-packet &#x2013; Show current use of remote protocol `QStartupWithShell' (startup-with-shell) packet.
+show remote static-tracepoints-packet &#x2013; Show current use of remote protocol `StaticTracepoints' (static-tracepoints) packet.
+show remote supported-packets-packet &#x2013; Show current use of remote protocol `qSupported' (supported-packets) packet.
+show remote swbreak-feature-packet &#x2013; Show current use of remote protocol `swbreak-feature' (swbreak-feature) packet.
+show remote symbol-lookup-packet &#x2013; Show current use of remote protocol `qSymbol' (symbol-lookup) packet.
+show remote system-call-allowed &#x2013; Show if the host system(3) call is allowed for the target.
+show remote target-features-packet &#x2013; Show current use of remote protocol `qXfer:features:read' (target-features) packet.
+show remote thread-events-packet &#x2013; Show current use of remote protocol `QThreadEvents' (thread-events) packet.
+show remote threads-packet &#x2013; Show current use of remote protocol `qXfer:threads:read' (threads) packet.
+show remote trace-buffer-size-packet &#x2013; Show current use of remote protocol `QTBuffer:size' (trace-buffer-size) packet.
+show remote trace-status-packet &#x2013; Show current use of remote protocol `qTStatus' (trace-status) packet.
+show remote traceframe-info-packet &#x2013; Show current use of remote protocol `qXfer:traceframe-<a href="read.html#Top">read</a>' (traceframe-info) packet.
+show remote unwind-info-block-packet &#x2013; Show current use of remote protocol `qXfer:uib:read' (unwind-info-block) packet.
+show remote verbose-resume-packet &#x2013; Show current use of remote protocol `vCont' (verbose-resume) packet.
+show remote verbose-resume-supported-packet &#x2013; Show current use of remote protocol `vContSupported' (verbose-resume-supported) packet.
+show remote vfork-event-feature-packet &#x2013; Show current use of remote protocol `vfork-event-feature' (vfork-event-feature) packet.
+show remote write-siginfo-object-packet &#x2013; Show current use of remote protocol `qXfer:siginfo:write' (write-siginfo-object) packet.
+show remote write-watchpoint-packet &#x2013; Show current use of remote protocol `Z2' (write-watchpoint) packet.
+show remoteaddresssize &#x2013; Show the maximum size of the address (in bits) in a memory packet.
+show remotecache &#x2013; Show cache use for remote targets.
+show remoteflow &#x2013; Show use of hardware flow control for remote serial I/O.
+show remotelogbase &#x2013; Show numerical base for remote session logging.
+show remotelogfile &#x2013; Show filename for remote session recording.
+show remotetimeout &#x2013; Show timeout limit to wait for target to respond.
+show remotewritesize &#x2013; Show the maximum number of bytes per memory write packet (deprecated).
+show schedule-multiple &#x2013; Show mode for resuming threads of all processes.
+show scheduler-locking &#x2013; Show mode for locking scheduler during execution.
+show script-extension &#x2013; Show mode for script filename extension recognition.
+show serial &#x2013; Show default serial/parallel port configuration.
+show serial baud &#x2013; Show baud rate for remote serial I/O.
+show serial parity &#x2013; Show parity for remote serial I/O.
+show solib-search-path &#x2013; Show the search path for loading non-absolute shared library symbol files.
+show stack-cache &#x2013; Show cache use for stack access.
+show startup-with-shell &#x2013; Show use of shell to start subprocesses.
+show step-mode &#x2013; Show mode of the step operation.
+show stop-on-solib-events &#x2013; Show stopping for shared library events.
+show struct-convention &#x2013; Show the convention for returning small structs.
+show style &#x2013; Style-specific settings.
+show style address &#x2013; Address display styling.
+show style address background &#x2013; Show the background color for this property.
+show style address foreground &#x2013; Show the foreground color for this property.
+show style address intensity &#x2013; Show the display intensity for this property.
+show style enabled &#x2013; Show whether CLI is enabled.
+show style filename &#x2013; Filename display styling.
+show style filename background &#x2013; Show the background color for this property.
+show style filename foreground &#x2013; Show the foreground color for this property.
+show style filename intensity &#x2013; Show the display intensity for this property.
+show style function &#x2013; Function name display styling.
+show style function background &#x2013; Show the background color for this property.
+show style function foreground &#x2013; Show the foreground color for this property.
+show style function intensity &#x2013; Show the display intensity for this property.
+show style highlight &#x2013; Highlight display styling.
+show style highlight background &#x2013; Show the background color for this property.
+show style highlight foreground &#x2013; Show the foreground color for this property.
+show style highlight intensity &#x2013; Show the display intensity for this property.
+show style metadata &#x2013; Metadata display styling.
+show style metadata background &#x2013; Show the background color for this property.
+show style metadata foreground &#x2013; Show the foreground color for this property.
+show style metadata intensity &#x2013; Show the display intensity for this property.
+show style sources &#x2013; Show whether source code styling is enabled.
+show style title &#x2013; Title display styling.
+show style title background &#x2013; Show the background color for this property.
+show style title foreground &#x2013; Show the foreground color for this property.
+show style title intensity &#x2013; Show the display intensity for this property.
+show style tui-active-border &#x2013; TUI active border display styling.
+show style tui-active-border background &#x2013; Show the background color for this property.
+show style tui-active-border foreground &#x2013; Show the foreground color for this property.
+show style tui-border &#x2013; TUI border display styling.
+show style tui-border background &#x2013; Show the background color for this property.
+show style tui-border foreground &#x2013; Show the foreground color for this property.
+show style variable &#x2013; Variable name display styling.
+show style variable background &#x2013; Show the background color for this property.
+show style variable foreground &#x2013; Show the foreground color for this property.
+show style variable intensity &#x2013; Show the display intensity for this property.
+show substitute-path &#x2013; Show one or all substitution rules rewriting the source directories.
+show sysroot, show solib-absolute-prefix &#x2013; Show the current system root.
+show target-charset &#x2013; Show the target character set.
+show target-file-system-kind &#x2013; Show assumed file system kind for target reported file names.
+show target-wide-charset &#x2013; Show the target wide character set.
+show tcp &#x2013; TCP protocol specific variables.
+show tcp auto-retry &#x2013; Show auto-retry on socket connect.
+show tcp connect-timeout &#x2013; Show timeout limit in seconds for socket connection.
+show tdesc &#x2013; Show target description specific variables.
+show tdesc filename &#x2013; Show the file to read for an XML target description.
+show trace-buffer-size &#x2013; Show requested size of trace buffer.
+show trace-commands &#x2013; Show state of GDB CLI command tracing.
+show trace-notes &#x2013; Show the notes string to use for current and future trace runs.
+show trace-stop-notes &#x2013; Show the notes string to use for future tstop commands.
+show trace-user &#x2013; Show the user name to use for current and future trace runs.
+show trust-readonly-sections &#x2013; Show mode for reading from readonly sections.
+show tui &#x2013; TUI configuration variables.
+show tui active-border-mode &#x2013; Show the attribute mode to use for the active TUI window border.
+show tui border-kind &#x2013; Show the kind of border for TUI windows.
+show tui border-mode &#x2013; Show the attribute mode to use for the TUI window borders.
+show tui compact-source &#x2013; Show whether the TUI source window is compact.
+show tui tab-width &#x2013; Show the tab witdh, in characters, for the TUI.
+show unwind-on-terminating-exception &#x2013; Show unwinding of stack if std::terminate() is called while in a call dummy.
+show unwindonsignal &#x2013; Show unwinding of stack if a signal is received while in a call dummy.
+show use-coredump-filter &#x2013; Show whether gcore should consider /proc/PID/coredump_filter.
+show use-deprecated-index-sections &#x2013; Show whether to use deprecated gdb_index sections.
+show user &#x2013; Show definitions of non-python/scheme user defined commands.
+show values &#x2013; Elements of value history around item number IDX (or last ten).
+show varsize-limit &#x2013; Show the maximum number of bytes allowed in a variable-size object.
+show verbose &#x2013; Show verbosity.
+show version &#x2013; Show what version of GDB this is.
+show warranty &#x2013; Various kinds of warranty you do not have.
+show watchdog &#x2013; Show watchdog timer.
+show width &#x2013; Show number of characters where GDB should wrap lines of its output.
+show write &#x2013; Show writing into executable and core files.
+</p>
+
+<p>
+Command class: support
+</p>
+
+<p>
+add-auto-load-safe-path &#x2013; Add entries to the list of directories from which it is safe to auto-load files.
+add-auto-load-scripts-directory &#x2013; Add entries to the list of directories from which to load auto-loaded scripts.
+alias &#x2013; Define a new command that is an alias of an existing command.
+apropos &#x2013; Search for commands matching a REGEXP.
+define &#x2013; Define a new command name.  Command name is argument.
+define-prefix &#x2013; Define or mark a command as a user-defined prefix command.
+demangle &#x2013; Demangle a mangled name.
+document &#x2013; Document a user-defined command.
+dont-repeat &#x2013; Don't repeat this command.
+down-silently &#x2013; Same as the `down' command, but does not print anything.
+echo &#x2013; Print a constant string.  Give string as argument.
+help, h &#x2013; Print list of commands.
+if &#x2013; Execute nested commands once IF the conditional expression is non zero.
+interpreter-exec &#x2013; Execute a command in an interpreter.
+make &#x2013; Run the ``make'' program using the rest of the line as arguments.
+new-ui &#x2013; Create a new UI.
+overlay, ov, ovly &#x2013; Commands for debugging overlays.
+overlay auto &#x2013; Enable automatic overlay debugging.
+overlay list-overlays &#x2013; List mappings of overlay sections.
+overlay load-target &#x2013; Read the overlay mapping state from the target.
+overlay manual &#x2013; Enable overlay debugging.
+overlay map-overlay &#x2013; Assert that an overlay section is mapped.
+overlay off &#x2013; Disable overlay debugging.
+overlay unmap-overlay &#x2013; Assert that an overlay section is unmapped.
+pipe, | &#x2013; Send the output of a gdb command to a shell command.
+quit, q &#x2013; Exit gdb.
+shell, ! &#x2013; Execute the rest of the line as a shell command.
+source &#x2013; Read commands from a file named FILE.
+up-silently &#x2013; Same as the `up' command, but does not print anything.
+while &#x2013; Execute nested commands WHILE the conditional expression is non zero.
+</p>
+
+<p>
+Command class: text-user-interface
+</p>
+
+<ul class="org-ul">
+<li>&#x2013; Scroll window forward.</li>
+<li>&#x2013; Scroll window backward.</li>
+</ul>
+<p>
+&lt; &#x2013; Scroll window text to the left.
+&gt; &#x2013; Scroll window text to the right.
+focus, fs &#x2013; Set focus to named window or next/prev window.
+layout &#x2013; Change the layout of windows.
+layout asm &#x2013; Apply the "asm" layout.
+layout next &#x2013; Apply the next TUI layout.
+layout prev &#x2013; Apply the previous TUI layout.
+layout regs &#x2013; Apply the TUI register layout.
+layout split &#x2013; Apply the "split" layout.
+layout src &#x2013; Apply the "src" layout.
+refresh &#x2013; Refresh the terminal display.
+tui &#x2013; Text User Interface commands.
+tui disable &#x2013; Disable TUI display mode.
+tui enable &#x2013; Enable TUI display mode.
+tui new-layout &#x2013; Create a new TUI layout.
+tui reg &#x2013; TUI command to control the register window.
+update &#x2013; Update the source window and locator to display the current execution point.
+winheight, wh &#x2013; Set or modify the height of a specified window.
+</p>
+
+<p>
+Command class: tracepoints
+</p>
+
+<p>
+actions &#x2013; Specify the actions to be taken at a tracepoint.
+collect &#x2013; Specify one or more data items to be collected at a tracepoint.
+end &#x2013; Ends a list of commands or actions.
+passcount &#x2013; Set the passcount for a tracepoint.
+tdump &#x2013; Print everything collected at the current tracepoint.
+teval &#x2013; Specify one or more expressions to be evaluated at a tracepoint.
+tfind &#x2013; Select a trace frame.
+tfind end, tfind none &#x2013; De-select any trace frame and resume 'live' debugging.
+tfind line &#x2013; Select a trace frame by source line.
+tfind outside &#x2013; Select a trace frame whose PC is outside the given range (exclusive).
+tfind pc &#x2013; Select a trace frame by PC.
+tfind range &#x2013; Select a trace frame whose PC is in the given range (inclusive).
+tfind start &#x2013; Select the first trace frame in the trace buffer.
+tfind tracepoint &#x2013; Select a trace frame by tracepoint number.
+tsave &#x2013; Save the trace data to a file.
+tstart &#x2013; Start trace data collection.
+tstatus &#x2013; Display the status of the current trace data collection.
+tstop &#x2013; Stop trace data collection.
+tvariable &#x2013; Define a trace state variable.
+while-stepping, stepping, ws &#x2013; Specify single-stepping behavior at a tracepoint.
+</p>
+
+<p>
+Command class: user-defined
+</p>
+
+
+<p>
+Unclassified commands
+</p>
+
+<p>
+add-inferior &#x2013; Add a new inferior.
+clone-inferior &#x2013; Clone inferior ID.
+eval &#x2013; Construct a GDB command and then evaluate it.
+flash-erase &#x2013; Erase all flash memory regions.
+function &#x2013; Placeholder command for showing help on convenience functions.
+function _any_caller_is &#x2013; Check all calling function's names.
+function _any_caller_matches &#x2013; Compare all calling function's names with a regexp.
+function _as_string &#x2013; Return the string representation of a value.
+function _caller_is &#x2013; Check the calling function's name.
+function _caller_matches &#x2013; Compare the calling function's name with a regexp.
+function _cimag &#x2013; Extract the imaginary part of a complex number.
+function _creal &#x2013; Extract the real part of a complex number.
+function _gdb_maint_setting &#x2013; $_gdb_maint_setting - returns the value of a GDB maintenance setting.
+function _gdb_maint_setting_str &#x2013; $_gdb_maint_setting_str - returns the value of a GDB maintenance setting as a string.
+function _gdb_setting &#x2013; $_gdb_setting - returns the value of a GDB setting.
+function _gdb_setting_str &#x2013; $_gdb_setting_str - returns the value of a GDB setting as a string.
+function _isvoid &#x2013; Check whether an expression is void.
+function _memeq &#x2013; $_memeq - compare bytes of memory.
+function _regex &#x2013; $_regex - check if a string matches a regular expression.
+function _streq &#x2013; $_streq - check string equality.
+function _strlen &#x2013; $_strlen - compute string length.
+jit-reader-load &#x2013; Load FILE as debug info reader and unwinder for JIT compiled code.
+jit-reader-unload &#x2013; Unload the currently loaded JIT debug info reader.
+remove-inferiors &#x2013; Remove inferior ID (or list of IDs).
+unset &#x2013; Complement to certain "set" commands.
+unset environment &#x2013; Cancel environment variable VAR for the program.
+unset exec-wrapper &#x2013; Disable use of an execution wrapper.
+unset substitute-path &#x2013; Delete one or all substitution rules rewriting the source directories.
+unset tdesc &#x2013; Unset target description specific variables.
+unset tdesc filename &#x2013; Unset the file to read for an XML target description.
+</p>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-23 Tue 09:14</p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

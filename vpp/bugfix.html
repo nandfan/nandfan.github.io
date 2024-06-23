@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPP bug修复记录</title>
+<meta name="author" content="nandfan" />
+<meta name="keywords" content="vpp" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VPP bug修复记录</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org29b4b00">1. bug修复</a>
+<ul>
+<li><a href="#org0a604ea">1.1. 对Vector等数据结构的指针引用</a>
+<ul>
+<li><a href="#orgdcb40be">1.1.1. 描述</a></li>
+<li><a href="#org076ab83">1.1.2. 复现条件</a></li>
+</ul>
+</li>
+<li><a href="#org280fda7">1.2. Socket的连接状态问题</a>
+<ul>
+<li><a href="#orgf709c5c">1.2.1. 描述</a></li>
+<li><a href="#orgc0a7573">1.2.2. 问题场景</a></li>
+</ul>
+</li>
+<li><a href="#org96a489e">1.3. vls_intercept_sigchld_handler函数被递归调用</a>
+<ul>
+<li><a href="#org40f694c">1.3.1. 描述</a></li>
+<li><a href="#org4acbd08">1.3.2. 问题场景</a></li>
+</ul>
+</li>
+<li><a href="#org543fc55">1.4. svm_msg_q_wait() 死锁问题</a>
+<ul>
+<li><a href="#org46a275c">1.4.1. 描述</a></li>
+</ul>
+</li>
+<li><a href="#org7156ea8">1.5. ldp运行nginx，监听多端口，只有首个端口正常</a>
+<ul>
+<li><a href="#orgbaa2edc">1.5.1. 描述</a></li>
+</ul>
+</li>
+<li><a href="#org75f8367">1.6. 小问题</a></li>
+</ul>
+</li>
+<li><a href="#org7e872b6">2. bug记录</a>
+<ul>
+<li><a href="#org56eb38f">2.1. pthread_mutex_lock阻塞问题</a></li>
+<li><a href="#orgdd05378">2.2. clib_bitmap</a></li>
+<li><a href="#org8195237">2.3. vcl_select_handle_mq_evemnt</a></li>
+<li><a href="#org4a7323e">2.4. ngx_select_repair_fd_sets导致vpp的fd全部清除</a></li>
+<li><a href="#orgc2872ce">2.5. udp发包问题 （nginx使用udp发包，开始数据量少，结束时发送大量数据）</a></li>
+<li><a href="#org04a33da">2.6. 关于tso gso开启后的FP问题</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org29b4b00" class="outline-2">
+<h2 id="org29b4b00"><span class="section-number-2">1.</span> bug修复</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org0a604ea" class="outline-3">
+<h3 id="org0a604ea"><span class="section-number-3">1.1.</span> 对Vector等数据结构的指针引用</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+<b>修复链接：</b> <a href="https://gerrit.fd.io/r/c/vpp/+/28905">https://gerrit.fd.io/r/c/vpp/+/28905</a>
+</p>
+</div>
+
+<div id="outline-container-orgdcb40be" class="outline-4">
+<h4 id="orgdcb40be"><span class="section-number-4">1.1.1.</span> 描述</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+使用指针来引用内存导致的问题。VPP中的Vector、Pool等结构一般用索引来标识内存位置，因为从这些结构中分配内存时，有可能改变内存位置，使用指针引用有可能导致指向非法内存，而索引是相对于内存起始的偏移。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org076ab83" class="outline-4">
+<h4 id="org076ab83"><span class="section-number-4">1.1.2.</span> 复现条件</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<p>
+使用LDP启动应用时，配置vcl.conf 的app-proxy-transport-tcp选项。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org280fda7" class="outline-3">
+<h3 id="org280fda7"><span class="section-number-3">1.2.</span> Socket的连接状态问题</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+<b>修复连接：</b> <a href="https://gerrit.fd.io/r/c/vpp/+/29409">https://gerrit.fd.io/r/c/vpp/+/29409</a>
+</p>
+</div>
+
+<div id="outline-container-orgf709c5c" class="outline-4">
+<h4 id="orgf709c5c"><span class="section-number-4">1.2.1.</span> 描述</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+在vpp的host stack，使用socket创建一个非阻塞的tcp套接字，当使用connect函数连接（tcp）时，host stack中会直接返回，并在内部标识连接状态为已连接，但是此时有关连接传输（和vpp通信队列）信息还未初始化，如果此时调用write或者send等函数发送数据，会导致vpp挂死。
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc0a7573" class="outline-4">
+<h4 id="orgc0a7573"><span class="section-number-4">1.2.2.</span> 问题场景</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+在使用nginx作为反向代理测试性能时，nginx不断向后段server发起tcp连接；
+</p>
+
+<p>
+当连接池不够用时，nginx会进行连接重用，会导致释放现有的连接。
+</p>
+
+<p>
+在ngx_epoll_process_events中，已经返回就绪的连接事件列表，当前面的事件A是新建连接，但由于连接池不够用而重用时，可能重用的是后面事件B的连接结构（ngx_connection_t），当处理到B事件的读或者写时，由于B连接结构的fd指向A的刚刚创建的fd(未初始化完成)，此时读写会导致内存的非法引用，nginx挂死。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org96a489e" class="outline-3">
+<h3 id="org96a489e"><span class="section-number-3">1.3.</span> vls_intercept_sigchld_handler函数被递归调用</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+<b>修复连接：</b> <a href="https://gerrit.fd.io/r/c/vpp/+/31375">https://gerrit.fd.io/r/c/vpp/+/31375</a>
+</p>
+</div>
+
+<div id="outline-container-org40f694c" class="outline-4">
+<h4 id="org40f694c"><span class="section-number-4">1.3.1.</span> 描述</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+在VPP的LDP之上运行app时，如果app主进程fork子进程后，会调用vls_incercept_sigchld函数，其中设置SIGCHLD信号的处理函数为vls_intercept_sigchld_handler， old_sa保存原始的信号处理函数; 当第二次fork时，再次调用vls_incercept_sigchld函数，old_sa保存的函数被覆盖为vls_intercept_sigchld_handler，此时，如果子进程退出，会造成vls_intercept_sigchld_handler的递归调用。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4acbd08" class="outline-4">
+<h4 id="org4acbd08"><span class="section-number-4">1.3.2.</span> 问题场景</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+nginx开启缓存，cache loader进程初始化完毕退出时，master进程进入递归状态，直到栈溢出。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org543fc55" class="outline-3">
+<h3 id="org543fc55"><span class="section-number-3">1.4.</span> svm_msg_q_wait() 死锁问题</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+<b>修复链接 ：</b> <a href="https://gerrit.fd.io/r/c/vpp/+/31759">https://gerrit.fd.io/r/c/vpp/+/31759</a>
+</p>
+</div>
+
+<div id="outline-container-org46a275c" class="outline-4">
+<h4 id="org46a275c"><span class="section-number-4">1.4.1.</span> 描述</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<p>
+生产者在调用svm_msg_q_wait()之前已经使用svm_msg_q_lock() 获取了锁。
+</p>
+
+<p>
+之后维护者又重构了实现。 链接： <a href="https://gerrit.fd.io/r/c/vpp/+/31774/5">https://gerrit.fd.io/r/c/vpp/+/31774/5</a>
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7156ea8" class="outline-3">
+<h3 id="org7156ea8"><span class="section-number-3">1.5.</span> ldp运行nginx，监听多端口，只有首个端口正常</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+<b>修复链接：</b> <a href="https://gerrit.fd.io/r/c/vpp/+/31779">https://gerrit.fd.io/r/c/vpp/+/31779</a>
+</p>
+</div>
+<div id="outline-container-orgbaa2edc" class="outline-4">
+<h4 id="orgbaa2edc"><span class="section-number-4">1.5.1.</span> 描述</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<p>
+当使用ldp的方式运行nginx，nginx监听多个端口，并配置为启用master进程，此时访问，只有第一个端口服务正常。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org75f8367" class="outline-3">
+<h3 id="org75f8367"><span class="section-number-3">1.6.</span> 小问题</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+<a href="https://gerrit.fd.io/r/c/vpp/+/30358">https://gerrit.fd.io/r/c/vpp/+/30358</a>
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7e872b6" class="outline-2">
+<h2 id="org7e872b6"><span class="section-number-2">2.</span> bug记录</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org56eb38f" class="outline-3">
+<h3 id="org56eb38f"><span class="section-number-3">2.1.</span> pthread_mutex_lock阻塞问题</h3>
+</div>
+
+<div id="outline-container-orgdd05378" class="outline-3">
+<h3 id="orgdd05378"><span class="section-number-3">2.2.</span> clib_bitmap</h3>
+<div class="outline-text-3" id="text-2-2">
+<div class="org-src-container">
+<pre class="src src-c">always_inline <span style="color: #66D9EF;">void</span>
+<span style="color: #A6E22E;">ldp_select_init_maps</span> (<span style="color: #66D9EF;">fd_set</span> * <span style="color: #FD971F;">__restrict</span> original,
+                      <span style="color: #66D9EF;">clib_bitmap_t</span> ** <span style="color: #FD971F;">resultb</span>, <span style="color: #66D9EF;">clib_bitmap_t</span> ** <span style="color: #FD971F;">libcb</span>,
+                      <span style="color: #66D9EF;">clib_bitmap_t</span> ** <span style="color: #FD971F;">vclb</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">nfds</span>, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">minbits</span>,
+                      <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">n_bytes</span>, <span style="color: #66D9EF;">uword</span> * <span style="color: #FD971F;">si_bits</span>, <span style="color: #66D9EF;">uword</span> * <span style="color: #FD971F;">libc_bits</span>)
+{
+        <span style="color: #66D9EF;">uword</span> <span style="color: #FD971F;">si_bits_set</span>, <span style="color: #FD971F;">libc_bits_set</span>;
+        <span style="color: #66D9EF;">vls_handle_t</span> <span style="color: #FD971F;">vlsh</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>;
+
+        clib_bitmap_validate (*vclb, minbits);
+        clib_bitmap_validate (*libcb, minbits);
+        clib_bitmap_validate (*resultb, minbits);
+        clib_memcpy_fast (*resultb, original, n_bytes);
+        memset (original, 0, n_bytes);
+
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">*INDENT-OFF*</span><span style="color: #75715E;"> */</span>
+        clib_bitmap_foreach (fd, *resultb)  {
+                <span style="color: #F92672;">if</span> (fd &gt; nfds)
+                        <span style="color: #F92672;">break</span>;
+                vlsh = ldp_fd_to_vlsh (fd);
+                <span style="color: #F92672;">if</span> (vlsh == VLS_INVALID_HANDLE)
+                        clib_bitmap_set_no_check (*libcb, fd, 1);
+                <span style="color: #F92672;">else</span>
+                        *vclb = clib_bitmap_set (*vclb, vlsh_to_session_index (vlsh), 1);
+        }
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">*INDENT-ON*</span><span style="color: #75715E;"> */</span>
+
+        si_bits_set = clib_bitmap_last_set (*vclb) + 1;
+        *si_bits = (si_bits_set &gt; *si_bits) ? si_bits_set : *si_bits;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">if (*si_bits)</span>
+<span style="color: #75715E;">           &#22914;&#26524;si_bits&#20026;0&#26102;&#35843;&#29992;clib_bitmap_validate &#20250;&#23548;&#33268;&#20869;&#23384;&#20998;&#37197;&#22833;&#36133;&#65292;</span>
+<span style="color: #75715E;">           &#30001;&#20110;&#20869;&#37096;&#20250;&#20351;&#29992;*si_bits-1&#20316;&#20026;&#21028;&#26029;&#65292;</span>
+<span style="color: #75715E;">        */</span>
+
+        clib_bitmap_validate (*resultb, *si_bits);
+
+        libc_bits_set = clib_bitmap_last_set (*libcb) + 1;
+        *libc_bits = (libc_bits_set &gt; *libc_bits) ? libc_bits_set : *libc_bits;
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8195237" class="outline-3">
+<h3 id="org8195237"><span class="section-number-3">2.3.</span> vcl_select_handle_mq_evemnt</h3>
+<div class="outline-text-3" id="text-2-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #A6E22E;">vcl_select_handle_mq_event</span> (<span style="color: #66D9EF;">vcl_worker_t</span> * <span style="color: #FD971F;">wrk</span>, <span style="color: #66D9EF;">session_event_t</span> * <span style="color: #FD971F;">e</span>,
+                            <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">n_bits</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> *<span style="color: #FD971F;">read_map</span>,
+                            <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> *<span style="color: #FD971F;">write_map</span>,
+                            <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> *<span style="color: #FD971F;">except_map</span>, <span style="color: #66D9EF;">u32</span> * <span style="color: #FD971F;">bits_set</span>)
+{
+  <span style="color: #66D9EF;">session_disconnected_msg_t</span> *<span style="color: #FD971F;">disconnected_msg</span>;
+  <span style="color: #66D9EF;">session_connected_msg_t</span> *<span style="color: #FD971F;">connected_msg</span>;
+  <span style="color: #66D9EF;">vcl_session_t</span> *<span style="color: #FD971F;">s</span>;
+  <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">sid</span>;
+
+  <span style="color: #F92672;">switch</span> (e-&gt;event_type)
+    {
+     <span style="color: #75715E;">/* </span><span style="color: #75715E;">......</span><span style="color: #75715E;">  */</span>
+    <span style="color: #F92672;">case</span> SESSION_CTRL_EVT_CONNECTED:
+      <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>e-&gt;postponed)
+        {
+          connected_msg = (<span style="color: #66D9EF;">session_connected_msg_t</span> *) e-&gt;data;
+          sid = vcl_session_connected_handler (wrk, connected_msg);
+        }
+      <span style="color: #F92672;">else</span>
+        sid = e-&gt;session_index;
+      <span style="color: #F92672;">if</span> (sid == VCL_INVALID_SESSION_INDEX)
+        <span style="color: #F92672;">break</span>;
+      <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#35843;&#29992;connect&#20043;&#21518;&#65292;&#22914;&#26524;app&#22312;vpp&#36820;&#22238;&#20043;&#21069;&#65292;&#35843;&#29992;close&#65292;&#21017;&#27492;session&#30340;fd&#24050;&#32463;&#34987;&#28165;&#38500;&#65292;&#27492;&#26102;&#36820;&#22238;&#23548;&#33268;&#33719;&#21462;fd&#26102;&#22833;&#36133;&#65292;&#35302;&#21457;ASSERT</span><span style="color: #75715E;"> */</span>
+      <span style="color: #F92672;">if</span> (sid &lt; n_bits &amp;&amp; write_map)
+        {
+          clib_bitmap_set_no_check ((<span style="color: #66D9EF;">uword</span> *) write_map, sid, 1);
+          *bits_set += 1;
+        }
+      <span style="color: #F92672;">break</span>;
+     <span style="color: #75715E;">/* </span><span style="color: #75715E;">......</span><span style="color: #75715E;">  */</span>
+    <span style="color: #F92672;">default</span>:
+      clib_warning (<span style="color: #E6DB74;">"unhandled: %u"</span>, e-&gt;event_type);
+      <span style="color: #F92672;">break</span>;
+    }
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4a7323e" class="outline-3">
+<h3 id="org4a7323e"><span class="section-number-3">2.4.</span> ngx_select_repair_fd_sets导致vpp的fd全部清除</h3>
+<div class="outline-text-3" id="text-2-4">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #A6E22E;">ngx_select_repair_fd_sets</span>(<span style="color: #66D9EF;">ngx_cycle_t</span> *<span style="color: #FD971F;">cycle</span>)
+{
+        <span style="color: #F92672;">if</span> (getsockopt(s, SOL_SOCKET, SO_TYPE, &amp;n, &amp;len) == -1) {
+                err = ngx_socket_errno;
+                FD_CLR(s, &amp;master_read_fd_set);
+        }
+
+        <span style="color: #F92672;">if</span> (getsockopt(s, SOL_SOCKET, SO_TYPE, &amp;n, &amp;len) == -1) {
+                FD_CLR(s, &amp;master_write_fd_set);
+        }
+
+        max_fd = -1;
+}
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">ngx_int_t</span> <span style="color: #A6E22E;">ngx_select_process_events</span>(<span style="color: #66D9EF;">ngx_cycle_t</span> *<span style="color: #FD971F;">cycle</span>, <span style="color: #66D9EF;">ngx_msec_t</span> <span style="color: #FD971F;">timer</span>, <span style="color: #66D9EF;">ngx_uint_t</span> <span style="color: #FD971F;">flags</span>)
+{
+        ready = select(max_fd + 1, &amp;work_read_fd_set, &amp;work_write_fd_set, <span style="color: #AE81FF;">NULL</span>, tp);
+        nready = 0;
+        <span style="color: #F92672;">for</span> (i = 0; i &lt; nevents; i++) {
+                <span style="color: #F92672;">if</span> (ev-&gt;write) {
+                        <span style="color: #F92672;">if</span> (FD_ISSET(c-&gt;fd, &amp;work_write_fd_set)) {
+                                found = 1;
+                        }
+                } <span style="color: #F92672;">else</span> {
+                        <span style="color: #F92672;">if</span> (FD_ISSET(c-&gt;fd, &amp;work_read_fd_set)) {
+                                found = 1;
+                        }
+                }
+
+                <span style="color: #F92672;">if</span> (found) {
+                        ev-&gt;ready = 1;
+                        queue = ev-&gt;accept ? &amp;ngx_posted_accept_events : &amp;ngx_posted_events;
+                        ngx_post_event(ev, queue);
+                        nready++;
+                }
+        }
+
+        <span style="color: #F92672;">if</span> (ready != nready) {
+                ngx_select_repair_fd_sets(cycle);
+        }
+        <span style="color: #F92672;">return</span> NGX_OK;
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc2872ce" class="outline-3">
+<h3 id="orgc2872ce"><span class="section-number-3">2.5.</span> udp发包问题 （nginx使用udp发包，开始数据量少，结束时发送大量数据）</h3>
+</div>
+
+<div id="outline-container-org04a33da" class="outline-3">
+<h3 id="org04a33da"><span class="section-number-3">2.6.</span> 关于tso gso开启后的FP问题</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,1178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:54 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>高速缓存</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">高速缓存</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgd69b715">1. 介绍</a></li>
+<li><a href="#orge606193">2. 运行原理</a></li>
+<li><a href="#org087d528">3. 通用的高速缓存存储器组织结构</a>
+<ul>
+<li><a href="#org06485c4">3.1. 高速缓存通用组织形式</a></li>
+<li><a href="#orgb03cedd">3.2. 直接映射高速缓存</a></li>
+<li><a href="#org66e1eb4">3.3. 组相连高速缓存</a></li>
+<li><a href="#org5f12c34">3.4. 全相连高速缓存</a></li>
+<li><a href="#orgcc4abe7">3.5. 写的问题</a></li>
+</ul>
+</li>
+<li><a href="#org3808577">4. 一个真实的高速缓存层次结构的剖析</a></li>
+<li><a href="#org895b9a7">5. 高速缓存参数的性能影响</a></li>
+<li><a href="#org1268d26">6. 编写高速缓存友好的代码</a></li>
+</ul>
+</div>
+</div>
+<div class="org-center">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">类型</th>
+<th scope="col" class="org-left">缓存什么</th>
+<th scope="col" class="org-left">被缓存在何处</th>
+<th scope="col" class="org-right">延迟(周期数)</th>
+<th scope="col" class="org-left">由谁管理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">CPU 寄存器</td>
+<td class="org-left">4字节或8字节</td>
+<td class="org-left">芯片上的CPU寄存器</td>
+<td class="org-right">0</td>
+<td class="org-left">编译器</td>
+</tr>
+
+<tr>
+<td class="org-left">TLB</td>
+<td class="org-left">地址翻译</td>
+<td class="org-left">芯片上的TLB</td>
+<td class="org-right">0</td>
+<td class="org-left">硬件MMU</td>
+</tr>
+
+<tr>
+<td class="org-left">L1高速缓存</td>
+<td class="org-left">64字节块</td>
+<td class="org-left">芯片上的L1高速缓存</td>
+<td class="org-right">4</td>
+<td class="org-left">硬件</td>
+</tr>
+
+<tr>
+<td class="org-left">L2高速缓存</td>
+<td class="org-left">64字节块</td>
+<td class="org-left">芯片上的L2高速缓存</td>
+<td class="org-right">10</td>
+<td class="org-left">硬件</td>
+</tr>
+
+<tr>
+<td class="org-left">L3高速缓存</td>
+<td class="org-left">64字节块</td>
+<td class="org-left">芯片上的L3高速缓存</td>
+<td class="org-right">50</td>
+<td class="org-left">硬件</td>
+</tr>
+
+<tr>
+<td class="org-left">虚拟内存</td>
+<td class="org-left">4KB页</td>
+<td class="org-left">主存</td>
+<td class="org-right">200</td>
+<td class="org-left">硬件+OS</td>
+</tr>
+
+<tr>
+<td class="org-left">缓冲区缓存</td>
+<td class="org-left">部分文件</td>
+<td class="org-left">主存</td>
+<td class="org-right">200</td>
+<td class="org-left">OS</td>
+</tr>
+
+<tr>
+<td class="org-left">磁盘缓存</td>
+<td class="org-left">硬盘扇区</td>
+<td class="org-left">磁盘控制器</td>
+<td class="org-right">100 0000</td>
+<td class="org-left">控制器固件</td>
+</tr>
+
+<tr>
+<td class="org-left">网络缓存</td>
+<td class="org-left">部分文件</td>
+<td class="org-left">本地磁盘</td>
+<td class="org-right">10 000 000</td>
+<td class="org-left">NFS客户</td>
+</tr>
+
+<tr>
+<td class="org-left">浏览器缓存</td>
+<td class="org-left">Web页</td>
+<td class="org-left">本地磁盘</td>
+<td class="org-right">10 000 000</td>
+<td class="org-left">Web浏览器</td>
+</tr>
+
+<tr>
+<td class="org-left">Web缓存</td>
+<td class="org-left">Web页</td>
+<td class="org-left">远程服务器磁盘</td>
+<td class="org-right">1 000 000 000</td>
+<td class="org-left">Web代理服务器</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div id="outline-container-orgd69b715" class="outline-2">
+<h2 id="orgd69b715"><span class="section-number-2">1.</span> 介绍</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+根据机械原理, 较大的存储设备要比较小的存储设备运行的慢, 典型的例如磁盘和内存, 磁盘容量要比内存大的多, 但是, cpu从内存读取数据的开销, 要比从磁盘大的多.
+</p>
+
+<p>
+高速缓存的设计用于存储cpu近期可能会需要的信息, 用于缓解内存数度慢跟不上cpu读写速度要求的矛盾. 将cpu最近可能会用到的信息(数据或者指令)从内存复制到高速缓存中, 当cpu下次访问时, 直接从高速缓存读取, 提高读取速度, 使得cpu运行更加高效.
+</p>
+
+<p>
+高速缓存远远小于内存的容量, 那么高速缓存中就只能容纳内存的一小部分信息. cpu有多大的概率可以从高速缓存中得到原本应当从内存中获取的信息, 是评价高速缓存运行性能的关键指标, 被称为cache的命中率.
+</p>
+
+<p>
+为了提高命中率, 必须找出一套方案, 从cache的读写原理, cache的容量设置, 确定cache存储单元与内存哪一个单元是对应关系, 内存和cache每次交换数据的单位量, 交换的时刻, cache介入计算机系统中的方式等多方面, 来解决cache速度、命中率等一系列问题.
+</p>
+
+<p>
+L1, L2, L3三级缓存. L1高速缓存的容量最小, 位于cpu芯片上, 其访问速度和寄存器相当. L2高速缓存容量
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge606193" class="outline-2">
+<h2 id="orge606193"><span class="section-number-2">2.</span> 运行原理</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+高速缓冲存储器的运行原理, 与内存的运行原理有很大区别. 内存存储器, 是建立在每个内存地址对应内存的一个存储单元这一关系之上的. 在计算机程序中, 要使用内存某单元中的数据, 必须在指令中给出该单元的地址. 读操作时, 给出这一地址后, 通过译码电路, 就选中主存中欲读的一个存储单元, 执行读操作. 而高速缓冲存储器的运行原理则完全不同，由于其存储容量很小, 无法通过对原本用于读内存的地址直接进行译码来选择一个CACHE单元. 那该用什么办法找到该内存单元所对应的CACHE单元呢? 也许最简单的办法, 是合理设计CACHE存储器的组织形式.
+</p>
+
+<p>
+例如将cache存储单元分为三部分:
+</p>
+<ul class="org-ul">
+<li>cache的数据字段
+保存从内存中复制过来的数据, 由cpu第一次读取内存是完成, 在读取内存的同时, 顺便将该内容写入高速缓存.</li>
+
+<li>cache的标志字段
+保存相应的内存单元的地址内容, 在复制内存的数据时, 把内存地址保存在此字段, 当cpu要读取内存时, 先从高速缓存查找.</li>
+
+<li>cache的有效位
+用来标识数据字段的内容是否有效, 为0表明cache单元数据无效, 为1表明该单元已被占用, 内容有效.</li>
+</ul>
+
+<p>
+以上只是简单描述的高速缓存的简单原理.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org087d528" class="outline-2">
+<h2 id="org087d528"><span class="section-number-2">3.</span> 通用的高速缓存存储器组织结构</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+把内存单元的数据复制到cache中时, 还要把内存单元的地址, 经过某种函数处理关系后写进cache的标志字段, 这一过程被称为cnache的地址映射.
+</p>
+
+<p>
+cache存储器通常使用3种映射方式, 分别是全相连映射、直接映射、组相连映射.
+</p>
+
+<p>
+考虑一个计算机系统, 其中每个存储器地址由m位, 则总地址数量为 M=2^m个, 这样高速缓存被组织成一个有 S=2^s个高速缓存组的数组. 每个组包行E个高速缓存行(cache line). 每个行由一个B=2^b字节的数据块(block)组成, 一个有效位表明此行的数据是否有效, 还有t(t=m-(b+s))个标记位(tag bit)(内存地址位数的一个子集), 他们唯一的标识高速缓存的块.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">参数</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">S=2<sup>s</sup></td>
+<td class="org-left">缓存组的组数量</td>
+</tr>
+
+<tr>
+<td class="org-left">E</td>
+<td class="org-left">每个组的行数</td>
+</tr>
+
+<tr>
+<td class="org-left">B=2<sup>b</sup></td>
+<td class="org-left">每个缓存行的块大小(字节)</td>
+</tr>
+
+<tr>
+<td class="org-left">m=log<sub>2</sub>(M)</td>
+<td class="org-left">内存物理地址位数</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">衍生参数</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">M=2<sup>m</sup></td>
+<td class="org-left">内存地址的数量</td>
+</tr>
+
+<tr>
+<td class="org-left">s=log<sub>2</sub>(S)</td>
+<td class="org-left">组索引的位数</td>
+</tr>
+
+<tr>
+<td class="org-left">b=lob<sub>2</sub>(B)</td>
+<td class="org-left">块偏移的位数</td>
+</tr>
+
+<tr>
+<td class="org-left">t=m-(s+b)</td>
+<td class="org-left">标记位的位数</td>
+</tr>
+
+<tr>
+<td class="org-left">C=BxExS</td>
+<td class="org-left">去除有效位和标记位的高速缓存的大小</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+<div id="outline-container-org06485c4" class="outline-3">
+<h3 id="org06485c4"><span class="section-number-3">3.1.</span> 高速缓存通用组织形式</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<div id="orgd70e582" class="figure">
+<p><img src="./image/cache.png" alt="cache.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>高速缓存组织形式</p>
+</div>
+
+<ul class="org-ul">
+<li>高速缓存(S,E,B,m)的通用组织:
+<ul class="org-ul">
+<li>高速缓存是一个高速缓存的数组. 每个组包含一个或多个行, 每个行包含一个有效位, t个标记位, B个字节的数据块;</li>
+<li>高速缓存的结构将m个地址位划分为 t个标记位, s个索引位, b个块偏移位</li>
+</ul></li>
+</ul>
+
+<p>
+高速缓存结构可以用元组(S,E,B,m)来描述. 高速缓存的大小C, 指的是所有块大小的总和. 不包含有效位和标记位, C=SxExB.
+</p>
+
+<ul class="org-ul">
+<li>内存地址位m位, S和B将内存地址分为三个字段:
+<ul class="org-ul">
+<li>s个索引位: 组索引位解释为一个无符号整数, 标识内存应该在哪个组中.</li>
+<li>t个标记位: 标识应当在组中的哪一行.</li>
+<li>b个块偏移: 标识B个字节中的数据块的偏移位置</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgb03cedd" class="outline-3">
+<h3 id="orgb03cedd"><span class="section-number-3">3.2.</span> 直接映射高速缓存</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+高速缓存组中每个组只有一行(E=1)时成为直接映射高速缓存.  结构如下:
+</p>
+
+
+<div id="orgfbc4cd3" class="figure">
+<p><img src="./image/cache_dm.png" alt="cache_dm.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>直接映射高速缓存</p>
+</div>
+
+<p>
+现在假设由一个系统包含一个CPU,一个寄存器, 一个L1高速缓存,一个内存.cpu读取内存的大致逻辑如下:
+</p>
+
+
+
+<div id="orga2b96fa" class="figure">
+<p><img src="./plantuml/cache_read.png" alt="cache_read.png" />
+</p>
+</div>
+
+<p>
+高速缓存确定一个请求是否命中, 然后取出被请求的字的过程分为三步: 组选择、行匹配、字抽取。
+</p>
+
+<ol class="org-ol">
+<li><p>
+组选择
+</p>
+
+<p>
+高速缓存从w的地址中抽取s个组索引位, 然后解释为对应于组号的无符号整数. 如下图所示.
+</p>
+
+
+<div id="org5b024bc" class="figure">
+<p><img src="./image/cache_dm_g.png" alt="cache_dm_g.png" />
+</p>
+</div></li>
+
+<li><p>
+行匹配
+</p>
+
+<p>
+在上一步中, 已经选定了一个组, 接下来确定组中是否有包含w的缓存行. 因为直接映射中, 每个组只有一行, 如果设置了有效位, 且缓存行中的标记位与w地址中的标记位相匹配时, 即缓存命中.
+</p>
+
+
+<div id="org97f2ecc" class="figure">
+<p><img src="./image/cache_dm_l.png" alt="cache_dm_l.png" />
+</p>
+</div></li>
+
+<li><p>
+字选择
+</p>
+
+<p>
+如果缓存命中, 则w的副本就在缓存行块中的某个位置. 通过w地址中的块偏移找到w副本在缓存行块中的位置.
+</p></li>
+
+<li><p>
+直接映射高速缓存中不命中时的行替换
+</p>
+
+<p>
+缓存不命中时, 需要从存储器层次结构中的下一层取出被请求的块. 用新取出的行替换高速缓存行.
+</p></li>
+
+<li><p>
+直接映高速缓存中的冲突不命中
+</p>
+
+<p>
+高速缓存反复的加载和驱逐相同的高速缓存块的组, 这种现象称为术语 "抖动". 其原因是这些块被映射到的同义个高速缓存组. 这种抖动一般至少会导致速度下降2-3倍.
+</p>
+
+<p>
+如果我们意识到此问题, 可以很容易的修复抖动问题. 一个简单方法是可以在数组或者结构的结尾放置B字节的填充.
+</p></li>
+
+<li><p>
+为何使用地址中间的位作索引
+</p>
+
+<p>
+如下图所时, 如果使用高位作索引, 那么一些连续的内存块就会映射到相同的高速缓存块.
+</p>
+
+<p>
+如果一个程序有良好的空间局部性, 顺序的扫描一个数组元素, 那么在任意时刻, 高速缓存都只保存着一个块的大小的数组内容, 使用效率降低. 相比较而言, 以中间位作索引, 相邻的块总是映射到不同的高速缓存行.
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org66e1eb4" class="outline-3">
+<h3 id="org66e1eb4"><span class="section-number-3">3.3.</span> 组相连高速缓存</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+直接映射高速缓存中冲突不命中的问题源于每个组只有一行这个限制. 组相连高速缓存放松了这个限制, 每个组都保存有超过一个的高速缓存行.  一个 1&lt;E&lt;C/B的高速缓存通常称为E路组相连高速缓存.
+</p>
+
+
+<div id="orgea9a236" class="figure">
+<p><img src="./image/cache_sa.png" alt="cache_sa.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li><p>
+组相连高速缓存中的组选择
+</p>
+
+<p>
+与直接映射高速缓存的组选择相同.
+</p>
+
+
+<div id="org2b47416" class="figure">
+<p><img src="./image/cache_sa_g.png" alt="cache_sa_g.png" />
+</p>
+</div></li>
+</ol>
+
+
+<ol class="org-ol">
+<li><p>
+组相连高速缓存中的行匹配和字选择
+</p>
+
+<p>
+组相连高速缓存的行匹配需要检查多个行的标记位和有效位, 以确定请求的字是否在缓存行集合中.
+</p>
+
+<p>
+组中的任何一行都可以包含任何映射到这个组的内存块, 所以高速缓存必须搜索组中的每一行, 以寻找匹配行.  如果找到则命中, 根据块偏移在缓存行的块中选择一个字.
+</p>
+
+
+<div id="org2b0d7a7" class="figure">
+<p><img src="./image/cache_sa_l.png" alt="cache_sa_l.png" />
+</p>
+</div></li>
+
+<li><p>
+组相连高速缓存中不命中时的行替换
+</p>
+
+<p>
+如果缓存不命中时, 从内存中取出块后应该放入高速缓存组的哪一行呢? 如果有空行, 选择空行, 如果没有空行, 那么选择一个cpu不会很快引用的行来替换.
+</p>
+
+<p>
+简单的策略时随机替换,还有一些副在的策略, 最不常使用策略, 最近最少使用策略&#x2026;&#x2026;
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org5f12c34" class="outline-3">
+<h3 id="org5f12c34"><span class="section-number-3">3.4.</span> 全相连高速缓存</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+全相连高速缓存是由一个包含所有高速缓存行的组(E=C/B)组成.
+</p>
+
+
+<div id="org05a194e" class="figure">
+<p><img src="./image/cache_fa.png" alt="cache_fa.png" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li><p>
+全相连高速缓存的组选择
+</p>
+
+<p>
+只有一组, 不用选. 地址中没有索引位, 只有标记位和块偏移.
+</p>
+
+
+<div id="orgf88bb76" class="figure">
+<p><img src="./image/cache_fa_g.png" alt="cache_fa_g.png" />
+</p>
+</div></li>
+
+<li><p>
+全相连高速缓存的行匹配和字选择
+</p>
+
+<p>
+与组相连高速缓存相同.
+</p>
+
+
+<div id="orgd14105d" class="figure">
+<p><img src="./image/cache_fa_l.png" alt="cache_fa_l.png" />
+</p>
+</div>
+
+<p>
+由于高速缓存电路需要并行的搜索许多相匹配的标记, 构造一个又大又快的相连高速缓存很困难, 而且比较昂贵. 因此, 全相连高速缓存只适合做小的高速缓存, 例如虚拟内存系统中的翻译备用缓冲器(TLB), 用以缓存页表项.
+</p></li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-orgcc4abe7" class="outline-3">
+<h3 id="orgcc4abe7"><span class="section-number-3">3.5.</span> 写的问题</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+如果写一个已经缓存了w的高速缓存. 在高速缓存更新后如何更新低一层的层次结构的副本呢. 最简单的方法就是直写,缺点是每次写都会引起总线流量. 另一种方法是write-back, 尽可能推迟更新, 只有当替换算法要驱逐这个修改过的块时, 才把他写入紧接着的第一层中, 可以显著的减少总线流量, 缺点时增加了复杂性. 高速缓存必须为每个缓存行维护一个额外的修改位, 表明是否被修改.
+</p>
+
+<p>
+如何处理写不命中呢. 一种方法是写分配, 加载相应的低一层中的块到高速缓存中, 然后更新高速缓存块. 写分配试图利用写的空间局部性, 缺点是每次不命中都会导致一个块从低一层传送到高速缓存. 另一种方法是非写分配, 避开高速缓存, 直接写入低一层中. 直写通常是非写分配, write-back通常是写分配.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3808577" class="outline-2">
+<h2 id="org3808577"><span class="section-number-2">4.</span> 一个真实的高速缓存层次结构的剖析</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+以上只介绍了高速缓存只保存数据. 实际上, 高速缓存既保存数据, 也保存指令. 只保存指令的称为i-cache. 只保存程序数据的为d-cache. 既保存指令也保存数据的高速缓存称为统一的高速缓存. 现代处理器包括独立的i-cache和d-cache. 两个独立的高速缓存能够同时读取指令和数据.
+</p>
+
+<p>
+下图给出了 Intel Corei7处理器的高速缓存层次结构. 每个cpu有4个核. 每个核有自己私有的L1 i-cache、L1 d-cache和L2统一高速缓存。 所有高速缓存共享L3统一高速缓存。 这个层次结构所有的SRAM高速缓存存储器都在CPU芯片上。
+</p>
+
+
+<div id="org4fb2e7b" class="figure">
+<p><img src="./image/cache_core_i7.png" alt="cache_core_i7.png" />
+</p>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-center">高速缓存类型</th>
+<th scope="col" class="org-center">访问时间（周期）</th>
+<th scope="col" class="org-center">高速缓存大小（C）</th>
+<th scope="col" class="org-center">相连度（E）</th>
+<th scope="col" class="org-center">块大小（B）</th>
+<th scope="col" class="org-center">组数（S）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-center">L1 i-cache</td>
+<td class="org-center">4</td>
+<td class="org-center">32KB</td>
+<td class="org-center">8</td>
+<td class="org-center">64B</td>
+<td class="org-center">64</td>
+</tr>
+
+<tr>
+<td class="org-center">L1 d-cache</td>
+<td class="org-center">4</td>
+<td class="org-center">32KB</td>
+<td class="org-center">8</td>
+<td class="org-center">64B</td>
+<td class="org-center">64</td>
+</tr>
+
+<tr>
+<td class="org-center">L2 统一高速缓存</td>
+<td class="org-center">10</td>
+<td class="org-center">256KB</td>
+<td class="org-center">8</td>
+<td class="org-center">64B</td>
+<td class="org-center">512</td>
+</tr>
+
+<tr>
+<td class="org-center">L3 统一高速缓存</td>
+<td class="org-center">40～75</td>
+<td class="org-center">8MB</td>
+<td class="org-center">16</td>
+<td class="org-center">64B</td>
+<td class="org-center">8192</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org895b9a7" class="outline-2">
+<h2 id="org895b9a7"><span class="section-number-2">5.</span> 高速缓存参数的性能影响</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+衡量指标有：
+</p>
+<ul class="org-ul">
+<li>不命中率</li>
+<li>命中率</li>
+<li>命中时间</li>
+<li>不命中处罚</li>
+</ul>
+<ol class="org-ol">
+<li>高速缓存大小的影响
+较大的高速缓存可能会提高命中率，但是通常大存储器运行要慢一些，所以会增加命中时间。这就是为什么 L1高速缓存比L2高速缓存小， L2小于L3的原因。</li>
+
+<li>块大小的影响
+较大的块能利用程序中可能存在的空间局部性， 提高命中率。对于给定的高速缓存大小， 块越大意味着高速缓存行越少。会损害时间局部性比空间局部性更好的程序的命中率。较大的块对不命中处罚也有负面影响， 块越大传送时间越长。</li>
+
+<li>相连度的影响
+E代表高速缓存组中的缓存行数。较高的相连度会降低高速缓存由于冲突不命中出现抖动的可能性。 但较高的相连度会造成较高的成本。实现较昂贵，且很难使速度变快。每一行需要更多的标记位，LRY状态位和额外的控制逻辑。较高的相连度还会增加命中时间和不命中处罚。</li>
+
+<li>写策略的影响
+直写高速缓存比较容易实现，而且能使用独立于高速缓存的写缓冲区， 用来更新内存。此外读不命中开销没那么大，因为不会触发内存写。另一方面，写回高速缓存引起的传送比较少，它允许更多的到内存的带宽用于执行DMA的I/O设备。此外，越往层次结构下面走， 传送时间增加，减少传送的数量就变得更加重要。一般而言，高速缓存越往下层，越可能使用写回而不是直写。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org1268d26" class="outline-2">
+<h2 id="org1268d26"><span class="section-number-2">6.</span> 编写高速缓存友好的代码</h2>
+<div class="outline-text-2" id="text-6">
+<ol class="org-ol">
+<li>让最常见的情况运行的快。程序通常把大部分时间都花在少量的核心函数上，而这些函数通常把是大部分时间都花在了少量循环上。所以把注意力集中在核心函数里的循环上，而忽略其他部分。</li>
+
+<li>尽量减少每个循环内部的缓存不命中数量。在其它条件相同情况下，不命中率较低的循环运行的更快。</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">sumvec</span> (<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">v</span>[N])
+{
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">i</span>, <span style="color: #FD971F;">sum</span> = 0;
+        <span style="color: #F92672;">for</span> (i = 0; i &lt; N; i++)
+                sum += v[i];
+        <span style="color: #F92672;">return</span> sum;
+}
+</pre>
+</div>
+
+<p>
+假设一个高速缓存的块大小位B字节， 那么一个步长位k的引用模式（k以字位单位）平均每次循环迭代会有min(1, (wordsize*k)/B)次缓存不命中。 当k=1时取最小值， 所以v步长为1却是时高速缓存友好的。例如假设v是块对齐的，字位4字节，高速缓存块为4个字，高速缓存初始为空。然后，无论什么杨的高速缓存结构， 对v的引用都会得到下面的命中和不命中模式：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">v[i]</th>
+<th scope="col" class="org-left">i=0</th>
+<th scope="col" class="org-left">i=1</th>
+<th scope="col" class="org-left">i=2</th>
+<th scope="col" class="org-left">i=3</th>
+<th scope="col" class="org-left">i=4</th>
+<th scope="col" class="org-left">i=5</th>
+<th scope="col" class="org-left">i=6</th>
+<th scope="col" class="org-left">i=7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">访问顺序，h命中，m不命中</td>
+<td class="org-left">1[m]</td>
+<td class="org-left">2[h]</td>
+<td class="org-left">3[h]</td>
+<td class="org-left">4[h]</td>
+<td class="org-left">5[m]</td>
+<td class="org-left">6[h]</td>
+<td class="org-left">7[h]</td>
+<td class="org-left">8[h]</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+这个例子中，对v[0]的引用不命中，然后包含v[0]~v[3]的块被从内存load到高速缓存中。因此接下来三个引用都会命中。加载v[4]时也是如此。
+</p>
+
+<p>
+上述示例说明了编写高速缓存友好代码的两个重要问题：
+</p>
+<ul class="org-ul">
+<li>对局部变量的反复引用是好的，因为编译器能够将他们缓存在寄存器文件中（时间局部性）。</li>
+<li>步长为1的引用模式是好的，因为存储器层次结构中所有层次上的缓存都是将数据存储为连续的块（空间局部性）。</li>
+</ul>
+
+<p>
+在对多为数据进行操作的程序中，空间局部性尤为重要。如下面的例子：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">sumarrayrows</span> (<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">a</span>[M][N])
+{
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">i</span>, <span style="color: #FD971F;">j</span>, <span style="color: #FD971F;">sum</span> = 0;
+        <span style="color: #F92672;">for</span> (i = 0; i &lt; M; i++) {
+                <span style="color: #F92672;">for</span> (j = 0; j &lt; N; j++) {
+                        sum += a[i][j];
+                }
+        }
+        <span style="color: #F92672;">return</span> sum;
+}
+</pre>
+</div>
+
+<p>
+由于C语言以行优先顺序存储数组，所以这个行数中的内循环有与上一个例子（sumvec）一样好的步长为1的访问模式。假设我们对这个高速缓存做对sumvec一样的假设。那么对数组a的引用会得到下面的命中和不命中模式：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">a[i][j]</th>
+<th scope="col" class="org-left">j=0</th>
+<th scope="col" class="org-left">j=1</th>
+<th scope="col" class="org-left">j=2</th>
+<th scope="col" class="org-left">j=3</th>
+<th scope="col" class="org-left">j=4</th>
+<th scope="col" class="org-left">j=5</th>
+<th scope="col" class="org-left">j=6</th>
+<th scope="col" class="org-left">j=7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">i = 0</td>
+<td class="org-left">1[m]</td>
+<td class="org-left">2[h]</td>
+<td class="org-left">3[h]</td>
+<td class="org-left">4[h]</td>
+<td class="org-left">5[m]</td>
+<td class="org-left">6[h]</td>
+<td class="org-left">7[h]</td>
+<td class="org-left">8[h]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 1</td>
+<td class="org-left">9[m]</td>
+<td class="org-left">10[h]</td>
+<td class="org-left">11[h]</td>
+<td class="org-left">12[h]</td>
+<td class="org-left">13[m]</td>
+<td class="org-left">14[h]</td>
+<td class="org-left">15[h]</td>
+<td class="org-left">16[h]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 2</td>
+<td class="org-left">17[m]</td>
+<td class="org-left">18[h]</td>
+<td class="org-left">19[h]</td>
+<td class="org-left">20[h]</td>
+<td class="org-left">21[m]</td>
+<td class="org-left">22[h]</td>
+<td class="org-left">23[h]</td>
+<td class="org-left">24[h]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 3</td>
+<td class="org-left">25[m]</td>
+<td class="org-left">26[h]</td>
+<td class="org-left">27[h]</td>
+<td class="org-left">28[h]</td>
+<td class="org-left">29[m]</td>
+<td class="org-left">30[h]</td>
+<td class="org-left">31[h]</td>
+<td class="org-left">32[h]</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+如果我们稍稍修改以下循环的次序：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">sumarraycols</span> (<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">a</span>[M][N])
+{
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">i</span>, <span style="color: #FD971F;">j</span>, <span style="color: #FD971F;">sum</span> = 0;
+        <span style="color: #F92672;">for</span> (j = 0; j &lt; M; j++) {
+                <span style="color: #F92672;">for</span> (i = 0; i &lt; N; i++) {
+                        sum += a[i][j];
+                }
+        }
+        <span style="color: #F92672;">return</span> sum;
+}
+</pre>
+</div>
+<p>
+这种情况下，我们是一列一列的扫描数组。 如果幸运的话，整个数组都在高速缓存中，那么也会有相同的不命中率（1/4）。不过，如果数组比高速缓存要大， 那么每次对a[j][i]的访问都不会命中！
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">a[i][j]</th>
+<th scope="col" class="org-left">j=0</th>
+<th scope="col" class="org-left">j=1</th>
+<th scope="col" class="org-left">j=2</th>
+<th scope="col" class="org-left">j=3</th>
+<th scope="col" class="org-left">j=4</th>
+<th scope="col" class="org-left">j=5</th>
+<th scope="col" class="org-left">j=6</th>
+<th scope="col" class="org-left">j=7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">i = 0</td>
+<td class="org-left">1[m]</td>
+<td class="org-left">2[m]</td>
+<td class="org-left">3[m]</td>
+<td class="org-left">4[m]</td>
+<td class="org-left">5[m]</td>
+<td class="org-left">6[m]</td>
+<td class="org-left">7[m]</td>
+<td class="org-left">8[m]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 1</td>
+<td class="org-left">9[m]</td>
+<td class="org-left">10[m]</td>
+<td class="org-left">11[m]</td>
+<td class="org-left">12[m]</td>
+<td class="org-left">13[m]</td>
+<td class="org-left">14[m]</td>
+<td class="org-left">15[m]</td>
+<td class="org-left">16[m]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 2</td>
+<td class="org-left">17[m]</td>
+<td class="org-left">18[m]</td>
+<td class="org-left">19[m]</td>
+<td class="org-left">20[m]</td>
+<td class="org-left">21[m]</td>
+<td class="org-left">22[m]</td>
+<td class="org-left">23[m]</td>
+<td class="org-left">24[m]</td>
+</tr>
+
+<tr>
+<td class="org-left">i = 3</td>
+<td class="org-left">25[m]</td>
+<td class="org-left">26[m]</td>
+<td class="org-left">27[m]</td>
+<td class="org-left">28[m]</td>
+<td class="org-left">29[m]</td>
+<td class="org-left">30[m]</td>
+<td class="org-left">31[m]</td>
+<td class="org-left">32[m]</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+较高的不命中率对运行时间有显著影响。例如在桌面机器上，sumarrayrows运行速度比sumarraycols快25倍。总之，我们应当注意程序中的局部性，试着编写利用局部性的程序。
+</p>
+
+<p>
+在程序中利用局部性的技术：
+</p>
+<ul class="org-ul">
+<li>将注意力集中在内循环上，大部分计算和内存访问都发生在这里。</li>
+<li>通过按照数据对象存储在内存中的顺序、以步长为1来读取数据，从而使得程序中的空间局部性最大。</li>
+<li>一旦从存储器中读入了一个数据对象，就尽可能的多使用它，从而使得程序中的时间局部性最大。</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

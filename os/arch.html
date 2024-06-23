@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-24 Wed 10:32 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ARCH安装总结</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,77 +191,54 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">ARCH安装总结</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgb3b3701">1. 安装</a>
+<li><a href="#orgb5547ba">1. 安装</a>
 <ul>
-<li><a href="#orgbc9b58f">1.1. usb制作启动盘</a></li>
-<li><a href="#orgd2d3ea5">1.2. 查看BIOS设置，检查引导方式：MBR(legacy)/GPT(UEFI)</a></li>
-<li><a href="#org906d72e">1.3. 安装系统</a>
+<li><a href="#orged11564">1.1. usb制作启动盘</a></li>
+<li><a href="#orga13279c">1.2. 查看BIOS设置，检查引导方式：MBR(legacy)/GPT(UEFI)</a></li>
+<li><a href="#org81f3899">1.3. 安装系统</a>
 <ul>
-<li><a href="#org0fdb762">1.3.1. 分区</a></li>
-<li><a href="#orgd0218fb">1.3.2. 格式化磁盘：</a></li>
-<li><a href="#org09a5167">1.3.3. 挂载分区</a></li>
-<li><a href="#orgaad333c">1.3.4. 安装</a></li>
-<li><a href="#orgf14f903">1.3.5. 配置系统</a></li>
-<li><a href="#org28245fa">1.3.6. Chroot</a></li>
-<li><a href="#orgf55948d">1.3.7. 时区</a></li>
-<li><a href="#org87711ee">1.3.8. 本地化</a></li>
-<li><a href="#org0796733">1.3.9. 网络配置</a></li>
-<li><a href="#orga681b66">1.3.10. Root 密码</a></li>
-<li><a href="#org8c7f8e7">1.3.11. 安装引导程序(UEFI)</a></li>
-<li><a href="#orgd338b93">1.3.12. 退出重启系统</a></li>
+<li><a href="#orgcb096ea">1.3.1. 分区</a></li>
+<li><a href="#org64dc8cf">1.3.2. 格式化磁盘：</a></li>
+<li><a href="#orgd1b792b">1.3.3. 挂载分区</a></li>
+<li><a href="#org7946e72">1.3.4. 安装</a></li>
+<li><a href="#orgcbfcad4">1.3.5. 配置系统</a></li>
+<li><a href="#org5579989">1.3.6. Chroot</a></li>
+<li><a href="#orgbfa50b6">1.3.7. 时区</a></li>
+<li><a href="#orgf8848d5">1.3.8. 本地化</a></li>
+<li><a href="#org7563d92">1.3.9. 网络配置</a></li>
+<li><a href="#org1828024">1.3.10. Root 密码</a></li>
+<li><a href="#org4384c8c">1.3.11. 安装引导程序(UEFI)</a></li>
+<li><a href="#orgb25d0da">1.3.12. 退出重启系统</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org4d24c36">2. 应用</a>
+<li><a href="#org89646f7">2. 应用</a>
 <ul>
-<li><a href="#orgdb8c110">2.1. 图形界面</a></li>
+<li><a href="#org5e497bb">2.1. 图形界面</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgb3b3701" class="outline-2">
-<h2 id="orgb3b3701"><span class="section-number-2">1</span> 安装</h2>
+<div id="outline-container-orgb5547ba" class="outline-2">
+<h2 id="orgb5547ba"><span class="section-number-2">1.</span> 安装</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orgbc9b58f" class="outline-3">
-<h3 id="orgbc9b58f"><span class="section-number-3">1.1</span> usb制作启动盘</h3>
+<div id="outline-container-orged11564" class="outline-3">
+<h3 id="orged11564"><span class="section-number-3">1.1.</span> usb制作启动盘</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 首先需要将整个的U盘内容备份，然后依次执行如下命令
@@ -279,14 +257,14 @@
 将iso写入到U盘:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ sudo dd <span style="color: #FF8C00; font-weight: bold;">if</span>=archlinux-2018.12.01-x86_64.iso <span style="color: #FF8C00; font-weight: bold;">of</span>=/dev/sdb <span style="color: #FF8C00; font-weight: bold;">bs</span>=8M <span style="color: #FF8C00; font-weight: bold;">status</span>=progress <span style="color: #FF8C00; font-weight: bold;">oflag</span>=sync
+<pre class="src src-sh">$ sudo dd <span style="color: #FD971F;">if</span>=archlinux-2018.12.01-x86_64.iso <span style="color: #FD971F;">of</span>=/dev/sdb <span style="color: #FD971F;">bs</span>=8M <span style="color: #FD971F;">status</span>=progress <span style="color: #FD971F;">oflag</span>=sync
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgd2d3ea5" class="outline-3">
-<h3 id="orgd2d3ea5"><span class="section-number-3">1.2</span> 查看BIOS设置，检查引导方式：MBR(legacy)/GPT(UEFI)</h3>
+<div id="outline-container-orga13279c" class="outline-3">
+<h3 id="orga13279c"><span class="section-number-3">1.2.</span> 查看BIOS设置，检查引导方式：MBR(legacy)/GPT(UEFI)</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 这里需要区分对待两种不同的引导方式：
@@ -298,12 +276,12 @@
 </div>
 </div>
 
-<div id="outline-container-org906d72e" class="outline-3">
-<h3 id="org906d72e"><span class="section-number-3">1.3</span> 安装系统</h3>
+<div id="outline-container-org81f3899" class="outline-3">
+<h3 id="org81f3899"><span class="section-number-3">1.3.</span> 安装系统</h3>
 <div class="outline-text-3" id="text-1-3">
 </div>
-<div id="outline-container-org0fdb762" class="outline-4">
-<h4 id="org0fdb762"><span class="section-number-4">1.3.1</span> 分区</h4>
+<div id="outline-container-orgcb096ea" class="outline-4">
+<h4 id="orgcb096ea"><span class="section-number-4">1.3.1.</span> 分区</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 BIOS 与 MBR
@@ -401,8 +379,8 @@ UEFI 与 GPT
 </div>
 </div>
 
-<div id="outline-container-orgd0218fb" class="outline-4">
-<h4 id="orgd0218fb"><span class="section-number-4">1.3.2</span> 格式化磁盘：</h4>
+<div id="outline-container-org64dc8cf" class="outline-4">
+<h4 id="org64dc8cf"><span class="section-number-4">1.3.2.</span> 格式化磁盘：</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <div class="org-src-container">
 <pre class="src src-sh">$ cfdisk /dev/sdx
@@ -427,14 +405,14 @@ $ mkfs.ext4 /dev/sdx2
 </div>
 </div>
 </div>
-<div id="outline-container-org09a5167" class="outline-4">
-<h4 id="org09a5167"><span class="section-number-4">1.3.3</span> 挂载分区</h4>
+<div id="outline-container-orgd1b792b" class="outline-4">
+<h4 id="orgd1b792b"><span class="section-number-4">1.3.3.</span> 挂载分区</h4>
 <div class="outline-text-4" id="text-1-3-3">
 <p>
 MBR
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount /dev/sdx /mnt</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount /dev/sdx /mnt</span>
 </pre>
 </div>
 
@@ -459,13 +437,13 @@ $ mount /dev/sdx1 /mnt/boot/efi
 </div>
 
 
-<div id="outline-container-orgaad333c" class="outline-4">
-<h4 id="orgaad333c"><span class="section-number-4">1.3.4</span> 安装</h4>
+<div id="outline-container-org7946e72" class="outline-4">
+<h4 id="org7946e72"><span class="section-number-4">1.3.4.</span> 安装</h4>
 <div class="outline-text-4" id="text-1-3-4">
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">pacstrap /mnt base linux linux-firmware</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">pacstrap /mnt base linux linux-firmware</span>
   &#25110;&#32773;
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">pacstrap /mnt base linux-lts linux-firmware</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">pacstrap /mnt base linux-lts linux-firmware</span>
 </pre>
 </div>
 
@@ -484,15 +462,15 @@ base 软件包并没有包含 Live 环境中的全部程序。因此要获得一
 </div>
 </div>
 
-<div id="outline-container-orgf14f903" class="outline-4">
-<h4 id="orgf14f903"><span class="section-number-4">1.3.5</span> 配置系统</h4>
+<div id="outline-container-orgcbfcad4" class="outline-4">
+<h4 id="orgcbfcad4"><span class="section-number-4">1.3.5.</span> 配置系统</h4>
 <div class="outline-text-4" id="text-1-3-5">
 <p>
 Fstab
 用以下命令生成 fstab 文件 (用 -U 或 -L 选项设置UUID 或卷标)：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">genfstab -U /mnt &gt;&gt; /mnt/etc/fstab</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">genfstab -U /mnt &gt;&gt; /mnt/etc/fstab</span>
 </pre>
 </div>
 
@@ -502,27 +480,27 @@ Fstab
 </div>
 </div>
 
-<div id="outline-container-org28245fa" class="outline-4">
-<h4 id="org28245fa"><span class="section-number-4">1.3.6</span> Chroot</h4>
+<div id="outline-container-org5579989" class="outline-4">
+<h4 id="org5579989"><span class="section-number-4">1.3.6.</span> Chroot</h4>
 <div class="outline-text-4" id="text-1-3-6">
 <p>
 Change root 到新安装的系统：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">arch-chroot /mnt</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">arch-chroot /mnt</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgf55948d" class="outline-4">
-<h4 id="orgf55948d"><span class="section-number-4">1.3.7</span> 时区</h4>
+<div id="outline-container-orgbfa50b6" class="outline-4">
+<h4 id="orgbfa50b6"><span class="section-number-4">1.3.7.</span> 时区</h4>
 <div class="outline-text-4" id="text-1-3-7">
 <p>
 设置时区：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span>
 </pre>
 </div>
 
@@ -530,7 +508,7 @@ Change root 到新安装的系统：
 运行 hwclock(8) 以生成 /etc/adjtime：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">hwclock --systohc</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">hwclock --systohc</span>
 </pre>
 </div>
 
@@ -540,8 +518,8 @@ Change root 到新安装的系统：
 </div>
 </div>
 
-<div id="outline-container-org87711ee" class="outline-4">
-<h4 id="org87711ee"><span class="section-number-4">1.3.8</span> 本地化</h4>
+<div id="outline-container-orgf8848d5" class="outline-4">
+<h4 id="orgf8848d5"><span class="section-number-4">1.3.8.</span> 本地化</h4>
 <div class="outline-text-4" id="text-1-3-8">
 <p>
 本地化的程序与库若要本地化文本，都依赖 Locale，后者明确规定地域、货币、时区日期的格式、字符排列方式和其他本地化标准。
@@ -559,7 +537,7 @@ Change root 到新安装的系统：
 接着执行 locale-gen 以生成 locale 信息：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">locale-gen</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">locale-gen</span>
 </pre>
 </div>
 
@@ -567,7 +545,7 @@ Change root 到新安装的系统：
 然后创建 locale.conf 文件，并 编辑设定 LANG 变量，比如：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">echo "LANG=en_US.UTF-8" &gt; /etc/locale.conf</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">echo "LANG=en_US.UTF-8" &gt; /etc/locale.conf</span>
 </pre>
 </div>
 
@@ -588,24 +566,24 @@ LibreOffice &#31561;&#21150;&#20844;&#36719;&#20214;&#30340;&#32440;&#24352;&#23
 </div>
 </div>
 
-<div id="outline-container-org0796733" class="outline-4">
-<h4 id="org0796733"><span class="section-number-4">1.3.9</span> 网络配置</h4>
+<div id="outline-container-org7563d92" class="outline-4">
+<h4 id="org7563d92"><span class="section-number-4">1.3.9.</span> 网络配置</h4>
 <div class="outline-text-4" id="text-1-3-9">
 <p>
 创建 hostname 文件:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">echo "myhostname" &gt; /etc/hostname</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">echo "myhostname" &gt; /etc/hostname</span>
 </pre>
 </div>
 <p>
 添加对应的信息到 hosts:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat  /etc/hosts</span>
-127.0.0.1   localhost
-::1     localhost
-127.0.1.1   myhostname.localdomain  myhostname
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">cat  /etc/hosts</span>
+127.0.0.1       localhost
+::1             localhost
+127.0.1.1       myhostname.localdomain  myhostname
 </pre>
 </div>
 <p>
@@ -614,27 +592,27 @@ LibreOffice &#31561;&#21150;&#20844;&#36719;&#20214;&#30340;&#32440;&#24352;&#23
 </div>
 </div>
 
-<div id="outline-container-orga681b66" class="outline-4">
-<h4 id="orga681b66"><span class="section-number-4">1.3.10</span> Root 密码</h4>
+<div id="outline-container-org1828024" class="outline-4">
+<h4 id="org1828024"><span class="section-number-4">1.3.10.</span> Root 密码</h4>
 <div class="outline-text-4" id="text-1-3-10">
 <p>
 设置 Root 密码：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">passwd</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">passwd</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org8c7f8e7" class="outline-4">
-<h4 id="org8c7f8e7"><span class="section-number-4">1.3.11</span> 安装引导程序(UEFI)</h4>
+<div id="outline-container-org4384c8c" class="outline-4">
+<h4 id="org4384c8c"><span class="section-number-4">1.3.11.</span> 安装引导程序(UEFI)</h4>
 <div class="outline-text-4" id="text-1-3-11">
 <p>
 首先安装软件包 grub 和 efibootmgr。其中“GRUB”是启动引导器，“efibootmgr”被 GRUB 脚本用来将启动项写入 NVRAM。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">pacman -S grub efibootmgr</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">pacman -S grub efibootmgr</span>
 </pre>
 </div>
 
@@ -642,7 +620,7 @@ LibreOffice &#31561;&#21150;&#20844;&#36719;&#20214;&#30340;&#32440;&#24352;&#23
 <b>esp替换为EFI分区挂载目录</b>
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB</span>
 </pre>
 </div>
 
@@ -650,18 +628,18 @@ LibreOffice &#31561;&#21150;&#20844;&#36719;&#20214;&#30340;&#32440;&#24352;&#23
 在配置完成后，生成主配置文件。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">grub-mkconfig -o /boot/grub/grub.cfg</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">grub-mkconfig -o /boot/grub/grub.cfg</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgd338b93" class="outline-4">
-<h4 id="orgd338b93"><span class="section-number-4">1.3.12</span> 退出重启系统</h4>
+<div id="outline-container-orgb25d0da" class="outline-4">
+<h4 id="orgb25d0da"><span class="section-number-4">1.3.12.</span> 退出重启系统</h4>
 <div class="outline-text-4" id="text-1-3-12">
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">exit</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">umount /mnt -R reboot</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">exit</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">umount /mnt -R reboot</span>
 </pre>
 </div>
 </div>
@@ -669,12 +647,12 @@ LibreOffice &#31561;&#21150;&#20844;&#36719;&#20214;&#30340;&#32440;&#24352;&#23
 </div>
 </div>
 
-<div id="outline-container-org4d24c36" class="outline-2">
-<h2 id="org4d24c36"><span class="section-number-2">2</span> 应用</h2>
+<div id="outline-container-org89646f7" class="outline-2">
+<h2 id="org89646f7"><span class="section-number-2">2.</span> 应用</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgdb8c110" class="outline-3">
-<h3 id="orgdb8c110"><span class="section-number-3">2.1</span> 图形界面</h3>
+<div id="outline-container-org5e497bb" class="outline-3">
+<h3 id="org5e497bb"><span class="section-number-3">2.1.</span> 图形界面</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 i3-gaps
@@ -690,7 +668,7 @@ rxvt-unicode(Urxvt: 终端）
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-24 Wed 10:32</p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

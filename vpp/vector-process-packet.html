@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>向量包处理库（Vector Processing Packet）</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">向量包处理库（Vector Processing Packet）</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org467e1c5">1. NODE</a>
+<ul>
+<li><a href="#org4201ff1">1.1. node 的类型</a></li>
+<li><a href="#org86810a7">1.2. node的定义</a>
+<ul>
+<li><a href="#orga6467e7">1.2.1. VLIB_REGISTER_NODE</a></li>
+<li><a href="#org91a375f">1.2.2. VLIB_NODE_FN</a></li>
+</ul>
+</li>
+<li><a href="#org3ac6433">1.3. node的注册</a></li>
+</ul>
+</li>
+<li><a href="#orgcd3e241">2. node初始化</a></li>
+<li><a href="#org637c32d">3. MAIN_LOOP注册</a></li>
+<li><a href="#org3792cf1">4. INIT_FUNCTION注册</a></li>
+<li><a href="#orgc19dd92">5. PLUGIN注册</a></li>
+<li><a href="#org384f917">6. THREAD注册</a></li>
+<li><a href="#orgab441c7">7. SIBILIND</a></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org467e1c5" class="outline-2">
+<h2 id="org467e1c5"><span class="section-number-2">1.</span> NODE</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org4201ff1" class="outline-3">
+<h3 id="org4201ff1"><span class="section-number-3">1.1.</span> node 的类型</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">typedef</span> <span style="color: #F92672;">enum</span>
+{
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">An internal node on the call graph (could be output).</span><span style="color: #75715E;"> */</span>
+  <span style="color: #FD971F;">VLIB_NODE_TYPE_INTERNAL</span>,
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">Nodes which input data into the processing graph.</span>
+<span style="color: #75715E;">     Input nodes are called for each iteration of main loop.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #FD971F;">VLIB_NODE_TYPE_INPUT</span>,
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">Nodes to be called before all input nodes.</span>
+<span style="color: #75715E;">     Used, for example, to clean out driver TX rings before</span>
+<span style="color: #75715E;">     processing input.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #FD971F;">VLIB_NODE_TYPE_PRE_INPUT</span>,
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">"Process" nodes which can be suspended and later resumed.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #FD971F;">VLIB_NODE_TYPE_PROCESS</span>,
+
+  <span style="color: #FD971F;">VLIB_N_NODE_TYPE</span>,
+} <span style="color: #66D9EF;">vlib_node_type_t</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org86810a7" class="outline-3">
+<h3 id="org86810a7"><span class="section-number-3">1.2.</span> node的定义</h3>
+<div class="outline-text-3" id="text-1-2">
+</div>
+<div id="outline-container-orga6467e7" class="outline-4">
+<h4 id="orga6467e7"><span class="section-number-4">1.2.1.</span> VLIB_REGISTER_NODE</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+node 的注册，使用gcc的 <code>__attribute__((__constructor__))</code> 构造属性，在main函数之前进行注册。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #F92672;">#define</span> <span style="color: #A6E22E;">VLIB_REGISTER_NODE</span>(<span style="color: #FD971F;">x</span>, ...)                                             \
+        __VA_ARGS__ <span style="color: #66D9EF;">vlib_node_registration_t</span> <span style="color: #FD971F;">x</span>;                                \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_node_registration_</span>##x(<span style="color: #66D9EF;">void</span>)                     \
+                <span style="color: #F92672;">__attribute__</span>((__constructor__));                              \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_node_registration_</span>##x(<span style="color: #66D9EF;">void</span>)                     \
+        {                                                                      \
+                <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();                             \
+                x.next_registration = vm-&gt;node_main.node_registrations;        \
+                vm-&gt;node_main.node_registrations = &amp;x;                         \
+        }                                                                      \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_node_registration_</span>##x(<span style="color: #66D9EF;">void</span>)                      \
+                <span style="color: #F92672;">__attribute__</span>((__destructor__));                               \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_node_registration_</span>##x(<span style="color: #66D9EF;">void</span>)                      \
+        {                                                                      \
+                <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();                             \
+                VLIB_REMOVE_FROM_LINKED_LIST(vm-&gt;node_main.node_registrations, \
+                                             &amp;x, next_registration);           \
+        }                                                                      \
+        __VA_ARGS__ <span style="color: #66D9EF;">vlib_node_registration_t</span> <span style="color: #FD971F;">x</span>
+
+<span style="color: #A6E22E;">VLIB_REGISTER_NODE</span>(dpdk_input_node) = {
+        .type = VLIB_NODE_TYPE_INPUT,
+        .name = <span style="color: #E6DB74;">"dpdk-input"</span>,
+        .sibling_of = <span style="color: #E6DB74;">"device-input"</span>,
+        .flags = VLIB_NODE_FLAG_TRACE_SUPPORTED,
+
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Will be enabled if/when hardware is detected.</span><span style="color: #75715E;"> */</span>
+        .state = VLIB_NODE_STATE_DISABLED,
+
+        .format_buffer = format_ethernet_header_with_length,
+        .format_trace = format_dpdk_rx_trace,
+
+        .n_errors = DPDK_N_ERROR,
+        .error_strings = dpdk_error_strings,
+}
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#23439;&#23450;&#20041;&#23637;&#24320;&#21518; (dpdk-input-node)</span><span style="color: #75715E;"> */</span>
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">dpdk_input_node &#21464;&#37327;&#22768;&#26126;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">vlib_node_registration_t</span> <span style="color: #FD971F;">dpdk_input_node</span>;
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20989;&#25968;&#22768;&#26126;&#65306;&#27880;&#20876;dpdk_input_node&#65292; &#21033;&#29992;gcc&#30340;&#26500;&#36896;&#23646;&#24615;&#65292;&#20351;&#20854;&#20808;&#20110;main&#20989;&#25968;&#25191;&#34892;</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_node_registration_dpdk_input_node</span>(<span style="color: #66D9EF;">void</span>)
+        <span style="color: #F92672;">__attribute__</span>((__constructor__));
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20989;&#25968;&#23450;&#20041;</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_node_registration_dpdk_input_node</span>(<span style="color: #66D9EF;">void</span>)
+{
+        <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21033;&#29992; node &#32467;&#26500;&#30340; next_registration &#23558;&#25152;&#26377;node&#20018;&#25104;&#19968;&#20010;&#38142;&#34920;</span><span style="color: #75715E;"> */</span>
+        dpdk_input_node.next_registration = vm-&gt;node_main.node_registrations;
+        vm-&gt;node_main.node_registrations = &amp;dpdk_input_node;
+}
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20989;&#25968;&#22768;&#26126;&#65306; &#20174;vlib_main_t &#32467;&#26500;&#30340;&#38142;&#34920;&#20013;&#31227;&#38500;&#35813;node&#65292; &#22312;main&#20989;&#25968;&#36816;&#34892;&#21518;&#35843;&#29992;(&#26512;&#26500;&#20989;&#25968;)</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_node_registration_dpdk_input_node</span>(<span style="color: #66D9EF;">void</span>)
+        <span style="color: #F92672;">__attribute__</span>((__destructor__));
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20989;&#25968;&#23450;&#20041;</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_node_registration_dpdk_input_node</span>(<span style="color: #66D9EF;">void</span>)
+{
+        <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();
+        VLIB_REMOVE_FROM_LINKED_LIST(vm-&gt;node_main.node_registrations,
+                                     &amp;dpdk_input_node, next_registration);
+}
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">node&#30340;&#23450;&#20041;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">vlib_node_registration_t</span> <span style="color: #FD971F;">dpdk_input_node</span> = {
+        .type = VLIB_NODE_TYPE_INPUT,
+        .name = <span style="color: #E6DB74;">"dpdk-input"</span>,
+        .sibling_of = <span style="color: #E6DB74;">"device-input"</span>,
+        .flags = VLIB_NODE_FLAG_TRACE_SUPPORTED,
+
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Will be enabled if/when hardware is detected.</span><span style="color: #75715E;"> */</span>
+        .state = VLIB_NODE_STATE_DISABLED,
+
+        .format_buffer = format_ethernet_header_with_length,
+        .format_trace = format_dpdk_rx_trace,
+
+        .n_errors = DPDK_N_ERROR,
+        .error_strings = dpdk_error_strings,
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>利用 <b>VLIB_REGISTER_NODE(x,&#x2026;)</b> 定义好node后，会生成 <b>static void \__vlib_add_node_registration_nodename(void){&#x2026;}</b> 之类的初始化函数，此类函数使用 <b>__attribute__ ((<span class="underline"><span class="underline">constructor</span></span>))</b> 属性修饰(构造函数)， 会在main函数执行之前被调用。</li>
+
+<li>函数的功能是利用自身的 <b>next_registration</b> 成员以及 <b>vlib_mains[n]-&gt;node_main.node_registrations</b> 将所有node串成一个链表。</li>
+</ul>
+
+
+
+<div id="orgd89f814" class="figure">
+<p><img src="./dot/v_reg_node.svg" alt="v_reg_node.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org91a375f" class="outline-4">
+<h4 id="org91a375f"><span class="section-number-4">1.2.2.</span> VLIB_NODE_FN</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+VLIB_NODE_FN用于定义 vlib_node_registration_t 结构中的 function（node的处理函数） 成员。
+</p>
+
+<p>
+注意：如果使用VLIB_NODE_FN定义node的function时， 定义node时的function成员必须为NULL。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #F92672;">#define</span> <span style="color: #A6E22E;">VLIB_NODE_FN</span>(<span style="color: #FD971F;">node</span>)                                                     \
+        <span style="color: #66D9EF;">uword</span> <span style="color: #A6E22E;">CLIB_MARCH_SFX</span>(node##_fn)();                                     \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">vlib_node_fn_registration_t</span> <span style="color: #A6E22E;">CLIB_MARCH_SFX</span>(                     \
+                node##_fn_registration) = {                                    \
+                .function = &amp;CLIB_MARCH_SFX(node##_fn),                        \
+        };                                                                     \
+                                                                               \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__clib_constructor</span> CLIB_MARCH_SFX(                         \
+                node##_multiarch_register)(<span style="color: #66D9EF;">void</span>)                               \
+        {                                                                      \
+                <span style="color: #F92672;">extern</span> <span style="color: #66D9EF;">vlib_node_registration_t</span> <span style="color: #FD971F;">node</span>;                          \
+                <span style="color: #66D9EF;">vlib_node_fn_registration_t</span> *<span style="color: #FD971F;">r</span>;                                \
+                r = &amp;CLIB_MARCH_SFX(node##_fn_registration);                   \
+                r-&gt;priority = CLIB_MARCH_FN_PRIORITY();                        \
+                r-&gt;name = CLIB_MARCH_VARIANT_STR;                              \
+                r-&gt;next_registration = node.node_fn_registrations;             \
+                node.node_fn_registrations = r;                                \
+        }                                                                      \
+        <span style="color: #66D9EF;">uword</span> <span style="color: #66D9EF;">CLIB_CPU_OPTIMIZED</span> <span style="color: #A6E22E;">CLIB_MARCH_SFX</span>(node##_fn)
+
+<span style="color: #A6E22E;">VLIB_NODE_FN</span>(dpdk_input_node)
+(<span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span>, <span style="color: #66D9EF;">vlib_node_runtime_t</span> *<span style="color: #FD971F;">node</span>, <span style="color: #66D9EF;">vlib_frame_t</span> *<span style="color: #FD971F;">f</span>)
+{......}
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#23439;&#23450;&#20041;&#23637;&#24320;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">uword</span> <span style="color: #A6E22E;">dpdk_input_node_fn</span>();
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">vlib_node_fn_registration_t</span> <span style="color: #FD971F;">dpdk_input_node_fn_registration</span> = {
+        .function = &amp;dpdk_input_node_fn,
+};
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__clib_constructor</span> dpdk_input_node_multiarch_register(<span style="color: #66D9EF;">void</span>)
+{
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#22312;&#20351;&#29992;VLIB_NODE_FN&#27880;&#20876;function&#26102;&#65292; node&#20013;&#30340;function&#25104;&#21592;&#24517;&#39035;&#20026;NULL,</span>
+<span style="color: #75715E;">           &#22312;&#35843;&#29992;register_node&#26102;, &#20808;&#26816;&#26597;&#26159;&#21542;&#21021;&#22987;&#21270;&#20102;node&#20013;&#30340;node_fn_registrations</span>
+<span style="color: #75715E;">           &#25104;&#21592;(&#20351;&#29992;VLIB_NODE_FN&#23439;&#23450;&#20041;&#27880;&#20876;)</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">extern</span> <span style="color: #66D9EF;">vlib_node_registration_t</span> <span style="color: #FD971F;">node</span>;
+        <span style="color: #66D9EF;">vlib_node_fn_registration_t</span> *<span style="color: #FD971F;">r</span>;
+        r = &amp;dpdk_input_node_fn_registration;
+        r-&gt;priority = 0;
+        r-&gt;name = <span style="color: #E6DB74;">"default"</span>;
+        r-&gt;next_registration = node.node_fn_registrations;
+        node.node_fn_registrations = r;
+}
+<span style="color: #66D9EF;">uword</span> <span style="color: #A6E22E;">dpdk_input_node_fn</span>(<span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span>, <span style="color: #66D9EF;">vlib_node_runtime_t</span> *<span style="color: #FD971F;">node</span>, <span style="color: #66D9EF;">vlib_frame_t</span> *<span style="color: #FD971F;">f</span>)
+{......}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3ac6433" class="outline-3">
+<h3 id="org3ac6433"><span class="section-number-3">1.3.</span> node的注册</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+使用函数 <code>register_node()</code> 函数对node进行注册.
+</p>
+
+<p>
+函数  <code>register_node()</code> 的调用顺序：
+</p>
+
+<div id="orgec0ab28" class="figure">
+<p><img src="./plantuml/vpp/reg_node_call_stack.svg" alt="reg_node_call_stack.svg" class="org-svg" />
+</p>
+</div>
+
+
+<div id="org6801aa3" class="figure">
+<p><img src="./plantuml/vpp/reg_node_fun.png" alt="reg_node_fun.png" />
+</p>
+</div>
+
+<div id="orga08b4e0" class="figure">
+<p><img src="./plantuml/vpp/reg_node_fun.svg" alt="reg_node_fun.svg" class="org-svg" />
+</p>
+</div>
+
+<p>
+vlib数据包处理应用程序总是定义一组图节点来处理数据包。
+</p>
+
+<p>
+一个通常通过VLIB_REGISTER_NODE宏来构造vlib_node_registration_t。在运行时，框架将此类注册集处理为有向图。在运行时将节点添加到图很容易。该框架不支持删除节点。
+</p>
+
+<p>
+vlib提供了几种类型的矢量处理图节点，主要用于控制框架的调度行为。
+</p>
+
+<ul class="org-ul">
+<li>vlib_node_registration_t的类型成员的功能如下:
+<ul class="org-ul">
+<li>VLIB_NODE_TYPE_PRE_INPUT-在所有其他节点类型之前运行</li>
+<li>VLIB_NODE_TYPE_INPUT-在pre_input节点之后尽可能频繁地运行</li>
+<li>VLIB_NODE_TYPE_INTERNAL-仅在通过添加待处理帧后显示的使其可运行</li>
+<li>VLIB_NODE_TYPE_PROCESS-仅在明确使其可运行时。“进程”节点实际上是协作的多任务线程。他们 必须在相当短的时间内明确暂停。</li>
+</ul></li>
+</ul>
+
+<p>
+为了更好地理解图节点调度程序，请阅读./src/vlib/main.c:vlib_main_loop。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcd3e241" class="outline-2">
+<h2 id="orgcd3e241"><span class="section-number-2">2.</span> node初始化</h2>
+<div class="outline-text-2" id="text-2">
+<pre class="example">
+vlib_node_main_init
+- sibling关联
+        1. 获取sibling_of标识的node,
+        2. 将本node index保存至同级node(属于同一个sibling_of)的sibling_bitmap中
+        3. 将同级node的index保存至本node的sibling_bitmap中
+        4. 将本node 和 所属 sibling_of的node互相关联
+
+- node和next_node的关联
+        1. 将next_node_names 名称解析为索引, 保存至 vlib_node_t 中的 next_nodes成员中
+
+- next_node和上一级的关联
+        1. 将node的索引保存至next_node的prev_node_bitmap中
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org637c32d" class="outline-2">
+<h2 id="org637c32d"><span class="section-number-2">3.</span> MAIN_LOOP注册</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(start_workers);
+</p>
+
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(ip4_main_loop_enter);
+</p>
+
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(ip6_main_loop_enter);
+</p>
+
+<p>
+VLIB_MAIN_LOOP_ENTER_FUNCTION(session_main_loop_init);
+</p>
+
+<p>
+vlib_node_registration_t node;
+</p>
+
+<p>
+利用 node-&gt;node_fn_registrations; 来串接node的注册;
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3792cf1" class="outline-2">
+<h2 id="org3792cf1"><span class="section-number-2">4.</span> INIT_FUNCTION注册</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+VLIB_INIT_FUNCTION
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc19dd92" class="outline-2">
+<h2 id="orgc19dd92"><span class="section-number-2">5.</span> PLUGIN注册</h2>
+<div class="outline-text-2" id="text-5">
+<div class="org-src-container">
+<pre class="src src-c">
+  <span style="color: #F92672;">typedef</span> <span style="color: #66D9EF;">CLIB_PACKED</span>(<span style="color: #F92672;">struct</span> {
+    <span style="color: #66D9EF;">u8</span> <span style="color: #FD971F;">default_disabled</span>;
+    <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">version</span>[32];
+    <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">version_required</span>[32];
+    <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">overrides</span>[256];
+    <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">early_init</span>;
+    <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">description</span>;
+  }) vlib_plugin_registration_t;
+
+
+
+<span style="color: #F92672;">#define</span> <span style="color: #A6E22E;">VLIB_PLUGIN_REGISTER</span>() \
+  vlib_plugin_registration_t vlib_plugin_registration \
+  CLIB_NOSANITIZE_PLUGIN_REG_SECTION \
+  <span style="color: #66D9EF;">__clib_export</span> <span style="color: #A6E22E;">__clib_section</span>(<span style="color: #E6DB74;">".vlib_plugin_registration"</span>)
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org384f917" class="outline-2">
+<h2 id="org384f917"><span class="section-number-2">6.</span> THREAD注册</h2>
+<div class="outline-text-2" id="text-6">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">  #define</span> <span style="color: #A6E22E;">VLIB_REGISTER_THREAD</span>(<span style="color: #FD971F;">x</span>,...)                     \
+    __VA_ARGS__ <span style="color: #66D9EF;">vlib_thread_registration_t</span> <span style="color: #FD971F;">x</span>;             \
+  <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_thread_registration_</span>##x (<span style="color: #66D9EF;">void</span>)   \
+    <span style="color: #F92672;">__attribute__</span>((__constructor__)) ;                    \
+  <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_thread_registration_</span>##x (<span style="color: #66D9EF;">void</span>)   \
+  {                                                       \
+    <span style="color: #66D9EF;">vlib_thread_main_t</span> * <span style="color: #FD971F;">tm</span> = &amp;vlib_thread_main;          \
+    x.next = tm-&gt;next;                                    \
+    tm-&gt;next = &amp;x;                                        \
+  }                                                       \
+  <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_thread_registration_</span>##x (<span style="color: #66D9EF;">void</span>)    \
+    <span style="color: #F92672;">__attribute__</span>((__destructor__)) ;                     \
+  <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_thread_registration_</span>##x (<span style="color: #66D9EF;">void</span>)    \
+  {                                                       \
+    <span style="color: #66D9EF;">vlib_thread_main_t</span> * <span style="color: #FD971F;">tm</span> = &amp;vlib_thread_main;          \
+    VLIB_REMOVE_FROM_LINKED_LIST (tm-&gt;next, &amp;x, next);    \
+  }                                                       \
+  __VA_ARGS__ <span style="color: #66D9EF;">vlib_thread_registration_t</span> <span style="color: #FD971F;">x</span>
+
+
+
+<span style="color: #A6E22E;">VLIB_REGISTER_THREAD</span> (worker_thread_reg, <span style="color: #F92672;">static</span>) = {
+  .name = <span style="color: #E6DB74;">"workers"</span>,
+  .short_name = <span style="color: #E6DB74;">"wk"</span>,
+  .function = vlib_worker_thread_fn,
+};
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#23439;&#23450;&#20041;&#23637;&#24320;</span><span style="color: #75715E;"> */</span>
+
+<span style="color: #66D9EF;">vlib_thread_registration_t</span> <span style="color: #FD971F;">worker_thread_reg</span>;
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_thread_registration_worker_thread_reg</span> (<span style="color: #66D9EF;">void</span>) <span style="color: #F92672;">__attribute__</span>((__constructor__));
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_thread_registration_worker_thread_reg</span> (<span style="color: #66D9EF;">void</span>)
+{
+        <span style="color: #66D9EF;">vlib_thread_main_t</span> *<span style="color: #FD971F;">tm</span> = &amp;vlib_thread_main;
+        worker_thread_reg.next = tm-&gt;next;
+        tm-&gt;next = &amp;worker_thread_reg;
+}
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_thread_registration_worker_thread_reg</span> (<span style="color: #66D9EF;">void</span>) <span style="color: #F92672;">__attribute__</span>((__constructor__));
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_thread_registration_worker_thread_reg</span> (<span style="color: #66D9EF;">void</span>)
+{
+      <span style="color: #66D9EF;">vlib_thread_main_t</span> *<span style="color: #FD971F;">tm</span> = &amp;vlib_thread_main;
+      VLIB_REMOVE_FROM_LINKED_LIST (tm-&gt;next, &amp;worker_thread_reg, next);
+}
+
+<span style="color: #66D9EF;">vlib_thread_registration_t</span> <span style="color: #FD971F;">worker_thread_reg</span>;
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgab441c7" class="outline-2">
+<h2 id="orgab441c7"><span class="section-number-2">7.</span> SIBILIND</h2>
+<div class="outline-text-2" id="text-7">
+<ul class="org-ul">
+<li>device-input</li>
+<li>ethernet-input</li>
+<li>nat-default</li>
+<li>ip6-rewrite</li>
+<li>ip4-rewrite</li>
+<li>ip4-input</li>
+<li>ip6-input</li>
+<li>ip6-local</li>
+<li>ip4-local</li>
+<li>ip4-drop</li>
+<li>ip6-drop</li>
+<li>l2-output-feat-arc</li>
+<li>l2-input-feat-arc</li>
+<li>mpls-lookup</li>
+<li>ip4-lookup</li>
+<li>ip6-lookup</li>
+<li>mpls-load-balance</li>
+<li>adj-midchain-tx</li>
+<li>mpls-output</li>
+<li>esp6-decrypt-tun</li>
+<li>esp4-decrypt-tun</li>
+<li>esp6-decrypt</li>
+<li>esp4-decrypt</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

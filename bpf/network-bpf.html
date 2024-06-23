@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-10-29 Fri 21:15 -->
+<!-- 2024-06-23 Sun 15:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BPF之网络</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,99 +191,52 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">BPF之网络</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgc8d9816">1. BPF技术的网络应用</a></li>
-<li><a href="#org5ea50c4">2. 网络分析策略</a></li>
-<li><a href="#orge02fbea">3. 传统工具</a>
+<li><a href="#org65c50a0">1. BPF技术的网络应用</a></li>
+<li><a href="#org1011f49">2. 网络分析策略</a></li>
+<li><a href="#org50d1d5c">3. 传统工具</a>
 <ul>
-<li><a href="#org34015ce">3.1. ss</a></li>
-<li><a href="#org8f5aba2">3.2. ip</a></li>
-<li><a href="#org9f95c32">3.3. nstat</a></li>
-<li><a href="#orga5d8f20">3.4. netstat</a></li>
-<li><a href="#orgd5400af">3.5. sar</a></li>
-<li><a href="#orga97b4fc">3.6. nicstat</a></li>
-<li><a href="#orgdd1b58c">3.7. ethtool</a></li>
-<li><a href="#orgac05afd">3.8. tcpdump</a></li>
-<li><a href="#org8a11705">3.9. /proc</a></li>
+<li><a href="#org882ab44">3.1. ss</a></li>
+<li><a href="#orgf967ed2">3.2. ip</a></li>
+<li><a href="#orgd8766b5">3.3. nstat</a></li>
+<li><a href="#orgca21f2f">3.4. netstat</a></li>
+<li><a href="#orgaa040d3">3.5. sar</a></li>
+<li><a href="#org708a140">3.6. nicstat</a></li>
+<li><a href="#org629f06c">3.7. ethtool</a></li>
+<li><a href="#org49bfa62">3.8. tcpdump</a></li>
+<li><a href="#org0a14a7b">3.9. /proc</a></li>
 </ul>
 </li>
-<li><a href="#org53e71c1">4. BPF工具</a>
+<li><a href="#org21f1311">4. BPF工具</a>
 <ul>
-<li><a href="#orgc2eea1c">4.1. sockstat</a></li>
-<li><a href="#org0cacddd">4.2. sofamily</a></li>
-<li><a href="#org62741fe">4.3. soprotocol</a></li>
-<li><a href="#org714f7ab">4.4. soconnect</a></li>
-<li><a href="#orgb4138c9">4.5. soaccept</a></li>
-<li><a href="#org4d1671f">4.6. socketio</a></li>
-<li><a href="#org2fe42ae">4.7. socksize</a></li>
-<li><a href="#org5b122bb">4.8. sockstat</a></li>
-<li><a href="#orgc3bb150">4.9. sormem</a></li>
-<li><a href="#org540a050">4.10. soconnlat</a></li>
+<li><a href="#org98ef54a">4.1. sockstat</a></li>
+<li><a href="#orgb255890">4.2. sofamily</a></li>
+<li><a href="#org95c1216">4.3. soprotocol</a></li>
+<li><a href="#org2c97b69">4.4. soconnect</a></li>
+<li><a href="#orga73d07f">4.5. soaccept</a></li>
+<li><a href="#orgfd87da6">4.6. socketio</a></li>
+<li><a href="#orgbcb6598">4.7. socksize</a></li>
+<li><a href="#org04921f8">4.8. sockstat</a></li>
+<li><a href="#org6264d34">4.9. sormem</a></li>
+<li><a href="#org84c958c">4.10. soconnlat</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgc8d9816" class="outline-2">
-<h2 id="orgc8d9816"><span class="section-number-2">1</span> BPF技术的网络应用</h2>
+<div id="outline-container-org65c50a0" class="outline-2">
+<h2 id="org65c50a0"><span class="section-number-2">1.</span> BPF技术的网络应用</h2>
 <div class="outline-text-2" id="text-1">
 <ul class="org-ul">
 <li><p>
@@ -311,8 +265,8 @@ Queueing in the Linux Network Stack – Dan Siemon
 </div>
 </div>
 
-<div id="outline-container-org5ea50c4" class="outline-2">
-<h2 id="org5ea50c4"><span class="section-number-2">2</span> 网络分析策略</h2>
+<div id="outline-container-org1011f49" class="outline-2">
+<h2 id="org1011f49"><span class="section-number-2">2.</span> 网络分析策略</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li>使用基于计数器的工具来理解基本的网络统计信息：网络包速率和吞吐量，如果正在使用TCP，那么查看TCP连接率和TCP重传率（例如，使用ss、nstat、netstat和sar工具）。</li>
@@ -345,12 +299,12 @@ a. 注意：网络延迟测试在有不同负载的情况下可能由于网络�
 </div>
 
 
-<div id="outline-container-orge02fbea" class="outline-2">
-<h2 id="orge02fbea"><span class="section-number-2">3</span> 传统工具</h2>
+<div id="outline-container-org50d1d5c" class="outline-2">
+<h2 id="org50d1d5c"><span class="section-number-2">3.</span> 传统工具</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org34015ce" class="outline-3">
-<h3 id="org34015ce"><span class="section-number-3">3.1</span> ss</h3>
+<div id="outline-container-org882ab44" class="outline-3">
+<h3 id="org882ab44"><span class="section-number-3">3.1.</span> ss</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 ss是一个套接字统计工具，可以简要输出当前打开的套接字信息。
@@ -408,11 +362,11 @@ Usage: ss [ OPTIONS ]
    -F, --filter=FILE   read filter information from FILE
        FILTER := [ state STATE-FILTER ] [ EXPRESSION ]
        STATE-FILTER := {all|connected|synchronized|bucket|big|TCP-STATES}
-     TCP-STATES := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|closed|close-wait|last-ack|listening|closing}
-      connected := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
+         TCP-STATES := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|closed|close-wait|last-ack|listening|closing}
+          connected := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
        synchronized := {established|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
-	 bucket := {syn-recv|time-wait}
-	big := {established|syn-sent|fin-wait-{1,2}|closed|close-wait|last-ack|listening|closing}
+             bucket := {syn-recv|time-wait}
+                big := {established|syn-sent|fin-wait-{1,2}|closed|close-wait|last-ack|listening|closing}
 
 </pre>
 </div>
@@ -430,15 +384,15 @@ Usage: ss [ OPTIONS ]
 <pre class="src src-shell">$ ss -tiepm
 State      Recv-Q       Send-Q                  Local Address:Port                    Peer Address:Port               Process
 ESTAB      0            0                       10.91.128.129:38520                  10.91.128.246:ms-wbt-server       users:((<span style="color: #CDC673;">"remmina"</span>,<span style="color: #FF8C00;">pid</span>=118215,<span style="color: #FF8C00;">fd</span>=54)) timer:(keepalive,1.796ms,0) uid:1000 ino:1484710 sk:306 cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
-     skmem:(r0,rb4697728,t0,tb87040,f4096,w0,o0,bl0,d0) sack cubic wscale:0,7 rto:208 rtt:7.884/8.453 ato:52 mss:1460 pmtu:1500 rcvmss:1460 advmss:1460 cwnd:10 bytes_sent:248979 bytes_acked:248980 bytes_received:5791517 segs_out:12332 segs_in:15857 data_segs_out:4211 data_segs_in:13099 send 14.8Mbps lastsnd:70208 lastrcv:1204 lastack:1204 pacing_rate 29.6Mbps delivery_rate 92Mbps delivered:4212 app_limited busy:94592ms rcv_rtt:115.524 rcv_space:405247 rcv_ssthresh:2308280 minrtt:0.264
+         skmem:(r0,rb4697728,t0,tb87040,f4096,w0,o0,bl0,d0) sack cubic wscale:0,7 rto:208 rtt:7.884/8.453 ato:52 mss:1460 pmtu:1500 rcvmss:1460 advmss:1460 cwnd:10 bytes_sent:248979 bytes_acked:248980 bytes_received:5791517 segs_out:12332 segs_in:15857 data_segs_out:4211 data_segs_in:13099 send 14.8Mbps lastsnd:70208 lastrcv:1204 lastack:1204 pacing_rate 29.6Mbps delivery_rate 92Mbps delivered:4212 app_limited busy:94592ms rcv_rtt:115.524 rcv_space:405247 rcv_ssthresh:2308280 minrtt:0.264
 ESTAB      0            0                           127.0.0.1:58280                      127.0.0.1:1089                users:((<span style="color: #CDC673;">"chromium"</span>,<span style="color: #FF8C00;">pid</span>=2223,<span style="color: #FF8C00;">fd</span>=206)) timer:(keepalive,1.032ms,0) uid:1000 ino:1532896 sk:308 cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
-     skmem:(r0,rb131072,t0,tb2626560,f0,w0,o0,bl0,d43) ts sack cubic wscale:7,7 rto:204 rtt:0.053/0.036 ato:40 mss:32768 pmtu:65535 rcvmss:1966 advmss:65483 cwnd:10 bytes_sent:2240 bytes_acked:2241 bytes_received:3817 segs_out:85 segs_in:96 data_segs_out:19 data_segs_in:20 send 49.5Gbps lastsnd:43968 lastrcv:43968 lastack:43968 pacing_rate 97.8Gbps delivery_rate 21.8Gbps delivered:20 app_limited rcv_space:65495 rcv_ssthresh:65495 minrtt:0.012
+         skmem:(r0,rb131072,t0,tb2626560,f0,w0,o0,bl0,d43) ts sack cubic wscale:7,7 rto:204 rtt:0.053/0.036 ato:40 mss:32768 pmtu:65535 rcvmss:1966 advmss:65483 cwnd:10 bytes_sent:2240 bytes_acked:2241 bytes_received:3817 segs_out:85 segs_in:96 data_segs_out:19 data_segs_in:20 send 49.5Gbps lastsnd:43968 lastrcv:43968 lastack:43968 pacing_rate 97.8Gbps delivery_rate 21.8Gbps delivered:20 app_limited rcv_space:65495 rcv_ssthresh:65495 minrtt:0.012
 ESTAB      0            0                       10.91.128.129:52894                  10.91.128.246:65432               users:((<span style="color: #CDC673;">"ssh"</span>,<span style="color: #FF8C00;">pid</span>=101147,<span style="color: #FF8C00;">fd</span>=3)) timer:(keepalive,99min,0) uid:1000 ino:1208090 sk:30d cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
-     skmem:(r0,rb2432752,t0,tb87040,f0,w0,o0,bl0,d0) sack cubic wscale:0,7 rto:204 rtt:2.912/0.439 ato:40 mss:1460 pmtu:1500 rcvmss:1460 advmss:1460 cwnd:10 bytes_sent:17168 bytes_acked:17169 bytes_received:1356800 segs_out:12571 segs_in:12238 data_segs_out:399 data_segs_in:12217 send 40.1Mbps lastsnd:8449972 lastrcv:8449888 lastack:1228204 pacing_rate 80.2Mbps delivery_rate 144Mbps delivered:400 app_limited busy:2280ms rcv_rtt:12095.8 rcv_space:99500 rcv_ssthresh:1215736 minrtt:0.141
+         skmem:(r0,rb2432752,t0,tb87040,f0,w0,o0,bl0,d0) sack cubic wscale:0,7 rto:204 rtt:2.912/0.439 ato:40 mss:1460 pmtu:1500 rcvmss:1460 advmss:1460 cwnd:10 bytes_sent:17168 bytes_acked:17169 bytes_received:1356800 segs_out:12571 segs_in:12238 data_segs_out:399 data_segs_in:12217 send 40.1Mbps lastsnd:8449972 lastrcv:8449888 lastack:1228204 pacing_rate 80.2Mbps delivery_rate 144Mbps delivered:400 app_limited busy:2280ms rcv_rtt:12095.8 rcv_space:99500 rcv_ssthresh:1215736 minrtt:0.141
 ESTAB      0            0                       10.91.128.129:38204                    10.96.113.9:https               ino:1505288 sk:30e cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
-     skmem:(r0,rb131072,t0,tb87040,f0,w0,o0,bl0,d0) ts cubic rto:232 rtt:28.16/0.095 ato:40 mss:1448 pmtu:1500 rcvmss:1448 advmss:1448 cwnd:10 bytes_sent:24975 bytes_acked:24976 bytes_received:33078 segs_out:622 segs_in:636 data_segs_out:406 data_segs_in:229 send 4.11Mbps lastsnd:6344 lastrcv:6316 lastack:6316 pacing_rate 8.23Mbps delivery_rate 418kbps delivered:407 app_limited busy:11284ms rcv_space:14480 rcv_ssthresh:64088 minrtt:27.729
+         skmem:(r0,rb131072,t0,tb87040,f0,w0,o0,bl0,d0) ts cubic rto:232 rtt:28.16/0.095 ato:40 mss:1448 pmtu:1500 rcvmss:1448 advmss:1448 cwnd:10 bytes_sent:24975 bytes_acked:24976 bytes_received:33078 segs_out:622 segs_in:636 data_segs_out:406 data_segs_in:229 send 4.11Mbps lastsnd:6344 lastrcv:6316 lastack:6316 pacing_rate 8.23Mbps delivery_rate 418kbps delivered:407 app_limited busy:11284ms rcv_space:14480 rcv_ssthresh:64088 minrtt:27.729
 ESTAB      0            0                       10.91.128.129:59654                 198.252.206.25:https               users:((<span style="color: #CDC673;">"chromium"</span>,<span style="color: #FF8C00;">pid</span>=2223,<span style="color: #FF8C00;">fd</span>=243)) timer:(keepalive,29sec,0) uid:1000 ino:1063964 sk:30f cgroup:/user.slice/user-1000.slice/session-2.scope &lt;-&gt;
-     skmem:(r0,rb131072,t0,tb87040,f0,w0,o0,bl0,d1) ts sack cubic wscale:9,7 rto:452 rtt:250.283/15.596 ato:40 mss:1448 pmtu:1500 rcvmss:1448 advmss:1448 cwnd:3 ssthresh:4 bytes_sent:15603 bytes_retrans:1935 bytes_acked:13669 bytes_received:24422 segs_out:2259 segs_in:2296 data_segs_out:365 data_segs_in:320 send 139kbps lastsnd:243300 lastrcv:243300 lastack:15324 pacing_rate 167kbps delivery_rate 53kbps delivered:357 app_limited busy:102288ms retrans:0/47 dsack_dups:38 rcv_rtt:287.25 rcv_space:14480 rcv_ssthresh:64088 minrtt:224.562
+         skmem:(r0,rb131072,t0,tb87040,f0,w0,o0,bl0,d1) ts sack cubic wscale:9,7 rto:452 rtt:250.283/15.596 ato:40 mss:1448 pmtu:1500 rcvmss:1448 advmss:1448 cwnd:3 ssthresh:4 bytes_sent:15603 bytes_retrans:1935 bytes_acked:13669 bytes_received:24422 segs_out:2259 segs_in:2296 data_segs_out:365 data_segs_in:320 send 139kbps lastsnd:243300 lastrcv:243300 lastack:15324 pacing_rate 167kbps delivery_rate 53kbps delivered:357 app_limited busy:102288ms retrans:0/47 dsack_dups:38 rcv_rtt:287.25 rcv_space:14480 rcv_ssthresh:64088 minrtt:224.562
 
 </pre>
 </div>
@@ -454,25 +408,25 @@ ESTAB      0            0                       10.91.128.129:59654             
 </div>
 </div>
 
-<div id="outline-container-org8f5aba2" class="outline-3">
-<h3 id="org8f5aba2"><span class="section-number-3">3.2</span> ip</h3>
+<div id="outline-container-orgf967ed2" class="outline-3">
+<h3 id="orgf967ed2"><span class="section-number-3">3.2.</span> ip</h3>
 <div class="outline-text-3" id="text-3-2">
 <div class="org-src-container">
 <pre class="src src-shell">$ ip --help
 Usage: ip [ OPTIONS ] OBJECT { COMMAND | <span style="color: #FF1493;">help</span> }
        ip [ -force ] -batch filename
 where  OBJECT := { link | address | addrlabel | route | rule | neigh | ntable |
-	   tunnel | tuntap | maddress | mroute | mrule | monitor | xfrm |
-	   netns | l2tp | fou | macsec | tcp_metrics | token | netconf | ila |
-	   vrf | sr | nexthop | mptcp }
+                   tunnel | tuntap | maddress | mroute | mrule | monitor | xfrm |
+                   netns | l2tp | fou | macsec | tcp_metrics | token | netconf | ila |
+                   vrf | sr | nexthop | mptcp }
        OPTIONS := { -V[ersion] | -s[tatistics] | -d[etails] | -r[esolve] |
-	    -h[uman-readable] | -iec | -j[son] | -p[retty] |
-	    -f[amily] { inet | inet6 | mpls | bridge | link } |
-	    -4 | -6 | -I | -D | -M | -B | -0 |
-	    -l[oops] { maximum-addr-flush-attempts } | -br[ief] |
-	    -o[neline] | -t[imestamp] | -ts[hort] | -b[atch] [filename] |
-	    -rc[vbuf] [size] | -n[etns] name | -N[umeric] | -a[ll] |
-	    -c[olor]}
+                    -h[uman-readable] | -iec | -j[son] | -p[retty] |
+                    -f[amily] { inet | inet6 | mpls | bridge | link } |
+                    -4 | -6 | -I | -D | -M | -B | -0 |
+                    -l[oops] { maximum-addr-flush-attempts } | -br[ief] |
+                    -o[neline] | -t[imestamp] | -ts[hort] | -b[atch] [filename] |
+                    -rc[vbuf] [size] | -n[etns] name | -N[umeric] | -a[ll] |
+                    -c[olor]}
 </pre>
 </div>
 
@@ -498,8 +452,8 @@ where  OBJECT := { link | address | addrlabel | route | rule | neigh | ntable |
 </div>
 </div>
 
-<div id="outline-container-org9f95c32" class="outline-3">
-<h3 id="org9f95c32"><span class="section-number-3">3.3</span> nstat</h3>
+<div id="outline-container-orgd8766b5" class="outline-3">
+<h3 id="orgd8766b5"><span class="section-number-3">3.3.</span> nstat</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 nstat可以打印出由内核维护的各种网络指标。
@@ -630,8 +584,8 @@ IpExtInECT0Pkts                 2                  0.0
 </div>
 </div>
 
-<div id="outline-container-orga5d8f20" class="outline-3">
-<h3 id="orga5d8f20"><span class="section-number-3">3.4</span> netstat</h3>
+<div id="outline-container-orgca21f2f" class="outline-3">
+<h3 id="orgca21f2f"><span class="section-number-3">3.4.</span> netstat</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li><b>-s</b> 获取网络软件栈统计信息</li>
@@ -641,8 +595,8 @@ IpExtInECT0Pkts                 2                  0.0
 </ul>
 </div>
 </div>
-<div id="outline-container-orgd5400af" class="outline-3">
-<h3 id="orgd5400af"><span class="section-number-3">3.5</span> sar</h3>
+<div id="outline-container-orgaa040d3" class="outline-3">
+<h3 id="orgaa040d3"><span class="section-number-3">3.5.</span> sar</h3>
 <div class="outline-text-3" id="text-3-5">
 <p>
 sar是一个系统活动报表工具，能够打印各种网络统计信息报表。
@@ -651,62 +605,62 @@ sar是一个系统活动报表工具，能够打印各种网络统计信息报�
 <pre class="src src-shell">$ sar --help
 Usage: sar [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]
 Main options and reports (report name between square brackets):
-    -B  Paging statistics [A_PAGE]
-    -b  I/O and transfer rate statistics [A_IO]
-    -d  Block devices statistics [A_DISK]
-    -F [ MOUNT ]
-	Filesystems statistics [A_FS]
-    -H  Hugepages utilization statistics [A_HUGE]
-    -I { &lt;int_list&gt; | SUM | ALL }
-	Interrupts statistics [A_IRQ]
-    -m { &lt;keyword&gt; [,...] | ALL }
-	Power management statistics [A_PWR_...]
-	Keywords are:
-	CPU CPU instantaneous clock frequency
-	FAN Fans speed
-	FREQ    CPU average clock frequency
-	IN  Voltage inputs
-	TEMP    Devices temperature
-	USB USB devices plugged into the system
-    -n { &lt;keyword&gt; [,...] | ALL }
-	Network statistics [A_NET_...]
-	Keywords are:
-	DEV Network interfaces
-	EDEV    Network interfaces (errors)
-	NFS NFS client
-	NFSD    NFS server
-	SOCK    Sockets (v4)
-	IP  IP traffic  (v4)
-	EIP IP traffic  (v4) (errors)
-	ICMP    ICMP traffic    (v4)
-	EICMP   ICMP traffic    (v4) (errors)
-	TCP TCP traffic (v4)
-	ETCP    TCP traffic (v4) (errors)
-	UDP UDP traffic (v4)
-	SOCK6   Sockets (v6)
-	IP6 IP traffic  (v6)
-	EIP6    IP traffic  (v6) (errors)
-	ICMP6   ICMP traffic    (v6)
-	EICMP6  ICMP traffic    (v6) (errors)
-	UDP6    UDP traffic (v6)
-	FC  Fibre channel HBAs
-	SOFT    Software-based network processing
-    -q [ &lt;keyword&gt; [,...] | PSI | ALL ]
-	System load and pressure-stall statistics
-	Keywords are:
-	LOAD    Queue length and load average statistics [A_QUEUE]
-	CPU Pressure-stall CPU statistics [A_PSI_CPU]
-	IO  Pressure-stall I/O statistics [A_PSI_IO]
-	MEM Pressure-stall memory statistics [A_PSI_MEM]
-    -r [ ALL ]
-	Memory utilization statistics [A_MEMORY]
-    -S  Swap space utilization statistics [A_MEMORY]
-    -u [ ALL ]
-	CPU utilization statistics [A_CPU]
-    -v  Kernel tables statistics [A_KTABLES]
-    -W  Swapping statistics [A_SWAP]
-    -w  Task creation and system switching statistics [A_PCSW]
-    -y  TTY devices statistics [A_SERIAL]
+        -B      Paging statistics [A_PAGE]
+        -b      I/O and transfer rate statistics [A_IO]
+        -d      Block devices statistics [A_DISK]
+        -F [ MOUNT ]
+                Filesystems statistics [A_FS]
+        -H      Hugepages utilization statistics [A_HUGE]
+        -I { &lt;int_list&gt; | SUM | ALL }
+                Interrupts statistics [A_IRQ]
+        -m { &lt;keyword&gt; [,...] | ALL }
+                Power management statistics [A_PWR_...]
+                Keywords are:
+                CPU     CPU instantaneous clock frequency
+                FAN     Fans speed
+                FREQ    CPU average clock frequency
+                IN      Voltage inputs
+                TEMP    Devices temperature
+                USB     USB devices plugged into the system
+        -n { &lt;keyword&gt; [,...] | ALL }
+                Network statistics [A_NET_...]
+                Keywords are:
+                DEV     Network interfaces
+                EDEV    Network interfaces (errors)
+                NFS     NFS client
+                NFSD    NFS server
+                SOCK    Sockets (v4)
+                IP      IP traffic      (v4)
+                EIP     IP traffic      (v4) (errors)
+                ICMP    ICMP traffic    (v4)
+                EICMP   ICMP traffic    (v4) (errors)
+                TCP     TCP traffic     (v4)
+                ETCP    TCP traffic     (v4) (errors)
+                UDP     UDP traffic     (v4)
+                SOCK6   Sockets (v6)
+                IP6     IP traffic      (v6)
+                EIP6    IP traffic      (v6) (errors)
+                ICMP6   ICMP traffic    (v6)
+                EICMP6  ICMP traffic    (v6) (errors)
+                UDP6    UDP traffic     (v6)
+                FC      Fibre channel HBAs
+                SOFT    Software-based network processing
+        -q [ &lt;keyword&gt; [,...] | PSI | ALL ]
+                System load and pressure-stall statistics
+                Keywords are:
+                LOAD    Queue length and load average statistics [A_QUEUE]
+                CPU     Pressure-stall CPU statistics [A_PSI_CPU]
+                IO      Pressure-stall I/O statistics [A_PSI_IO]
+                MEM     Pressure-stall memory statistics [A_PSI_MEM]
+        -r [ ALL ]
+                Memory utilization statistics [A_MEMORY]
+        -S      Swap space utilization statistics [A_MEMORY]
+        -u [ ALL ]
+                CPU utilization statistics [A_CPU]
+        -v      Kernel tables statistics [A_KTABLES]
+        -W      Swapping statistics [A_SWAP]
+        -w      Task creation and system switching statistics [A_PCSW]
+        -y      TTY devices statistics [A_SERIAL]
 </pre>
 </div>
 
@@ -725,32 +679,32 @@ Main options and reports (report name between square brackets):
 </div>
 </div>
 
-<div id="outline-container-orga97b4fc" class="outline-3">
-<h3 id="orga97b4fc"><span class="section-number-3">3.6</span> nicstat</h3>
+<div id="outline-container-org708a140" class="outline-3">
+<h3 id="org708a140"><span class="section-number-3">3.6.</span> nicstat</h3>
 <div class="outline-text-3" id="text-3-6">
 <p>
 打印网络接口的统计信息。
 </p>
 </div>
 </div>
-<div id="outline-container-orgdd1b58c" class="outline-3">
-<h3 id="orgdd1b58c"><span class="section-number-3">3.7</span> ethtool</h3>
+<div id="outline-container-org629f06c" class="outline-3">
+<h3 id="org629f06c"><span class="section-number-3">3.7.</span> ethtool</h3>
 <div class="outline-text-3" id="text-3-7">
 <p>
 ethtool可以利用 <b>-i</b> 和 <b>-k</b> 选项检查网络接口的静态配置信息，也可以使用 <b>-S</b>  打印驱动程序的统计信息。
 </p>
 </div>
 </div>
-<div id="outline-container-orgac05afd" class="outline-3">
-<h3 id="orgac05afd"><span class="section-number-3">3.8</span> tcpdump</h3>
+<div id="outline-container-org49bfa62" class="outline-3">
+<h3 id="org49bfa62"><span class="section-number-3">3.8.</span> tcpdump</h3>
 </div>
-<div id="outline-container-org8a11705" class="outline-3">
-<h3 id="org8a11705"><span class="section-number-3">3.9</span> /proc</h3>
+<div id="outline-container-org0a14a7b" class="outline-3">
+<h3 id="org0a14a7b"><span class="section-number-3">3.9.</span> /proc</h3>
 </div>
 </div>
 
-<div id="outline-container-org53e71c1" class="outline-2">
-<h2 id="org53e71c1"><span class="section-number-2">4</span> BPF工具</h2>
+<div id="outline-container-org21f1311" class="outline-2">
+<h2 id="org21f1311"><span class="section-number-2">4.</span> BPF工具</h2>
 <div class="outline-text-2" id="text-4">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -974,8 +928,8 @@ ethtool可以利用 <b>-i</b> 和 <b>-k</b> 选项检查网络接口的静态配
 
 
 
-<div id="outline-container-orgc2eea1c" class="outline-3">
-<h3 id="orgc2eea1c"><span class="section-number-3">4.1</span> sockstat</h3>
+<div id="outline-container-org98ef54a" class="outline-3">
+<h3 id="org98ef54a"><span class="section-number-3">4.1.</span> sockstat</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 该工具打印套接字的统计信息，统计每秒套接字相关的系统调用统计次数！
@@ -986,7 +940,7 @@ ethtool可以利用 <b>-i</b> 和 <b>-k</b> 选项检查网络接口的静态配
 
 BEGIN
 {
-    <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;\n "</span>);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;\n "</span>);
 }
 
 tracepoint:syscalls:sys_enter_accept*,
@@ -996,14 +950,14 @@ tracepoint:syscalls:sys_enter_socket*,
 kprobe:sock_recvmsg,
 kprobe:sock_sendmsg
 {
-    @[probe] = count();
+        @[probe] = count();
 }
 
 interval:s:1
 {
-    <span style="color: #FF1493;">time</span>();
-    print(@);
-    clear(@);
+        <span style="color: #FF1493;">time</span>();
+        print(@);
+        clear(@);
 }
 
 </pre>
@@ -1063,8 +1017,8 @@ Attaching 1 probe...
 </div>
 
 
-<div id="outline-container-org0cacddd" class="outline-3">
-<h3 id="org0cacddd"><span class="section-number-3">4.2</span> sofamily</h3>
+<div id="outline-container-orgb255890" class="outline-3">
+<h3 id="orgb255890"><span class="section-number-3">4.2.</span> sofamily</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 这里的跟踪函数调用相对不频繁，因此工具的额外消耗可以忽略不计。
@@ -1086,7 +1040,7 @@ Attaching 1 probe...
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_connect
 {
     <span style="color: #FF8C00;">@connect</span>[<span style="color: #FF1493;">comm</span>, args-&gt;uservaddr-&gt;sa_family,
-	     <span style="color: #FF8C00;">@fam2str</span>[args-&gt;uservaddr-&gt;sa_family]] = <span style="color: #FF1493;">count</span>();
+             <span style="color: #FF8C00;">@fam2str</span>[args-&gt;uservaddr-&gt;sa_family]] = <span style="color: #FF1493;">count</span>();
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_accept,
@@ -1100,8 +1054,8 @@ Attaching 1 probe...
 /<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]/
 {
     <span style="color: #FF1493;">if</span> (args-&gt;ret &gt; 0) {
-	   <span style="color: #FF8C00;">$sa</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
-	   <span style="color: #FF8C00;">@accept</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">$sa</span>-&gt;sa_family, <span style="color: #FF8C00;">@fam2str</span>[<span style="color: #FF8C00;">$sa</span>-&gt;sa_family]] = <span style="color: #FF1493;">count</span>();
+           <span style="color: #FF8C00;">$sa</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+           <span style="color: #FF8C00;">@accept</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">$sa</span>-&gt;sa_family, <span style="color: #FF8C00;">@fam2str</span>[<span style="color: #FF8C00;">$sa</span>-&gt;sa_family]] = <span style="color: #FF1493;">count</span>();
        }
        <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
 }
@@ -1150,8 +1104,8 @@ Attaching 7 probes...
 </div>
 
 
-<div id="outline-container-org62741fe" class="outline-3">
-<h3 id="org62741fe"><span class="section-number-3">4.3</span> soprotocol</h3>
+<div id="outline-container-org95c1216" class="outline-3">
+<h3 id="org95c1216"><span class="section-number-3">4.3.</span> soprotocol</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
 soprotocol按进程名和传输协议来跟踪新套接字的建立。
@@ -1164,25 +1118,25 @@ soprotocol按进程名和传输协议来跟踪新套接字的建立。
 
 <span style="color: #AF87FF;">BEGIN</span>
 {
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;socket connect/accept&#25805;&#20316;&#65292;&#20351;&#29992; Ctrl-C &#32467;&#26463;&#65281;\n"</span>);
-	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_IP] = <span style="color: #CDC673;">"IPPROTO_IP"</span>;
-	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_ICMP] = <span style="color: #CDC673;">"IPPROTO_ICMP"</span>;
-	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_TCP] = <span style="color: #CDC673;">"IPPROTO_TCP"</span>;
-	<span style="color: #FF8C00;">@prot2str</span>[IPPROTO_UDP] = <span style="color: #CDC673;">"IPPROTO_UDP"</span>;
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;socket connect/accept&#25805;&#20316;&#65292;&#20351;&#29992; Ctrl-C &#32467;&#26463;&#65281;\n"</span>);
+        <span style="color: #FF8C00;">@prot2str</span>[IPPROTO_IP] = <span style="color: #CDC673;">"IPPROTO_IP"</span>;
+        <span style="color: #FF8C00;">@prot2str</span>[IPPROTO_ICMP] = <span style="color: #CDC673;">"IPPROTO_ICMP"</span>;
+        <span style="color: #FF8C00;">@prot2str</span>[IPPROTO_TCP] = <span style="color: #CDC673;">"IPPROTO_TCP"</span>;
+        <span style="color: #FF8C00;">@prot2str</span>[IPPROTO_UDP] = <span style="color: #CDC673;">"IPPROTO_UDP"</span>;
 }
 
 <span style="color: #AF87FF;">kprobe</span>:security_socket_accept,
 <span style="color: #AF87FF;">kprobe</span>:security_socket_connect
 {
-	<span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
-	<span style="color: #FF8C00;">$protocol</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;sk_protocol &amp; 0xff;
-	<span style="color: #FF8C00;">@connect</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">$protocol</span>, <span style="color: #FF8C00;">@prot2str</span>[<span style="color: #FF8C00;">$protocol</span>],
-			 <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name] = <span style="color: #FF1493;">count</span>();
+        <span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
+        <span style="color: #FF8C00;">$protocol</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;sk_protocol &amp; 0xff;
+        <span style="color: #FF8C00;">@connect</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">$protocol</span>, <span style="color: #FF8C00;">@prot2str</span>[<span style="color: #FF8C00;">$protocol</span>],
+                         <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name] = <span style="color: #FF1493;">count</span>();
 }
 
 <span style="color: #AF87FF;">END</span>
 {
-	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@prot2str</span>);
+        <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@prot2str</span>);
 }
 </pre>
 </div>
@@ -1192,15 +1146,15 @@ sock结构体中的sk-&gt;__sk_common.skc_prot-&gt;name 保存的是协议名称
 </p>
 <div class="org-src-container">
 <pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span> <span style="color: #FF8C00;">tcp_prot</span> = {
-	.name                   = <span style="color: #CDC673;">"TCP"</span>,
-	.owner                  = THIS_MODULE,
-	.close                  = tcp_close,
-	.connect                  = tcp_v4_connect,
-	.disconnect             = tcp_disconnect,
-	.accept                 = inet_csk_accept,
-	.ioctl                  = tcp_ioctl,
-	.init                   = tcp_v4_init_sock,
-	[...]
+        .name                   = <span style="color: #CDC673;">"TCP"</span>,
+        .owner                  = THIS_MODULE,
+        .close                  = tcp_close,
+        .connect                  = tcp_v4_connect,
+        .disconnect             = tcp_disconnect,
+        .accept                 = inet_csk_accept,
+        .ioctl                  = tcp_ioctl,
+        .init                   = tcp_v4_init_sock,
+        [...]
 };
 </pre>
 </div>
@@ -1237,8 +1191,8 @@ Attaching 4 probes...
 </div>
 </div>
 
-<div id="outline-container-org714f7ab" class="outline-3">
-<h3 id="org714f7ab"><span class="section-number-3">4.4</span> soconnect</h3>
+<div id="outline-container-org2c97b69" class="outline-3">
+<h3 id="org2c97b69"><span class="section-number-3">4.4.</span> soconnect</h3>
 <div class="outline-text-3" id="text-4-4">
 <p>
 soconnect展示了IP协议套接字的connect请求。
@@ -1252,65 +1206,65 @@ soconnect展示了IP协议套接字的connect请求。
 
 <span style="color: #AF87FF;">BEGIN</span>
 {
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6s %-16s FAM %-16s %-5s %8s %s\n"</span>, <span style="color: #CDC673;">"PID"</span>, <span style="color: #CDC673;">"PROCESS"</span>,
-	       <span style="color: #CDC673;">"ADDRESS"</span>, <span style="color: #CDC673;">"PORT"</span>, <span style="color: #CDC673;">"LAT(us)"</span>, <span style="color: #CDC673;">"RESULT"</span>);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6s %-16s FAM %-16s %-5s %8s %s\n"</span>, <span style="color: #CDC673;">"PID"</span>, <span style="color: #CDC673;">"PROCESS"</span>,
+               <span style="color: #CDC673;">"ADDRESS"</span>, <span style="color: #CDC673;">"PORT"</span>, <span style="color: #CDC673;">"LAT(us)"</span>, <span style="color: #CDC673;">"RESULT"</span>);
 
-	<span style="color: #FF8C00;">@err2str</span>[0] = <span style="color: #CDC673;">"Success"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EPERM] = <span style="color: #CDC673;">"Permission denied"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EINTR] = <span style="color: #CDC673;">"Interrupted"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EBADF] = <span style="color: #CDC673;">"Invalid sockfd"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EAGAIN] = <span style="color: #CDC673;">"Routing cache insuff"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EACCES] = <span style="color: #CDC673;">"Perm, denied (EACCES)"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EFAULT] = <span style="color: #CDC673;">"Sock struct addr invalid"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ENOTSOCK] = <span style="color: #CDC673;">"FD not a socket"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EPROTOTYPE] = <span style="color: #CDC673;">"Socket protocol error"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EAFNOSUPPORT] = <span style="color: #CDC673;">"Address family invalid"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EADDRINUSE] = <span style="color: #CDC673;">"Local addr in use"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EADDRNOTAVAIL] = <span style="color: #CDC673;">"NO port avaiable"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ENETUNREACH] = <span style="color: #CDC673;">"Network unreachable"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EISCONN] = <span style="color: #CDC673;">"Already connected"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ETIMEDOUT] = <span style="color: #CDC673;">"Timeout"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ECONNREFUSED] = <span style="color: #CDC673;">"Connet refused"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EALREADY] = <span style="color: #CDC673;">"Not ye completed"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EINPROGRESS] = <span style="color: #CDC673;">"In progress"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[0] = <span style="color: #CDC673;">"Success"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EPERM] = <span style="color: #CDC673;">"Permission denied"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EINTR] = <span style="color: #CDC673;">"Interrupted"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EBADF] = <span style="color: #CDC673;">"Invalid sockfd"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EAGAIN] = <span style="color: #CDC673;">"Routing cache insuff"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EACCES] = <span style="color: #CDC673;">"Perm, denied (EACCES)"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EFAULT] = <span style="color: #CDC673;">"Sock struct addr invalid"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ENOTSOCK] = <span style="color: #CDC673;">"FD not a socket"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EPROTOTYPE] = <span style="color: #CDC673;">"Socket protocol error"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EAFNOSUPPORT] = <span style="color: #CDC673;">"Address family invalid"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EADDRINUSE] = <span style="color: #CDC673;">"Local addr in use"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EADDRNOTAVAIL] = <span style="color: #CDC673;">"NO port avaiable"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ENETUNREACH] = <span style="color: #CDC673;">"Network unreachable"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EISCONN] = <span style="color: #CDC673;">"Already connected"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ETIMEDOUT] = <span style="color: #CDC673;">"Timeout"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ECONNREFUSED] = <span style="color: #CDC673;">"Connet refused"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EALREADY] = <span style="color: #CDC673;">"Not ye completed"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EINPROGRESS] = <span style="color: #CDC673;">"In progress"</span>;
 
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_connect
 /args-&gt;uservaddr-&gt;sa_family == AF_INET ||
-	    args-&gt;uservaddr-&gt;sa_family == AF_INET6/
+            args-&gt;uservaddr-&gt;sa_family == AF_INET6/
 {
-	<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>] = args-&gt;uservaddr;
-	<span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">nsecs</span>;
+        <span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>] = args-&gt;uservaddr;
+        <span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">nsecs</span>;
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_exit_connect
 /<span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]/
 {
-	<span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6d %-16s %-3d "</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]-&gt;sa_family);
+        <span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6d %-16s %-3d "</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]-&gt;sa_family);
 
-	<span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]-&gt;sa_family == AF_INET) {
-		<span style="color: #FF8C00;">$s</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
-		<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s</span>-&gt;sin_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s</span>-&gt;sin_port &lt;&lt; 8) &amp; 0xff00);
-		<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
-		       <span style="color: #FF1493;">ntop</span>(AF_INET, <span style="color: #FF8C00;">$s</span>-&gt;sin_addr.s_addr),
-		       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
-	} <span style="color: #FF1493;">else</span> {
-		<span style="color: #FF8C00;">$s6</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in6</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
-		<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &lt;&lt; 8) &amp; 0xff00);
-		<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
-		       <span style="color: #FF1493;">ntop</span>(AF_INET6, <span style="color: #FF8C00;">$s6</span>-&gt;sin6_addr.in6_u.u6_addr8),
-		       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
-	}
+        <span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]-&gt;sa_family == AF_INET) {
+                <span style="color: #FF8C00;">$s</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+                <span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s</span>-&gt;sin_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s</span>-&gt;sin_port &lt;&lt; 8) &amp; 0xff00);
+                <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+                       <span style="color: #FF1493;">ntop</span>(AF_INET, <span style="color: #FF8C00;">$s</span>-&gt;sin_addr.s_addr),
+                       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+        } <span style="color: #FF1493;">else</span> {
+                <span style="color: #FF8C00;">$s6</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in6</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+                <span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &lt;&lt; 8) &amp; 0xff00);
+                <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+                       <span style="color: #FF1493;">ntop</span>(AF_INET6, <span style="color: #FF8C00;">$s6</span>-&gt;sin6_addr.in6_u.u6_addr8),
+                       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+        }
 
-	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
-	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]);
+        <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
+        <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@start</span>[<span style="color: #FF1493;">tid</span>]);
 }
 
 <span style="color: #AF87FF;">END</span>
 {
-	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@start</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@err2str</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@sockaddr</span>);
+        <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@start</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@err2str</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@sockaddr</span>);
 }
 
 </pre>
@@ -1340,8 +1294,8 @@ PID    PROCESS          FAM ADDRESS          PORT   LAT(us) RESULT
 </div>
 
 
-<div id="outline-container-orgb4138c9" class="outline-3">
-<h3 id="orgb4138c9"><span class="section-number-3">4.5</span> soaccept</h3>
+<div id="outline-container-orga73d07f" class="outline-3">
+<h3 id="orga73d07f"><span class="section-number-3">4.5.</span> soaccept</h3>
 <div class="outline-text-3" id="text-4-5">
 <p>
 soaccept展示了IP协议套接字的接收请求。
@@ -1357,62 +1311,62 @@ soaccept展示了IP协议套接字的接收请求。
 
 <span style="color: #AF87FF;">BEGIN</span>
 {
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6s %-16s FAM %-16s %-5s %8s %s\n"</span>, <span style="color: #CDC673;">"PID"</span>, <span style="color: #CDC673;">"PROCESS"</span>,
-	       <span style="color: #CDC673;">"ADDRESS"</span>, <span style="color: #CDC673;">"PORT"</span>, <span style="color: #CDC673;">"LAT(us)"</span>, <span style="color: #CDC673;">"RESULT"</span>);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6s %-16s FAM %-16s %-5s %8s %s\n"</span>, <span style="color: #CDC673;">"PID"</span>, <span style="color: #CDC673;">"PROCESS"</span>,
+               <span style="color: #CDC673;">"ADDRESS"</span>, <span style="color: #CDC673;">"PORT"</span>, <span style="color: #CDC673;">"LAT(us)"</span>, <span style="color: #CDC673;">"RESULT"</span>);
 
-	<span style="color: #FF8C00;">@err2str</span>[0] = <span style="color: #CDC673;">"Success"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EPERM] = <span style="color: #CDC673;">"Permission denied"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EINTR] = <span style="color: #CDC673;">"Interrupted"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EBADF] = <span style="color: #CDC673;">"Invalid sockfd"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EAGAIN] = <span style="color: #CDC673;">"None to accept"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ENOMEM] = <span style="color: #CDC673;">"Out of memory"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EFAULT] = <span style="color: #CDC673;">"Sock struct addr invalid"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EINVAL] = <span style="color: #CDC673;">"Args invalid"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ENFILE] = <span style="color: #CDC673;">"System FD limit"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EMFILE] = <span style="color: #CDC673;">"Process FD limit"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EPROTO] = <span style="color: #CDC673;">"Protocol error"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ENOTSOCK] = <span style="color: #CDC673;">"FD not a socket"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[EOPNOTSUPP] = <span style="color: #CDC673;">"Not SOCK_STREAM"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ECONNABORTED] = <span style="color: #CDC673;">"Aborted"</span>;
-	<span style="color: #FF8C00;">@err2str</span>[ENOBUFS] = <span style="color: #CDC673;">"Memory (ENOBUFS)"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[0] = <span style="color: #CDC673;">"Success"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EPERM] = <span style="color: #CDC673;">"Permission denied"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EINTR] = <span style="color: #CDC673;">"Interrupted"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EBADF] = <span style="color: #CDC673;">"Invalid sockfd"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EAGAIN] = <span style="color: #CDC673;">"None to accept"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ENOMEM] = <span style="color: #CDC673;">"Out of memory"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EFAULT] = <span style="color: #CDC673;">"Sock struct addr invalid"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EINVAL] = <span style="color: #CDC673;">"Args invalid"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ENFILE] = <span style="color: #CDC673;">"System FD limit"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EMFILE] = <span style="color: #CDC673;">"Process FD limit"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EPROTO] = <span style="color: #CDC673;">"Protocol error"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ENOTSOCK] = <span style="color: #CDC673;">"FD not a socket"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[EOPNOTSUPP] = <span style="color: #CDC673;">"Not SOCK_STREAM"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ECONNABORTED] = <span style="color: #CDC673;">"Aborted"</span>;
+        <span style="color: #FF8C00;">@err2str</span>[ENOBUFS] = <span style="color: #CDC673;">"Memory (ENOBUFS)"</span>;
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_accept,
 <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_enter_accept4
 {
-	<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>] = args-&gt;upeer_sockaddr;
+        <span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>] = args-&gt;upeer_sockaddr;
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_exit_accept,
 <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_accept4
 /<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]/
 {
-	<span style="color: #FF8C00;">$sa</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)<span style="color: #FF8C00;">$sockaddr</span>[<span style="color: #FF1493;">tid</span>];
-	<span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET || <span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET6) {
-		<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6d %-16s %-3d "</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">@sa</span>-&gt;sa_family);
-		<span style="color: #FF8C00;">$error</span> = args-&gt;ret &gt; 0 ? 0 : - args-&gt;ret;
+        <span style="color: #FF8C00;">$sa</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)<span style="color: #FF8C00;">$sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+        <span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET || <span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET6) {
+                <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-6d %-16s %-3d "</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #FF1493;">comm</span>, <span style="color: #FF8C00;">@sa</span>-&gt;sa_family);
+                <span style="color: #FF8C00;">$error</span> = args-&gt;ret &gt; 0 ? 0 : - args-&gt;ret;
 
-		<span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET) {
-			<span style="color: #FF8C00;">$s</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
-			<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s</span>-&gt;sin_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s</span>-&gt;sin_port &lt;&lt; 8) &amp; 0xff00);
-			<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
-			       <span style="color: #FF1493;">ntop</span>(AF_INET, <span style="color: #FF8C00;">$s</span>-&gt;sin_addr.s_addr),
-			       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
-		} <span style="color: #FF1493;">else</span> {
-			<span style="color: #FF8C00;">$s6</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in6</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
-			<span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &lt;&lt; 8) &amp; 0xff00);
-			<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
-			       <span style="color: #FF1493;">ntop</span>(AF_INET6, <span style="color: #FF8C00;">$s6</span>-&gt;sin6_addr.in6_u.u6_addr8),
-			       <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
-		}
+                <span style="color: #FF1493;">if</span> (<span style="color: #FF8C00;">$sa</span>-&gt;sa_family == AF_INET) {
+                        <span style="color: #FF8C00;">$s</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+                        <span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s</span>-&gt;sin_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s</span>-&gt;sin_port &lt;&lt; 8) &amp; 0xff00);
+                        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+                               <span style="color: #FF1493;">ntop</span>(AF_INET, <span style="color: #FF8C00;">$s</span>-&gt;sin_addr.s_addr),
+                               <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+                } <span style="color: #FF1493;">else</span> {
+                        <span style="color: #FF8C00;">$s6</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in6</span> *)<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>];
+                        <span style="color: #FF8C00;">$port</span> = (<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &gt;&gt; 8) | ((<span style="color: #FF8C00;">$s6</span>-&gt;sin6_port &lt;&lt; 8) &amp; 0xff00);
+                        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%-16s %-5d %8d %s\n"</span>,
+                               <span style="color: #FF1493;">ntop</span>(AF_INET6, <span style="color: #FF8C00;">$s6</span>-&gt;sin6_addr.in6_u.u6_addr8),
+                               <span style="color: #FF8C00;">$port</span>, <span style="color: #FF8C00;">$dur_us</span>, <span style="color: #FF8C00;">@err2str</span>[-args-&gt;ret]);
+                }
 
-		<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
-	}
+                <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@sockaddr</span>[<span style="color: #FF1493;">tid</span>]);
+        }
 }
 
 <span style="color: #AF87FF;">END</span>
 {
-	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@err2str</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@sockaddr</span>);
+        <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@err2str</span>); <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@sockaddr</span>);
 }
 
 </pre>
@@ -1448,8 +1402,8 @@ PID    PROCESS          FAM ADDRESS          PORT   LAT(us) RESULT
 </div>
 
 
-<div id="outline-container-org4d1671f" class="outline-3">
-<h3 id="org4d1671f"><span class="section-number-3">4.6</span> socketio</h3>
+<div id="outline-container-orgfd87da6" class="outline-3">
+<h3 id="orgfd87da6"><span class="section-number-3">4.6.</span> socketio</h3>
 <div class="outline-text-3" id="text-4-6">
 <p>
 socketio 按进程、方向、协议和端口来展示套接字的I/O统计信息。
@@ -1463,19 +1417,19 @@ socketio 按进程、方向、协议和端口来展示套接字的I/O统计信�
 
 <span style="color: #AF87FF;">kprobe</span>:sock_recvmsg
 {
-	<span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
-	<span style="color: #FF8C00;">$dport</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_dport;
-	<span style="color: #FF8C00;">$dport</span> = (<span style="color: #FF8C00;">$dport</span> &gt;&gt; 8) | ((<span style="color: #FF8C00;">$dport</span> &lt;&lt; 8) &amp; 0xff00);
-	<span style="color: #FF8C00;">@io</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #CDC673;">"read"</span>, <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name, <span style="color: #FF8C00;">$dport</span>] = <span style="color: #FF1493;">count</span>();
+        <span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
+        <span style="color: #FF8C00;">$dport</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_dport;
+        <span style="color: #FF8C00;">$dport</span> = (<span style="color: #FF8C00;">$dport</span> &gt;&gt; 8) | ((<span style="color: #FF8C00;">$dport</span> &lt;&lt; 8) &amp; 0xff00);
+        <span style="color: #FF8C00;">@io</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #CDC673;">"read"</span>, <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name, <span style="color: #FF8C00;">$dport</span>] = <span style="color: #FF1493;">count</span>();
 }
 
 
 <span style="color: #AF87FF;">kprobe</span>:sock_sendmsg
 {
-	<span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
-	<span style="color: #FF8C00;">$dport</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_dport;
-	<span style="color: #FF8C00;">$dport</span> = (<span style="color: #FF8C00;">$dport</span> &gt;&gt; 8) | ((<span style="color: #FF8C00;">$dport</span> &lt;&lt; 8) &amp; 0xff00);
-	<span style="color: #FF8C00;">@io</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #CDC673;">"write"</span>, <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name, <span style="color: #FF8C00;">$dport</span>] = <span style="color: #FF1493;">count</span>();
+        <span style="color: #FF8C00;">$sock</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>;
+        <span style="color: #FF8C00;">$dport</span> = <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_dport;
+        <span style="color: #FF8C00;">$dport</span> = (<span style="color: #FF8C00;">$dport</span> &gt;&gt; 8) | ((<span style="color: #FF8C00;">$dport</span> &lt;&lt; 8) &amp; 0xff00);
+        <span style="color: #FF8C00;">@io</span>[<span style="color: #FF1493;">comm</span>, <span style="color: #FF1493;">pid</span>, <span style="color: #CDC673;">"write"</span>, <span style="color: #FF8C00;">$sock</span>-&gt;sk-&gt;__sk_common.skc_prot-&gt;name, <span style="color: #FF8C00;">$dport</span>] = <span style="color: #FF1493;">count</span>();
 }
 
 </pre>
@@ -1512,8 +1466,8 @@ Attaching 2 probes...
 </div>
 </div>
 
-<div id="outline-container-org2fe42ae" class="outline-3">
-<h3 id="org2fe42ae"><span class="section-number-3">4.7</span> socksize</h3>
+<div id="outline-container-orgbcb6598" class="outline-3">
+<h3 id="orgbcb6598"><span class="section-number-3">4.7.</span> socksize</h3>
 <div class="outline-text-3" id="text-4-7">
 <p>
 socksize按进程和操作方向统计套接字的I/O数量和字节数。
@@ -1531,9 +1485,9 @@ socksize按进程和操作方向统计套接字的I/O数量和字节数。
 
 <p>
 kprobe:sock_recvmsg,
-	    kprobe:sock_sendmsg
+            kprobe:sock_sendmsg
 {
-	@socket[tid] = arg0;
+        @socket[tid] = arg0;
 }
 </p>
 
@@ -1541,35 +1495,35 @@ kprobe:sock_recvmsg,
 <p>
 kretprobe:sock_recvmsg
 {
-	//retval为64位整数， 而返回值是32位
-	if (retval &lt; 0x7fffffff) {
-		@read_bytes[comm] = hist(retval);
-	}
-	delete(@socket[tid]);
+        //retval为64位整数， 而返回值是32位
+        if (retval &lt; 0x7fffffff) {
+                @read_bytes[comm] = hist(retval);
+        }
+        delete(@socket[tid]);
 }
 </p>
 
 <p>
 kretprobe:sock_sendmsg
 {
-	if (retval &lt; 0x7fffffff) {
-		@write_bytes[comm] = hist(retval);
-	}
-	delete(@socket[tid]);
+        if (retval &lt; 0x7fffffff) {
+                @write_bytes[comm] = hist(retval);
+        }
+        delete(@socket[tid]);
 }
 </p>
 
 <p>
 END
 {
-	clear(@socket);
+        clear(@socket);
 }
 </p>
 </div>
 </div>
 
-<div id="outline-container-org5b122bb" class="outline-3">
-<h3 id="org5b122bb"><span class="section-number-3">4.8</span> sockstat</h3>
+<div id="outline-container-org04921f8" class="outline-3">
+<h3 id="org04921f8"><span class="section-number-3">4.8.</span> sockstat</h3>
 <div class="outline-text-3" id="text-4-8">
 <p>
 该工具打印套接字的统计信息，统计每秒套接字相关的系统调用统计次数！
@@ -1580,7 +1534,7 @@ END
 
 BEGIN
 {
-    <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;\n "</span>);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;sock&#30340;&#32479;&#35745;&#20449;&#24687;&#65292;&#27599;&#31186;&#36755;&#20986;&#19968;&#27425;\n "</span>);
 }
 
 tracepoint:syscalls:sys_enter_accept*,
@@ -1590,14 +1544,14 @@ tracepoint:syscalls:sys_enter_socket*,
 kprobe:sock_recvmsg,
 kprobe:sock_sendmsg
 {
-    @[probe] = count();
+        @[probe] = count();
 }
 
 interval:s:1
 {
-    <span style="color: #FF1493;">time</span>();
-    print(@);
-    clear(@);
+        <span style="color: #FF1493;">time</span>();
+        print(@);
+        clear(@);
 }
 
 </pre>
@@ -1747,14 +1701,14 @@ Attaching 5 probes...
     @write_bytes[i3status]:
 [16, 32)              26 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
     [32, 64)               4 |@@@@@@@@                                            |
-    [...]
+        [...]
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc3bb150" class="outline-3">
-<h3 id="orgc3bb150"><span class="section-number-3">4.9</span> sormem</h3>
+<div id="outline-container-org6264d34" class="outline-3">
+<h3 id="org6264d34"><span class="section-number-3">4.9.</span> sormem</h3>
 <div class="outline-text-3" id="text-4-9">
 <p>
 sormem跟踪套接字的接收队列，以直方图展示队列长度与可调节的上限对比。
@@ -1767,26 +1721,26 @@ sormem跟踪套接字的接收队列，以直方图展示队列长度与可调�
 
 <span style="color: #AF87FF;">BEGIN</span>
 {
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;socket &#25509;&#25910;&#32531;&#20914;&#21306;&#22823;&#23567;&#65292;Ctrl-C&#32467;&#26463;.\n"</span>);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;socket &#25509;&#25910;&#32531;&#20914;&#21306;&#22823;&#23567;&#65292;Ctrl-C&#32467;&#26463;.\n"</span>);
 }
 
 <span style="color: #AF87FF;">kprobe</span>:sock_recvmsg
 {
-	<span style="color: #FF8C00;">$sock</span> = ((<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>)-&gt;sk;
-	<span style="color: #FF8C00;">@rmem_alloc</span> = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$sock</span>-&gt;sk_backlog.rmem_alloc.counter);
-	<span style="color: #FF8C00;">@rmem_limit</span> = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$sock</span>-&gt;sk_rcvbuf &amp; 0xffffffff);
+        <span style="color: #FF8C00;">$sock</span> = ((<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *)<span style="color: #FF1493;">arg0</span>)-&gt;sk;
+        <span style="color: #FF8C00;">@rmem_alloc</span> = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$sock</span>-&gt;sk_backlog.rmem_alloc.counter);
+        <span style="color: #FF8C00;">@rmem_limit</span> = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$sock</span>-&gt;sk_rcvbuf &amp; 0xffffffff);
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">sock</span>:sock_rcvqueue_full
 {
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%s rmem_alloc %d &gt; rcvbuf %d, skb size %d\n"</span>, <span style="color: #FF1493;">probe</span>,
-	       args-&gt;rmem_alloc, args-&gt;sk_rcvbuf, args-&gt;truesize);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%s rmem_alloc %d &gt; rcvbuf %d, skb size %d\n"</span>, <span style="color: #FF1493;">probe</span>,
+               args-&gt;rmem_alloc, args-&gt;sk_rcvbuf, args-&gt;truesize);
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">sock</span>:sock_exceed_buf_limit
 {
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%s rmem_alloc %d, allocated %d\n"</span>, <span style="color: #FF1493;">probe</span>,
-	       args-&gt;rmem_alloc, args-&gt;allocated);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"%s rmem_alloc %d, allocated %d\n"</span>, <span style="color: #FF1493;">probe</span>,
+               args-&gt;rmem_alloc, args-&gt;allocated);
 
 }
 
@@ -1802,38 +1756,38 @@ Attaching 4 probes...
 
 @rmem_alloc:
 [0]                  296 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-    [1]                    0 |                                                    |
-    [2, 4)                 0 |                                                    |
-    [4, 8)                 0 |                                                    |
-    [8, 16)                0 |                                                    |
-    [16, 32)               0 |                                                    |
-    [32, 64)               0 |                                                    |
-    [64, 128)              0 |                                                    |
-    [128, 256)             0 |                                                    |
-    [256, 512)             0 |                                                    |
-    [512, 1K)              2 |                                                    |
-    [1K, 2K)              63 |@@@@@@@@@@@                                         |
-    [2K, 4K)               0 |                                                    |
-    [4K, 8K)               8 |@                                                   |
-    [8K, 16K)             36 |@@@@@@                                              |
-    [16K, 32K)             0 |                                                    |
-    [32K, 64K)             8 |@                                                   |
+        [1]                    0 |                                                    |
+        [2, 4)                 0 |                                                    |
+        [4, 8)                 0 |                                                    |
+        [8, 16)                0 |                                                    |
+        [16, 32)               0 |                                                    |
+        [32, 64)               0 |                                                    |
+        [64, 128)              0 |                                                    |
+        [128, 256)             0 |                                                    |
+        [256, 512)             0 |                                                    |
+        [512, 1K)              2 |                                                    |
+        [1K, 2K)              63 |@@@@@@@@@@@                                         |
+        [2K, 4K)               0 |                                                    |
+        [4K, 8K)               8 |@                                                   |
+        [8K, 16K)             36 |@@@@@@                                              |
+        [16K, 32K)             0 |                                                    |
+        [32K, 64K)             8 |@                                                   |
 
-    @rmem_limit:
+        @rmem_limit:
 [64K, 128K)           12 |@@                                                  |
-    [128K, 256K)         306 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-    [256K, 512K)           0 |                                                    |
-    [512K, 1M)             0 |                                                    |
-    [1M, 2M)               0 |                                                    |
-    [2M, 4M)              95 |@@@@@@@@@@@@@@@@                                    |
+        [128K, 256K)         306 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+        [256K, 512K)           0 |                                                    |
+        [512K, 1M)             0 |                                                    |
+        [1M, 2M)               0 |                                                    |
+        [2M, 4M)              95 |@@@@@@@@@@@@@@@@                                    |
 </pre>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-org540a050" class="outline-3">
-<h3 id="org540a050"><span class="section-number-3">4.10</span> soconnlat</h3>
+<div id="outline-container-org84c958c" class="outline-3">
+<h3 id="org84c958c"><span class="section-number-3">4.10.</span> soconnlat</h3>
 <div class="outline-text-3" id="text-4-10">
 <p>
 soconnlat以直方图的形式统计套接字连接延迟，同时带有用户态调用栈信息。通过代码路径来识别不同的连接。
@@ -1847,40 +1801,40 @@ soconnlat以直方图的形式统计套接字连接延迟，同时带有用户�
 
 <span style="color: #AF87FF;">BEGIN</span>
 {
-	<span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;IP connect&#30340;&#24310;&#36831;(&#29992;&#25143;&#24577;&#35843;&#29992;&#26632;)&#65292;Ctrl-C&#32467;&#26463;.\n"</span>);
+        <span style="color: #FF1493;">printf</span>(<span style="color: #CDC673;">"&#36319;&#36394;IP connect&#30340;&#24310;&#36831;(&#29992;&#25143;&#24577;&#35843;&#29992;&#26632;)&#65292;Ctrl-C&#32467;&#26463;.\n"</span>);
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_enter_connect
 /args-&gt;uservaddr-&gt;sa_family == AF_INET ||
-	    args-&gt;uservaddr-&gt;sa_family == AF_INET6/
+            args-&gt;uservaddr-&gt;sa_family == AF_INET6/
 {
-	<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">nsecs</span>;
-	<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">ustack</span>();
+        <span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">nsecs</span>;
+        <span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>] = <span style="color: #FF1493;">ustack</span>();
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:sys_exit_connect
 {
-	<span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
-	<span style="color: #FF8C00;">@us</span>[<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>], <span style="color: #FF1493;">comm</span>] = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$dur_us</span>);
-	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]);
-	<span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>]);
+        <span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
+        <span style="color: #FF8C00;">@us</span>[<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>], <span style="color: #FF1493;">comm</span>] = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$dur_us</span>);
+        <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]);
+        <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>]);
 }
 
 <span style="color: #AF87FF;">tracepoint</span>:<span style="color: #AF87FF;">syscalls</span>:<span style="color: #5FD7FF;">sys_exit_poll</span>*,
-	    <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_epoll*,
-	    <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_select*,
-	    <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_pselect*
-	    /<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>] &amp;&amp; args-&gt;ret &gt; 0/
-	    {
-		    <span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
-		    <span style="color: #FF8C00;">@us</span>[<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>], <span style="color: #FF1493;">comm</span>] = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$dur_us</span>);
-		    <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]);
-		    <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>]);
-	    }
+            <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_epoll*,
+            <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_select*,
+            <span style="color: #AF87FF;">tracepoint</span>:syscalls:sys_exit_pselect*
+            /<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>] &amp;&amp; args-&gt;ret &gt; 0/
+            {
+                    <span style="color: #FF8C00;">$dur_us</span> = (<span style="color: #FF1493;">nsecs</span> - <span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]) / 1000;
+                    <span style="color: #FF8C00;">@us</span>[<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>], <span style="color: #FF1493;">comm</span>] = <span style="color: #FF1493;">hist</span>(<span style="color: #FF8C00;">$dur_us</span>);
+                    <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_start</span>[<span style="color: #FF1493;">tid</span>]);
+                    <span style="color: #FF1493;">delete</span>(<span style="color: #FF8C00;">@conn_stack</span>[<span style="color: #FF1493;">tid</span>]);
+            }
 
 <span style="color: #AF87FF;">END</span>
 {
-	<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@conn_start</span>);<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@conn_stack</span>);
+        <span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@conn_start</span>);<span style="color: #FF1493;">clear</span>(<span style="color: #FF8C00;">@conn_stack</span>);
 }
 
 </pre>
@@ -2062,8 +2016,8 @@ soconnlat以直方图的形式统计套接字连接延迟，同时带有用户�
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-10-29 Fri 21:15</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:53</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

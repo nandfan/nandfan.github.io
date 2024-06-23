@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPP 构建</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VPP 构建</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orge68601f">1. 简介</a></li>
+<li><a href="#orgd33e3c3">2. 编译</a>
+<ul>
+<li><a href="#org50e954e">2.1. 克隆项目</a></li>
+<li><a href="#org1195d4f">2.2. 编译</a></li>
+<li><a href="#org4935775">2.3. 单独编译插件</a></li>
+</ul>
+</li>
+<li><a href="#org5ccc321">3. 运行</a></li>
+<li><a href="#org16d26ce">4. 提交补丁</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge68601f" class="outline-2">
+<h2 id="orge68601f"><span class="section-number-2">1.</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+VPP(Vector Packet Processing), VPP是由思科开源的一个可扩展的框架，可提供开箱即用的生产质量交换机/路由器功能， 是一种高性能的数据包处理堆栈，可以在普通CPU上运行。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd33e3c3" class="outline-2">
+<h2 id="orgd33e3c3"><span class="section-number-2">2.</span> 编译</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+<a href="https://wiki.fd.io/view/VPP/Pulling,_Building,_Running,_Hacking_and_Pushing_VPP_Code">链接：https://wiki.fd.io/view/VPP/Pulling,_Building,_Running,_Hacking_and_Pushing_VPP_Code</a>
+</p>
+</div>
+
+<div id="outline-container-org50e954e" class="outline-3">
+<h3 id="org50e954e"><span class="section-number-3">2.1.</span> 克隆项目</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+项目地址: <a href="https://gerrit.fd.io/r/vpp">https://gerrit.fd.io/r/vpp</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git clone <span style="color: #E6DB74;">"https://gerrit.fd.io/r/vpp"</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1195d4f" class="outline-3">
+<h3 id="org1195d4f"><span class="section-number-3">2.2.</span> 编译</h3>
+<div class="outline-text-3" id="text-2-2">
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #75715E;"># </span><span style="color: #75715E;">if vpp&lt;08.10</span>
+$ make install-dep
+$ make bootstrap
+$ make build        <span style="color: #75715E;"># </span><span style="color: #75715E;">or `make build-release`</span>
+
+<span style="color: #75715E;"># </span><span style="color: #75715E;">vpp 08.10+ (cmake)</span>
+$ make install-dep
+$ make install-ext-deps
+$ make build        <span style="color: #75715E;"># </span><span style="color: #75715E;">or `make build-release`</span>
+</pre>
+</div>
+
+<p>
+编译debug版本, 使用命令: <code>make build</code>,  realease: <code>make build</code>.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4935775" class="outline-3">
+<h3 id="org4935775"><span class="section-number-3">2.3.</span> 单独编译插件</h3>
+<div class="outline-text-3" id="text-2-3">
+<div class="org-src-container">
+<pre class="src src-sh">$ cd my-plugin
+$ mkdir _build
+$ cd _build
+$ cmake -GNinja -DCMAKE_INSTALL_PREFIX:<span style="color: #FD971F;">PATH</span>=/path/to/vpp/build-root/install-vpp-native/vpp ../
+$ ninja
+</pre>
+</div>
+<p>
+如果系统中安装了vpp-dev包，DCMAKE_INSTALL_PREFIX变量可以不用设置。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5ccc321" class="outline-2">
+<h2 id="org5ccc321"><span class="section-number-2">3.</span> 运行</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+编译后的程序目录:
+debug:  /path/to/vpp/build-root/install-vpp_debug-native/vpp/bin/vpp
+release:  /path/to/vpp/build-root/install-vpp-native/vpp/bin/vpp
+</p>
+
+<p>
+配置文件目录: /path/to/vpp/src/vpp/conf/startup.conf
+注意: 在 unix 和 api-segment 配置块中, 需要修改 gid 的配置. 或者单独创建vpp组.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo /path/to/vpp/build-root/install-vpp_debug-native/vpp/bin/vpp -c /path/to/vpp/src/vpp/conf/startup.conf
+</pre>
+</div>
+
+<p>
+打开cli
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo /path/to/vpp/build-root/install-vpp_debug-native/vpp/bin/vppctl
+$ ?  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#21015;&#20986;&#21629;&#20196;&#21015;&#34920;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org16d26ce" class="outline-2">
+<h2 id="org16d26ce"><span class="section-number-2">4.</span> 提交补丁</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>注册账号
+首先需要注册 linux foundation 账号, <a href="https://linuxfoundation.org/">https://linuxfoundation.org/</a></li>
+
+<li>添加证书
+然后在 vpp gerrit项目平台的设置中添加自己的证书, <a href="https://gerrit.fd.io/r/settings/">https://gerrit.fd.io/r/settings/</a></li>
+
+<li><p>
+配置ssh
+在家目录的 <code>.ssh</code> 目录中的config(没有的话手动创建)中配置以下内容
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">Host gerrit.fd.io
+      User username   # &#37197;&#32622;&#29992;&#25143;&#21517;
+      Port 29418
+      Hostname gerrit.fd.io
+      PreferredAuthentications publickey
+      IdentityFile ~/.ssh/id_rsa # &#37197;&#32622;&#19978;&#38754;&#28155;&#21152;&#30340;&#35777;&#20070;
+      ForwardX11 no
+</pre>
+</div></li>
+
+<li><p>
+clone项目
+</p>
+
+<p>
+注意替换以下内容中的 <code>xxxxxx</code> 为自己的用户名.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ git clone <span style="color: #E6DB74;">"ssh://xxxxxx@gerrit.fd.io:29418/vpp"</span> &amp;&amp; scp -p -P 29418 xxxxxx@gerrit.fd.io:hooks/commit-msg <span style="color: #E6DB74;">"vpp/.git/hooks/"</span>
+</pre>
+</div>
+
+<p>
+或者直接打开以下链接, 复制页面中的 命令行.
+<a href="https://gerrit.fd.io/r/admin/repos/vpp">https://gerrit.fd.io/r/admin/repos/vpp</a>
+</p></li>
+
+<li><p>
+提交格式
+提交补丁使用以下命令.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ git commit -s
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">&#27169;&#22359;: &#38388;&#35201;&#35828;&#26126;
+  &#35814;&#32454;&#35828;&#26126;, &#21487;&#20197;&#30465;&#30053;
+
+Type: fix
+</pre>
+</div>
+
+<p>
+注意: Type 中的字段可以为 <code>feature fix refactor improvement style docs test make</code> 中的任意一个值, 并且必须填写.
+</p>
+
+<p>
+也可以执行 <code>git log</code> , 参照着来写.
+</p></li>
+
+<li><p>
+代码review
+需要预先安装 <code>git-review</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ sudo apt install git-review
+</pre>
+</div>
+
+<p>
+执行提交
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ git review
+</pre>
+</div></li>
+
+<li><p>
+查看 dashboard
+</p>
+
+<p>
+在链接 <a href="https://gerrit.fd.io/r/dashboard/self">https://gerrit.fd.io/r/dashboard/self</a> 中查看提交的补丁状态, 并指定 reviewer 人员.
+</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>dpdk-input</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">dpdk-input</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgddc751b">1. dpdk_config配置初始化</a>
+<ul>
+<li><a href="#orgd8b77e8">1.1. 配置项</a></li>
+<li><a href="#orgadb76a1">1.2. dev  dpdk_device_config</a></li>
+<li><a href="#org773280f">1.3. rte_eal_init</a></li>
+<li><a href="#org1d06c27">1.4. buffer pool 初始化</a></li>
+</ul>
+</li>
+<li><a href="#orgd046940">2. dpdk_process协程</a></li>
+<li><a href="#orge24d531">3. 数据包处理逻辑</a></li>
+<li><a href="#org194a331">4. 代码逻辑</a>
+<ul>
+<li><a href="#orga245e1c">4.1. 执行input node</a>
+<ul>
+<li><a href="#orgff6f97e">4.1.1. dpdk-input-node</a></li>
+<li><a href="#org9ceaba7">4.1.2. ethernet-input-node</a></li>
+<li><a href="#org77c2578">4.1.3. ip4-input-node</a></li>
+<li><a href="#org116fcf2">4.1.4. ip4-lookup-node</a></li>
+<li><a href="#org4494073">4.1.5. ip4-local-node</a></li>
+<li><a href="#org5484f83">4.1.6. tcp4-input-node</a></li>
+<li><a href="#org998f561">4.1.7. 执行逻辑</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgddc751b" class="outline-2">
+<h2 id="orgddc751b"><span class="section-number-2">1.</span> dpdk_config配置初始化</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+首先，在 src/plugins/dpdk/device/init.c 文件中，注册了dpdk配置处理函数：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #A6E22E;">VLIB_CONFIG_FUNCTION</span> (dpdk_config, <span style="color: #E6DB74;">"dpdk"</span>);
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgd8b77e8" class="outline-3">
+<h3 id="orgd8b77e8"><span class="section-number-3">1.1.</span> 配置项</h3>
+<div class="outline-text-3" id="text-1-1">
+<dl class="org-dl">
+<dt>no-hugetlb</dt><dd>不使用大页</dd>
+<dt>telemetry</dt><dd></dd>
+
+<dt>enable-tcp-udp-checksum</dt><dd>开启udp tcp 校验和</dd>
+<dt>no-tx-checksum-offload</dt><dd>启用硬件计算校验和</dd>
+<dt>decimal-interface-names</dt><dd>十进制的接口名称</dd>
+<dt>no-multi-seg</dt><dd>设备不支持多segment发送</dd>
+<dt>num-mem-channels</dt><dd>内存通道</dd>
+<dt>num-crypto-mbufs</dt><dd></dd>
+
+<dt>uio-driver</dt><dd>使用的uio驱动</dd>
+<dt>no-pci</dt><dd>是否禁用pci设备</dd>
+<dt>blacklist</dt><dd>设备黑名单</dd>
+<dt>no-vmbus</dt><dd>禁用VM bus</dd>
+<dt>no-shconf</dt><dd>不共享配置 （mmap映射文件描述符）</dd>
+<dt>no-hpet</dt><dd>禁用HPET</dd>
+<dt>no-huge</dt><dd>使用malloc而非hugetlbfs</dd>
+<dt>vmware-tsc-map </dt><dd>使用vmware TSC map</dd>
+<dt>huge-dir</dt><dd>指定hugetlbfs目录</dd>
+<dt>proc-type</dt><dd>进程的类型 primary还是secoundary</dd>
+<dt>file-prefix</dt><dd>hugetlbfs 文件前缀名</dd>
+<dt>vdev</dt><dd>虚拟设备 使用eal_option_device_add解析</dd>
+<dt>log-level</dt><dd>日至级别</dd>
+<dt>iova-mode</dt><dd>iova模式 PA或者VA</dd>
+<dt>coremask, c</dt><dd>cpu绑定</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-orgadb76a1" class="outline-3">
+<h3 id="orgadb76a1"><span class="section-number-3">1.2.</span> dev  dpdk_device_config</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+根据设备类型插入对应的hash表
+初始化设备参数
+解析设备配置
+</p>
+
+<dl class="org-dl">
+<dt>num-rx-queues</dt><dd>rx队列</dd>
+<dt>num-tx-queues</dt><dd>tx队列</dd>
+<dt>num-rx-desc</dt><dd>rx ring大小</dd>
+<dt>num-tx-desc</dt><dd>tx ring大小</dd>
+<dt>name</dt><dd>指定设备的名称</dd>
+<dt>workers</dt><dd>指定设备绑定的cpu</dd>
+<dt>rss</dt><dd>rss hash分流</dd>
+<dt>vlan-strip-offload on/off</dt><dd>是否开启vlan剥离</dd>
+<dt>tso on/off</dt><dd>是否开启tso</dd>
+<dt>devargs</dt><dd>设备参数</dd>
+<dt>rss-queues</dt><dd>配置rss queue</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org773280f" class="outline-3">
+<h3 id="org773280f"><span class="section-number-3">1.3.</span> rte_eal_init</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+在解析完参数后， 开始生成dpdk eal的参数， 之后调用rte_eal_init开始dpdk eal 的初始化。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1d06c27" class="outline-3">
+<h3 id="org1d06c27"><span class="section-number-3">1.4.</span> buffer pool 初始化</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+<pre class="src src-fundamental">dpdk_buffer_pools_create
+      &#20998;&#21035;&#27880;&#20876;&#8220;vpp&#8221;&#21644;&#8220;vpp-no-cache&#8221;&#30340;&#20869;&#23384;&#27744;&#32467;&#26500;
+      dpdk_buffer_pool_init
+              &#20998;&#21035;&#21019;&#24314;&#32531;&#23384;mempool&#21644;&#38750;&#32531;&#23384;mempool&#30340;buffer
+              &#35843;&#29992;rte_pktmbuf_pool_init&#21021;&#22987;&#21270;mempool (&#24182;&#21021;&#22987;&#21270;mempool&#20013;&#30340;&#31169;&#26377;&#25968;&#25454;)
+              &#20998;&#21035;&#35745;&#31639;mempool&#20013;&#27599;&#39033;&#30340;&#23545;&#35937;header
+              &#20351;&#29992;rte_pktmbuf_init&#26469;&#21021;&#22987;&#21270;mempool&#20013;&#30340;&#27599;&#20010;obj
+              &#25335;&#36125;buffer_templates
+              &#20026;&#29289;&#29702;&#35774;&#22791;&#36827;&#34892;DMA&#26144;&#23556;
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgd046940" class="outline-2">
+<h2 id="orgd046940"><span class="section-number-2">2.</span> dpdk_process协程</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-fundamental">dpdk_lib_init
+    &#26681;&#25454;&#37197;&#32622;&#21021;&#22987;&#21270;tcpudp&#26657;&#39564;&#21644;&#26631;&#35782;
+    &#21021;&#22987;&#21270;&#32447;&#31243;&#25968;&#25454;&#30340;buffer_template.flag
+    &#21021;&#22987;&#21270;&#32447;&#31243;&#25968;&#25454;&#20013;&#30340;sw_if_index[VLIB_TX]
+    &#20998;&#21035;&#21019;&#24314;vnet interface&#65292;
+        &#21021;&#22987;&#21270;&#21517;&#31216;&#38431;&#21015;&#20197;&#21450;&#35774;&#22791;&#21442;&#25968;&#31561;&#31561;&#12290;
+        &#25351;&#23450;&#35774;&#22791;&#30340;&#22788;&#29702;&#32447;&#31243;
+        ethernet_register_interface
+              vnet_register_interface
+                      &#21019;&#24314;&#32593;&#21345;&#30340;tx-node&#21644;output-node &#65288;devname-tx devname-output &#65289;
+                      &#35843;&#29992;vlib_register_node&#27880;&#20876;tx-node &#21644; output_node
+                      vnet_sw_interface_set_flags_helper &#35843;&#29992;&#31034;&#20363;&#34987;&#21019;&#24314;&#26102;&#30340;up/down&#22238;&#35843;
+              ethernet_setup_node
+              vnet_sw_interface_set_mtu
+              ethernet_set_mac
+        &#35774;&#32622;&#25509;&#21475;&#35774;&#22791;&#30340;input-node&#65288;dpdk_input_node&#65289;
+        &#27880;&#20876;&#35774;&#22791;&#30340;rx_queue
+        dpdk_service_setup //&#20351;&#29992;dpdk&#30340;&#25509;&#21475;&#21021;&#22987;&#21270;&#35774;&#22791;&#65292;&#22914;&#26524;&#25351;&#23450;&#20102;&#21551;&#21160;&#21442;&#25968;&#65292;&#21017;&#23558;&#24320;&#21551;&#35774;&#22791;
+        vlan strip&#37197;&#32622;
+dpdk_cryptodev_init
+dpdk_update_link_state
+&#24490;&#29615;&#65292;&#32479;&#35745;&#21644;&#26356;&#26032;&#38142;&#36335;&#29366;&#24577;
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge24d531" class="outline-2">
+<h2 id="orge24d531"><span class="section-number-2">3.</span> 数据包处理逻辑</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+device-input(例如 dpdk-input-node)之类的节点, next node 与device-input保持一致
+分别为:
+</p>
+<ul class="org-ul">
+<li>ip4-input-no-checksum [0]</li>
+<li>ip4-input [1]</li>
+<li>ip6-input [2]</li>
+<li>mpls-input [3]</li>
+<li>ethernet-input [4]</li>
+<li>error-drop [5]</li>
+</ul>
+
+
+<ul class="org-ul">
+<li>dpdk_device_input</li>
+<li>ethernet_input</li>
+<li>ip4_input</li>
+<li>ip4_lookup</li>
+<li>ip4_local</li>
+<li>tcp4_input</li>
+<li>tcp4_listen</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">vlib_main_or_worker_loop
+        //&#35843;&#24230;&#25191;&#34892; VLIB_NODE_TYPE_PRE_INPUT &#31867;&#22411;&#30340;node
+        vec_foreach(,,nm-&gt;nodes_by_type[VLIB_NODE_TYPE_PRE_INPUT){dispatch_node}
+        //&#35843;&#24230;&#25191;&#34892; VLIB_NODE_TYPE_INPUT &#31867;&#22411;&#30340;node
+        vec_foreach(,,nm-&gt;nodes_by_type[VLIB_NODE_TYPE_INPUT){dispatch_node}
+                dpdk_device_input &#22312;&#27492;&#20301;&#32622;&#34987;&#35843;&#29992;
+        //&#25191;&#34892;&#34987;input node &#28155;&#21152;&#30340; &#26410;&#20915;&#21521;&#37327;
+        for (i = 0; i &lt; _vec_len (nm-&gt;pending_frames); i++)
+                cpu_time_now = dispatch_pending_node (vm, i, cpu_time_now);
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org194a331" class="outline-2">
+<h2 id="org194a331"><span class="section-number-2">4.</span> 代码逻辑</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orga245e1c" class="outline-3">
+<h3 id="orga245e1c"><span class="section-number-3">4.1.</span> 执行input node</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+在vlib_main_loop中, 调度 VLIB_NODE_TYPE_INPUT 类型的node时, dpdk-input-node会被调用.
+</p>
+</div>
+
+<div id="outline-container-orgff6f97e" class="outline-4">
+<h4 id="orgff6f97e"><span class="section-number-4">4.1.1.</span> dpdk-input-node</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">dpdk_device_input()
+        rte_eth_rx_burst()
+        dpdk_process_rx_burst()
+        vlib_put_next_frame()
+</pre>
+</div>
+
+<p>
+在执行完 vlib_put_next_frame 后, 会将ethernet-input-node 加入 vlib_node_main_t的 pending_frames中, 等待被执行.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9ceaba7" class="outline-4">
+<h4 id="org9ceaba7"><span class="section-number-4">4.1.2.</span> ethernet-input-node</h4>
+<div class="outline-text-4" id="text-4-1-2">
+<p>
+在 vlib_main_or_worker_loop 中, 会处理由 input node 添加的 pending vector, 通过调用 dispatch_pending_node() 函数来处理, ethernet-input-node由此被调用.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">ethernet_input_node
+        eth_input_single_int
+                eth_input_process_frame
+                vlib_buffer_enqueue_to_next
+</pre>
+</div>
+
+<p>
+在 eth_input_process_frame 中,确定数据报类型, 假设为ipv4的报文, 选定ip4-input-node 或者 ip4-input-no-checksum-node 作为下一个node处理.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org77c2578" class="outline-4">
+<h4 id="org77c2578"><span class="section-number-4">4.1.3.</span> ip4-input-node</h4>
+<div class="outline-text-4" id="text-4-1-3">
+<p>
+在ethernet-input-node处理完成后, ip4-input-node已经被添加至pending_frames 中, 下一次轮询直接被调用.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">ip4_input_node_fn/ip4_inpu_no_checksum_node_fn
+        ip4_input_inline
+                ip4_input_set_next
+                        &#35774;&#32622;next node&#20026; IP4_INPUT_NEXT_LOOKUP
+                        vnet_feature_arc_start
+        vlib_buffer_enqueue_to_next
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org116fcf2" class="outline-4">
+<h4 id="org116fcf2"><span class="section-number-4">4.1.4.</span> ip4-lookup-node</h4>
+<div class="outline-text-4" id="text-4-1-4">
+<div class="org-src-container">
+<pre class="src src-fundamental">
+ip4_lookup_inline
+        ip4_fib_mtire_liikup_step_one
+        ip4_fib_mtrie_lookup_step
+vlib_buffer_enqueue_to_next
+
+</pre>
+</div>
+
+<p>
+通过查找转发信息库, 发现是到本机的报文, 选定ip-local-node为下一个node.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4494073" class="outline-4">
+<h4 id="org4494073"><span class="section-number-4">4.1.5.</span> ip4-local-node</h4>
+<div class="outline-text-4" id="text-4-1-5">
+<div class="org-src-container">
+<pre class="src src-fundamental">ip4_local_inline
+        ip4_local_classify
+                &#20998;&#29255;&#25253;&#25991;&#36873;&#25321;IP_LOCAL_NEXT_REASSEMBLY&#20026;&#19979;&#19968;&#20010;node
+                &#21542;&#21017;&#30452;&#25509;&#26681;&#25454;&#22235;&#23618;&#21327;&#35758;&#36873;&#25321;&#30456;&#24212;&#30340;node(tcp4-input-node)
+        ip4_local_set_next_and_error
+vlib_buffer_enqueue_to_next
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5484f83" class="outline-4">
+<h4 id="org5484f83"><span class="section-number-4">4.1.6.</span> tcp4-input-node</h4>
+<div class="outline-text-4" id="text-4-1-6">
+<div class="org-src-container">
+<pre class="src src-fundamental">tcp46_input_inline
+        tcp_input_lookup_buffer
+                session_lookup_connection_wt4
+                        &#26597;&#25214;established session
+                        &#26597;&#25214;half-open connection
+                        &#26597;&#25214;session rules table
+                        &#26597;&#25214;listener session
+        tcp_input_dispatch_buffer
+                &#26681;&#25454;&#26597;&#25214;&#21040;&#30340;&#36830;&#25509;&#21477;&#26564;,&#20174;tcp&#29366;&#24577;&#36716;&#25442;&#34920;(tcp_dispatch_table_init)&#20013;&#36873;&#25321;&#19979;&#19968;&#20010;node
+vlib_buffer_enqueue_to_next
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org998f561" class="outline-4">
+<h4 id="org998f561"><span class="section-number-4">4.1.7.</span> 执行逻辑</h4>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

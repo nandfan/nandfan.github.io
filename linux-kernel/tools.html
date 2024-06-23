@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-11-28 Sun 12:55 -->
+<!-- 2024-06-23 Sun 15:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux性能分析工具汇总</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,81 +191,34 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">Linux性能分析工具汇总</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org4f3f663">1. vmstat</a></li>
-<li><a href="#orgb7eaa16">2. iostat</a></li>
-<li><a href="#org117710d">3. dstat</a></li>
-<li><a href="#org4983203">4. iotop</a></li>
-<li><a href="#orgfd1a90c">5. pidstat</a></li>
-<li><a href="#orgbd9e588">6. top</a></li>
-<li><a href="#org9b0b18d">7. htop</a></li>
-<li><a href="#orgdf2fc95">8. mpstat</a></li>
-<li><a href="#orgbbd509e">9. netstat</a></li>
-<li><a href="#org99c4c7d">10. ps</a></li>
-<li><a href="#orga7b42dc">11. strace</a></li>
-<li><a href="#orgc06393b">12. uptime</a></li>
-<li><a href="#org67279e5">13. lsof</a></li>
-<li><a href="#orgbf4586c">14. perf</a></li>
-<li><a href="#orge4c5c7a">15. sar、netstat、pidstat、strace、tcpdump、blktrace、iotop、slabtop、sysctl、/proc。</a></li>
-<li><a href="#org1e4f3a3">16. mpstat</a></li>
-<li><a href="#org151107e">17. nload</a></li>
+<li><a href="#org1c22d02">1. vmstat</a></li>
+<li><a href="#org4e09ee2">2. iostat</a></li>
+<li><a href="#org4f2b89f">3. dstat</a></li>
+<li><a href="#orgba4272a">4. iotop</a></li>
+<li><a href="#org22a1e69">5. pidstat</a></li>
+<li><a href="#orga082c38">6. top</a></li>
+<li><a href="#orgbe17191">7. htop</a></li>
+<li><a href="#org2db758d">8. mpstat</a></li>
+<li><a href="#orgf312279">9. netstat</a></li>
+<li><a href="#orgc5b255d">10. ps</a></li>
+<li><a href="#org09c385b">11. strace</a></li>
+<li><a href="#orgb0afa61">12. uptime</a></li>
+<li><a href="#org6d459bf">13. lsof</a></li>
+<li><a href="#orgcc67a60">14. perf</a></li>
+<li><a href="#org58fa7fe">15. sar、netstat、pidstat、strace、tcpdump、blktrace、iotop、slabtop、sysctl、/proc。</a></li>
+<li><a href="#org8975891">16. mpstat</a></li>
+<li><a href="#org50bd09b">17. nload</a></li>
 </ul>
 </div>
 </div>
@@ -272,50 +226,50 @@ for the JavaScript code in this tag.
 <a href="https://www.brendangregg.com/linuxperf.html">https://www.brendangregg.com/linuxperf.html</a>
 </p>
 
-<div id="outline-container-org4f3f663" class="outline-2">
-<h2 id="org4f3f663"><span class="section-number-2">1</span> vmstat</h2>
+<div id="outline-container-org1c22d02" class="outline-2">
+<h2 id="org1c22d02"><span class="section-number-2">1.</span> vmstat</h2>
 </div>
-<div id="outline-container-orgb7eaa16" class="outline-2">
-<h2 id="orgb7eaa16"><span class="section-number-2">2</span> iostat</h2>
+<div id="outline-container-org4e09ee2" class="outline-2">
+<h2 id="org4e09ee2"><span class="section-number-2">2.</span> iostat</h2>
 </div>
-<div id="outline-container-org117710d" class="outline-2">
-<h2 id="org117710d"><span class="section-number-2">3</span> dstat</h2>
+<div id="outline-container-org4f2b89f" class="outline-2">
+<h2 id="org4f2b89f"><span class="section-number-2">3.</span> dstat</h2>
 </div>
-<div id="outline-container-org4983203" class="outline-2">
-<h2 id="org4983203"><span class="section-number-2">4</span> iotop</h2>
+<div id="outline-container-orgba4272a" class="outline-2">
+<h2 id="orgba4272a"><span class="section-number-2">4.</span> iotop</h2>
 </div>
-<div id="outline-container-orgfd1a90c" class="outline-2">
-<h2 id="orgfd1a90c"><span class="section-number-2">5</span> pidstat</h2>
+<div id="outline-container-org22a1e69" class="outline-2">
+<h2 id="org22a1e69"><span class="section-number-2">5.</span> pidstat</h2>
 </div>
-<div id="outline-container-orgbd9e588" class="outline-2">
-<h2 id="orgbd9e588"><span class="section-number-2">6</span> top</h2>
+<div id="outline-container-orga082c38" class="outline-2">
+<h2 id="orga082c38"><span class="section-number-2">6.</span> top</h2>
 </div>
-<div id="outline-container-org9b0b18d" class="outline-2">
-<h2 id="org9b0b18d"><span class="section-number-2">7</span> htop</h2>
+<div id="outline-container-orgbe17191" class="outline-2">
+<h2 id="orgbe17191"><span class="section-number-2">7.</span> htop</h2>
 </div>
-<div id="outline-container-orgdf2fc95" class="outline-2">
-<h2 id="orgdf2fc95"><span class="section-number-2">8</span> mpstat</h2>
+<div id="outline-container-org2db758d" class="outline-2">
+<h2 id="org2db758d"><span class="section-number-2">8.</span> mpstat</h2>
 </div>
-<div id="outline-container-orgbbd509e" class="outline-2">
-<h2 id="orgbbd509e"><span class="section-number-2">9</span> netstat</h2>
+<div id="outline-container-orgf312279" class="outline-2">
+<h2 id="orgf312279"><span class="section-number-2">9.</span> netstat</h2>
 </div>
-<div id="outline-container-org99c4c7d" class="outline-2">
-<h2 id="org99c4c7d"><span class="section-number-2">10</span> ps</h2>
+<div id="outline-container-orgc5b255d" class="outline-2">
+<h2 id="orgc5b255d"><span class="section-number-2">10.</span> ps</h2>
 </div>
-<div id="outline-container-orga7b42dc" class="outline-2">
-<h2 id="orga7b42dc"><span class="section-number-2">11</span> strace</h2>
+<div id="outline-container-org09c385b" class="outline-2">
+<h2 id="org09c385b"><span class="section-number-2">11.</span> strace</h2>
 </div>
-<div id="outline-container-orgc06393b" class="outline-2">
-<h2 id="orgc06393b"><span class="section-number-2">12</span> uptime</h2>
+<div id="outline-container-orgb0afa61" class="outline-2">
+<h2 id="orgb0afa61"><span class="section-number-2">12.</span> uptime</h2>
 </div>
-<div id="outline-container-org67279e5" class="outline-2">
-<h2 id="org67279e5"><span class="section-number-2">13</span> lsof</h2>
+<div id="outline-container-org6d459bf" class="outline-2">
+<h2 id="org6d459bf"><span class="section-number-2">13.</span> lsof</h2>
 </div>
-<div id="outline-container-orgbf4586c" class="outline-2">
-<h2 id="orgbf4586c"><span class="section-number-2">14</span> perf</h2>
+<div id="outline-container-orgcc67a60" class="outline-2">
+<h2 id="orgcc67a60"><span class="section-number-2">14.</span> perf</h2>
 </div>
-<div id="outline-container-orge4c5c7a" class="outline-2">
-<h2 id="orge4c5c7a"><span class="section-number-2">15</span> sar、netstat、pidstat、strace、tcpdump、blktrace、iotop、slabtop、sysctl、/proc。</h2>
+<div id="outline-container-org58fa7fe" class="outline-2">
+<h2 id="org58fa7fe"><span class="section-number-2">15.</span> sar、netstat、pidstat、strace、tcpdump、blktrace、iotop、slabtop、sysctl、/proc。</h2>
 <div class="outline-text-2" id="text-15">
 <p>
 Linux 系统性能分析工具图解读
@@ -554,19 +508,19 @@ sysctl
 </div>
 
 
-<div id="outline-container-org1e4f3a3" class="outline-2">
-<h2 id="org1e4f3a3"><span class="section-number-2">16</span> mpstat</h2>
+<div id="outline-container-org8975891" class="outline-2">
+<h2 id="org8975891"><span class="section-number-2">16.</span> mpstat</h2>
 </div>
 
-<div id="outline-container-org151107e" class="outline-2">
-<h2 id="org151107e"><span class="section-number-2">17</span> nload</h2>
+<div id="outline-container-org50bd09b" class="outline-2">
+<h2 id="org50bd09b"><span class="section-number-2">17.</span> nload</h2>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-11-28 Sun 12:55</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

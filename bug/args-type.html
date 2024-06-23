@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>由于传参类型改变，导致程序coredump</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">由于传参类型改变，导致程序coredump</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org304db00">1. 类型大小变化</a></li>
+<li><a href="#org4f24eb9">2. 有符号和无符号的变化</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org304db00" class="outline-2">
+<h2 id="org304db00"><span class="section-number-2">1.</span> 类型大小变化</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+起因是同事优化了一段代码，类似如下格式：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">foo</span>(<span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">a</span>, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">b</span>)
+{
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
+}
+
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">main</span>()
+{
+        <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">b</span> = 12;
+
+        <span style="color: #E6DB74;">/** &#21407;&#20808;&#30340;&#35843;&#29992;&#26041;&#24335;</span>
+<span style="color: #E6DB74;">            foo(12, b); */</span>
+
+        <span style="color: #E6DB74;">/** &#20248;&#21270;&#21518;*/</span>
+        <span style="color: #66D9EF;">short</span> <span style="color: #FD971F;">a</span> = 12;
+        foo(a, b);
+}
+
+</pre>
+</div>
+
+<p>
+由于首个参数传参类型变为short，占用两个字节，但是函数参数类型为size_t （8字节），导致foo函数内部读取时，高位字节为脏数据，进而在函数内部读取到非法值。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #A6E22E;">00000000004214bd</span> &lt;rfc1035_name_unpack&gt;:
+  <span style="color: #F92672;">4214bd</span>:       55                      push   <span style="color: #FD971F;">%rbp</span>
+  <span style="color: #F92672;">4214be</span>:       48 89 e5                mov    <span style="color: #FD971F;">%rsp</span>,<span style="color: #FD971F;">%rbp</span>
+  <span style="color: #F92672;">4214c1</span>:       48 83 ec 60             sub    $0x60,<span style="color: #FD971F;">%rsp</span>
+  <span style="color: #F92672;">4214c5</span>:       48 89 7d d8             mov    <span style="color: #FD971F;">%rdi</span>,-0x28(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">4214c9</span>:       48 89 75 d0             mov    <span style="color: #FD971F;">%rsi</span>,-0x30(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">4214cd</span>:       48 89 55 c8             mov    <span style="color: #FD971F;">%rdx</span>,-0x38(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">4214d1</span>:       48 89 4d c0             mov    <span style="color: #FD971F;">%rcx</span>,-0x40(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">4214d5</span>:       4c 89 45 b8             mov    <span style="color: #FD971F;">%r8</span>,-0x48(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #75715E;">/** </span><span style="color: #75715E;">&#35835;&#21462;&#21442;&#25968;&#65292;r9&#38750;&#27861;&#20540;&#65292;&#23548;&#33268;&#21518;&#32493;&#22788;&#29702;&#26102;&#65292;&#20869;&#23384;&#36234;&#30028;</span><span style="color: #75715E;"> */</span>
+  <span style="color: #F92672;">4214d9</span>:       4c 89 4d b0             mov    <span style="color: #FD971F;">%r9</span>,-0x50(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">4214dd</span>:       c7 45 fc 00 00 00 00    movl   $0x0,-0x4(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">4214e4</span>:       48 83 7d b0 00          cmpq   $0x0,-0x50(<span style="color: #FD971F;">%rbp</span>)
+  ......
+
+<span style="color: #A6E22E;">0000000000421757</span> &lt;rfc1035_query_unpack&gt;:
+  <span style="color: #F92672;">421757</span>:       55                      push   <span style="color: #FD971F;">%rbp</span>
+  <span style="color: #F92672;">421758</span>:       48 89 e5                mov    <span style="color: #FD971F;">%rsp</span>,<span style="color: #FD971F;">%rbp</span>
+  <span style="color: #F92672;">42175b</span>:       48 83 ec 40             sub    $0x40,<span style="color: #FD971F;">%rsp</span>
+  <span style="color: #F92672;">42175f</span>:       48 89 7d e8             mov    <span style="color: #FD971F;">%rdi</span>,-0x18(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">421763</span>:       48 89 75 e0             mov    <span style="color: #FD971F;">%rsi</span>,-0x20(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">421767</span>:       48 89 55 d8             mov    <span style="color: #FD971F;">%rdx</span>,-0x28(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">42176b</span>:       48 89 4d d0             mov    <span style="color: #FD971F;">%rcx</span>,-0x30(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #F92672;">42176f</span>:       66 c7 45 fe 00 01       movw   $0x100,-0x2(<span style="color: #FD971F;">%rbp</span>)
+  <span style="color: #75715E;">/**  </span><span style="color: #75715E;">movzwl &#23383; &#20570;&#38646;&#25193;&#23637;&#65292;&#20256;&#36865;&#21040; &#21452;&#23383;&#65292;&#23383;&#20195;&#34920;2bytes</span><span style="color: #75715E;">*/</span>
+  <span style="color: #F92672;">421775</span>:       0f b7 7d fe             movzwl -0x2(<span style="color: #FD971F;">%rbp</span>),<span style="color: #FD971F;">%edi</span>
+  <span style="color: #F92672;">421779</span>:       48 8b 4d d0             mov    -0x30(<span style="color: #FD971F;">%rbp</span>),<span style="color: #FD971F;">%rcx</span>
+  <span style="color: #F92672;">42177d</span>:       48 8b 55 d8             mov    -0x28(<span style="color: #FD971F;">%rbp</span>),<span style="color: #FD971F;">%rdx</span>
+  <span style="color: #F92672;">421781</span>:       48 8b 75 e0             mov    -0x20(<span style="color: #FD971F;">%rbp</span>),<span style="color: #FD971F;">%rsi</span>
+  <span style="color: #F92672;">421785</span>:       48 8b 45 e8             mov    -0x18(<span style="color: #FD971F;">%rbp</span>),<span style="color: #FD971F;">%rax</span>
+  <span style="color: #F92672;">421789</span>:       c7 04 24 00 00 00 00    movl   $0x0,(<span style="color: #FD971F;">%rsp</span>)
+  <span style="color: #75715E;">/**  </span><span style="color: #75715E;">&#19978;&#38754;&#36171;&#20540;&#26102;&#65292;&#36171;&#20540;&#30340;edi&#65292;rdi&#39640;&#20301;4&#23383;&#33410;&#26377;&#33039;&#25968;&#25454;&#65292;&#27492;&#26102;&#23558;rdi&#36171;&#20540;&#32473;r9&#65292;r9&#20026;&#38750;&#27861;&#20540;</span><span style="color: #75715E;">*/</span>
+  <span style="color: #F92672;">421790</span>:       49 89 f9                mov    <span style="color: #FD971F;">%rdi</span>,<span style="color: #FD971F;">%r9</span>
+  <span style="color: #F92672;">421793</span>:       49 89 c8                mov    <span style="color: #FD971F;">%rcx</span>,<span style="color: #FD971F;">%r8</span>
+  <span style="color: #F92672;">421796</span>:       b9 00 00 00 00          mov    $0x0,<span style="color: #FD971F;">%ecx</span>
+  <span style="color: #F92672;">42179b</span>:       48 89 c7                mov    <span style="color: #FD971F;">%rax</span>,<span style="color: #FD971F;">%rdi</span>
+  <span style="color: #75715E;">/** </span><span style="color: #75715E;">&#21442;&#25968;&#37117;&#24050;&#32463;&#36171;&#20540;&#32473;&#23492;&#23384;&#22120;&#65292;&#35843;&#29992;&#20989;&#25968;</span><span style="color: #75715E;"> */</span>
+  <span style="color: #F92672;">42179e</span>:       e8 1a fd ff ff          callq  4214bd &lt;rfc1035_name_unpack&gt;
+  <span style="color: #F92672;">4217a3</span>:       85 c0                   test   <span style="color: #FD971F;">%eax</span>,<span style="color: #FD971F;">%eax</span>
+  ......
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4f24eb9" class="outline-2">
+<h2 id="org4f24eb9"><span class="section-number-2">2.</span> 有符号和无符号的变化</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">foo</span>()
+{
+        <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">buf</span>[UDP_SO_RCVBUF]
+        size_t len;
+        len = recvfrom(buf,...);
+        <span style="color: #F92672;">if</span> (len &lt;= 0) {
+                <span style="color: #E6DB74;">/** len&#26159;&#26080;&#31526;&#21495;&#31867;&#22411;&#65292;&#19981;&#21487;&#33021;&#23567;&#20110;0*/</span>
+                <span style="color: #F92672;">return</span>;
+        }
+
+        <span style="color: #E6DB74;">/** &#24403;recvfrom&#36820;&#22238;&#36127;&#25968;&#65292;len&#26159;&#26080;&#31526;&#21495;&#25968;&#65292;&#23548;&#33268;len&#21464;&#24456;&#22823;&#65292;&#22312;process&#22788;&#29702;&#20013;&#65292;&#22534;&#26632;&#34987;&#30772;&#22351;&#65292;gdb&#26080;&#27861;&#30475;&#21040;&#22534;&#26632;&#20449;&#24687; */</span>
+        process(buf, len);
+        <span style="color: #F92672;">return</span>
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

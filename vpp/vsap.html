@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VSAP编译运行</title>
+<meta name="author" content="nandfan" />
+<meta name="keywords" content="vpp" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VSAP编译运行</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org3d211c5">1. 项目</a>
+<ul>
+<li><a href="#orgf458715">1.1. 简介</a>
+<ul>
+<li><a href="#org45139da">1.1.1. LDP</a></li>
+<li><a href="#org40de4e4">1.1.2. VCL</a></li>
+</ul>
+</li>
+<li><a href="#org9b31f27">1.2. 获取代码</a></li>
+<li><a href="#orgc216894">1.3. 目录结构</a></li>
+</ul>
+</li>
+<li><a href="#org4bcb47a">2. 编译</a>
+<ul>
+<li><a href="#orgfd82b6b">2.1. vpp</a></li>
+</ul>
+</li>
+<li><a href="#orga1a9cac">3. VCL Nginx</a>
+<ul>
+<li><a href="#orga980c22">3.1. app worker补丁</a></li>
+<li><a href="#orga66004d">3.2. vcl nginx</a></li>
+<li><a href="#orgbea0e2f">3.3. 编译nginx</a></li>
+<li><a href="#org549c445">3.4. 运行vcl nginx</a></li>
+</ul>
+</li>
+<li><a href="#orgf25bf9c">4. LDP Nginx</a>
+<ul>
+<li><a href="#org1228735">4.1. 无锁VLS补丁</a></li>
+<li><a href="#org5e4ca33">4.2. 运行ldp nginx</a></li>
+</ul>
+</li>
+<li><a href="#org47c1a05">5. 开启VPP TLS</a>
+<ul>
+<li><a href="#org7b3feba">5.1. 为vcl nginx开启tls支持</a></li>
+<li><a href="#orgf92799f">5.2. 为ldp nginx开启tls支持</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org3d211c5" class="outline-2">
+<h2 id="org3d211c5"><span class="section-number-2">1.</span> 项目</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgf458715" class="outline-3">
+<h3 id="orgf458715"><span class="section-number-3">1.1.</span> 简介</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+VSAP 项目优化了nginx 基于 vpp 的 hoststack 的性能. 主要提供了两种方式来集成nginx. LDP 和 VCL
+</p>
+</div>
+
+<div id="outline-container-org45139da" class="outline-4">
+<h4 id="org45139da"><span class="section-number-4">1.1.1.</span> LDP</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+基于LDP的方式, nginx启动时需要使用 LD_PREALOAD 环境变量, 指定vpp提供的 <code>libvcl_ldpreaload.so</code> 库文件. 此种方式 nginx 无需修改, 可以直接运行.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org40de4e4" class="outline-4">
+<h4 id="org40de4e4"><span class="section-number-4">1.1.2.</span> VCL</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<p>
+基于VCL的方式, nginx 通过修改代码, 与vpp的hoststack直接通信.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9b31f27" class="outline-3">
+<h3 id="org9b31f27"><span class="section-number-3">1.2.</span> 获取代码</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+首先 clone 项目, 并初始化 submododule, 项目地址: <a href="https://gerrit.fd.io/r/vsap">https://gerrit.fd.io/r/vsap</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git clone https://gerrit.fd.io/r/vsap
+$ cd vsap
+$ git submodule init
+$ git submodule update
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc216894" class="outline-3">
+<h3 id="orgc216894"><span class="section-number-3">1.3.</span> 目录结构</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+<pre class="src src-fundamental">configs              # vpp, nginx, vcl &#30340;&#37197;&#32622;&#25991;&#20214;&#30446;&#24405;
+INFO.yaml
+Makefile
+nginx_patches        # nginx &#30340; vcl &#34917;&#19969;
+packages
+README.md
+vpp                  # vpp &#28304;&#30721;&#30446;&#24405;
+vpp_patches          # &#26080;&#38145;&#30340;ldp &#20197;&#21450;nginx&#32465;&#23450;&#21040;vpp &#34917;&#19969;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4bcb47a" class="outline-2">
+<h2 id="org4bcb47a"><span class="section-number-2">2.</span> 编译</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgfd82b6b" class="outline-3">
+<h3 id="orgfd82b6b"><span class="section-number-3">2.1.</span> vpp</h3>
+<div class="outline-text-3" id="text-2-1">
+<ul class="org-ul">
+<li><p>
+安装依赖
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make dep
+</pre>
+</div></li>
+
+<li><p>
+编译vcl deb包
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make deb-vcl
+</pre>
+</div></li>
+
+<li><p>
+编译vcl vpp 和vcl nginx
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make build-vcl
+</pre>
+</div></li>
+
+<li><p>
+编译ldp deb包
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make deb-ldp
+</pre>
+</div></li>
+
+<li><p>
+编译ldp vpp和lcp nginx
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make build-ldp
+</pre>
+</div></li>
+
+<li><p>
+指定vpp版本
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make deb-vcl <span style="color: #FD971F;">vpp</span>=2001
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#25110;&#32773;</span>
+$ make deb-vcl <span style="color: #FD971F;">vpp</span>=2005
+</pre>
+</div></li>
+
+<li><p>
+指定debug版本
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make deb-vcl <span style="color: #FD971F;">debug</span>=1
+</pre>
+</div></li>
+
+<li><p>
+增加openssl3.0支持
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make deb-vcl <span style="color: #FD971F;">openssl3_enable</span>=1
+</pre>
+</div>
+<p>
+如果已经有openssl3.0, 不想重新编译
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make deb-vcl <span style="color: #FD971F;">openssl3_enable</span>=1 <span style="color: #FD971F;">openssl3_lib_ready</span>=1
+</pre>
+</div></li>
+
+<li><p>
+验证vcl启动正常
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make verify-vcl
+</pre>
+</div></li>
+
+<li><p>
+验证ldp启动正常
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make verify-ldp
+</pre>
+</div></li>
+
+<li><p>
+清理vcl环境
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make clean-vcl
+</pre>
+</div></li>
+
+<li><p>
+清理ldp环境
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make clean-ldp
+</pre>
+</div></li>
+
+<li><p>
+清理编译环境
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ make clean
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga1a9cac" class="outline-2">
+<h2 id="orga1a9cac"><span class="section-number-2">3.</span> VCL Nginx</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orga980c22" class="outline-3">
+<h3 id="orga980c22"><span class="section-number-3">3.1.</span> app worker补丁</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+VCL和LDP都需要此补丁.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ cd /path/to/vpp
+$ patch -p1 &lt; /path/to/this/repo/vpp_patches/common/0001-session-pinning.patch
+$ make build          <span style="color: #75715E;"># </span><span style="color: #75715E;">&#36825;&#26159;debug&#29256;&#26412;, &#22914;&#26524;&#35201;&#32534;&#35793;release, &#25191;&#34892;: make build-release</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga66004d" class="outline-3">
+<h3 id="orga66004d"><span class="section-number-3">3.2.</span> vcl nginx</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-shell">$ cd /path/to/vpp
+$ patch -p1 &lt; /path/to/this/repo/vpp_patches/vcl/0001-ngxvcl-api.patch
+$ make build          <span style="color: #75715E;">#  </span><span style="color: #75715E;">realease&#29256;&#26412;&#20351;&#29992;: make build-release</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbea0e2f" class="outline-3">
+<h3 id="orgbea0e2f"><span class="section-number-3">3.3.</span> 编译nginx</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+首先打补丁.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ cd path/to/your/own/nginx-1.14.2
+$ patch -p2 &lt; path/to/this/repo/nginx_patches/0001-ngxvcl.patch
+</pre>
+</div>
+
+<p>
+编译配置
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ ./configure --with-vcl --vpp-lib-path=/path/to/this/repo/vpp/build-root/install-vpp-native/vpp/lib --vpp-src-path=/path/to/this/repo/vpp/src
+$ make
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org549c445" class="outline-3">
+<h3 id="org549c445"><span class="section-number-3">3.4.</span> 运行vcl nginx</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+运行vcl nginx需要导入环境变量, VLC_CONFIG用开指定vcl的配置参数, LD_LIBRARY_PATH指定vpp实现的系统调用接口库文件.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #75715E;"># </span><span style="color: #75715E;">export VCL_CONFIG=/path/to/this/repo/configs/vcl.conf</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">export LD_LIBRARY_PATH=/path/to/this/repo/vpp/build-root/install-vpp-native/vpp/lib</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">/path/to/this/repo/_build/usr/local/nginx/sbin/nginx -c /path/to/this/repo/configs/nginx.conf</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf25bf9c" class="outline-2">
+<h2 id="orgf25bf9c"><span class="section-number-2">4.</span> LDP Nginx</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org1228735" class="outline-3">
+<h3 id="org1228735"><span class="section-number-3">4.1.</span> 无锁VLS补丁</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+该补丁移除了vls session锁, 可以节省100%cpu时钟周期, 特别是对cpu密集型的应用.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ cd /path/to/vpp
+$ patch -p1 &lt; /path/to/this/repo/vpp_patches/ldp/2005/0001-LDP-remove-lock.patch
+$ make build
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5e4ca33" class="outline-3">
+<h3 id="org5e4ca33"><span class="section-number-3">4.2.</span> 运行ldp nginx</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
+<pre class="src src-shell">$ export <span style="color: #FD971F;">VCL_CONFIG</span>=path/to/this/repo/vcl.conf
+$ <span style="color: #FD971F;">LD_PRELOAD</span>=/path/to/this/repo/vpp/build-root/install-vpp-native/vpp/lib/libvcl_ldpreload.so /path/to/this/repo/_build/usr/local/nginx/sbin/nginx -c /path/to/this/repo/configs/nginx.conf
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org47c1a05" class="outline-2">
+<h2 id="org47c1a05"><span class="section-number-2">5.</span> 开启VPP TLS</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org7b3feba" class="outline-3">
+<h3 id="org7b3feba"><span class="section-number-3">5.1.</span> 为vcl nginx开启tls支持</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+在运行vcl nginx之前, 导入以下环境变量.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ export <span style="color: #FD971F;">NGXVCL_TLS_ON</span>=1
+$ export <span style="color: #FD971F;">NGXVCL_TLS_CERT</span>=/path/to/this/repo/configs/tls-test-cert
+$ export <span style="color: #FD971F;">NGXVCL_TLS_KEY</span>=/path/to/this/repo/configs/tls-test-key
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf92799f" class="outline-3">
+<h3 id="orgf92799f"><span class="section-number-3">5.2.</span> 为ldp nginx开启tls支持</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+在运行ldp nginx之前, 导入以下环境变量.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ export <span style="color: #FD971F;">LDP_TRANSPARENT_TLS</span>=1
+$ export <span style="color: #FD971F;">LDP_TLS_CERT_FILE</span>=/path/to/this/repo/configs/tls-test-cert
+$ export <span style="color: #FD971F;">LDP_TLS_KEY_FILE</span>=/path/to/this/repo/configs/tls-test-key
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

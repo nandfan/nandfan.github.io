@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:54 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nginx</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Nginx</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgc36e03d">1. nginx http</a>
+<ul>
+<li><a href="#org3a36f5b">1.1. http模块结构</a></li>
+<li><a href="#orga9585c3">1.2. 处理阶段</a></li>
+<li><a href="#orgc2b8335">1.3. NGX_HTTP_CONTENT_PHASE的两种介入方式</a></li>
+<li><a href="#org1a65906">1.4. 初始化</a></li>
+<li><a href="#orge131ce9">1.5. header filter和body filter</a></li>
+<li><a href="#org9170307">1.6. 连接处理过程</a></li>
+<li><a href="#org8f81853">1.7. 阶段处理</a></li>
+<li><a href="#org6e2e0e8">1.8. 反向代理请求处理</a></li>
+</ul>
+</li>
+<li><a href="#orgaedeb63">2. nginx epoll</a>
+<ul>
+<li><a href="#org2c84946">2.1. epoll处理事件</a></li>
+</ul>
+</li>
+<li><a href="#orgfe98e4e">3. 数据结构</a>
+<ul>
+<li><a href="#org5cb0e9c">3.1. 内存池</a>
+<ul>
+<li><a href="#org1a08480">3.1.1. 结构关系</a></li>
+<li><a href="#org2d3a6ad">3.1.2. 接口</a></li>
+</ul>
+</li>
+<li><a href="#orgfcd9dff">3.2. hash</a>
+<ul>
+<li><a href="#org2751e01">3.2.1. 数据结构关系</a></li>
+<li><a href="#orge4e6622">3.2.2. 初始化流程</a></li>
+<li><a href="#orgb3ef4fb">3.2.3. 添加流程</a></li>
+</ul>
+</li>
+<li><a href="#orged36840">3.3. chain buf</a></li>
+</ul>
+</li>
+<li><a href="#org49b2d0c">4. 正则使用</a></li>
+<li><a href="#orgd3ddb40">5. REUSEPORT</a></li>
+<li><a href="#org45256bd">6. UPSTREAM</a>
+<ul>
+<li><a href="#org71f999b">6.1. non buffer</a></li>
+<li><a href="#org40c1095">6.2. buffering</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+内部跳转,  内部跳转时如果想在rewrite后的location中使用前面location中所设置的变量, 则需要在前面的location中设置set变量,   不可以在server块中配置, 否则, 在跳转到新的location后, 会使用server块的默认变量值
+</p>
+
+<div id="outline-container-orgc36e03d" class="outline-2">
+<h2 id="orgc36e03d"><span class="section-number-2">1.</span> nginx http</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org3a36f5b" class="outline-3">
+<h3 id="org3a36f5b"><span class="section-number-3">1.1.</span> http模块结构</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> {
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#35299;&#26512;&#37197;&#32622;&#21069;&#35843;&#29992;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">ngx_int_t</span>   (*<span style="color: #A6E22E;">preconfiguration</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>);
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#35299;&#26512;&#37197;&#32622;&#21518;&#35843;&#29992;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">ngx_int_t</span>   (*<span style="color: #A6E22E;">postconfiguration</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>);
+
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21019;&#24314;main&#37197;&#32622;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">void</span>       *(*<span style="color: #A6E22E;">create_main_conf</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>);
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21021;&#22987;&#21270;main&#37197;&#32622;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">char</span>       *(*<span style="color: #A6E22E;">init_main_conf</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">conf</span>);
+
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21019;&#24314;server&#37197;&#32622;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">void</span>       *(*<span style="color: #A6E22E;">create_srv_conf</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>);
+        <span style="color: #75715E;">/* */</span>
+        <span style="color: #66D9EF;">char</span>       *(*<span style="color: #A6E22E;">merge_srv_conf</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">prev</span>, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">conf</span>);
+
+        <span style="color: #75715E;">/**/</span>
+        <span style="color: #66D9EF;">void</span>       *(*<span style="color: #A6E22E;">create_loc_conf</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>);
+        <span style="color: #75715E;">/**/</span>
+        <span style="color: #66D9EF;">char</span>       *(*<span style="color: #A6E22E;">merge_loc_conf</span>)(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">prev</span>, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">conf</span>);
+} <span style="color: #66D9EF;">ngx_http_module_t</span>;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga9585c3" class="outline-3">
+<h3 id="orga9585c3"><span class="section-number-3">1.2.</span> 处理阶段</h3>
+<div class="outline-text-3" id="text-1-2">
+<dl class="org-dl">
+<dt>NGX_HTTP_POST_READ_PHASE</dt><dd>在接收到完整的http头部后处理</dd>
+<dt>NGX_HTTP_SERVER_REWRITE_PHASE</dt><dd>在将uri和location匹配前，修改请求的URI（重定向）</dd>
+<dt>NGX_HTTP_FIND_CONFIG_PHASE</dt><dd>根据请求的uri，查找location</dd>
+<dt>NGX_HTTP_REWRITE_PHASE</dt><dd>在匹配到location后，再修改请求的uri的阶段</dd>
+<dt>NGX_HTTP_POST_REWRITE_PHASE</dt><dd>这个阶段用在rewrite重写uri之后，防止nginx配置错误导致死循环，用变量记录rewrite次数，超过10次认为死循环，返回500。</dd>
+<dt>NGX_HTTP_PREACCESS_PHASE</dt><dd>在NGX_HTTP_ACCESS_PHASE阶段决定请求的访问权限前的处理阶段。</dd>
+<dt>NGX_HTTP_ACCESS_PHASE</dt><dd>用户让http模块判断是否允许请求访问nginx。</dd>
+<dt>NGX_HTTP_POST_ACCESS_PHASE</dt><dd>当NGX_HTTP_ACCESS_PHASE阶段返回不允许的错误码时（例如NGX_HTTP_FORBIDDEN），这个阶段发送相应的错误相应。</dd>
+<dt>NGX_HTTP_PRECONTENT_PHASE</dt><dd>目前由ngx_http_mirror_module和ngx_http_try_files_module模块使用。</dd>
+<dt>NGX_HTTP_CONTENT_PHASE</dt><dd>用于处理请求内容的阶段。</dd>
+<dt>NGX_HTTP_LOG_PHASE</dt><dd>记录日志的阶段。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-orgc2b8335" class="outline-3">
+<h3 id="orgc2b8335"><span class="section-number-3">1.3.</span> NGX_HTTP_CONTENT_PHASE的两种介入方式</h3>
+<div class="outline-text-3" id="text-1-3">
+<ol class="org-ol">
+<li><p>
+和其他阶段相同，通过向ngx_http_core_main_conf_t结构中的phases数组中添加处理方法。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">ngx_int_t</span>
+<span style="color: #A6E22E;">ngx_http_gzip_static_init</span>(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>)
+{
+        <span style="color: #66D9EF;">ngx_http_handler_pt</span>        *<span style="color: #FD971F;">h</span>;
+        <span style="color: #66D9EF;">ngx_http_core_main_conf_t</span>  *<span style="color: #FD971F;">cmcf</span>;
+        cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
+        h = ngx_array_push(&amp;cmcf-&gt;phases[NGX_HTTP_CONTENT_PHASE].handlers);
+        *h = ngx_http_gzip_static_handler;
+        <span style="color: #F92672;">return</span> NGX_OK;
+}
+</pre>
+</div></li>
+<li><p>
+通过向location配置结构ngx_http_core_loc_conf_t中的handler成员赋值，来定义处理方法。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">char</span> *
+<span style="color: #A6E22E;">ngx_http_proxy_pass</span>(<span style="color: #66D9EF;">ngx_conf_t</span> *<span style="color: #FD971F;">cf</span>, <span style="color: #66D9EF;">ngx_command_t</span> *<span style="color: #FD971F;">cmd</span>, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">conf</span>)
+{
+        <span style="color: #66D9EF;">ngx_http_core_loc_conf_t</span>   *<span style="color: #FD971F;">clcf</span>;
+        clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+        clcf-&gt;handler = ngx_http_proxy_handler;
+        ......
+}
+</pre>
+</div></li>
+</ol>
+
+<p>
+注意：
+</p>
+<ol class="org-ol">
+<li>第一种方式中，通过向phase数组中添加处理函数，可以由任意个模块在NGX_HTTP_CONTENT_PHASE处理。</li>
+<li>如果采用第二种方式，设置ngx_http_core_loc_conf_t中的handler成员，则location内只能由一个模块处理。</li>
+<li>如果两种方式都设置的话，只有第二种方式生效。</li>
+<li>如果多个模块都使用第二种方式设置，则在location中，后面的配置会覆盖前面设置的handler回调。</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org1a65906" class="outline-3">
+<h3 id="org1a65906"><span class="section-number-3">1.4.</span> 初始化</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<div id="org0d5dbff" class="figure">
+<p><img src="./plantuml/http_block.png" alt="http_block.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge131ce9" class="outline-3">
+<h3 id="orge131ce9"><span class="section-number-3">1.5.</span> header filter和body filter</h3>
+</div>
+
+
+<div id="outline-container-org9170307" class="outline-3">
+<h3 id="org9170307"><span class="section-number-3">1.6.</span> 连接处理过程</h3>
+<div class="outline-text-3" id="text-1-6">
+
+<div id="org5cb3a70" class="figure">
+<p><img src="plantuml/connect-proc.png" alt="connect-proc.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8f81853" class="outline-3">
+<h3 id="org8f81853"><span class="section-number-3">1.7.</span> 阶段处理</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+checker方法整理：
+</p>
+
+<ul class="org-ul">
+<li>NGX_HTTP_SERVER_REWRITE_PHASE ngx_http_core_rewrite_phase</li>
+<li>NGX_HTTP_FIND_CONFIG_PHASE ngx_http_core_find_config_phase</li>
+<li>NGX_HTTP_REWRITE_PHASE ngx_http_core_rewrite_phase</li>
+<li>NGX_HTTP_POST_REWRITE_PHASE ngx_http_core_post_rewrite_phase</li>
+<li>NGX_HTTP_ACCESS_PHASE ngx_http_core_access_phase</li>
+<li>NGX_HTTP_POST_ACCESS_PHASE ngx_http_core_post_access_phase</li>
+<li>NGX_HTTP_CONTENT_PHASE ngx_http_core_content_phase</li>
+<li>ngx_http_core_generic_phase</li>
+</ul>
+
+
+<div id="orge98cd4e" class="figure">
+<p><img src="plantuml/phase-proc.png" alt="phase-proc.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6e2e0e8" class="outline-3">
+<h3 id="org6e2e0e8"><span class="section-number-3">1.8.</span> 反向代理请求处理</h3>
+<div class="outline-text-3" id="text-1-8">
+
+<div id="orged4ae18" class="figure">
+<p><img src="plantuml/proxy.png" alt="proxy.png" />
+</p>
+</div>
+
+
+
+<div id="org32bc625" class="figure">
+<p><img src="plantuml/proxy-resp.png" alt="proxy-resp.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaedeb63" class="outline-2">
+<h2 id="orgaedeb63"><span class="section-number-2">2.</span> nginx epoll</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org2c84946" class="outline-3">
+<h3 id="org2c84946"><span class="section-number-3">2.1.</span> epoll处理事件</h3>
+<div class="outline-text-3" id="text-2-1">
+
+<div id="org52d29f6" class="figure">
+<p><img src="plantuml/epoll-event.png" alt="epoll-event.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfe98e4e" class="outline-2">
+<h2 id="orgfe98e4e"><span class="section-number-2">3.</span> 数据结构</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org5cb0e9c" class="outline-3">
+<h3 id="org5cb0e9c"><span class="section-number-3">3.1.</span> 内存池</h3>
+<div class="outline-text-3" id="text-3-1">
+</div>
+<div id="outline-container-org1a08480" class="outline-4">
+<h4 id="org1a08480"><span class="section-number-4">3.1.1.</span> 结构关系</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ngx_pool_large_s</span>  <span style="color: #66D9EF;">ngx_pool_large_t</span>;
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ngx_pool_large_s</span> {
+        <span style="color: #66D9EF;">ngx_pool_large_t</span>     *<span style="color: #FD971F;">next</span>;
+        <span style="color: #66D9EF;">void</span>                 *<span style="color: #FD971F;">alloc</span>;
+};
+
+<span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> {
+        <span style="color: #66D9EF;">u_char</span>               *<span style="color: #FD971F;">last</span>;
+        <span style="color: #66D9EF;">u_char</span>               *<span style="color: #FD971F;">end</span>;
+        <span style="color: #66D9EF;">ngx_pool_t</span>           *<span style="color: #FD971F;">next</span>;
+        <span style="color: #66D9EF;">ngx_uint_t</span>            <span style="color: #FD971F;">failed</span>;
+} <span style="color: #66D9EF;">ngx_pool_data_t</span>;
+
+
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ngx_pool_s</span> {
+        <span style="color: #66D9EF;">ngx_pool_data_t</span>       <span style="color: #FD971F;">d</span>;
+        <span style="color: #66D9EF;">size_t</span>                <span style="color: #FD971F;">max</span>;
+        <span style="color: #66D9EF;">ngx_pool_t</span>           *<span style="color: #FD971F;">current</span>;
+        <span style="color: #66D9EF;">ngx_chain_t</span>          *<span style="color: #FD971F;">chain</span>;
+        <span style="color: #66D9EF;">ngx_pool_large_t</span>     *<span style="color: #FD971F;">large</span>;
+        <span style="color: #66D9EF;">ngx_pool_cleanup_t</span>   *<span style="color: #FD971F;">cleanup</span>;
+        <span style="color: #66D9EF;">ngx_log_t</span>            *<span style="color: #FD971F;">log</span>;
+};
+
+</pre>
+</div>
+
+
+<div id="org922b4fb" class="figure">
+<p><img src="dot/pool.png" alt="pool.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2d3a6ad" class="outline-4">
+<h4 id="org2d3a6ad"><span class="section-number-4">3.1.2.</span> 接口</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #A6E22E;">ngx_create_pool</span>(<span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">size</span>, <span style="color: #66D9EF;">ngx_log_t</span> *<span style="color: #FD971F;">log</span>);
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">ngx_destroy_pool</span>(<span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #FD971F;">pool</span>);
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">ngx_reset_pool</span>(<span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #FD971F;">pool</span>);
+
+<span style="color: #66D9EF;">void</span> *<span style="color: #A6E22E;">ngx_palloc</span>(<span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #FD971F;">pool</span>, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">size</span>);
+<span style="color: #66D9EF;">void</span> *<span style="color: #A6E22E;">ngx_pnalloc</span>(<span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #FD971F;">pool</span>, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">size</span>);
+<span style="color: #66D9EF;">void</span> *<span style="color: #A6E22E;">ngx_pcalloc</span>(<span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #FD971F;">pool</span>, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">size</span>);
+<span style="color: #66D9EF;">void</span> *<span style="color: #A6E22E;">ngx_pmemalign</span>(<span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #FD971F;">pool</span>, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">size</span>, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">alignment</span>);
+<span style="color: #66D9EF;">ngx_int_t</span> <span style="color: #A6E22E;">ngx_pfree</span>(<span style="color: #66D9EF;">ngx_pool_t</span> *<span style="color: #FD971F;">pool</span>, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">p</span>);
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfcd9dff" class="outline-3">
+<h3 id="orgfcd9dff"><span class="section-number-3">3.2.</span> hash</h3>
+<div class="outline-text-3" id="text-3-2">
+</div>
+<div id="outline-container-org2751e01" class="outline-4">
+<h4 id="org2751e01"><span class="section-number-4">3.2.1.</span> 数据结构关系</h4>
+<div class="outline-text-4" id="text-3-2-1">
+
+<div id="org4bb9bd7" class="figure">
+<p><img src="./dot/hash_st.png" alt="hash_st.png" />
+</p>
+</div>
+
+
+<div id="org17d1ed7" class="figure">
+<p><img src="./dot/hash_relation.png" alt="hash_relation.png" />
+</p>
+</div>
+
+<p>
+说明:
+</p>
+<ol class="org-ol">
+<li>实际的ngx_hash_elt_t在内存中的大小由name成员的长度决定;</li>
+</ol>
+
+
+
+
+<div id="orgbec98b5" class="figure">
+<p><img src="./dot/wc_hash_relation.png" alt="wc_hash_relation.png" />
+</p>
+</div>
+
+
+
+<div id="org44c1607" class="figure">
+<p><img src="./dot/hash_wc_key_relation.png" alt="hash_wc_key_relation.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge4e6622" class="outline-4">
+<h4 id="orge4e6622"><span class="section-number-4">3.2.2.</span> 初始化流程</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<ul class="org-ul">
+<li>精确匹配正则初始化</li>
+</ul>
+
+
+<div id="org7003b53" class="figure">
+<p><img src="./plantuml/hash_init.png" alt="hash_init.png" />
+</p>
+</div>
+
+
+<ul class="org-ul">
+<li><p>
+通配符hash正则初始化
+通配符正则的初始化通过接口 <code>ngx_hash_wildcard_init</code> 进行初始化，这个函数中又使用了递归调用。以下值说明大致的初始化流程和初始化后的结果。
+</p>
+
+<ul class="org-ul">
+<li><p>
+首先在初始化之前，需要对key值进行排序，以下摘抄nginx一段初始化代码：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">if</span> (conf-&gt;keys-&gt;dns_wc_head.nelts) {
+        ngx_qsort(conf-&gt;keys-&gt;dns_wc_head.elts, (<span style="color: #66D9EF;">size_t</span>) conf-&gt;keys-&gt;dns_wc_head.nelts, <span style="color: #F92672;">sizeof</span>(ngx_hash_key_t),ngx_http_cmp_referer_wildcards);
+        hash.hash = <span style="color: #AE81FF;">NULL</span>;
+        hash.temp_pool = cf-&gt;temp_pool;
+        <span style="color: #F92672;">if</span> (ngx_hash_wildcard_init(&amp;hash, conf-&gt;keys-&gt;dns_wc_head.elts, conf-&gt;keys-&gt;dns_wc_head.nelts)
+            != NGX_OK)
+                <span style="color: #F92672;">return</span> NGX_CONF_ERROR;
+        conf-&gt;hash.wc_head = (<span style="color: #66D9EF;">ngx_hash_wildcard_t</span> *) hash.hash;
+}
+</pre>
+</div></li>
+<li>使用 ‘.’ 将域名拆分，首先将所有域名的第一段保存在一个数组（curr_names）中，注意curr_names中的name都不重复。</li>
+<li>在上一步骤中，如果多个域名第一段相同，则将这些域名的第二段保存在另一个数组（next_names）中，然后递归调用 <code>ngx_hash_wildcard_init</code> 进行初始化，并将hash表的地址保存在上一部中的curr_names中的value中。</li>
+<li>如此直到初始化完成。</li>
+</ul>
+
+<p>
+说明：
+</p></li>
+</ul>
+
+
+<div id="org45d2d8d" class="figure">
+<p><img src="./dot/wc_hash_init.png" alt="wc_hash_init.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb3ef4fb" class="outline-4">
+<h4 id="orgb3ef4fb"><span class="section-number-4">3.2.3.</span> 添加流程</h4>
+<div class="outline-text-4" id="text-3-2-3">
+
+<div id="orgad2d2ad" class="figure">
+<p><img src="./plantuml/wc_hash_add.png" alt="wc_hash_add.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orged36840" class="outline-3">
+<h3 id="orged36840"><span class="section-number-3">3.3.</span> chain buf</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ngx_chain_s</span> {
+    <span style="color: #66D9EF;">ngx_buf_t</span>    *<span style="color: #FD971F;">buf</span>;
+    <span style="color: #66D9EF;">ngx_chain_t</span>  *<span style="color: #FD971F;">next</span>;
+};
+
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ngx_buf_s</span> {
+    <span style="color: #66D9EF;">u_char</span>          *<span style="color: #FD971F;">pos</span>;
+    <span style="color: #66D9EF;">u_char</span>          *<span style="color: #FD971F;">last</span>;
+    <span style="color: #66D9EF;">off_t</span>            <span style="color: #FD971F;">file_pos</span>;
+    <span style="color: #66D9EF;">off_t</span>            <span style="color: #FD971F;">file_last</span>;
+
+    <span style="color: #66D9EF;">u_char</span>          *<span style="color: #FD971F;">start</span>;         <span style="color: #75715E;">/* </span><span style="color: #75715E;">start of buffer</span><span style="color: #75715E;"> */</span>
+    <span style="color: #66D9EF;">u_char</span>          *<span style="color: #FD971F;">end</span>;           <span style="color: #75715E;">/* </span><span style="color: #75715E;">end of buffer</span><span style="color: #75715E;"> */</span>
+    <span style="color: #66D9EF;">ngx_buf_tag_t</span>    <span style="color: #FD971F;">tag</span>;
+    <span style="color: #66D9EF;">ngx_file_t</span>      *<span style="color: #FD971F;">file</span>;
+    <span style="color: #66D9EF;">ngx_buf_t</span>       *<span style="color: #FD971F;">shadow</span>;
+
+
+    <span style="color: #75715E;">/* </span><span style="color: #75715E;">the buf's content could be changed</span><span style="color: #75715E;"> */</span>
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">temporary</span>:1;
+
+    <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">     * the buf's content is in a memory cache or in a read only memory</span>
+<span style="color: #75715E;">     * and must not be changed</span>
+<span style="color: #75715E;">     */</span>
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">memory</span>:1;
+
+    <span style="color: #75715E;">/* </span><span style="color: #75715E;">the buf's content is mmap()ed and must not be changed</span><span style="color: #75715E;"> */</span>
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">mmap</span>:1;
+
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">recycled</span>:1;
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">in_file</span>:1;
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">flush</span>:1;
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">sync</span>:1;
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">last_buf</span>:1;
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">last_in_chain</span>:1;
+
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">last_shadow</span>:1;
+    <span style="color: #66D9EF;">unsigned</span>         <span style="color: #FD971F;">temp_file</span>:1;
+
+    <span style="color: #75715E;">/* </span><span style="color: #75715E;">STUB</span><span style="color: #75715E;"> */</span> <span style="color: #66D9EF;">int</span>   <span style="color: #FD971F;">num</span>;
+};
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org49b2d0c" class="outline-2">
+<h2 id="org49b2d0c"><span class="section-number-2">4.</span> 正则使用</h2>
+</div>
+
+<div id="outline-container-orgd3ddb40" class="outline-2">
+<h2 id="orgd3ddb40"><span class="section-number-2">5.</span> REUSEPORT</h2>
+</div>
+
+<div id="outline-container-org45256bd" class="outline-2">
+<h2 id="org45256bd"><span class="section-number-2">6.</span> UPSTREAM</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org71f999b" class="outline-3">
+<h3 id="org71f999b"><span class="section-number-3">6.1.</span> non buffer</h3>
+<div class="outline-text-3" id="text-6-1">
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span>
+<span style="color: #A6E22E;">ngx_http_upstream_process_non_buffered_downstream</span>(<span style="color: #66D9EF;">ngx_http_request_t</span> *<span style="color: #FD971F;">r</span>)
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span>
+<span style="color: #A6E22E;">ngx_http_upstream_process_non_buffered_upstream</span>(<span style="color: #66D9EF;">ngx_http_request_t</span> *<span style="color: #FD971F;">r</span>,
+    <span style="color: #66D9EF;">ngx_http_upstream_t</span> *<span style="color: #FD971F;">u</span>)
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span>
+<span style="color: #A6E22E;">ngx_http_upstream_process_non_buffered_request</span>(<span style="color: #66D9EF;">ngx_http_request_t</span> *<span style="color: #FD971F;">r</span>,<span style="color: #66D9EF;">ngx_uint_t</span> <span style="color: #FD971F;">do_write</span>)
+
+<span style="color: #66D9EF;">ngx_int_t</span> <span style="color: #A6E22E;">ngx_http_upstream_non_buffered_filter</span>(<span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">data</span>, <span style="color: #66D9EF;">ssize_t</span> <span style="color: #FD971F;">bytes</span>)
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org40c1095" class="outline-3">
+<h3 id="org40c1095"><span class="section-number-3">6.2.</span> buffering</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

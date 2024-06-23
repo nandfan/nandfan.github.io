@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-18 Sat 10:22 -->
+<!-- 2024-06-23 Sun 15:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>dot编程语法</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,140 +191,92 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
-	displayAlign: "center",
-	displayIndent: "0em",
+        displayAlign: "center",
+        displayIndent: "0em",
 
-	"HTML-CSS": { scale: 100,
-			linebreaks: { automatic: "false" },
-			webFont: "TeX"
-		       },
-	SVG: {scale: 100,
-	      linebreaks: { automatic: "false" },
-	      font: "TeX"},
-	NativeMML: {scale: 100},
-	TeX: { equationNumbers: {autoNumber: "AMS"},
-	       MultLineWidth: "85%",
-	       TagSide: "right",
-	       TagIndent: ".8em"
-	     }
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
 });
 </script>
-<script type="text/javascript"
-	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">dot编程语法</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgb0d7f80">1. Dot编程语法</a>
+<li><a href="#org8e7a114">1. Dot编程语法</a>
 <ul>
-<li><a href="#orga9b49b6">1.1. 格式概览</a></li>
-<li><a href="#orgd29de22">1.2. Subgraphs和Cluster</a></li>
-<li><a href="#org9c84afc">1.3. 词法和语法注释</a></li>
-<li><a href="#orge0e18c8">1.4. 编码</a></li>
+<li><a href="#org97d600e">1.1. 格式概览</a></li>
+<li><a href="#org6ca9cfe">1.2. Subgraphs和Cluster</a></li>
+<li><a href="#org26db72f">1.3. 词法和语法注释</a></li>
+<li><a href="#org0e04b50">1.4. 编码</a></li>
 </ul>
 </li>
-<li><a href="#org80973af">2. 用户手册</a>
+<li><a href="#org8b4e97f">2. 用户手册</a>
 <ul>
-<li><a href="#orgea77007">2.1. Node的主要属性</a></li>
-<li><a href="#org6156baa">2.2. Edge的主要属性</a></li>
-<li><a href="#org572451c">2.3. Graph的主要属性</a></li>
+<li><a href="#org4bee602">2.1. Node的主要属性</a></li>
+<li><a href="#orga6492b7">2.2. Edge的主要属性</a></li>
+<li><a href="#org43dd87f">2.3. Graph的主要属性</a></li>
 </ul>
 </li>
-<li><a href="#orgc89faa7">3. Node、Edge、Graph属性</a>
+<li><a href="#org23092df">3. Node、Edge、Graph属性</a>
 <ul>
-<li><a href="#orga530f72">3.1. 属性概览</a></li>
-<li><a href="#org38c4e44">3.2. 属性描述</a></li>
-<li><a href="#orged55b9c">3.3. 属性类型描述</a></li>
+<li><a href="#orgfa032d7">3.1. 属性概览</a></li>
+<li><a href="#org0808d7b">3.2. 属性描述</a></li>
+<li><a href="#org5dbb22e">3.3. 属性类型描述</a></li>
 </ul>
 </li>
-<li><a href="#org6afc081">4. Node形状</a>
+<li><a href="#orgaefd905">4. Node形状</a>
 <ul>
-<li><a href="#org8bd565d">4.1. 基于多边形的Nodes</a></li>
-<li><a href="#org210d01c">4.2. 基于记录的Nodes</a></li>
-<li><a href="#orgeb2f732">4.3. Node的样式</a></li>
-<li><a href="#orgafa3fa5">4.4. 类HTML的标签</a>
+<li><a href="#org7345588">4.1. 基于多边形的Nodes</a></li>
+<li><a href="#orgc9bfbed">4.2. 基于记录的Nodes</a></li>
+<li><a href="#orge3da1bd">4.3. Node的样式</a></li>
+<li><a href="#org88da95a">4.4. 类HTML的标签</a>
 <ul>
-<li><a href="#org184b49b">4.4.1. 用户自定义Node</a></li>
-<li><a href="#org44a28d8">4.4.2. SDL Shapes for PostScript</a></li>
+<li><a href="#org1c80e23">4.4.1. 用户自定义Node</a></li>
+<li><a href="#org9db45e6">4.4.2. SDL Shapes for PostScript</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orga6cdc01">5. 箭头形状</a></li>
-<li><a href="#orgd7a74bc">6. 颜色</a>
+<li><a href="#org0629978">5. 箭头形状</a></li>
+<li><a href="#org3191bde">6. 颜色</a>
 <ul>
-<li><a href="#orga9350d2">6.1. X11配色方案</a></li>
-<li><a href="#orge957aa6">6.2. SVG配色方案</a></li>
+<li><a href="#orge3c0ff4">6.1. X11配色方案</a></li>
+<li><a href="#org4a47ef2">6.2. SVG配色方案</a></li>
 </ul>
 </li>
-<li><a href="#orgccff280">7. 总结整理</a>
+<li><a href="#orgff1bc94">7. 总结整理</a>
 <ul>
-<li><a href="#orge81ba1e">7.1. 图表类型</a></li>
-<li><a href="#org564843e">7.2. 图表属性</a></li>
-<li><a href="#orge8c7743">7.3. node属性</a></li>
-<li><a href="#org7fe7edd">7.4. edge属性</a></li>
-<li><a href="#org8e5a7eb">7.5. 方向说明</a></li>
-<li><a href="#org273ffe7">7.6. 形状</a></li>
+<li><a href="#org78c5dee">7.1. 图表类型</a></li>
+<li><a href="#org7a084fe">7.2. 图表属性</a></li>
+<li><a href="#org7ffba18">7.3. node属性</a></li>
+<li><a href="#org9cb2edd">7.4. edge属性</a></li>
+<li><a href="#orgb492925">7.5. 方向说明</a></li>
+<li><a href="#orgb096cd5">7.6. 形状</a></li>
 </ul>
 </li>
-<li><a href="#orga4193ff">8. 方向</a></li>
-<li><a href="#org7ba3439">9. 图的属性</a></li>
+<li><a href="#orgaf2b4e0">8. 方向</a></li>
+<li><a href="#org186edb4">9. 图的属性</a></li>
 </ul>
 </div>
 </div>
@@ -332,21 +285,21 @@ for the JavaScript code in this tag.
 <a href="https://www.cnblogs.com/CoolJie/archive/2012/07/17/graphviz.html">https://www.cnblogs.com/CoolJie/archive/2012/07/17/graphviz.html</a>
 </p>
 
-<div id="outline-container-orgb0d7f80" class="outline-2">
-<h2 id="orgb0d7f80"><span class="section-number-2">1</span> Dot编程语法</h2>
+<div id="outline-container-org8e7a114" class="outline-2">
+<h2 id="org8e7a114"><span class="section-number-2">1.</span> Dot编程语法</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orga9b49b6" class="outline-3">
-<h3 id="orga9b49b6"><span class="section-number-3">1.1</span> 格式概览</h3>
+<div id="outline-container-org97d600e" class="outline-3">
+<h3 id="org97d600e"><span class="section-number-3">1.1.</span> 格式概览</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-fundamental">     graph : [ strict ] (graph | digraph) [ ID ] '{' stmt_list '}'
  stmt_list : [ stmt [ ';' ] stmt_list ]
       stmt : node_stmt
-	   | edge_stmt
-	   | attr_stmt
-	   | ID '=' ID
-	   | subgraph
+           | edge_stmt
+           | attr_stmt
+           | ID '=' ID
+           | subgraph
  attr_stmt : (graph | node | edge) attr_list
  attr_list : '[' [ a_list ] ']' [ attr_list ]
     a_list : ID '=' ID [ (';' | ',') ] [ a_list ]
@@ -355,7 +308,7 @@ for the JavaScript code in this tag.
  node_stmt : node_id [ attr_list ]
    node_id : ID [ port ]
       port : ':' ID [ ':' compass_pt ]
-	   | ':' compass_pt
+           | ':' compass_pt
   subgraph : [ subgraph [ ID ] ] '{' stmt_list '}'
 compass_pt : (n | ne | e | se | s | sw | w | nw | c | _)
 
@@ -396,8 +349,8 @@ ID可以是以下命名格式:
 </div>
 
 
-<div id="outline-container-orgd29de22" class="outline-3">
-<h3 id="orgd29de22"><span class="section-number-3">1.2</span> Subgraphs和Cluster</h3>
+<div id="outline-container-org6ca9cfe" class="outline-3">
+<h3 id="org6ca9cfe"><span class="section-number-3">1.2.</span> Subgraphs和Cluster</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 Graphviz中 subgraphs扮演三个角色
@@ -424,17 +377,17 @@ A -&gt; C;
 提供一个上下文来设置, 例如为所有node指定默认颜色; 另一个例子是:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">test</span>{
-	<span style="color: #FF1493;">subgraph</span> {
-		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>;
-		A; B; C;
-	}
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">test</span>{
+        <span style="color: #F92672;">subgraph</span> {
+                <span style="color: #FD971F;">rank =</span> <span style="color: #AE81FF;">same</span>;
+                A; B; C;
+        }
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orgd7a6bd8" class="figure">
 <p><img src="./dot/dot/dot_rank_same.png" alt="dot_rank_same.png" />
 </p>
 </div>
@@ -450,8 +403,8 @@ A -&gt; C;
 
 
 
-<div id="outline-container-org9c84afc" class="outline-3">
-<h3 id="org9c84afc"><span class="section-number-3">1.3</span> 词法和语法注释</h3>
+<div id="outline-container-org26db72f" class="outline-3">
+<h3 id="org26db72f"><span class="section-number-3">1.3.</span> 词法和语法注释</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 graph 必须被指定为 digraph或者graph, 指定了是有向图还是无向图.
@@ -466,16 +419,16 @@ graph 可以被指定为 <code>strict</code>, 例如, 在有向图中,尾node和
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">strict graph</span> {
+<pre class="src src-dot"><span style="color: #F92672;">strict graph</span> {
   a -- b
   a -- b
-  b -- a [<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">blue</span>]
+  b -- a [<span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">blue</span>]
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org7e1f181" class="figure">
 <p><img src="./dot/dot/dot_strict.png" alt="dot_strict.png" />
 </p>
 </div>
@@ -504,8 +457,8 @@ subgraph 和 cluster 有一些限制. 首先, graph 和 subgraphs 共享相同�
 </div>
 
 
-<div id="outline-container-orge0e18c8" class="outline-3">
-<h3 id="orge0e18c8"><span class="section-number-3">1.4</span> 编码</h3>
+<div id="outline-container-org0e04b50" class="outline-3">
+<h3 id="org0e04b50"><span class="section-number-3">1.4.</span> 编码</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 Dot语言至少采用ascii字符集. 双引号的字符串, 普通字符或者类似html语法可能会包含一些非ascii字符,  在大多数情况下，这些字符串是无法被dot解释, 只是用来作标识或者直接传递, 但标签是需要显示的, 这需要软件能计算文件的大小并确定适当的字形. 因此它需要知道使用的字符编码.
@@ -527,12 +480,12 @@ DOT默认假定使用UTF-8编码, 它也支持Latin1（ISO-8859-1）编码, 可�
 </div>
 
 
-<div id="outline-container-org80973af" class="outline-2">
-<h2 id="org80973af"><span class="section-number-2">2</span> 用户手册</h2>
+<div id="outline-container-org8b4e97f" class="outline-2">
+<h2 id="org8b4e97f"><span class="section-number-2">2.</span> 用户手册</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgea77007" class="outline-3">
-<h3 id="orgea77007"><span class="section-number-3">2.1</span> Node的主要属性</h3>
+<div id="outline-container-org4bee602" class="outline-3">
+<h3 id="org4bee602"><span class="section-number-3">2.1.</span> Node的主要属性</h3>
 <div class="outline-text-3" id="text-2-1">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -749,8 +702,8 @@ DOT默认假定使用UTF-8编码, 它也支持Latin1（ISO-8859-1）编码, 可�
 </div>
 
 
-<div id="outline-container-org6156baa" class="outline-3">
-<h3 id="org6156baa"><span class="section-number-3">2.2</span> Edge的主要属性</h3>
+<div id="outline-container-orga6492b7" class="outline-3">
+<h3 id="orga6492b7"><span class="section-number-3">2.2.</span> Edge的主要属性</h3>
 <div class="outline-text-3" id="text-2-2">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -1098,8 +1051,8 @@ DOT默认假定使用UTF-8编码, 它也支持Latin1（ISO-8859-1）编码, 可�
 </div>
 </div>
 
-<div id="outline-container-org572451c" class="outline-3">
-<h3 id="org572451c"><span class="section-number-3">2.3</span> Graph的主要属性</h3>
+<div id="outline-container-org43dd87f" class="outline-3">
+<h3 id="org43dd87f"><span class="section-number-3">2.3.</span> Graph的主要属性</h3>
 <div class="outline-text-3" id="text-2-3">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -1437,12 +1390,12 @@ DOT默认假定使用UTF-8编码, 它也支持Latin1（ISO-8859-1）编码, 可�
 </div>
 
 
-<div id="outline-container-orgc89faa7" class="outline-2">
-<h2 id="orgc89faa7"><span class="section-number-2">3</span> Node、Edge、Graph属性</h2>
+<div id="outline-container-org23092df" class="outline-2">
+<h2 id="org23092df"><span class="section-number-2">3.</span> Node、Edge、Graph属性</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-orga530f72" class="outline-3">
-<h3 id="orga530f72"><span class="section-number-3">3.1</span> 属性概览</h3>
+<div id="outline-container-orgfa032d7" class="outline-3">
+<h3 id="orgfa032d7"><span class="section-number-3">3.1.</span> 属性概览</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 下表描述了Graphviz工具的各种属性. 该表给出了了属性名称, 使用该属性的图形组件（node, edge等）以及属性的类型（合法的类型字符串）. 表格还提供了属性的默认值, 属性允许设置的最小数值, 以及对属性使用的某些限制.
@@ -3066,8 +3019,8 @@ Dot允许标准的C语言的 int 和 double 类型.  对于BOOL类型, true或�
 </div>
 
 
-<div id="outline-container-org38c4e44" class="outline-3">
-<h3 id="org38c4e44"><span class="section-number-3">3.2</span> 属性描述</h3>
+<div id="outline-container-org0808d7b" class="outline-3">
+<h3 id="org0808d7b"><span class="section-number-3">3.2.</span> 属性描述</h3>
 <div class="outline-text-3" id="text-3-2">
 <dl class="org-dl">
 <dt>_background : string, default: &lt;node&gt;, Valid for: Graphs</dt><dd><p>
@@ -3125,21 +3078,21 @@ Dot允许标准的C语言的 int 和 double 类型.  对于BOOL类型, true或�
 示例:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
-  <span style="color: #FF1493;">graph</span> [class=<span style="color: #CDC673;">"cats"</span>];
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
+  <span style="color: #F92672;">graph</span> [class=<span style="color: #E6DB74;">"cats"</span>];
 
-  <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_big</span> {
-    <span style="color: #FF1493;">graph</span> [class=<span style="color: #CDC673;">"big_cats"</span>];
+  <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_big</span> {
+    <span style="color: #F92672;">graph</span> [class=<span style="color: #E6DB74;">"big_cats"</span>];
 
-    <span style="color: #CDC673;">"Lion"</span> [class=<span style="color: #CDC673;">"yellow social"</span>];
-    <span style="color: #CDC673;">"Snow Leopard"</span> [class=<span style="color: #CDC673;">"white solitary"</span>];
+    <span style="color: #E6DB74;">"Lion"</span> [class=<span style="color: #E6DB74;">"yellow social"</span>];
+    <span style="color: #E6DB74;">"Snow Leopard"</span> [class=<span style="color: #E6DB74;">"white solitary"</span>];
   }
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orgffcc872" class="figure">
 <p><img src="./dot/dot/dot_class.png" alt="dot_class.png" />
 </p>
 </div></dd>
@@ -3181,9 +3134,9 @@ edge的值可以是单色, 也可以是 colorList.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
-  a -&gt; b [<span style="color: #FF8C00;">dir=</span><span style="color: #AF87FF;">both</span> <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"red:blue"</span>]
-  c -&gt; d [<span style="color: #FF8C00;">dir=</span><span style="color: #AF87FF;">none</span> <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"green:red;0.25:blue"</span>]
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
+  a -&gt; b [<span style="color: #FD971F;">dir=</span><span style="color: #AE81FF;">both</span> <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"red:blue"</span>]
+  c -&gt; d [<span style="color: #FD971F;">dir=</span><span style="color: #AE81FF;">none</span> <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"green:red;0.25:blue"</span>]
 }
 </pre>
 </div>
@@ -3226,10 +3179,10 @@ edge的值可以是单色, 也可以是 colorList.
 为false时, node的排列不参考edge
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
   a -&gt; c;
   a -&gt; b;
-  b -&gt; c [<span style="color: #FF8C00;">constraint=</span><span style="color: #AF87FF;">false</span>];
+  b -&gt; c [<span style="color: #FD971F;">constraint=</span><span style="color: #AE81FF;">false</span>];
 }
 </pre>
 </div>
@@ -4620,8 +4573,8 @@ Even if no z values are specified in the input, it is necessary to declare a z a
 </div>
 
 
-<div id="outline-container-orged55b9c" class="outline-3">
-<h3 id="orged55b9c"><span class="section-number-3">3.3</span> 属性类型描述</h3>
+<div id="outline-container-org5dbb22e" class="outline-3">
+<h3 id="org5dbb22e"><span class="section-number-3">3.3.</span> 属性类型描述</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 以下列表列出了给定类型值的合法字符串.  描述合法的类型字符串语法可以时 文字字符串, stdio编码(例如 double为%f), 正则表达式的混合.对于正则表达式, (&#x2026;)* 表示括在括号中的表达式为0个或多个,  (&#x2026;)+表示1个或多个, (&#x2026;)?表示0或1个.
@@ -5588,8 +5541,8 @@ Attributes: viewport
 
 
 
-<div id="outline-container-org6afc081" class="outline-2">
-<h2 id="org6afc081"><span class="section-number-2">4</span> Node形状</h2>
+<div id="outline-container-orgaefd905" class="outline-2">
+<h2 id="orgaefd905"><span class="section-number-2">4.</span> Node形状</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 主要有三种类型: polygon-based, record-based和用户自定义. record-based 形状在很大程度上已被类似HTML的标签所取代和概括. 也就是说, 使用shape=none, margin=0的类似HTML的标签替代shape=record.
@@ -5600,8 +5553,8 @@ Attributes: viewport
 </p>
 </div>
 
-<div id="outline-container-org8bd565d" class="outline-3">
-<h3 id="org8bd565d"><span class="section-number-3">4.1</span> 基于多边形的Nodes</h3>
+<div id="outline-container-org7345588" class="outline-3">
+<h3 id="org7345588"><span class="section-number-3">4.1.</span> 基于多边形的Nodes</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 下面显示了 polygon-based 可能的形状.
@@ -5819,11 +5772,11 @@ polygon-based几何形状可以node属性(regular peripheries orientation)来影
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
   {
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">margin=</span>0 <span style="color: #FF8C00;">fontcolor=</span><span style="color: #CDC673;">blue</span> <span style="color: #FF8C00;">fontsize=</span>32 <span style="color: #FF8C00;">width=</span>0.5 <span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">circle</span> <span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>]
-    b [<span style="color: #FF8C00;">fillcolor=</span><span style="color: #CDC673;">yellow</span> <span style="color: #FF8C00;">fixedsize=</span><span style="color: #AF87FF;">true</span> <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"a very long label"</span>]
-    d [<span style="color: #FF8C00;">fixedsize=</span>shape <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"an even longer label"</span>]
+    <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">margin=</span>0 <span style="color: #FD971F;">fontcolor=</span><span style="color: #E6DB74;">blue</span> <span style="color: #FD971F;">fontsize=</span>32 <span style="color: #FD971F;">width=</span>0.5 <span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">circle</span> <span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">filled</span>]
+    b [<span style="color: #FD971F;">fillcolor=</span><span style="color: #E6DB74;">yellow</span> <span style="color: #FD971F;">fixedsize=</span><span style="color: #AE81FF;">true</span> <span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"a very long label"</span>]
+    d [<span style="color: #FD971F;">fixedsize=</span>shape <span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"an even longer label"</span>]
   }
   a -&gt; {c d}
   b -&gt; {c d}
@@ -5832,13 +5785,13 @@ polygon-based几何形状可以node属性(regular peripheries orientation)来影
 </div>
 
 
-<div class="figure">
+<div id="org9d7b3b7" class="figure">
 <p><img src="./dot/dot/dot_size.png" alt="dot_size.png" />
 </p>
 </div>
 
 
-<div class="figure">
+<div id="org9b33734" class="figure">
 <p><img src="./image/dot/fixed.gif" alt="fixed.gif" />
 </p>
 </div>
@@ -5853,8 +5806,8 @@ The shapes: note, tab, folder, box3d and component were provided by Pander. The 
 </div>
 </div>
 
-<div id="outline-container-org210d01c" class="outline-3">
-<h3 id="org210d01c"><span class="section-number-3">4.2</span> 基于记录的Nodes</h3>
+<div id="outline-container-orgc9bfbed" class="outline-3">
+<h3 id="orgc9bfbed"><span class="section-number-3">4.2.</span> 基于记录的Nodes</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 注意: 请参阅本页顶部有关record-based的node的注释. 另外还要注意, 如果相同rank的一个或两个node都具有record形状, 并且之间使用non-trivial的edges(带有port或者labels的edge)会有问题.
@@ -5890,13 +5843,13 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 示例:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">structs</span> {
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>];
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">rankdir=LR</span>
-    struct1 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"</span>];
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">struct1 [label="&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"; shape=Mrecord];</span>
-    struct2 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
-    struct3 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"hello&amp;#92;nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">structs</span> {
+    <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">record</span>];
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">rankdir=LR</span>
+    struct1 [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"</span>];
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">struct1 [label="&lt;f0&gt; left|&lt;f1&gt; mid&amp;#92; dle|&lt;f2&gt; right"; shape=Mrecord];</span>
+    struct2 [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
+    struct3 [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"hello&amp;#92;nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
     struct1:f1 -&gt; struct2:f0;
     struct1:f2 -&gt; struct3:here;
 }
@@ -5908,7 +5861,7 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 </p>
 
 
-<div class="figure">
+<div id="org61454ef" class="figure">
 <p><img src="./image/dot/record.gif" alt="record.gif" />
 </p>
 </div>
@@ -5918,7 +5871,7 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 </p>
 
 
-<div class="figure">
+<div id="org0afcf2b" class="figure">
 <p><img src="./image/dot/record2.gif" alt="record2.gif" />
 </p>
 </div>
@@ -5928,7 +5881,7 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 </p>
 
 
-<div class="figure">
+<div id="org4596918" class="figure">
 <p><img src="./image/dot/mrecord.gif" alt="mrecord.gif" />
 </p>
 </div>
@@ -5937,8 +5890,8 @@ record node的初始方向取决于rankdir属性. 如果此属性是TB(默认)�
 
 
 
-<div id="outline-container-orgeb2f732" class="outline-3">
-<h3 id="orgeb2f732"><span class="section-number-3">4.3</span> Node的样式</h3>
+<div id="outline-container-orge3da1bd" class="outline-3">
+<h3 id="orge3da1bd"><span class="section-number-3">4.3.</span> Node的样式</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
 style属性可用于修改node的外观, 目前, 有8个样式值: filled, invisible, diagonals, rounded,  dashed, dotted, solid和bold. 通常, style属性的值可以是一个逗号分隔的列表. 如果样式包含冲突(例如style="dotted, solid"), 则使用最后一个属性.
@@ -5950,25 +5903,25 @@ style属性可用于修改node的外观, 目前, 有8个样式值: filled, invis
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
-  <span style="color: #FF8C00;">rankdir=</span><span style="color: #AF87FF;">LR</span>
-  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">blue</span>]
-  node1 [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>]
-  node2 [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00;">fillcolor=</span><span style="color: #CDC673;">red</span>]
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
+  <span style="color: #FD971F;">rankdir=</span><span style="color: #AE81FF;">LR</span>
+  <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">box</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">blue</span>]
+  node1 [<span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">filled</span>]
+  node2 [<span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">filled</span>, <span style="color: #FD971F;">fillcolor=</span><span style="color: #E6DB74;">red</span>]
   node0 -&gt; node1 -&gt; node2
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org5e656fd" class="figure">
 <p><img src="./dot/dot/dot_fill.png" alt="dot_fill.png" />
 </p>
 </div></dd>
 </dl>
 
 
-<div class="figure">
+<div id="orgdad4f51" class="figure">
 <p><img src="./image/dot/fill.gif" alt="fill.gif" />
 </p>
 </div>
@@ -5985,12 +5938,12 @@ rounded示例:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">R</span> {
-  <span style="color: #FF8C00;">rankdir=</span><span style="color: #AF87FF;">LR</span>
-  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">rounded</span>]
-  node1 [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>]
-  node2 [<span style="color: #FF8C00;">fillcolor=</span><span style="color: #CDC673;">yellow</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"rounded,filled"</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">diamond</span>]
-  node3 [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>, <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{ a | b | c }"</span>]
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">R</span> {
+  <span style="color: #FD971F;">rankdir=</span><span style="color: #AE81FF;">LR</span>
+  <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">rounded</span>]
+  node1 [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">box</span>]
+  node2 [<span style="color: #FD971F;">fillcolor=</span><span style="color: #E6DB74;">yellow</span>, <span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"rounded,filled"</span>, <span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">diamond</span>]
+  node3 [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">record</span>, <span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"{ a | b | c }"</span>]
 
   node1 -&gt; node2 -&gt; node3
 }
@@ -5998,13 +5951,13 @@ rounded示例:
 </div>
 
 
-<div class="figure">
+<div id="orgdde519b" class="figure">
 <p><img src="./dot/dot/dot_round.png" alt="dot_round.png" />
 </p>
 </div>
 
 
-<div class="figure">
+<div id="orgd59eb81" class="figure">
 <p><img src="./image/dot/round.gif" alt="round.gif" />
 </p>
 </div></dd>
@@ -6017,8 +5970,8 @@ rounded示例:
 </div>
 </div>
 
-<div id="outline-container-orgafa3fa5" class="outline-3">
-<h3 id="orgafa3fa5"><span class="section-number-3">4.4</span> 类HTML的标签</h3>
+<div id="outline-container-org88da95a" class="outline-3">
+<h3 id="org88da95a"><span class="section-number-3">4.4.</span> 类HTML的标签</h3>
 <div class="outline-text-3" id="text-4-4">
 <p>
 如果将labe属性的值(label用于node, edge, clusters, and graphs, and the headlabel and taillabel attributes of an edge) 指定为 HTML字符串, 即以&lt;&#x2026;&gt; 而不是"&#x2026;"分隔, 则将标签解释为HTML描述. 简单来说, 这样的标签可以描述普通字符串标签所提供的多行使用不同对齐的文本. 更一般地, 标签可以指定一个类似于HTML提供的表的表, 在每个级别上具有不同的图形属性.
@@ -6042,35 +5995,35 @@ rounded示例:
 
 <div class="org-src-container">
 <pre class="src src-fundamental">    label:text
-	 |fonttable
+         |fonttable
      text:textitem
-	 |text textitem
+         |text textitem
  textitem:string
-	 |&lt;BR/&gt;
-	 |&lt;FONT&gt; text &lt;/FONT&gt;
-	 |&lt;I&gt; text &lt;/I&gt;
-	 |&lt;B&gt; text &lt;/B&gt;
-	 |&lt;U&gt; text &lt;/U&gt;
-	 |&lt;O&gt; text &lt;/O&gt;
-	 |&lt;SUB&gt; text &lt;/SUB&gt;
-	 |&lt;SUP&gt; text &lt;/SUP&gt;
-	 |&lt;S&gt; text &lt;/S&gt;
+         |&lt;BR/&gt;
+         |&lt;FONT&gt; text &lt;/FONT&gt;
+         |&lt;I&gt; text &lt;/I&gt;
+         |&lt;B&gt; text &lt;/B&gt;
+         |&lt;U&gt; text &lt;/U&gt;
+         |&lt;O&gt; text &lt;/O&gt;
+         |&lt;SUB&gt; text &lt;/SUB&gt;
+         |&lt;SUP&gt; text &lt;/SUP&gt;
+         |&lt;S&gt; text &lt;/S&gt;
 fonttable:table
-	 |&lt;FONT&gt; table &lt;/FONT&gt;
-	 |&lt;I&gt; table &lt;/I&gt;
-	 |&lt;B&gt; table &lt;/B&gt;
-	 |&lt;U&gt; table &lt;/U&gt;
-	 |&lt;O&gt; table &lt;/O&gt;
+         |&lt;FONT&gt; table &lt;/FONT&gt;
+         |&lt;I&gt; table &lt;/I&gt;
+         |&lt;B&gt; table &lt;/B&gt;
+         |&lt;U&gt; table &lt;/U&gt;
+         |&lt;O&gt; table &lt;/O&gt;
     table:&lt;TABLE&gt; rows &lt;/TABLE&gt;
      rows:row
-	 |rows row
-	 |rows &lt;HR/&gt; row
+         |rows row
+         |rows &lt;HR/&gt; row
       row:&lt;TR&gt; cells &lt;/TR&gt;
     cells:cell
-	 |cells cell
-	 |cells &lt;VR/&gt; cell
+         |cells cell
+         |cells &lt;VR/&gt; cell
      cell:&lt;TD&gt; label &lt;/TD&gt;
-	 |&lt;TD&gt; &lt;IMG/&gt; &lt;/TD&gt;
+         |&lt;TD&gt; &lt;IMG/&gt; &lt;/TD&gt;
 </pre>
 </div>
 
@@ -6092,125 +6045,125 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 <div class="org-src-container">
-<pre class="src src-html"><span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Table element </span><span style="color: #8B8878;">--&gt;</span>
+<pre class="src src-html"><span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Table element</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">TABLE</span>
-  <span style="color: #FF8C00;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
-  <span style="color: #FF8C00;">BGCOLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00;">BORDER</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">CELLBORDER</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">CELLPADDING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">CELLSPACING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00;">COLUMNS</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">FIXEDSIZE</span>=<span style="color: #CDC673;">"FALSE|TRUE"</span>
-  <span style="color: #FF8C00;">GRADIENTANGLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">HEIGHT</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">HREF</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">ID</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">PORT</span>=<span style="color: #CDC673;">"portName"</span>
-  <span style="color: #FF8C00;">ROWS</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">SIDES</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">STYLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">TARGET</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">TITLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">TOOLTIP</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">VALIGN</span>=<span style="color: #CDC673;">"MIDDLE|BOTTOM|TOP"</span>
-  <span style="color: #FF8C00;">WIDTH</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #A6E22E;">TABLE</span>
+  <span style="color: #FD971F;">ALIGN</span>=<span style="color: #E6DB74;">"CENTER|LEFT|RIGHT"</span>
+  <span style="color: #FD971F;">BGCOLOR</span>=<span style="color: #E6DB74;">"color"</span>
+  <span style="color: #FD971F;">BORDER</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">CELLBORDER</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">CELLPADDING</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">CELLSPACING</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">COLOR</span>=<span style="color: #E6DB74;">"color"</span>
+  <span style="color: #FD971F;">COLUMNS</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">FIXEDSIZE</span>=<span style="color: #E6DB74;">"FALSE|TRUE"</span>
+  <span style="color: #FD971F;">GRADIENTANGLE</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">HEIGHT</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">HREF</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">ID</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">PORT</span>=<span style="color: #E6DB74;">"portName"</span>
+  <span style="color: #FD971F;">ROWS</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">SIDES</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">STYLE</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">TARGET</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">TITLE</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">TOOLTIP</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">VALIGN</span>=<span style="color: #E6DB74;">"MIDDLE|BOTTOM|TOP"</span>
+  <span style="color: #FD971F;">WIDTH</span>=<span style="color: #E6DB74;">"value"</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Table row </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Table row</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">TR</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">TR</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Table cell </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Table cell</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">TD</span>
-  <span style="color: #FF8C00;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT|TEXT"</span>
-  <span style="color: #FF8C00;">BALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
-  <span style="color: #FF8C00;">BGCOLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00;">BORDER</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">CELLPADDING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">CELLSPACING</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00;">COLSPAN</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">FIXEDSIZE</span>=<span style="color: #CDC673;">"FALSE|TRUE"</span>
-  <span style="color: #FF8C00;">GRADIENTANGLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">HEIGHT</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">HREF</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">ID</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">PORT</span>=<span style="color: #CDC673;">"portName"</span>
-  <span style="color: #FF8C00;">ROWSPAN</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">SIDES</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">STYLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">TARGET</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">TITLE</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">TOOLTIP</span>=<span style="color: #CDC673;">"value"</span>
-  <span style="color: #FF8C00;">VALIGN</span>=<span style="color: #CDC673;">"MIDDLE|BOTTOM|TOP"</span>
-  <span style="color: #FF8C00;">WIDTH</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #A6E22E;">TD</span>
+  <span style="color: #FD971F;">ALIGN</span>=<span style="color: #E6DB74;">"CENTER|LEFT|RIGHT|TEXT"</span>
+  <span style="color: #FD971F;">BALIGN</span>=<span style="color: #E6DB74;">"CENTER|LEFT|RIGHT"</span>
+  <span style="color: #FD971F;">BGCOLOR</span>=<span style="color: #E6DB74;">"color"</span>
+  <span style="color: #FD971F;">BORDER</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">CELLPADDING</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">CELLSPACING</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">COLOR</span>=<span style="color: #E6DB74;">"color"</span>
+  <span style="color: #FD971F;">COLSPAN</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">FIXEDSIZE</span>=<span style="color: #E6DB74;">"FALSE|TRUE"</span>
+  <span style="color: #FD971F;">GRADIENTANGLE</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">HEIGHT</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">HREF</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">ID</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">PORT</span>=<span style="color: #E6DB74;">"portName"</span>
+  <span style="color: #FD971F;">ROWSPAN</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">SIDES</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">STYLE</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">TARGET</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">TITLE</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">TOOLTIP</span>=<span style="color: #E6DB74;">"value"</span>
+  <span style="color: #FD971F;">VALIGN</span>=<span style="color: #E6DB74;">"MIDDLE|BOTTOM|TOP"</span>
+  <span style="color: #FD971F;">WIDTH</span>=<span style="color: #E6DB74;">"value"</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Font specification </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Font specification</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">FONT</span>
-  <span style="color: #FF8C00;">COLOR</span>=<span style="color: #CDC673;">"color"</span>
-  <span style="color: #FF8C00;">FACE</span>=<span style="color: #CDC673;">"fontname"</span>
-  <span style="color: #FF8C00;">POINT-SIZE</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #A6E22E;">FONT</span>
+  <span style="color: #FD971F;">COLOR</span>=<span style="color: #E6DB74;">"color"</span>
+  <span style="color: #FD971F;">FACE</span>=<span style="color: #E6DB74;">"fontname"</span>
+  <span style="color: #FD971F;">POINT-SIZE</span>=<span style="color: #E6DB74;">"value"</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Line break </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Line break</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">BR</span>
-  <span style="color: #FF8C00;">ALIGN</span>=<span style="color: #CDC673;">"CENTER|LEFT|RIGHT"</span>
+&lt;<span style="color: #A6E22E;">BR</span>
+  <span style="color: #FD971F;">ALIGN</span>=<span style="color: #E6DB74;">"CENTER|LEFT|RIGHT"</span>
 /&gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Image inclusion </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Image inclusion</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">IMG</span>
-  <span style="color: #FF8C00;">SCALE</span>=<span style="color: #CDC673;">"FALSE|TRUE|WIDTH|HEIGHT|BOTH"</span>
-  <span style="color: #FF8C00;">SRC</span>=<span style="color: #CDC673;">"value"</span>
+&lt;<span style="color: #A6E22E;">IMG</span>
+  <span style="color: #FD971F;">SCALE</span>=<span style="color: #E6DB74;">"FALSE|TRUE|WIDTH|HEIGHT|BOTH"</span>
+  <span style="color: #FD971F;">SRC</span>=<span style="color: #E6DB74;">"value"</span>
 /&gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Italic style </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Italic style</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">I</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">I</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Bold style </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Bold style</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">B</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">B</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Underline text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Underline text</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">U</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">U</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Overline text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Overline text</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">O</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">O</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Subscript text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Subscript text</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">SUB</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">SUB</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Superscript text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Superscript text</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">SUP</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">SUP</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Strike-through text </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Strike-through text</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">S</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">S</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 &gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Horizontal rule </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Horizontal rule</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">HR</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">HR</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 /&gt;
-<span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">Vertical rule </span><span style="color: #8B8878;">--&gt;</span>
+<span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">Vertical rule</span><span style="color: #75715E;"> --&gt;</span>
 
-&lt;<span style="color: #87D700;">VR</span>
-  <span style="color: #8B8878;">&lt;!-- </span><span style="color: #8B8878;">No attributes </span><span style="color: #8B8878;">--&gt;</span>
+&lt;<span style="color: #A6E22E;">VR</span>
+  <span style="color: #75715E;">&lt;!-- </span><span style="color: #75715E;">No attributes</span><span style="color: #75715E;"> --&gt;</span>
 /&gt;
 
 </pre>
@@ -6333,30 +6286,30 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">structs</span> {
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">plaintext</span>]
-    struct1 [<span style="color: #FF8C00;">label=</span>&lt;
-&lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD&gt;left&lt;/TD&gt;&lt;TD PORT=<span style="color: #CDC673;">"f1"</span>&gt;mid dle&lt;/TD&gt;&lt;TD PORT=<span style="color: #CDC673;">"f2"</span>&gt;right&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">structs</span> {
+    <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">plaintext</span>]
+    struct1 [<span style="color: #FD971F;">label=</span>&lt;
+&lt;TABLE BORDER=<span style="color: #E6DB74;">"0"</span> CELLBORDER=<span style="color: #E6DB74;">"1"</span> CELLSPACING=<span style="color: #E6DB74;">"0"</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;&lt;TD&gt;left&lt;/TD&gt;&lt;TD PORT=<span style="color: #E6DB74;">"f1"</span>&gt;mid dle&lt;/TD&gt;&lt;TD PORT=<span style="color: #E6DB74;">"f2"</span>&gt;right&lt;/TD&gt;&lt;/<span style="color: #AE81FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;];
-    struct2 [<span style="color: #FF8C00;">label=</span>&lt;
-&lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD PORT=<span style="color: #CDC673;">"f0"</span>&gt;one&lt;/TD&gt;&lt;TD&gt;two&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
+    struct2 [<span style="color: #FD971F;">label=</span>&lt;
+&lt;TABLE BORDER=<span style="color: #E6DB74;">"0"</span> CELLBORDER=<span style="color: #E6DB74;">"1"</span> CELLSPACING=<span style="color: #E6DB74;">"0"</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;&lt;TD PORT=<span style="color: #E6DB74;">"f0"</span>&gt;one&lt;/TD&gt;&lt;TD&gt;two&lt;/TD&gt;&lt;/<span style="color: #AE81FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;];
-    struct3 [<span style="color: #FF8C00;">label=</span>&lt;
-&lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span> CELLPADDING=<span style="color: #CDC673;">"4"</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;
-    &lt;TD ROWSPAN=<span style="color: #CDC673;">"3"</span>&gt;hello&lt;<span style="color: #AF87FF;">BR</span>/&gt;world&lt;/TD&gt;
-    &lt;TD COLSPAN=<span style="color: #CDC673;">"3"</span>&gt;b&lt;/TD&gt;
-    &lt;TD ROWSPAN=<span style="color: #CDC673;">"3"</span>&gt;g&lt;/TD&gt;
-    &lt;TD ROWSPAN=<span style="color: #CDC673;">"3"</span>&gt;h&lt;/TD&gt;
-  &lt;/<span style="color: #AF87FF;">TR</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;
-    &lt;TD&gt;c&lt;/TD&gt;&lt;TD PORT=<span style="color: #CDC673;">"here"</span>&gt;d&lt;/TD&gt;&lt;TD&gt;e&lt;/TD&gt;
-  &lt;/<span style="color: #AF87FF;">TR</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;
-    &lt;TD COLSPAN=<span style="color: #CDC673;">"3"</span>&gt;f&lt;/TD&gt;
-  &lt;/<span style="color: #AF87FF;">TR</span>&gt;
+    struct3 [<span style="color: #FD971F;">label=</span>&lt;
+&lt;TABLE BORDER=<span style="color: #E6DB74;">"0"</span> CELLBORDER=<span style="color: #E6DB74;">"1"</span> CELLSPACING=<span style="color: #E6DB74;">"0"</span> CELLPADDING=<span style="color: #E6DB74;">"4"</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;
+    &lt;TD ROWSPAN=<span style="color: #E6DB74;">"3"</span>&gt;hello&lt;<span style="color: #AE81FF;">BR</span>/&gt;world&lt;/TD&gt;
+    &lt;TD COLSPAN=<span style="color: #E6DB74;">"3"</span>&gt;b&lt;/TD&gt;
+    &lt;TD ROWSPAN=<span style="color: #E6DB74;">"3"</span>&gt;g&lt;/TD&gt;
+    &lt;TD ROWSPAN=<span style="color: #E6DB74;">"3"</span>&gt;h&lt;/TD&gt;
+  &lt;/<span style="color: #AE81FF;">TR</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;
+    &lt;TD&gt;c&lt;/TD&gt;&lt;TD PORT=<span style="color: #E6DB74;">"here"</span>&gt;d&lt;/TD&gt;&lt;TD&gt;e&lt;/TD&gt;
+  &lt;/<span style="color: #AE81FF;">TR</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;
+    &lt;TD COLSPAN=<span style="color: #E6DB74;">"3"</span>&gt;f&lt;/TD&gt;
+  &lt;/<span style="color: #AE81FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;];
     struct1:f1 -&gt; struct2:f0;
     struct1:f2 -&gt; struct3:here;
@@ -6366,13 +6319,13 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </div>
 
 
-<div class="figure">
+<div id="orge3600d9" class="figure">
 <p><img src="./dot/dot/dot_html1.png" alt="dot_html1.png" />
 </p>
 </div>
 
 
-<div class="figure">
+<div id="org06c24f5" class="figure">
 <p><img src="./image/dot/html1.gif" alt="html1.gif" />
 </p>
 </div>
@@ -6384,7 +6337,7 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 
 
 
-<div class="figure">
+<div id="org7844ec5" class="figure">
 <p><img src="./image/dot/html2.gif" alt="html2.gif" />
 </p>
 </div>
@@ -6393,47 +6346,47 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 上图的源码:
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
-  <span style="color: #FF8C00;">rankdir=</span><span style="color: #AF87FF;">LR</span>
-  <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">plaintext</span>]
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
+  <span style="color: #FD971F;">rankdir=</span><span style="color: #AE81FF;">LR</span>
+  <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">plaintext</span>]
   a [
-     <span style="color: #FF8C00;">label=</span>&lt;
-&lt;TABLE BORDER=<span style="color: #CDC673;">"0"</span> CELLBORDER=<span style="color: #CDC673;">"1"</span> CELLSPACING=<span style="color: #CDC673;">"0"</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD ROWSPAN=<span style="color: #CDC673;">"3"</span> BGCOLOR=<span style="color: #CDC673;">"yellow"</span>&gt;class&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD PORT=<span style="color: #CDC673;">"here"</span> BGCOLOR=<span style="color: #CDC673;">"lightblue"</span>&gt;qualifier&lt;/TD&gt;&lt;/<span style="color: #AF87FF;">TR</span>&gt;
+     <span style="color: #FD971F;">label=</span>&lt;
+&lt;TABLE BORDER=<span style="color: #E6DB74;">"0"</span> CELLBORDER=<span style="color: #E6DB74;">"1"</span> CELLSPACING=<span style="color: #E6DB74;">"0"</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;&lt;TD ROWSPAN=<span style="color: #E6DB74;">"3"</span> BGCOLOR=<span style="color: #E6DB74;">"yellow"</span>&gt;class&lt;/TD&gt;&lt;/<span style="color: #AE81FF;">TR</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;&lt;TD PORT=<span style="color: #E6DB74;">"here"</span> BGCOLOR=<span style="color: #E6DB74;">"lightblue"</span>&gt;qualifier&lt;/TD&gt;&lt;/<span style="color: #AE81FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;
   ]
-    b [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">ellipse</span> <span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>
-  <span style="color: #FF8C00;">label=</span>&lt;
-&lt;TABLE BGCOLOR=<span style="color: #CDC673;">"bisque"</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD COLSPAN=<span style="color: #CDC673;">"3"</span>&gt;elephant&lt;/TD&gt;
-      &lt;TD ROWSPAN=<span style="color: #CDC673;">"2"</span> BGCOLOR=<span style="color: #CDC673;">"chartreuse"</span>
-	  VALIGN=<span style="color: #CDC673;">"bottom"</span> ALIGN=<span style="color: #CDC673;">"right"</span>&gt;two&lt;/TD&gt; &lt;/<span style="color: #AF87FF;">TR</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD COLSPAN=<span style="color: #CDC673;">"2"</span> ROWSPAN=<span style="color: #CDC673;">"2"</span>&gt;
-	&lt;TABLE BGCOLOR=<span style="color: #CDC673;">"grey"</span>&gt;
-	  &lt;<span style="color: #AF87FF;">TR</span>&gt; &lt;TD&gt;corn&lt;/TD&gt; &lt;/<span style="color: #AF87FF;">TR</span>&gt;
-	  &lt;<span style="color: #AF87FF;">TR</span>&gt; &lt;TD BGCOLOR=<span style="color: #CDC673;">"yellow"</span>&gt;c&lt;/TD&gt; &lt;/<span style="color: #AF87FF;">TR</span>&gt;
-	  &lt;<span style="color: #AF87FF;">TR</span>&gt; &lt;TD&gt;f&lt;/TD&gt; &lt;/<span style="color: #AF87FF;">TR</span>&gt;
-	&lt;/TABLE&gt; &lt;/TD&gt;
-      &lt;TD BGCOLOR=<span style="color: #CDC673;">"white"</span>&gt;penguin&lt;/TD&gt;
-  &lt;/<span style="color: #AF87FF;">TR</span>&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt; &lt;TD COLSPAN=<span style="color: #CDC673;">"2"</span> BORDER=<span style="color: #CDC673;">"4"</span> ALIGN=<span style="color: #CDC673;">"right"</span> PORT=<span style="color: #CDC673;">"there"</span>&gt;4&lt;/TD&gt; &lt;/<span style="color: #AF87FF;">TR</span>&gt;
+    b [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">ellipse</span> <span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">filled</span>
+  <span style="color: #FD971F;">label=</span>&lt;
+&lt;TABLE BGCOLOR=<span style="color: #E6DB74;">"bisque"</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;&lt;TD COLSPAN=<span style="color: #E6DB74;">"3"</span>&gt;elephant&lt;/TD&gt;
+      &lt;TD ROWSPAN=<span style="color: #E6DB74;">"2"</span> BGCOLOR=<span style="color: #E6DB74;">"chartreuse"</span>
+          VALIGN=<span style="color: #E6DB74;">"bottom"</span> ALIGN=<span style="color: #E6DB74;">"right"</span>&gt;two&lt;/TD&gt; &lt;/<span style="color: #AE81FF;">TR</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;&lt;TD COLSPAN=<span style="color: #E6DB74;">"2"</span> ROWSPAN=<span style="color: #E6DB74;">"2"</span>&gt;
+        &lt;TABLE BGCOLOR=<span style="color: #E6DB74;">"grey"</span>&gt;
+          &lt;<span style="color: #AE81FF;">TR</span>&gt; &lt;TD&gt;corn&lt;/TD&gt; &lt;/<span style="color: #AE81FF;">TR</span>&gt;
+          &lt;<span style="color: #AE81FF;">TR</span>&gt; &lt;TD BGCOLOR=<span style="color: #E6DB74;">"yellow"</span>&gt;c&lt;/TD&gt; &lt;/<span style="color: #AE81FF;">TR</span>&gt;
+          &lt;<span style="color: #AE81FF;">TR</span>&gt; &lt;TD&gt;f&lt;/TD&gt; &lt;/<span style="color: #AE81FF;">TR</span>&gt;
+        &lt;/TABLE&gt; &lt;/TD&gt;
+      &lt;TD BGCOLOR=<span style="color: #E6DB74;">"white"</span>&gt;penguin&lt;/TD&gt;
+  &lt;/<span style="color: #AE81FF;">TR</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt; &lt;TD COLSPAN=<span style="color: #E6DB74;">"2"</span> BORDER=<span style="color: #E6DB74;">"4"</span> ALIGN=<span style="color: #E6DB74;">"right"</span> PORT=<span style="color: #E6DB74;">"there"</span>&gt;4&lt;/TD&gt; &lt;/<span style="color: #AE81FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;
   ]
   c [
-  <span style="color: #FF8C00;">label=</span>&lt;long line 1&lt;<span style="color: #AF87FF;">BR</span>/&gt;line 2&lt;<span style="color: #AF87FF;">BR</span> ALIGN=<span style="color: #CDC673;">"LEFT"</span>/&gt;line 3&lt;<span style="color: #AF87FF;">BR</span> ALIGN=<span style="color: #CDC673;">"RIGHT"</span>/&gt;&gt;
+  <span style="color: #FD971F;">label=</span>&lt;long line 1&lt;<span style="color: #AE81FF;">BR</span>/&gt;line 2&lt;<span style="color: #AE81FF;">BR</span> ALIGN=<span style="color: #E6DB74;">"LEFT"</span>/&gt;line 3&lt;<span style="color: #AE81FF;">BR</span> ALIGN=<span style="color: #E6DB74;">"RIGHT"</span>/&gt;&gt;
   ]
 
-  <span style="color: #FF1493;">subgraph</span> { <span style="color: #FF8C00;">rank=</span><span style="color: #AF87FF;">same</span> b c }
-  a:here -&gt; b:there [<span style="color: #FF8C00;">dir=</span><span style="color: #AF87FF;">both</span> <span style="color: #FF8C00;">arrowtail =</span> <span style="color: #AF87FF;">diamond</span>]
+  <span style="color: #F92672;">subgraph</span> { <span style="color: #FD971F;">rank=</span><span style="color: #AE81FF;">same</span> b c }
+  a:here -&gt; b:there [<span style="color: #FD971F;">dir=</span><span style="color: #AE81FF;">both</span> <span style="color: #FD971F;">arrowtail =</span> <span style="color: #AE81FF;">diamond</span>]
   c -&gt; b
-  d [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">triangle</span>]
-  d -&gt; c [<span style="color: #FF8C00;">label=</span>&lt;
+  d [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">triangle</span>]
+  d -&gt; c [<span style="color: #FD971F;">label=</span>&lt;
 &lt;TABLE&gt;
-  &lt;<span style="color: #AF87FF;">TR</span>&gt;&lt;TD BGCOLOR=<span style="color: #CDC673;">"red"</span> WIDTH=<span style="color: #CDC673;">"10"</span>&gt; &lt;/TD&gt;
-      &lt;TD&gt;Edge labels&lt;<span style="color: #AF87FF;">BR</span>/&gt;also&lt;/TD&gt;
-      &lt;TD BGCOLOR=<span style="color: #CDC673;">"blue"</span> WIDTH=<span style="color: #CDC673;">"10"</span>&gt; &lt;/TD&gt;
-  &lt;/<span style="color: #AF87FF;">TR</span>&gt;
+  &lt;<span style="color: #AE81FF;">TR</span>&gt;&lt;TD BGCOLOR=<span style="color: #E6DB74;">"red"</span> WIDTH=<span style="color: #E6DB74;">"10"</span>&gt; &lt;/TD&gt;
+      &lt;TD&gt;Edge labels&lt;<span style="color: #AE81FF;">BR</span>/&gt;also&lt;/TD&gt;
+      &lt;TD BGCOLOR=<span style="color: #E6DB74;">"blue"</span> WIDTH=<span style="color: #E6DB74;">"10"</span>&gt; &lt;/TD&gt;
+  &lt;/<span style="color: #AE81FF;">TR</span>&gt;
 &lt;/TABLE&gt;&gt;
   ]
 
@@ -6450,7 +6403,7 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 
-<div class="figure">
+<div id="org203acb0" class="figure">
 <p><img src="./image/dot/html3.gif" alt="html3.gif" />
 </p>
 </div>
@@ -6461,7 +6414,7 @@ HTML字符串中允许使用HTML注释. 只要它们包含HTML元素的一部分
 </p>
 
 
-<div class="figure">
+<div id="org369c1ef" class="figure">
 <p><img src="./image/dot/html4.gif" alt="html4.gif" />
 </p>
 </div>
@@ -6486,14 +6439,14 @@ tee [shape=none margin=0 label=
   &lt;/table&gt;&gt;]
 </pre>
 
-<div class="figure">
+<div id="org330e63f" class="figure">
 <p><img src="./image/dot/tee.gif" alt="tee.gif" />
 </p>
 </div>
 </div>
 
-<div id="outline-container-org184b49b" class="outline-4">
-<h4 id="org184b49b"><span class="section-number-4">4.4.1</span> 用户自定义Node</h4>
+<div id="outline-container-org1c80e23" class="outline-4">
+<h4 id="org1c80e23"><span class="section-number-4">4.4.1.</span> 用户自定义Node</h4>
 <div class="outline-text-4" id="text-4-4-1">
 <p>
 用户指定了第三种类型的节点形状, 通常, 这些形状取决于具体图形格式的细节, 目前, 可以使用PostScript通过文件或附加库来描述形状, 以用于PostScript输出, 或者可以通过位图图像文件指定形状以用于SVG或位图(jpeg, gif等)输出. 有关更多信息, 请参见<a href="http://graphviz.org/faq/#FaqCustShape">如何创建自定义形状页面</a>.
@@ -6501,8 +6454,8 @@ tee [shape=none margin=0 label=
 </div>
 </div>
 
-<div id="outline-container-org44a28d8" class="outline-4">
-<h4 id="org44a28d8"><span class="section-number-4">4.4.2</span> SDL Shapes for PostScript</h4>
+<div id="outline-container-org9db45e6" class="outline-4">
+<h4 id="org9db45e6"><span class="section-number-4">4.4.2.</span> SDL Shapes for PostScript</h4>
 <div class="outline-text-4" id="text-4-4-2">
 <p>
 由CSR的Mark Rison提供的用户定义的节点形状的示例: SDL形状. 这些可用作PostScript函数, 其用法在外部PostScript过程中进行了描述. 可以在contrib/sdlshapes的release版本目录中找到的PostScript库文件和示例用法. 请注意库文件中包含的版权和许可声明sdl.ps.
@@ -6518,8 +6471,8 @@ tee [shape=none margin=0 label=
 </div>
 
 
-<div id="outline-container-orga6cdc01" class="outline-2">
-<h2 id="orga6cdc01"><span class="section-number-2">5</span> 箭头形状</h2>
+<div id="outline-container-org0629978" class="outline-2">
+<h2 id="org0629978"><span class="section-number-2">5.</span> 箭头形状</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Arrow shapes can be specified and named using the following simple grammar. Terminals are shown in bold font and nonterminals in italics. Literal characters are given in single quotes. Square brackets [ and ] enclose optional items. Vertical bars | separate alternatives.
@@ -6530,18 +6483,18 @@ Arrow shapes can be specified and named using the following simple grammar. Term
     aname:      [ modifiers ] shape
 modifiers:      [ 'o' ] [ side ]
      side:      'l'
-	 |      'r'
+         |      'r'
     shape:      box
-	 |      crow
-	 |      curve
-	 |      icurve
-	 |      diamond
-	 |      dot
-	 |      inv
-	 |      none
-	 |      normal
-	 |      tee
-	 |      vee
+         |      crow
+         |      curve
+         |      icurve
+         |      diamond
+         |      dot
+         |      inv
+         |      none
+         |      normal
+         |      tee
+         |      vee
 </pre>
 </div>
 
@@ -6757,12 +6710,12 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div id="outline-container-orgd7a74bc" class="outline-2">
-<h2 id="orgd7a74bc"><span class="section-number-2">6</span> 颜色</h2>
+<div id="outline-container-org3191bde" class="outline-2">
+<h2 id="org3191bde"><span class="section-number-2">6.</span> 颜色</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orga9350d2" class="outline-3">
-<h3 id="orga9350d2"><span class="section-number-3">6.1</span> X11配色方案</h3>
+<div id="outline-container-orge3c0ff4" class="outline-3">
+<h3 id="orge3c0ff4"><span class="section-number-3">6.1.</span> X11配色方案</h3>
 <div class="outline-text-3" id="text-6-1">
 <table border=1 align=center>
   <tr align=center>
@@ -7686,8 +7639,8 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 </div>
 
-<div id="outline-container-orge957aa6" class="outline-3">
-<h3 id="orge957aa6"><span class="section-number-3">6.2</span> SVG配色方案</h3>
+<div id="outline-container-org4a47ef2" class="outline-3">
+<h3 id="org4a47ef2"><span class="section-number-3">6.2.</span> SVG配色方案</h3>
 <div class="outline-text-3" id="text-6-2">
 <table border=1 align=center>
   <tr align=center>
@@ -7902,18 +7855,18 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div id="outline-container-orgccff280" class="outline-2">
-<h2 id="orgccff280"><span class="section-number-2">7</span> 总结整理</h2>
+<div id="outline-container-orgff1bc94" class="outline-2">
+<h2 id="orgff1bc94"><span class="section-number-2">7.</span> 总结整理</h2>
 <div class="outline-text-2" id="text-7">
 </div>
-<div id="outline-container-orge81ba1e" class="outline-3">
-<h3 id="orge81ba1e"><span class="section-number-3">7.1</span> 图表类型</h3>
+<div id="outline-container-org78c5dee" class="outline-3">
+<h3 id="org78c5dee"><span class="section-number-3">7.1.</span> 图表类型</h3>
 <div class="outline-text-3" id="text-7-1">
 <ul class="org-ul">
 <li>无向图 graph</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">graph</span> <span style="color: #87D700;">G</span> {
+<pre class="src src-dot"><span style="color: #F92672;">graph</span> <span style="color: #A6E22E;">G</span> {
     a -- b;
     b -- c;
     c -- d;
@@ -7923,7 +7876,7 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div class="figure">
+<div id="orgf502843" class="figure">
 <p><img src="./dot/dot/dot_graph.png" alt="dot_graph.png" />
 </p>
 </div>
@@ -7932,14 +7885,14 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 <li>有向图 digraph</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
     a -&gt; b;
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orge0a079f" class="figure">
 <p><img src="./dot/dot/dot_digraph.png" alt="dot_digraph.png" />
 </p>
 </div>
@@ -7951,30 +7904,30 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 子图必需以 <code>cluster</code> 字符串开头进行声明.
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
     a -&gt; b;
     b -&gt; c;
-    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_test</span> {
-	d -&gt; e;
+    <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_test</span> {
+        d -&gt; e;
     }
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orga4b4844" class="figure">
 <p><img src="./dot/dot/dot_subgraph.png" alt="dot_subgraph.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org564843e" class="outline-3">
-<h3 id="org564843e"><span class="section-number-3">7.2</span> 图表属性</h3>
+<div id="outline-container-org7a084fe" class="outline-3">
+<h3 id="org7a084fe"><span class="section-number-3">7.2.</span> 图表属性</h3>
 </div>
 
-<div id="outline-container-orge8c7743" class="outline-3">
-<h3 id="orge8c7743"><span class="section-number-3">7.3</span> node属性</h3>
+<div id="outline-container-org7ffba18" class="outline-3">
+<h3 id="org7ffba18"><span class="section-number-3">7.3.</span> node属性</h3>
 <div class="outline-text-3" id="text-7-3">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -8220,8 +8173,8 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 </div>
 
-<div id="outline-container-org7fe7edd" class="outline-3">
-<h3 id="org7fe7edd"><span class="section-number-3">7.4</span> edge属性</h3>
+<div id="outline-container-org9cb2edd" class="outline-3">
+<h3 id="org9cb2edd"><span class="section-number-3">7.4.</span> edge属性</h3>
 <div class="outline-text-3" id="text-7-4">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -8431,8 +8384,8 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 </div>
 
-<div id="outline-container-org8e5a7eb" class="outline-3">
-<h3 id="org8e5a7eb"><span class="section-number-3">7.5</span> 方向说明</h3>
+<div id="outline-container-orgb492925" class="outline-3">
+<h3 id="orgb492925"><span class="section-number-3">7.5.</span> 方向说明</h3>
 <div class="outline-text-3" id="text-7-5">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -8503,40 +8456,40 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">action</span> {
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout = dot; //&#40664;&#35748;&#24067;&#23616;&#26041;&#24335;&#65292;&#20027;&#35201;&#29992;&#20110;&#26377;&#21521;&#22270;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=neato; // &#22522;&#20110;spring-model(&#21448;&#31216;force-based)&#31639;&#27861;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=twopi; // &#24452;&#21521;&#24067;&#23616;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=circo; // &#22278;&#29615;&#24067;&#23616;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">layout=fdp; // &#29992;&#20110;&#26080;&#21521;&#22270;</span>
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">action</span> {
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">layout = dot; //&#40664;&#35748;&#24067;&#23616;&#26041;&#24335;&#65292;&#20027;&#35201;&#29992;&#20110;&#26377;&#21521;&#22270;</span>
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">layout=neato; // &#22522;&#20110;spring-model(&#21448;&#31216;force-based)&#31639;&#27861;</span>
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">layout=twopi; // &#24452;&#21521;&#24067;&#23616;</span>
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">layout=circo; // &#22278;&#29615;&#24067;&#23616;</span>
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">layout=fdp; // &#29992;&#20110;&#26080;&#21521;&#22270;</span>
 
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">shape &#35774;&#32622;node&#24418;&#29366;</span>
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">record</span>]
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">shape &#35774;&#32622;node&#24418;&#29366;</span>
+    <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">record</span>]
 
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">style &#35774;&#32622;edge&#30340;&#26679;&#24335;</span>
-    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">edge [style=dashed];</span>
-    node0 [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;head&gt; head|&lt;body&gt; body|&lt;foot&gt; foot"</span>]
-    node2 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"mind"</span>]
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">style &#35774;&#32622;edge&#30340;&#26679;&#24335;</span>
+    <span style="color: #75715E;">//</span><span style="color: #75715E;">edge [style=dashed];</span>
+    node0 [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&lt;head&gt; head|&lt;body&gt; body|&lt;foot&gt; foot"</span>]
+    node2 [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">box</span>, <span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"mind"</span>]
 
-    node0:head:n -&gt; node2:n [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"n"</span>]
-    node0:head:ne -&gt; node2:ne [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"ne"</span>]
-    node0:head:e -&gt; node2:e [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"e"</span>]
-    node0:head:se -&gt; node2:se [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"se"</span>]
-    node0:head:s -&gt; node2:s [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"s"</span>]
-    node0:head:sw -&gt; node2:sw [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"sw"</span>]
-    node0:head:w -&gt; node2:w [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"w"</span>]
-    node0:head:nw -&gt; node2:nw [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"nw"</span>]
-    node0:head:c -&gt; node2:c [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"c"</span>]
-    node0:head:_ -&gt; node2:_ [<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"_"</span>]
+    node0:head:n -&gt; node2:n [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"n"</span>]
+    node0:head:ne -&gt; node2:ne [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"ne"</span>]
+    node0:head:e -&gt; node2:e [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"e"</span>]
+    node0:head:se -&gt; node2:se [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"se"</span>]
+    node0:head:s -&gt; node2:s [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"s"</span>]
+    node0:head:sw -&gt; node2:sw [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"sw"</span>]
+    node0:head:w -&gt; node2:w [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"w"</span>]
+    node0:head:nw -&gt; node2:nw [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"nw"</span>]
+    node0:head:c -&gt; node2:c [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"c"</span>]
+    node0:head:_ -&gt; node2:_ [<span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"_"</span>]
 
-    node0:body[<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span> <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">lightblue</span>]
+    node0:body[<span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">filled</span> <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">lightblue</span>]
 }
 
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orgfd23efe" class="figure">
 <p><img src="./dot/dot/dot_direction.png" alt="dot_direction.png" />
 </p>
 </div>
@@ -8544,11 +8497,11 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div id="outline-container-org273ffe7" class="outline-3">
-<h3 id="org273ffe7"><span class="section-number-3">7.6</span> 形状</h3>
+<div id="outline-container-orgb096cd5" class="outline-3">
+<h3 id="orgb096cd5"><span class="section-number-3">7.6.</span> 形状</h3>
 <div class="outline-text-3" id="text-7-6">
 <div class="org-src-container">
-<pre class="src src-fundamental">main [lable = <span style="color: #CDC673;">"mail lable"</span>, shape = <span style="color: #CDC673;">"box"</span>];
+<pre class="src src-fundamental">main [lable = "mail lable", shape = "box"];
 </pre>
 </div>
 </div>
@@ -8556,31 +8509,31 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div id="outline-container-orga4193ff" class="outline-2">
-<h2 id="orga4193ff"><span class="section-number-2">8</span> 方向</h2>
+<div id="outline-container-orgaf2b4e0" class="outline-2">
+<h2 id="orgaf2b4e0"><span class="section-number-2">8.</span> 方向</h2>
 </div>
 
-<div id="outline-container-org7ba3439" class="outline-2">
-<h2 id="org7ba3439"><span class="section-number-2">9</span> 图的属性</h2>
+<div id="outline-container-org186edb4" class="outline-2">
+<h2 id="org186edb4"><span class="section-number-2">9.</span> 图的属性</h2>
 <div class="outline-text-2" id="text-9">
 <p>
 调节各个结点、边缘的布局是比较常见的操作，这些都可以通过属性来描述。属性就是键值对。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
-    <span style="color: #FF8C00;">size=</span><span style="color: #CDC673;">"4,4"</span>;
-    main [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>]; <span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#27880;&#37322;*/</span>
-    main -&gt; parse [<span style="color: #FF8C00;">weight=</span>8];
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
+    <span style="color: #FD971F;">size=</span><span style="color: #E6DB74;">"4,4"</span>;
+    main [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">box</span>]; <span style="color: #75715E;">/*</span><span style="color: #75715E;">&#27880;&#37322;*/</span>
+    main -&gt; parse [<span style="color: #FD971F;">weight=</span>8];
     parse -&gt; execute;
-    main -&gt; init [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">dotted</span>];
+    main -&gt; init [<span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">dotted</span>];
     main -&gt; cleanup;
     execute -&gt; {make_string; printf}
     init -&gt; make_string;
-    <span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">red</span>];
-    main -&gt; printf [<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">bold</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"100 times"</span>];
-    make_string [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"make a\nstring"</span>];
-    <span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">box</span>, <span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">".7 .3 1.0"</span>];
+    <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">red</span>];
+    main -&gt; printf [<span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">bold</span>,<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"100 times"</span>];
+    make_string [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"make a\nstring"</span>];
+    <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">box</span>, <span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">filled</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">".7 .3 1.0"</span>];
     execute -&gt; compare;
 }
 
@@ -8588,7 +8541,7 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </div>
 
 
-<div class="figure">
+<div id="org86c186c" class="figure">
 <p><img src="./dot/dot/dot_layout.png" alt="dot_layout.png" />
 </p>
 </div>
@@ -8612,20 +8565,20 @@ curve <img src="./image/dot/aa_curve.gif" alt="aa_curve.gif" /> lcurve <img src=
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
     a-&gt;b-&gt;c;
     b-&gt;d;
-    a[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00;">sides=</span>5,<span style="color: #FF8C00;">peripheries=</span>3,<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">lightblue</span>,<span style="color: #FF8C00;">style=</span><span style="color: #AF87FF;">filled</span>];
-    c[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00;">sides=</span>4,<span style="color: #FF8C00;">skew=</span>.4,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"hello world"</span>];
-    d[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">invtriangle</span>];
-    e[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">polygon</span>,<span style="color: #FF8C00;">sides=</span>4,<span style="color: #FF8C00;">distortion=</span>.7];
+    a[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">polygon</span>,<span style="color: #FD971F;">sides=</span>5,<span style="color: #FD971F;">peripheries=</span>3,<span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">lightblue</span>,<span style="color: #FD971F;">style=</span><span style="color: #AE81FF;">filled</span>];
+    c[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">polygon</span>,<span style="color: #FD971F;">sides=</span>4,<span style="color: #FD971F;">skew=</span>.4,<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"hello world"</span>];
+    d[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">invtriangle</span>];
+    e[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">polygon</span>,<span style="color: #FD971F;">sides=</span>4,<span style="color: #FD971F;">distortion=</span>.7];
 }
 
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orga991762" class="figure">
 <p><img src="./dot/dot/dot_polygon.png" alt="dot_polygon.png" />
 </p>
 </div>
@@ -8643,11 +8596,11 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">structs</span> {
-<span style="color: #FF1493;">node</span>[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>];
-    struct1[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; left|&lt;f1&gt; mid\ dle|&lt;f2&gt; right"</span>];
-    struct2[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
-    struct3[<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>,<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"hello\nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">structs</span> {
+<span style="color: #F92672;">node</span>[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">record</span>];
+    struct1[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">record</span>,<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&lt;f0&gt; left|&lt;f1&gt; mid\ dle|&lt;f2&gt; right"</span>];
+    struct2[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">record</span>,<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&lt;f0&gt; one|&lt;f1&gt; two"</span>];
+    struct3[<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">record</span>,<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"hello\nworld |{ b |{c|&lt;here&gt; d|e}| f}| g | h"</span>];
     struct1-&gt;struct2;
     struct1-&gt;struct3;
 }
@@ -8655,7 +8608,7 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 </div>
 
 
-<div class="figure">
+<div id="org8b4d4d0" class="figure">
 <p><img src="./dot/dot/dot_record.png" alt="dot_record.png" />
 </p>
 </div>
@@ -8669,23 +8622,23 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 比如一个hash表的内容，可能具有下列结构：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_hash_type</span> {
-    <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">compare</span>) ();
-    <span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">hash</span>) ();
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">st_hash_type</span> {
+    <span style="color: #66D9EF;">int</span> (*<span style="color: #A6E22E;">compare</span>) ();
+    <span style="color: #66D9EF;">int</span> (*<span style="color: #A6E22E;">hash</span>) ();
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_table_entry</span> {
-    <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">hash</span>;
-    <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">key</span>;
-    <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">record</span>;
-    <span style="color: #5FD7FF;">st_table_entry</span> *<span style="color: #FF8C00;">next</span>;
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">st_table_entry</span> {
+    <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">hash</span>;
+    <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">key</span>;
+    <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">record</span>;
+    <span style="color: #66D9EF;">st_table_entry</span> *<span style="color: #FD971F;">next</span>;
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_table</span> {
-    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_hash_type</span> *<span style="color: #FF8C00;">type</span>;
-    <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">num_bins</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">slot count</span><span style="color: #8B8878;"> */</span>
-    <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">num_entries</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">total number of entries</span><span style="color: #8B8878;"> */</span>
-    <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">st_table_entry</span> **<span style="color: #FF8C00;">bins</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">slot</span><span style="color: #8B8878;"> */</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">st_table</span> {
+    <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">st_hash_type</span> *<span style="color: #FD971F;">type</span>;
+    <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">num_bins</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">slot count</span><span style="color: #75715E;"> */</span>
+    <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">num_entries</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">total number of entries</span><span style="color: #75715E;"> */</span>
+    <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">st_table_entry</span> **<span style="color: #FD971F;">bins</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">slot</span><span style="color: #75715E;"> */</span>
 };
 </pre>
 </div>
@@ -8696,28 +8649,28 @@ boxLabel      -&gt; ['&lt;'string'&gt;'][string]
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">st2</span>{
-	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>;
-	<span style="color: #FF8C00;">fontsize =</span> 10;
-	<span style="color: #FF8C00;">rankdir=</span>TB;
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">st2</span>{
+        <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Verdana"</span>;
+        <span style="color: #FD971F;">fontsize =</span> 10;
+        <span style="color: #FD971F;">rankdir=</span>TB;
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>];
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Verdana"</span>, <span style="color: #FD971F;">fontsize =</span> 10, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"skyblue"</span>, <span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"record"</span>];
 
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"crimson"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"solid"</span>];
+        <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Verdana"</span>, <span style="color: #FD971F;">fontsize =</span> 10, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"crimson"</span>, <span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"solid"</span>];
 
-	st_hash_type [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;head&gt;st_hash_type|(*compare)|(*hash)}"</span>];
-	st_table_entry [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;head&gt;st_table_entry|hash|key|record|&lt;next&gt;next}"</span>];
-	st_table [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{st_table|&lt;type&gt;type|num_bins|num_entries|&lt;bins&gt;bins}"</span>];
+        st_hash_type [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"{&lt;head&gt;st_hash_type|(*compare)|(*hash)}"</span>];
+        st_table_entry [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"{&lt;head&gt;st_table_entry|hash|key|record|&lt;next&gt;next}"</span>];
+        st_table [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"{st_table|&lt;type&gt;type|num_bins|num_entries|&lt;bins&gt;bins}"</span>];
 
-	st_table:bins -&gt; st_table_entry:head;
-	st_table:type -&gt; st_hash_type:head;
-	st_table_entry:next -&gt; st_table_entry:head [<span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"dashed"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"forestgreen"</span>];
+        st_table:bins -&gt; st_table_entry:head;
+        st_table:type -&gt; st_hash_type:head;
+        st_table_entry:next -&gt; st_table_entry:head [<span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"dashed"</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"forestgreen"</span>];
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org733bebe" class="figure">
 <p><img src="./dot/dot/dot_hash.png" alt="dot_hash.png" />
 </p>
 </div>
@@ -8735,54 +8688,54 @@ hash表的实例
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">st</span>{
-	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>;
-	<span style="color: #FF8C00;">fontsize =</span> 10;
-	<span style="color: #FF8C00;">rankdir =</span> <span style="color: #AF87FF;">LR</span>;
-	<span style="color: #FF8C00;">rotate =</span> 90;
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">st</span>{
+        <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Verdana"</span>;
+        <span style="color: #FD971F;">fontsize =</span> 10;
+        <span style="color: #FD971F;">rankdir =</span> <span style="color: #AE81FF;">LR</span>;
+        <span style="color: #FD971F;">rotate =</span> 90;
 
-	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>, <span style="color: #FF8C00;">width=</span>.1, <span style="color: #FF8C00;">height=</span>.1];
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>];
+        <span style="color: #F92672;">node</span> [ <span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"record"</span>, <span style="color: #FD971F;">width=</span>.1, <span style="color: #FD971F;">height=</span>.1];
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Verdana"</span>, <span style="color: #FD971F;">fontsize =</span> 10, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"skyblue"</span>, <span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"record"</span>];
 
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Verdana"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"crimson"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"solid"</span>];
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"plaintext"</span>];
+        <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Verdana"</span>, <span style="color: #FD971F;">fontsize =</span> 10, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"crimson"</span>, <span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"solid"</span>];
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"plaintext"</span>];
 
-	st_table [<span style="color: #FF8C00;">label=</span>&lt;
-		  &lt;table border=<span style="color: #CDC673;">"0"</span> cellborder=<span style="color: #CDC673;">"1"</span> cellspacing=<span style="color: #CDC673;">"0"</span> align=<span style="color: #CDC673;">"left"</span>&gt;
-		  &lt;tr&gt;
-		  &lt;td&gt;st_table&lt;/td&gt;
-		  &lt;/tr&gt;
-		  &lt;tr&gt;
-		  &lt;td&gt;num_bins=5&lt;/td&gt;
-		  &lt;/tr&gt;
-		  &lt;tr&gt;
-		  &lt;td&gt;num_entries=3&lt;/td&gt;
-		  &lt;/tr&gt;
-		  &lt;tr&gt;
-		  &lt;td port=<span style="color: #CDC673;">"bins"</span>&gt;bins&lt;/td&gt;
-		  &lt;/tr&gt;
-		  &lt;/table&gt;
-		  &gt;];
+        st_table [<span style="color: #FD971F;">label=</span>&lt;
+                  &lt;table border=<span style="color: #E6DB74;">"0"</span> cellborder=<span style="color: #E6DB74;">"1"</span> cellspacing=<span style="color: #E6DB74;">"0"</span> align=<span style="color: #E6DB74;">"left"</span>&gt;
+                  &lt;tr&gt;
+                  &lt;td&gt;st_table&lt;/td&gt;
+                  &lt;/tr&gt;
+                  &lt;tr&gt;
+                  &lt;td&gt;num_bins=5&lt;/td&gt;
+                  &lt;/tr&gt;
+                  &lt;tr&gt;
+                  &lt;td&gt;num_entries=3&lt;/td&gt;
+                  &lt;/tr&gt;
+                  &lt;tr&gt;
+                  &lt;td port=<span style="color: #E6DB74;">"bins"</span>&gt;bins&lt;/td&gt;
+                  &lt;/tr&gt;
+                  &lt;/table&gt;
+                  &gt;];
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"record"</span>];
-	num_bins [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">" &lt;b1&gt; | &lt;b2&gt; | &lt;b3&gt; | &lt;b4&gt; | &lt;b5&gt; "</span>, <span style="color: #FF8C00;">height=</span>2];
-	<span style="color: #FF1493;">node</span>[ <span style="color: #FF8C00;">width=</span>2 ];
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"record"</span>];
+        num_bins [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">" &lt;b1&gt; | &lt;b2&gt; | &lt;b3&gt; | &lt;b4&gt; | &lt;b5&gt; "</span>, <span style="color: #FD971F;">height=</span>2];
+        <span style="color: #F92672;">node</span>[ <span style="color: #FD971F;">width=</span>2 ];
 
-	entry_1 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;next}"</span>];
-	entry_2 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
-	entry_3 [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
+        entry_1 [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"{&lt;e&gt;st_table_entry|&lt;next&gt;next}"</span>];
+        entry_2 [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
+        entry_3 [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"{&lt;e&gt;st_table_entry|&lt;next&gt;null}"</span>];
 
-	st_table:bins -&gt; num_bins:b1;
-	num_bins:b1 -&gt; entry_1:e;
-	entry_1:next -&gt; entry_2:e;
-	num_bins:b3 -&gt; entry_3:e;
+        st_table:bins -&gt; num_bins:b1;
+        num_bins:b1 -&gt; entry_1:e;
+        entry_1:next -&gt; entry_2:e;
+        num_bins:b3 -&gt; entry_3:e;
 
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orgd2e58e6" class="figure">
 <p><img src="./dot/dot/dot_hash_table.png" alt="dot_hash_table.png" />
 </p>
 </div>
@@ -8794,14 +8747,14 @@ hash表的实例
 <p>
 软件模块组成图
 Apache httpd模块关系
-	￼
+        ￼
 IDPV2后台的模块组成关系
 </p>
 
 <p>
 在实际的开发中，随着系统功能的完善，软件整体的结构会越来越复杂，通常开发人员会将软件划分为可理解的多个子模块，各个子模块通过协作，完成各种各样的需求。
 下面有个例子，是在IDPV2设计时的一个草稿：
-	￼
+        ￼
 IDP支持层为一个相对独立的子系统，其中包括如数据库管理器，配置信息管理器等模块，另外为了提供更大的灵活性，将很多其他的模块抽取出来作为外部模块，而支持层提供一个模块管理器，来负责加载/卸载这些外部的模块集合。
 </p>
 
@@ -8810,49 +8763,49 @@ IDP支持层为一个相对独立的子系统，其中包括如数据库管理�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">idp_modules</span>{
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">idp_modules</span>{
 
-	<span style="color: #FF8C00;">rankdir =</span> TB;
-	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00;">fontsize =</span> 12;
+        <span style="color: #FD971F;">rankdir =</span> TB;
+        <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>;
+        <span style="color: #FD971F;">fontsize =</span> 12;
 
-	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12, <span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"record"</span> ];
-	<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12 ];
+        <span style="color: #F92672;">node</span> [ <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 12, <span style="color: #FD971F;">shape =</span> <span style="color: #E6DB74;">"record"</span> ];
+        <span style="color: #F92672;">edge</span> [ <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 12 ];
 
-	    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_sl</span>{
-		<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"IDP&#25903;&#25345;&#23618;"</span>;
-		<span style="color: #FF8C00;">bgcolor=</span><span style="color: #CDC673;">"mintcream"</span>;
-		<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"Mrecord"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>];
-		network_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#32593;&#32476;&#31649;&#29702;&#22120;"</span>];
-		log_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#26085;&#24535;&#31649;&#29702;&#22120;"</span>];
-		module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#27169;&#22359;&#31649;&#29702;&#22120;"</span>];
-		conf_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#37197;&#32622;&#31649;&#29702;&#22120;"</span>];
-		db_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#25968;&#25454;&#24211;&#31649;&#29702;&#22120;"</span>];
-	    };
+            <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_sl</span>{
+                <span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"IDP&#25903;&#25345;&#23618;"</span>;
+                <span style="color: #FD971F;">bgcolor=</span><span style="color: #E6DB74;">"mintcream"</span>;
+                <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"Mrecord"</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"skyblue"</span>, <span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"filled"</span>];
+                network_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#32593;&#32476;&#31649;&#29702;&#22120;"</span>];
+                log_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#26085;&#24535;&#31649;&#29702;&#22120;"</span>];
+                module_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#27169;&#22359;&#31649;&#29702;&#22120;"</span>];
+                conf_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#37197;&#32622;&#31649;&#29702;&#22120;"</span>];
+                db_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#25968;&#25454;&#24211;&#31649;&#29702;&#22120;"</span>];
+            };
 
-	    <span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_md</span>{
-		<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21487;&#25554;&#25300;&#27169;&#22359;&#38598;"</span>;
-		<span style="color: #FF8C00;">bgcolor=</span><span style="color: #CDC673;">"lightcyan"</span>;
-		<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"chartreuse2"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>];
-		mod_dev [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24320;&#21457;&#25903;&#25345;&#27169;&#22359;"</span>];
-		mod_dm [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#25968;&#25454;&#24314;&#27169;&#27169;&#22359;"</span>];
-		mod_dp [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#37096;&#32626;&#21457;&#24067;&#27169;&#22359;"</span>];
-	    };
+            <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_md</span>{
+                <span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#21487;&#25554;&#25300;&#27169;&#22359;&#38598;"</span>;
+                <span style="color: #FD971F;">bgcolor=</span><span style="color: #E6DB74;">"lightcyan"</span>;
+                <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"chartreuse2"</span>, <span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"filled"</span>];
+                mod_dev [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#24320;&#21457;&#25903;&#25345;&#27169;&#22359;"</span>];
+                mod_dm [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#25968;&#25454;&#24314;&#27169;&#27169;&#22359;"</span>];
+                mod_dp [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#37096;&#32626;&#21457;&#24067;&#27169;&#22359;"</span>];
+            };
 
-	mod_dp -&gt; mod_dev [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
-	mod_dp -&gt; mod_dm [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
-	mod_dp -&gt; module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
-	mod_dev -&gt; mod_dm [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20381;&#36182;..."</span>];
-	mod_dev -&gt; module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
-	mod_dm -&gt; module_mgr [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;..."</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"yellowgreen"</span>, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>];
+        mod_dp -&gt; mod_dev [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#20381;&#36182;..."</span>];
+        mod_dp -&gt; mod_dm [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#20381;&#36182;..."</span>];
+        mod_dp -&gt; module_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#23433;&#35013;..."</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"yellowgreen"</span>, <span style="color: #FD971F;">arrowhead=</span><span style="color: #E6DB74;">"none"</span>];
+        mod_dev -&gt; mod_dm [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#20381;&#36182;..."</span>];
+        mod_dev -&gt; module_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#23433;&#35013;..."</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"yellowgreen"</span>, <span style="color: #FD971F;">arrowhead=</span><span style="color: #E6DB74;">"none"</span>];
+        mod_dm -&gt; module_mgr [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#23433;&#35013;..."</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"yellowgreen"</span>, <span style="color: #FD971F;">arrowhead=</span><span style="color: #E6DB74;">"none"</span>];
 
-	}
+        }
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orgaeaadab" class="figure">
 <p><img src="./dot/dot/dot_IDP.png" alt="dot_IDP.png" />
 </p>
 </div>
@@ -8860,34 +8813,34 @@ IDP支持层为一个相对独立的子系统，其中包括如数据库管理�
 <p>
 状态图
 有限自动机示意图
-	  ￼
+          ￼
 上图是一个简易有限自动机，接受a及a结尾的任意长度的串。其脚本定义如下：
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">automata_0</span> {
-	<span style="color: #FF8C00;">size =</span> <span style="color: #CDC673;">"8.5, 11"</span>;
-	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00;">fontsize =</span> 10;
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">automata_0</span> {
+        <span style="color: #FD971F;">size =</span> <span style="color: #E6DB74;">"8.5, 11"</span>;
+        <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>;
+        <span style="color: #FD971F;">fontsize =</span> 10;
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">circle</span>, <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">circle</span>, <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 10];
+        <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 10];
 
-	0 [ <span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">filled</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">lightgrey</span> ];
-	2 [ <span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">doublecircle</span> ];
-	0 -&gt; 2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"a "</span> ];
-	0 -&gt; 1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"other "</span> ];
-	1 -&gt; 2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"a "</span> ];
-	1 -&gt; 1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"other "</span> ];
-	2 -&gt; 2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"a "</span> ];
-	2 -&gt; 1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"other "</span> ];
-	<span style="color: #CDC673;">"Machine: a"</span> [ <span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span> ];
+        0 [ <span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">filled</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">lightgrey</span> ];
+        2 [ <span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">doublecircle</span> ];
+        0 -&gt; 2 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"a "</span> ];
+        0 -&gt; 1 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"other "</span> ];
+        1 -&gt; 2 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"a "</span> ];
+        1 -&gt; 1 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"other "</span> ];
+        2 -&gt; 2 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"a "</span> ];
+        2 -&gt; 1 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"other "</span> ];
+        <span style="color: #E6DB74;">"Machine: a"</span> [ <span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">plaintext</span> ];
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org24705a8" class="figure">
 <p><img src="./dot/dot/dot_auto_state.png" alt="dot_auto_state.png" />
 </p>
 </div>
@@ -8906,35 +8859,35 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">module_lc</span>{
-	<span style="color: #FF8C00;">rankdir=</span>TB;
-	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00;">fontsize =</span> 12;
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12, <span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"Mrecord"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"skyblue"</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>];
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 12, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"darkgreen"</span> ];
-	installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#23433;&#35013;&#29366;&#24577;"</span>];
-	resolved [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#23601;&#32490;&#29366;&#24577;"</span>];
-	uninstalled [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#21368;&#36733;&#29366;&#24577;"</span>];
-	starting [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#27491;&#22312;&#21551;&#21160;"</span>];
-	active [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#24050;&#28608;&#27963;(&#36816;&#34892;)&#29366;&#24577;"</span>];
-	stopping [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#27491;&#22312;&#20572;&#27490;"</span>];
-	start [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">""</span>, <span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"circle"</span>, <span style="color: #FF8C00;">width=</span>0.5, <span style="color: #FF8C00;">fixedsize=</span><span style="color: #AF87FF;">true</span>, <span style="color: #FF8C00;">style=</span><span style="color: #CDC673;">"filled"</span>, <span style="color: #FF8C00;">color=</span><span style="color: #CDC673;">"black"</span>];
-	start -&gt; installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#23433;&#35013;"</span>];
-	installed -&gt; uninstalled [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21368;&#36733;"</span>];
-	installed -&gt; resolved [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20934;&#22791;"</span>];
-	installed -&gt; installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#26356;&#26032;"</span>];
-	resolved -&gt; installed [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#26356;&#26032;"</span>];
-	resolved -&gt; uninstalled [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21368;&#36733;"</span>];
-	resolved -&gt; starting [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#21551;&#21160;"</span>];
-	starting -&gt; active [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">""</span>];
-	active -&gt; stopping [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"&#20572;&#27490;"</span>];
-	stopping -&gt; resolved [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">""</span>];
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">module_lc</span>{
+        <span style="color: #FD971F;">rankdir=</span>TB;
+        <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>;
+        <span style="color: #FD971F;">fontsize =</span> 12;
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 12, <span style="color: #FD971F;">shape =</span> <span style="color: #E6DB74;">"Mrecord"</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"skyblue"</span>, <span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"filled"</span>];
+        <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 12, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"darkgreen"</span> ];
+        installed [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#24050;&#23433;&#35013;&#29366;&#24577;"</span>];
+        resolved [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#24050;&#23601;&#32490;&#29366;&#24577;"</span>];
+        uninstalled [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#24050;&#21368;&#36733;&#29366;&#24577;"</span>];
+        starting [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#27491;&#22312;&#21551;&#21160;"</span>];
+        active [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#24050;&#28608;&#27963;(&#36816;&#34892;)&#29366;&#24577;"</span>];
+        stopping [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#27491;&#22312;&#20572;&#27490;"</span>];
+        start [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">""</span>, <span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"circle"</span>, <span style="color: #FD971F;">width=</span>0.5, <span style="color: #FD971F;">fixedsize=</span><span style="color: #AE81FF;">true</span>, <span style="color: #FD971F;">style=</span><span style="color: #E6DB74;">"filled"</span>, <span style="color: #FD971F;">color=</span><span style="color: #E6DB74;">"black"</span>];
+        start -&gt; installed [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#23433;&#35013;"</span>];
+        installed -&gt; uninstalled [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#21368;&#36733;"</span>];
+        installed -&gt; resolved [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#20934;&#22791;"</span>];
+        installed -&gt; installed [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#26356;&#26032;"</span>];
+        resolved -&gt; installed [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#26356;&#26032;"</span>];
+        resolved -&gt; uninstalled [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#21368;&#36733;"</span>];
+        resolved -&gt; starting [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#21551;&#21160;"</span>];
+        starting -&gt; active [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">""</span>];
+        active -&gt; stopping [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"&#20572;&#27490;"</span>];
+        stopping -&gt; resolved [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">""</span>];
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org245edaf" class="figure">
 <p><img src="./dot/dot/dot_osgi.png" alt="dot_osgi.png" />
 </p>
 </div>
@@ -8950,27 +8903,27 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">ast</span>{
-	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>;
-	<span style="color: #FF8C00;">fontsize =</span> 10;
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">ast</span>{
+        <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>;
+        <span style="color: #FD971F;">fontsize =</span> 10;
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">circle</span>, <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize =</span> 10];
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #CDC673;">"plaintext"</span>];
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">circle</span>, <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 10];
+        <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize =</span> 10];
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #E6DB74;">"plaintext"</span>];
 
-	mul [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"mul(*)"</span>];
-	add [<span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"add(+)"</span>];
+        mul [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"mul(*)"</span>];
+        add [<span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"add(+)"</span>];
 
-	add -&gt; 3
-	add -&gt; 4;
-	mul -&gt; add;
-	mul -&gt; 5;
+        add -&gt; 3
+        add -&gt; 4;
+        mul -&gt; add;
+        mul -&gt; 5;
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org0b4e052" class="figure">
 <p><img src="./dot/dot/dot_ast.png" alt="dot_ast.png" />
 </p>
 </div>
@@ -8985,30 +8938,30 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span>{
-	<span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>
-	<span style="color: #FF8C00;">fontsize =</span> 10
-	<span style="color: #FF1493;">node</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>, <span style="color: #FF8C00;">fontsize =</span> 10, <span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"record"</span> ];
-	<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00;">fontname =</span> <span style="color: #CDC673;">"Courier New"</span>, <span style="color: #FF8C00;">fontsize =</span> 10 ];
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span>{
+        <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Courier New"</span>
+        <span style="color: #FD971F;">fontsize =</span> 10
+        <span style="color: #F92672;">node</span> [ <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Courier New"</span>, <span style="color: #FD971F;">fontsize =</span> 10, <span style="color: #FD971F;">shape =</span> <span style="color: #E6DB74;">"record"</span> ];
+        <span style="color: #F92672;">edge</span> [ <span style="color: #FD971F;">fontname =</span> <span style="color: #E6DB74;">"Courier New"</span>, <span style="color: #FD971F;">fontsize =</span> 10 ];
 
-	Animal [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"{Animal |+ name : Stringl+ age : intl|+ die() : voidl}"</span> ];
+        Animal [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"{Animal |+ name : Stringl+ age : intl|+ die() : voidl}"</span> ];
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">clusterAnimalImpl</span>{
-		<span style="color: #FF8C00;">bgcolor=</span><span style="color: #CDC673;">"yellow"</span>
-		Dog [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"{Dog||+ bark() : voidl}"</span> ];
-		Cat [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"{Cat||+ meow() : voidl}"</span> ];
-		};
-		<span style="color: #FF1493;">edge</span> [ <span style="color: #FF8C00;">arrowhead =</span> <span style="color: #CDC673;">"empty"</span> ];
-		Dog-&gt;Animal;
-		Cat-&gt;Animal;
-		Dog-&gt;Cat [<span style="color: #FF8C00;">arrowhead=</span><span style="color: #CDC673;">"none"</span>, <span style="color: #FF8C00;">label=</span><span style="color: #CDC673;">"0..*"</span>];
-	}
+        <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">clusterAnimalImpl</span>{
+                <span style="color: #FD971F;">bgcolor=</span><span style="color: #E6DB74;">"yellow"</span>
+                Dog [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"{Dog||+ bark() : voidl}"</span> ];
+                Cat [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"{Cat||+ meow() : voidl}"</span> ];
+                };
+                <span style="color: #F92672;">edge</span> [ <span style="color: #FD971F;">arrowhead =</span> <span style="color: #E6DB74;">"empty"</span> ];
+                Dog-&gt;Animal;
+                Cat-&gt;Animal;
+                Dog-&gt;Cat [<span style="color: #FD971F;">arrowhead=</span><span style="color: #E6DB74;">"none"</span>, <span style="color: #FD971F;">label=</span><span style="color: #E6DB74;">"0..*"</span>];
+        }
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org8163065" class="figure">
 <p><img src="./dot/dot/dot_uml.png" alt="dot_uml.png" />
 </p>
 </div>
@@ -9021,69 +8974,69 @@ OSGi中，模块具有生命周期，从安装到卸载，可能的状态具有�
 脚本：
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">finite_state_machine</span> {
-	<span style="color: #FF8C00;">rankdir =</span> <span style="color: #AF87FF;">LR</span>;
-	<span style="color: #FF8C00;">size =</span> <span style="color: #CDC673;">"8,5"</span>
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">doublecircle</span>];
-	<span style="color: #AF87FF;">LR</span>_0 <span style="color: #AF87FF;">LR</span>_3 <span style="color: #AF87FF;">LR</span>_4 <span style="color: #AF87FF;">LR</span>_8;
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">circle</span>];
-	<span style="color: #AF87FF;">LR</span>_0 -&gt; <span style="color: #AF87FF;">LR</span>_2 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(B)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_0 -&gt; <span style="color: #AF87FF;">LR</span>_1 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(S)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_1 -&gt; <span style="color: #AF87FF;">LR</span>_3 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S($end)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"SS(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_2 -&gt; <span style="color: #AF87FF;">LR</span>_4 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(A)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_5 -&gt; <span style="color: #AF87FF;">LR</span>_7 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_5 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_6 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_6 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_7 -&gt; <span style="color: #AF87FF;">LR</span>_8 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_7 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_8 -&gt; <span style="color: #AF87FF;">LR</span>_6 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(b)"</span> ];
-	<span style="color: #AF87FF;">LR</span>_8 -&gt; <span style="color: #AF87FF;">LR</span>_5 [ <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"S(a)"</span> ];
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">finite_state_machine</span> {
+        <span style="color: #FD971F;">rankdir =</span> <span style="color: #AE81FF;">LR</span>;
+        <span style="color: #FD971F;">size =</span> <span style="color: #E6DB74;">"8,5"</span>
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">doublecircle</span>];
+        <span style="color: #AE81FF;">LR</span>_0 <span style="color: #AE81FF;">LR</span>_3 <span style="color: #AE81FF;">LR</span>_4 <span style="color: #AE81FF;">LR</span>_8;
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">circle</span>];
+        <span style="color: #AE81FF;">LR</span>_0 -&gt; <span style="color: #AE81FF;">LR</span>_2 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"SS(B)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_0 -&gt; <span style="color: #AE81FF;">LR</span>_1 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"SS(S)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_1 -&gt; <span style="color: #AE81FF;">LR</span>_3 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S($end)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_2 -&gt; <span style="color: #AE81FF;">LR</span>_6 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"SS(b)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_2 -&gt; <span style="color: #AE81FF;">LR</span>_5 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"SS(a)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_2 -&gt; <span style="color: #AE81FF;">LR</span>_4 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(A)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_5 -&gt; <span style="color: #AE81FF;">LR</span>_7 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(b)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_5 -&gt; <span style="color: #AE81FF;">LR</span>_5 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(a)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_6 -&gt; <span style="color: #AE81FF;">LR</span>_6 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(b)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_6 -&gt; <span style="color: #AE81FF;">LR</span>_5 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(a)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_7 -&gt; <span style="color: #AE81FF;">LR</span>_8 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(b)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_7 -&gt; <span style="color: #AE81FF;">LR</span>_5 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(a)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_8 -&gt; <span style="color: #AE81FF;">LR</span>_6 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(b)"</span> ];
+        <span style="color: #AE81FF;">LR</span>_8 -&gt; <span style="color: #AE81FF;">LR</span>_5 [ <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"S(a)"</span> ];
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orga56b7a7" class="figure">
 <p><img src="./dot/dot/dot_state_graph.png" alt="dot_state_graph.png" />
 </p>
 </div>
 
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">G</span> {
-	<span style="color: #FF8C00;">compound =</span> <span style="color: #AF87FF;">true</span>  <span style="color: #8B8878;">// </span><span style="color: #8B8878;">&#20801;&#35768;&#23376;&#22270;&#38388;&#23384;&#22312;&#36793;</span>
-	<span style="color: #FF8C00;">ranksep =</span> 1
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">record</span>]
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">G</span> {
+        <span style="color: #FD971F;">compound =</span> <span style="color: #AE81FF;">true</span>  <span style="color: #75715E;">// </span><span style="color: #75715E;">&#20801;&#35768;&#23376;&#22270;&#38388;&#23384;&#22312;&#36793;</span>
+        <span style="color: #FD971F;">ranksep =</span> 1
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">record</span>]
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_hardware</span> {
-		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"hardware"</span>
-		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">lightblue</span>
-		CPU Memory
-	}
+        <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_hardware</span> {
+                <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"hardware"</span>
+                <span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">lightblue</span>
+                CPU Memory
+        }
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_kernel</span> {
-		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"kernel"</span>
-		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">green</span>
-		Init IPC
-	}
+        <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_kernel</span> {
+                <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"kernel"</span>
+                <span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">green</span>
+                Init IPC
+        }
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_libc</span> {
-		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"libc"</span>
-		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">yellow</span>
-		glibc
-	}
+        <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_libc</span> {
+                <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"libc"</span>
+                <span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">yellow</span>
+                glibc
+        }
 
-	CPU -&gt; Init [<span style="color: #FF8C00;">lhead =</span> cluster_kernel <span style="color: #FF8C00;">ltail =</span> cluster_hardware]
-	IPC -&gt; glibc [<span style="color: #FF8C00;">lhead =</span> cluster_libc <span style="color: #FF8C00;">ltail =</span> cluster_kernel]
+        CPU -&gt; Init [<span style="color: #FD971F;">lhead =</span> cluster_kernel <span style="color: #FD971F;">ltail =</span> cluster_hardware]
+        IPC -&gt; glibc [<span style="color: #FD971F;">lhead =</span> cluster_libc <span style="color: #FD971F;">ltail =</span> cluster_kernel]
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org4a63f01" class="figure">
 <p><img src="./dot/dot/dot_compount.png" alt="dot_compount.png" />
 </p>
 </div>
@@ -9094,145 +9047,145 @@ TCP IP 状态流程图
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> {
-	<span style="color: #FF8C00;">compound=</span><span style="color: #AF87FF;">true</span>
-	<span style="color: #FF8C00;">fontsize=</span>10
-	<span style="color: #FF8C00;">margin=</span><span style="color: #CDC673;">"0,0"</span>
-	<span style="color: #FF8C00;">ranksep =</span> .75
-	<span style="color: #FF8C00;">nodesep =</span> .65
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> {
+        <span style="color: #FD971F;">compound=</span><span style="color: #AE81FF;">true</span>
+        <span style="color: #FD971F;">fontsize=</span>10
+        <span style="color: #FD971F;">margin=</span><span style="color: #E6DB74;">"0,0"</span>
+        <span style="color: #FD971F;">ranksep =</span> .75
+        <span style="color: #FD971F;">nodesep =</span> .65
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">Mrecord</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Inconsolata, Consolas"</span>, <span style="color: #FF8C00;">fontsize=</span>12, <span style="color: #FF8C00;">penwidth=</span>0.5]
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Inconsolata, Consolas"</span>, <span style="color: #FF8C00;">fontsize=</span>10, <span style="color: #FF8C00;">arrowhead=</span><span style="color: #AF87FF;">normal</span>]
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">Mrecord</span> <span style="color: #FD971F;">fontname=</span><span style="color: #E6DB74;">"Inconsolata, Consolas"</span>, <span style="color: #FD971F;">fontsize=</span>12, <span style="color: #FD971F;">penwidth=</span>0.5]
+        <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">fontname=</span><span style="color: #E6DB74;">"Inconsolata, Consolas"</span>, <span style="color: #FD971F;">fontsize=</span>10, <span style="color: #FD971F;">arrowhead=</span><span style="color: #AE81FF;">normal</span>]
 
 
-	<span style="color: #CDC673;">"TCP/IP State Transition"</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"plaintext"</span>, <span style="color: #FF8C00;">fontsize =</span> 16]
+        <span style="color: #E6DB74;">"TCP/IP State Transition"</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #E6DB74;">"plaintext"</span>, <span style="color: #FD971F;">fontsize =</span> 16]
 
-	<span style="color: #8B8878;">// </span><span style="color: #8B8878;">now start server state transition</span>
-	<span style="color: #CDC673;">"CLOSED"</span> -&gt; <span style="color: #CDC673;">"LISTEN"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>];
-	<span style="color: #CDC673;">"LISTEN"</span> -&gt; <span style="color: #CDC673;">"SENT_REVD"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
-	<span style="color: #CDC673;">"SENT_REVD"</span> -&gt; <span style="color: #CDC673;">"ESTABLISHED"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 20]
-	<span style="color: #CDC673;">"ESTABLISHED"</span> -&gt; <span style="color: #CDC673;">"CLOSE_WAIT"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 20]
+        <span style="color: #75715E;">// </span><span style="color: #75715E;">now start server state transition</span>
+        <span style="color: #E6DB74;">"CLOSED"</span> -&gt; <span style="color: #E6DB74;">"LISTEN"</span> [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>];
+        <span style="color: #E6DB74;">"LISTEN"</span> -&gt; <span style="color: #E6DB74;">"SENT_REVD"</span> [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
+        <span style="color: #E6DB74;">"SENT_REVD"</span> -&gt; <span style="color: #E6DB74;">"ESTABLISHED"</span> [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FD971F;">weight =</span> 20]
+        <span style="color: #E6DB74;">"ESTABLISHED"</span> -&gt; <span style="color: #E6DB74;">"CLOSE_WAIT"</span> [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FD971F;">weight =</span> 20]
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_passive_close</span> {
-		<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>
-		<span style="color: #FF8C00;">margin =</span> 10
+        <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_passive_close</span> {
+                <span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>
+                <span style="color: #FD971F;">margin =</span> 10
 
-		passive_close [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#34987;&#21160;&#20851;&#38381;"</span>, <span style="color: #FF8C00;">fontsize =</span> 14]
+                passive_close [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">plaintext</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#34987;&#21160;&#20851;&#38381;"</span>, <span style="color: #FD971F;">fontsize =</span> 14]
 
-		<span style="color: #CDC673;">"CLOSE_WAIT"</span> -&gt; <span style="color: #CDC673;">"LAST_ACK"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00;">weight =</span> 10]
-	}
-	<span style="color: #CDC673;">"LAST_ACK"</span> -&gt; <span style="color: #CDC673;">"CLOSED"</span> [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+                <span style="color: #E6DB74;">"CLOSE_WAIT"</span> -&gt; <span style="color: #E6DB74;">"LAST_ACK"</span> [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FD971F;">weight =</span> 10]
+        }
+        <span style="color: #E6DB74;">"LAST_ACK"</span> -&gt; <span style="color: #E6DB74;">"CLOSED"</span> [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
 
-	<span style="color: #8B8878;">// </span><span style="color: #8B8878;">now start client state transition</span>
-	<span style="color: #CDC673;">"CLOSED"</span> -&gt; <span style="color: #CDC673;">"SYN_SENT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>];
-	<span style="color: #CDC673;">"SYN_SENT"</span> -&gt; <span style="color: #CDC673;">"ESTABLISHED"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 25]
-	<span style="color: #CDC673;">"SYN_SENT"</span> -&gt; <span style="color: #CDC673;">"SENT_REVD"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
-	<span style="color: #CDC673;">"ESTABLISHED"</span> -&gt; <span style="color: #CDC673;">"FIN_WAIT_1"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00;">weight =</span> 20]
+        <span style="color: #75715E;">// </span><span style="color: #75715E;">now start client state transition</span>
+        <span style="color: #E6DB74;">"CLOSED"</span> -&gt; <span style="color: #E6DB74;">"SYN_SENT"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>];
+        <span style="color: #E6DB74;">"SYN_SENT"</span> -&gt; <span style="color: #E6DB74;">"ESTABLISHED"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FD971F;">weight =</span> 25]
+        <span style="color: #E6DB74;">"SYN_SENT"</span> -&gt; <span style="color: #E6DB74;">"SENT_REVD"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
+        <span style="color: #E6DB74;">"ESTABLISHED"</span> -&gt; <span style="color: #E6DB74;">"FIN_WAIT_1"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FD971F;">weight =</span> 20]
 
-	<span style="color: #FF1493;">subgraph</span> <span style="color: #87D700;">cluster_active_close</span> {
-		<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>
-		<span style="color: #FF8C00;">margin =</span> 10
+        <span style="color: #F92672;">subgraph</span> <span style="color: #A6E22E;">cluster_active_close</span> {
+                <span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>
+                <span style="color: #FD971F;">margin =</span> 10
 
-		active_<span style="color: #AF87FF;">open</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#20027;&#21160;&#20851;&#38381;"</span>, <span style="color: #FF8C00;">fontsize =</span> 14]
+                active_<span style="color: #AE81FF;">open</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">plaintext</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#20027;&#21160;&#20851;&#38381;"</span>, <span style="color: #FD971F;">fontsize =</span> 14]
 
-		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"FIN_WAIT_2"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
-		<span style="color: #CDC673;">"FIN_WAIT_2"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
-		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"CLOSING"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
-		<span style="color: #CDC673;">"FIN_WAIT_1"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
-		<span style="color: #CDC673;">"CLOSING"</span> -&gt; <span style="color: #CDC673;">"TIME_WAIT"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>]
-	}
+                <span style="color: #E6DB74;">"FIN_WAIT_1"</span> -&gt; <span style="color: #E6DB74;">"FIN_WAIT_2"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+                <span style="color: #E6DB74;">"FIN_WAIT_2"</span> -&gt; <span style="color: #E6DB74;">"TIME_WAIT"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
+                <span style="color: #E6DB74;">"FIN_WAIT_1"</span> -&gt; <span style="color: #E6DB74;">"CLOSING"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+                <span style="color: #E6DB74;">"FIN_WAIT_1"</span> -&gt; <span style="color: #E6DB74;">"TIME_WAIT"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
+                <span style="color: #E6DB74;">"CLOSING"</span> -&gt; <span style="color: #E6DB74;">"TIME_WAIT"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>]
+        }
 
-	<span style="color: #CDC673;">"TIME_WAIT"</span> -&gt; <span style="color: #CDC673;">"CLOSED"</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"2MSL&#36229;&#26102;"</span>]
+        <span style="color: #E6DB74;">"TIME_WAIT"</span> -&gt; <span style="color: #E6DB74;">"CLOSED"</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"2MSL&#36229;&#26102;"</span>]
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orga96c4ef" class="figure">
 <p><img src="./dot/dot/dot_tcp1.png" alt="dot_tcp1.png" />
 </p>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">rankdot</span> {
-	<span style="color: #FF8C00;">compound=</span><span style="color: #AF87FF;">true</span>
-	<span style="color: #FF8C00;">margin=</span><span style="color: #CDC673;">"0,0"</span>
-	<span style="color: #FF8C00;">ranksep =</span> .75
-	<span style="color: #FF8C00;">nodesep =</span> 1
-	pad = .5
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">splines = ortho</span>
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">rankdot</span> {
+        <span style="color: #FD971F;">compound=</span><span style="color: #AE81FF;">true</span>
+        <span style="color: #FD971F;">margin=</span><span style="color: #E6DB74;">"0,0"</span>
+        <span style="color: #FD971F;">ranksep =</span> .75
+        <span style="color: #FD971F;">nodesep =</span> 1
+        pad = .5
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">splines = ortho</span>
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">Mrecord</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>14]
-	<span style="color: #FF1493;">edge</span> [charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>11, <span style="color: #FF8C00;">arrowhead =</span> <span style="color: #AF87FF;">normal</span>]
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">Mrecord</span>, charset = <span style="color: #E6DB74;">"UTF-8"</span> <span style="color: #FD971F;">fontname=</span><span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize=</span>14]
+        <span style="color: #F92672;">edge</span> [charset = <span style="color: #E6DB74;">"UTF-8"</span> <span style="color: #FD971F;">fontname=</span><span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize=</span>11, <span style="color: #FD971F;">arrowhead =</span> <span style="color: #AE81FF;">normal</span>]
 
 
-	CLOSED -&gt; LISTEN [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 100];
+        CLOSED -&gt; LISTEN [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#34987;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FD971F;">weight =</span> 100];
 
-	<span style="color: #CDC673;">"TCP/IP State Transition"</span> [<span style="color: #FF8C00;">shape =</span> <span style="color: #CDC673;">"plaintext"</span>, <span style="color: #FF8C00;">fontsize =</span> 16]
+        <span style="color: #E6DB74;">"TCP/IP State Transition"</span> [<span style="color: #FD971F;">shape =</span> <span style="color: #E6DB74;">"plaintext"</span>, <span style="color: #FD971F;">fontsize =</span> 16]
 
-	{
-		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
-		SYN_RCVD SYN_SENT
-		<span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00;">width =</span> 0]
+        {
+                <span style="color: #FD971F;">rank =</span> <span style="color: #AE81FF;">same</span>
+                SYN_RCVD SYN_SENT
+                <span style="color: #AE81FF;">point</span>_1 [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">point</span>, <span style="color: #FD971F;">width =</span> 0]
 
-		SYN_SENT -&gt; <span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#20851;&#38381;&#25110;&#32773;&#36229;&#26102;"</span>]
-		<span style="color: #8B8878;">// </span><span style="color: #8B8878;">SYN_SENT -&gt; SYN_RCVD &#36825;&#20010;&#19968;&#34892;&#20195;&#30721;&#21644;&#19978;&#19968;&#34892;&#20914;&#31361;&#20102;&#65292;syn_sent &#20250;&#22312;syn_rcvd&#21491;&#36793;</span>
-		SYN_RCVD -&gt; SYN_SENT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">dir =</span> <span style="color: #AF87FF;">back</span>, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
-	}
+                SYN_SENT -&gt; <span style="color: #AE81FF;">point</span>_1 [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#20851;&#38381;&#25110;&#32773;&#36229;&#26102;"</span>]
+                <span style="color: #75715E;">// </span><span style="color: #75715E;">SYN_SENT -&gt; SYN_RCVD &#36825;&#20010;&#19968;&#34892;&#20195;&#30721;&#21644;&#19978;&#19968;&#34892;&#20914;&#31361;&#20102;&#65292;syn_sent &#20250;&#22312;syn_rcvd&#21491;&#36793;</span>
+                SYN_RCVD -&gt; SYN_SENT [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">dir =</span> <span style="color: #AE81FF;">back</span>, <span style="color: #FD971F;">headlabel =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK\n&#21516;&#26102;&#25171;&#24320;"</span>]
+        }
 
-	LISTEN -&gt; SYN_RCVD [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
-	SYN_RCVD -&gt; LISTEN [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;RST"</span>]
-	CLOSED:es -&gt; SYN_SENT [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>]
+        LISTEN -&gt; SYN_RCVD [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">headlabel =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN\n&#21457;&#36865;&#65306;SYN,ACK"</span>]
+        SYN_RCVD -&gt; LISTEN [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">headlabel =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;RST"</span>]
+        CLOSED:es -&gt; SYN_SENT [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#20027;&#21160;&#25171;&#24320;\n&#21457;&#36865;&#65306;SYN"</span>]
 
-	{
-		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
-		ESTABLISHED CLOSE_WAIT
+        {
+                <span style="color: #FD971F;">rank =</span> <span style="color: #AE81FF;">same</span>
+                ESTABLISHED CLOSE_WAIT
 
-		ESTABLISHED -&gt; CLOSE_WAIT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
-	}
+                ESTABLISHED -&gt; CLOSE_WAIT [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>]
+        }
 
-	SYN_RCVD -&gt; ESTABLISHED [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 9]
-	SYN_SENT -&gt; ESTABLISHED  [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 10]
+        SYN_RCVD -&gt; ESTABLISHED [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FD971F;">weight =</span> 9]
+        SYN_SENT -&gt; ESTABLISHED  [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;SYN,ACK\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FD971F;">weight =</span> 10]
 
-	{
-		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
+        {
+                <span style="color: #FD971F;">rank =</span> <span style="color: #AE81FF;">same</span>
 
-		FIN_WAIT_1
-		CLOSING
-		LAST_ACK
-		<span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00;">width =</span> 0]
+                FIN_WAIT_1
+                CLOSING
+                LAST_ACK
+                <span style="color: #AE81FF;">point</span>_2 [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">point</span>, <span style="color: #FD971F;">width =</span> 0]
 
-		FIN_WAIT_1 -&gt; CLOSING [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
-		LAST_ACK -&gt; <span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
-	}
+                FIN_WAIT_1 -&gt; CLOSING [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>]
+                LAST_ACK -&gt; <span style="color: #AE81FF;">point</span>_2 [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+        }
 
-	CLOSE_WAIT -&gt; LAST_ACK [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FF8C00;">weight =</span> 10]
+        CLOSE_WAIT -&gt; LAST_ACK [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>, <span style="color: #FD971F;">weight =</span> 10]
 
-	{
-		<span style="color: #FF8C00;">rank =</span> <span style="color: #AF87FF;">same</span>
-		FIN_WAIT_2  TIME_WAIT
+        {
+                <span style="color: #FD971F;">rank =</span> <span style="color: #AE81FF;">same</span>
+                FIN_WAIT_2  TIME_WAIT
 
-		<span style="color: #AF87FF;">point</span>_3 [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">point</span>, <span style="color: #FF8C00;">width =</span> 0]
-		TIME_WAIT -&gt; <span style="color: #AF87FF;">point</span>_3 [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"2MSL&#36229;&#26102;"</span>]
-	}
+                <span style="color: #AE81FF;">point</span>_3 [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">point</span>, <span style="color: #FD971F;">width =</span> 0]
+                TIME_WAIT -&gt; <span style="color: #AE81FF;">point</span>_3 [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"2MSL&#36229;&#26102;"</span>]
+        }
 
-	ESTABLISHED -&gt; FIN_WAIT_1 [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>]
-	FIN_WAIT_1 -&gt; FIN_WAIT_2 [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">headlabel =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 15]
-	FIN_WAIT_2 -&gt; TIME_WAIT [<span style="color: #FF8C00;">style =</span> blod, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FF8C00;">weight =</span> 10]
+        ESTABLISHED -&gt; FIN_WAIT_1 [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#24212;&#29992;&#65306;&#20851;&#38381;\n&#21457;&#36865;&#65306;FIN"</span>]
+        FIN_WAIT_1 -&gt; FIN_WAIT_2 [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">headlabel =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FD971F;">weight =</span> 15]
+        FIN_WAIT_2 -&gt; TIME_WAIT [<span style="color: #FD971F;">style =</span> blod, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;FIN\n&#21457;&#36865;&#65306;ACK"</span>, <span style="color: #FD971F;">weight =</span> 10]
 
-	CLOSING -&gt; TIME_WAIT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FF8C00;">weight =</span> 15]
-	FIN_WAIT_1 -&gt; TIME_WAIT [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
+        CLOSING -&gt; TIME_WAIT [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>, <span style="color: #FD971F;">weight =</span> 15]
+        FIN_WAIT_1 -&gt; TIME_WAIT [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&#25509;&#25910;&#65306;ACK\n&#21457;&#36865;&#65306;&lt;&#26080;&gt;"</span>]
 
-	<span style="color: #AF87FF;">point</span>_3 -&gt; <span style="color: #AF87FF;">point</span>_2 [<span style="color: #FF8C00;">arrowhead =</span> <span style="color: #AF87FF;">none</span>, <span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>, <span style="color: #FF8C00;">weight =</span> 10]
-	<span style="color: #AF87FF;">point</span>_2 -&gt; <span style="color: #AF87FF;">point</span>_1 [<span style="color: #FF8C00;">arrowhead =</span> <span style="color: #AF87FF;">none</span>, <span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>]
-	<span style="color: #AF87FF;">point</span>_1 -&gt; CLOSED [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dotted</span>]
+        <span style="color: #AE81FF;">point</span>_3 -&gt; <span style="color: #AE81FF;">point</span>_2 [<span style="color: #FD971F;">arrowhead =</span> <span style="color: #AE81FF;">none</span>, <span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>, <span style="color: #FD971F;">weight =</span> 10]
+        <span style="color: #AE81FF;">point</span>_2 -&gt; <span style="color: #AE81FF;">point</span>_1 [<span style="color: #FD971F;">arrowhead =</span> <span style="color: #AE81FF;">none</span>, <span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>]
+        <span style="color: #AE81FF;">point</span>_1 -&gt; CLOSED [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dotted</span>]
 }
 
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org153d522" class="figure">
 <p><img src="./dot/dot/dot_tcp2.png" alt="dot_tcp2.png" />
 </p>
 </div>
@@ -9246,83 +9199,83 @@ TCP IP 状态流程图
 epoll 相关数据结构及关系
 </p>
 <div class="org-src-container">
-<pre class="src src-dot"><span style="color: #FF1493;">digraph</span> <span style="color: #87D700;">rankdot</span> {
-	<span style="color: #FF8C00;">compound=</span><span style="color: #AF87FF;">true</span>
-	<span style="color: #FF8C00;">margin=</span><span style="color: #CDC673;">"0,0"</span>
-	<span style="color: #FF8C00;">ranksep =</span> .75
-	<span style="color: #FF8C00;">nodesep =</span> 1
-	pad = .5
-	<span style="color: #FF8C00;">rankdir =</span> <span style="color: #AF87FF;">LR</span>
+<pre class="src src-dot"><span style="color: #F92672;">digraph</span> <span style="color: #A6E22E;">rankdot</span> {
+        <span style="color: #FD971F;">compound=</span><span style="color: #AE81FF;">true</span>
+        <span style="color: #FD971F;">margin=</span><span style="color: #E6DB74;">"0,0"</span>
+        <span style="color: #FD971F;">ranksep =</span> .75
+        <span style="color: #FD971F;">nodesep =</span> 1
+        pad = .5
+        <span style="color: #FD971F;">rankdir =</span> <span style="color: #AE81FF;">LR</span>
 
-	<span style="color: #FF1493;">node</span> [<span style="color: #FF8C00;">shape=</span><span style="color: #AF87FF;">record</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>14]
-	<span style="color: #FF1493;">edge</span> [<span style="color: #FF8C00;">style =</span> <span style="color: #AF87FF;">dashed</span>, charset = <span style="color: #CDC673;">"UTF-8"</span> <span style="color: #FF8C00;">fontname=</span><span style="color: #CDC673;">"Microsoft YaHei"</span>, <span style="color: #FF8C00;">fontsize=</span>11]
+        <span style="color: #F92672;">node</span> [<span style="color: #FD971F;">shape=</span><span style="color: #AE81FF;">record</span>, charset = <span style="color: #E6DB74;">"UTF-8"</span> <span style="color: #FD971F;">fontname=</span><span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize=</span>14]
+        <span style="color: #F92672;">edge</span> [<span style="color: #FD971F;">style =</span> <span style="color: #AE81FF;">dashed</span>, charset = <span style="color: #E6DB74;">"UTF-8"</span> <span style="color: #FD971F;">fontname=</span><span style="color: #E6DB74;">"Microsoft YaHei"</span>, <span style="color: #FD971F;">fontsize=</span>11]
 
-	epoll [<span style="color: #FF8C00;">shape =</span> <span style="color: #AF87FF;">plaintext</span>, <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"epoll &#30456;&#20851;&#32467;&#26500;&#21450;&#37096;&#20998;&#20851;&#31995;"</span>]
+        epoll [<span style="color: #FD971F;">shape =</span> <span style="color: #AE81FF;">plaintext</span>, <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"epoll &#30456;&#20851;&#32467;&#26500;&#21450;&#37096;&#20998;&#20851;&#31995;"</span>]
 
-	eventpoll [
-		   <span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">cornflowerblue</span>,
-		   <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;eventpoll&gt; struct \n eventpoll |</span>
-<span style="color: #CDC673;">                   &lt;lock&gt; spinlock_t lock; |</span>
-<span style="color: #CDC673;">                   &lt;mutex&gt; struct mutex mtx; |</span>
-<span style="color: #CDC673;">                   &lt;wq&gt; wait_queue_head_t wq; |</span>
-<span style="color: #CDC673;">                   &lt;poll_wait&gt; wait_queue_head_t poll_wait; |</span>
-<span style="color: #CDC673;">                   &lt;rdllist&gt; struct list_head rdllist; |</span>
-<span style="color: #CDC673;">                   &lt;ovflist&gt; struct epitem *ovflist; |</span>
-<span style="color: #CDC673;">                   &lt;rbr&gt; struct rb_root_cached rbr; |</span>
-<span style="color: #CDC673;">                   &lt;ws&gt; struct wakeup_source *ws; |</span>
-<span style="color: #CDC673;">                   &lt;user&gt; struct user_struct *user; |</span>
-<span style="color: #CDC673;">                   &lt;file&gt; struct file *file; |</span>
-<span style="color: #CDC673;">                   &lt;visited&gt; int visited; |</span>
-<span style="color: #CDC673;">                   &lt;visited_list_link&gt; struct list_head visited_list_link;"</span>
-		   ]
+        eventpoll [
+                   <span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">cornflowerblue</span>,
+                   <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&lt;eventpoll&gt; struct \n eventpoll |</span>
+<span style="color: #E6DB74;">                   &lt;lock&gt; spinlock_t lock; |</span>
+<span style="color: #E6DB74;">                   &lt;mutex&gt; struct mutex mtx; |</span>
+<span style="color: #E6DB74;">                   &lt;wq&gt; wait_queue_head_t wq; |</span>
+<span style="color: #E6DB74;">                   &lt;poll_wait&gt; wait_queue_head_t poll_wait; |</span>
+<span style="color: #E6DB74;">                   &lt;rdllist&gt; struct list_head rdllist; |</span>
+<span style="color: #E6DB74;">                   &lt;ovflist&gt; struct epitem *ovflist; |</span>
+<span style="color: #E6DB74;">                   &lt;rbr&gt; struct rb_root_cached rbr; |</span>
+<span style="color: #E6DB74;">                   &lt;ws&gt; struct wakeup_source *ws; |</span>
+<span style="color: #E6DB74;">                   &lt;user&gt; struct user_struct *user; |</span>
+<span style="color: #E6DB74;">                   &lt;file&gt; struct file *file; |</span>
+<span style="color: #E6DB74;">                   &lt;visited&gt; int visited; |</span>
+<span style="color: #E6DB74;">                   &lt;visited_list_link&gt; struct list_head visited_list_link;"</span>
+                   ]
 
-	epitem [
-		<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>,
-		<span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;epitem&gt; struct \n epitem  |</span>
-<span style="color: #CDC673;">                &lt;rb&gt;struct rb_node rbn;\nstruct rcu_head rcu; |</span>
-<span style="color: #CDC673;">                &lt;rdllink&gt; struct list_head rdllink; |</span>
-<span style="color: #CDC673;">                &lt;next&gt; struct epitem *next; |</span>
-<span style="color: #CDC673;">                &lt;ffd&gt; struct epoll_filefd ffd; |</span>
-<span style="color: #CDC673;">                &lt;nwait&gt; int nwait; |</span>
-<span style="color: #CDC673;">                &lt;pwqlist&gt; struct list_head pwqlist; |</span>
-<span style="color: #CDC673;">                &lt;ep&gt; struct eventpoll *ep; |</span>
-<span style="color: #CDC673;">                &lt;fllink&gt; struct list_head fllink; |</span>
-<span style="color: #CDC673;">                &lt;ws&gt; struct wakeup_source __rcu *ws; |</span>
-<span style="color: #CDC673;">                &lt;event&gt; struct epoll_event event;"</span>
-		]
+        epitem [
+                <span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">sienna</span>,
+                <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&lt;epitem&gt; struct \n epitem  |</span>
+<span style="color: #E6DB74;">                &lt;rb&gt;struct rb_node rbn;\nstruct rcu_head rcu; |</span>
+<span style="color: #E6DB74;">                &lt;rdllink&gt; struct list_head rdllink; |</span>
+<span style="color: #E6DB74;">                &lt;next&gt; struct epitem *next; |</span>
+<span style="color: #E6DB74;">                &lt;ffd&gt; struct epoll_filefd ffd; |</span>
+<span style="color: #E6DB74;">                &lt;nwait&gt; int nwait; |</span>
+<span style="color: #E6DB74;">                &lt;pwqlist&gt; struct list_head pwqlist; |</span>
+<span style="color: #E6DB74;">                &lt;ep&gt; struct eventpoll *ep; |</span>
+<span style="color: #E6DB74;">                &lt;fllink&gt; struct list_head fllink; |</span>
+<span style="color: #E6DB74;">                &lt;ws&gt; struct wakeup_source __rcu *ws; |</span>
+<span style="color: #E6DB74;">                &lt;event&gt; struct epoll_event event;"</span>
+                ]
 
-	epitem2 [
-		 <span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>,
-		 <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;epitem&gt; struct \n epitem |</span>
-<span style="color: #CDC673;">                 &lt;rb&gt;struct rb_node rbn;\nstruct rcu_head rcu; |</span>
-<span style="color: #CDC673;">                 &lt;rdllink&gt; struct list_head rdllink; |</span>
-<span style="color: #CDC673;">                 &lt;next&gt; struct epitem *next; |</span>
-<span style="color: #CDC673;">                 &lt;ep&gt; struct eventpoll *ep; |</span>
-<span style="color: #CDC673;">                 &#183;&#183;&#183; |</span>
-<span style="color: #CDC673;">                 &#183;&#183;&#183; "</span>
-		 ]
+        epitem2 [
+                 <span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">sienna</span>,
+                 <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&lt;epitem&gt; struct \n epitem |</span>
+<span style="color: #E6DB74;">                 &lt;rb&gt;struct rb_node rbn;\nstruct rcu_head rcu; |</span>
+<span style="color: #E6DB74;">                 &lt;rdllink&gt; struct list_head rdllink; |</span>
+<span style="color: #E6DB74;">                 &lt;next&gt; struct epitem *next; |</span>
+<span style="color: #E6DB74;">                 &lt;ep&gt; struct eventpoll *ep; |</span>
+<span style="color: #E6DB74;">                 &#183;&#183;&#183; |</span>
+<span style="color: #E6DB74;">                 &#183;&#183;&#183; "</span>
+                 ]
 
-	eppoll_entry [
-		      <span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">darkviolet</span>,
-		      <span style="color: #FF8C00;">label =</span> <span style="color: #CDC673;">"&lt;entry&gt; struct \n eppoll_entry |</span>
-<span style="color: #CDC673;">                      &lt;llink&gt; struct list_head llink; |</span>
-<span style="color: #CDC673;">                      &lt;base&gt; struct epitem *base; |</span>
-<span style="color: #CDC673;">                      &lt;wait&gt; wait_queue_entry_t wait; |</span>
-<span style="color: #CDC673;">                      &lt;whead&gt; wait_queue_head_t *whead;"</span>
-		      ]
+        eppoll_entry [
+                      <span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">darkviolet</span>,
+                      <span style="color: #FD971F;">label =</span> <span style="color: #E6DB74;">"&lt;entry&gt; struct \n eppoll_entry |</span>
+<span style="color: #E6DB74;">                      &lt;llink&gt; struct list_head llink; |</span>
+<span style="color: #E6DB74;">                      &lt;base&gt; struct epitem *base; |</span>
+<span style="color: #E6DB74;">                      &lt;wait&gt; wait_queue_entry_t wait; |</span>
+<span style="color: #E6DB74;">                      &lt;whead&gt; wait_queue_head_t *whead;"</span>
+                      ]
 
-	epitem:ep -&gt; eventpoll:se [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>]
-	epitem2:ep -&gt; eventpoll:se [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">sienna</span>]
-	eventpoll:ovflist -&gt; epitem:next -&gt; epitem2:next [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">cornflowerblue</span>]
-	eventpoll:rdllist -&gt; epitem:rdllink -&gt; epitem2:rdllink [<span style="color: #FF8C00;">dir =</span> <span style="color: #AF87FF;">both</span>]
-	eppoll_entry:llink -&gt; epitem:pwqlist [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">darkviolet</span>]
-	eppoll_entry:base -&gt; epitem:nw  [<span style="color: #FF8C00;">color =</span> <span style="color: #CDC673;">darkviolet</span>]
+        epitem:ep -&gt; eventpoll:se [<span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">sienna</span>]
+        epitem2:ep -&gt; eventpoll:se [<span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">sienna</span>]
+        eventpoll:ovflist -&gt; epitem:next -&gt; epitem2:next [<span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">cornflowerblue</span>]
+        eventpoll:rdllist -&gt; epitem:rdllink -&gt; epitem2:rdllink [<span style="color: #FD971F;">dir =</span> <span style="color: #AE81FF;">both</span>]
+        eppoll_entry:llink -&gt; epitem:pwqlist [<span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">darkviolet</span>]
+        eppoll_entry:base -&gt; epitem:nw  [<span style="color: #FD971F;">color =</span> <span style="color: #E6DB74;">darkviolet</span>]
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orgb0e31dd" class="figure">
 <p><img src="./dot/dot/dot_epoll_struct.png" alt="dot_epoll_struct.png" />
 </p>
 </div>
@@ -9337,8 +9290,8 @@ epoll 相关数据结构及关系
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-18 Sat 10:22</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

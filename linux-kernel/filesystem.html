@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-25 Sat 12:21 -->
+<!-- 2024-06-23 Sun 15:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>linux文件系统</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,78 +191,31 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">linux文件系统</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org6e4cd6e">1. 文件系统操作</a>
+<li><a href="#orgee3c9d2">1. 文件系统操作</a>
 <ul>
-<li><a href="#orgd4617fc">1.1. 全局结构</a></li>
-<li><a href="#orgef75f7e">1.2. 注册</a></li>
+<li><a href="#org7f7c1f7">1.1. 全局结构</a></li>
+<li><a href="#orge30a40d">1.2. 注册</a></li>
 </ul>
 </li>
-<li><a href="#orgd2e395f">2. 命令</a>
+<li><a href="#org8aa7cf5">2. 命令</a>
 <ul>
-<li><a href="#orgb3fdaf2">2.1. mount</a>
+<li><a href="#org50f17b1">2.1. mount</a>
 <ul>
-<li><a href="#org4c65dcb">2.1.1. bind</a></li>
-<li><a href="#orgd5c243e">2.1.2. move</a></li>
-<li><a href="#orgc0afad4">2.1.3. rbind</a></li>
-<li><a href="#orgaa9dd42">2.1.4. make-shared</a></li>
+<li><a href="#orge439d99">2.1.1. bind</a></li>
+<li><a href="#orgf11f15e">2.1.2. move</a></li>
+<li><a href="#orge5b0a42">2.1.3. rbind</a></li>
+<li><a href="#org866c47d">2.1.4. make-shared</a></li>
 </ul>
 </li>
 </ul>
@@ -270,46 +224,46 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org6e4cd6e" class="outline-2">
-<h2 id="org6e4cd6e"><span class="section-number-2">1</span> 文件系统操作</h2>
+<div id="outline-container-orgee3c9d2" class="outline-2">
+<h2 id="orgee3c9d2"><span class="section-number-2">1.</span> 文件系统操作</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orgd4617fc" class="outline-3">
-<h3 id="orgd4617fc"><span class="section-number-3">1.1</span> 全局结构</h3>
+<div id="outline-container-org7f7c1f7" class="outline-3">
+<h3 id="org7f7c1f7"><span class="section-number-3">1.1.</span> 全局结构</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 文件系统结构的链表头
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> *<span style="color: #FF8C00;">file_systems</span>;
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_system_type</span> *<span style="color: #FD971F;">file_systems</span>;
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> {
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25991;&#20214;&#31995;&#32479;&#21517;&#31216;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25346;&#36733;&#26631;&#24535;</span><span style="color: #8B8878;">  */</span>
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fs_flags</span>;
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_REQUIRES_DEV</span>         1
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_BINARY_MOUNTDATA</span>     2
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_HAS_SUBTYPE</span>          4
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_USERNS_MOUNT</span>         8       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Can be mounted by userns root</span><span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_DISALLOW_NOTIFY_PERM</span> 16      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Disable fanotify permission events</span><span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">FS_RENAME_DOES_D_MOVE</span>   32768   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">FS will handle d_move() during rename() internally.</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">init_fs_context</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fs_context</span> *);
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">fs_parameter_spec</span> *<span style="color: #FF8C00;">parameters</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27492;&#25991;&#20214;&#25991;&#20214;&#31995;&#32479;&#30340;&#26032;&#23454;&#20363;&#34987;&#25346;&#36733;&#26159;&#35843;&#29992;</span><span style="color: #8B8878;">  */</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry</span> *(*<span style="color: #87D700;">mount</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> *, <span style="color: #5FD7FF;">int</span>,
-		       <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *, <span style="color: #5FD7FF;">void</span> *);
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#27492;&#25991;&#20214;&#31995;&#32479;&#30340;&#23454;&#20363;&#34987;&#20851;&#38381;&#26102;&#35843;&#29992;</span><span style="color: #8B8878;">  */</span>
-	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">kill_sb</span>) (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_block</span> *);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36830;&#25509;&#25152;&#26377;&#24050;&#27880;&#20876;&#25991;&#20214;&#31995;&#32479;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> * <span style="color: #FF8C00;">next</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30456;&#21516;&#25991;&#20214;&#31995;&#32479;&#30340;&#36229;&#32423;&#22359;&#32467;&#26500;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">hlist_head</span> <span style="color: #FF8C00;">fs_supers</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_system_type</span> {
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25991;&#20214;&#31995;&#32479;&#21517;&#31216;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">name</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25346;&#36733;&#26631;&#24535;</span><span style="color: #75715E;">  */</span>
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fs_flags</span>;
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">FS_REQUIRES_DEV</span>         1
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">FS_BINARY_MOUNTDATA</span>     2
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">FS_HAS_SUBTYPE</span>          4
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">FS_USERNS_MOUNT</span>         8       <span style="color: #75715E;">/* </span><span style="color: #75715E;">Can be mounted by userns root</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">FS_DISALLOW_NOTIFY_PERM</span> 16      <span style="color: #75715E;">/* </span><span style="color: #75715E;">Disable fanotify permission events</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">FS_RENAME_DOES_D_MOVE</span>   32768   <span style="color: #75715E;">/* </span><span style="color: #75715E;">FS will handle d_move() during rename() internally.</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">int</span> (*<span style="color: #A6E22E;">init_fs_context</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">fs_context</span> *);
+        <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">fs_parameter_spec</span> *<span style="color: #FD971F;">parameters</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#27492;&#25991;&#20214;&#25991;&#20214;&#31995;&#32479;&#30340;&#26032;&#23454;&#20363;&#34987;&#25346;&#36733;&#26159;&#35843;&#29992;</span><span style="color: #75715E;">  */</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">dentry</span> *(*<span style="color: #A6E22E;">mount</span>) (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_system_type</span> *, <span style="color: #66D9EF;">int</span>,
+                       <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *, <span style="color: #66D9EF;">void</span> *);
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#27492;&#25991;&#20214;&#31995;&#32479;&#30340;&#23454;&#20363;&#34987;&#20851;&#38381;&#26102;&#35843;&#29992;</span><span style="color: #75715E;">  */</span>
+        <span style="color: #66D9EF;">void</span> (*<span style="color: #A6E22E;">kill_sb</span>) (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">super_block</span> *);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">module</span> *<span style="color: #FD971F;">owner</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#36830;&#25509;&#25152;&#26377;&#24050;&#27880;&#20876;&#25991;&#20214;&#31995;&#32479;&#30340;&#25351;&#38024;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_system_type</span> * <span style="color: #FD971F;">next</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#30456;&#21516;&#25991;&#20214;&#31995;&#32479;&#30340;&#36229;&#32423;&#22359;&#32467;&#26500;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">hlist_head</span> <span style="color: #FD971F;">fs_supers</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
 };
 
 </pre>
@@ -317,28 +271,28 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgef75f7e" class="outline-3">
-<h3 id="orgef75f7e"><span class="section-number-3">1.2</span> 注册</h3>
+<div id="outline-container-orge30a40d" class="outline-3">
+<h3 id="orge30a40d"><span class="section-number-3">1.2.</span> 注册</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 注册文件系统通过调用 <code>register_filesystem</code> 将新的文件系统加入 <code>file_systems</code> 链表中.
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">register_filesystem</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> * <span style="color: #FF8C00;">fs</span>)
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">register_filesystem</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_system_type</span> * <span style="color: #FD971F;">fs</span>)
 {
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">res</span> = 0;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> ** <span style="color: #FF8C00;">p</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">res</span> = 0;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_system_type</span> ** <span style="color: #FD971F;">p</span>;
 
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
-	write_lock(&amp;file_systems_lock);
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26597;&#25214;&#25991;&#20214;&#31995;&#32479;&#20013;&#26159;&#21542;&#24050;&#32463;&#27880;&#20876;&#36807;, &#22914;&#26524;&#27809;&#26377;, &#36820;&#22238;&#38142;&#34920;&#26411;&#23614;&#25991;&#20214;&#31995;&#32479;&#30340;next&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
-	p = find_filesystem(fs-&gt;name, strlen(fs-&gt;name));
-	<span style="color: #FF1493;">if</span> (*p)
-		res = -EBUSY;
-	<span style="color: #FF1493;">else</span>
-		*p = fs;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#26032;&#25991;&#20214;&#31995;&#32479;&#20018;&#20837;&#38142;&#34920;</span>
-	write_unlock(&amp;file_systems_lock);
-	<span style="color: #FF1493;">return</span> res;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
+        write_lock(&amp;file_systems_lock);
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26597;&#25214;&#25991;&#20214;&#31995;&#32479;&#20013;&#26159;&#21542;&#24050;&#32463;&#27880;&#20876;&#36807;, &#22914;&#26524;&#27809;&#26377;, &#36820;&#22238;&#38142;&#34920;&#26411;&#23614;&#25991;&#20214;&#31995;&#32479;&#30340;next&#25351;&#38024;</span><span style="color: #75715E;"> */</span>
+        p = find_filesystem(fs-&gt;name, strlen(fs-&gt;name));
+        <span style="color: #F92672;">if</span> (*p)
+                res = -EBUSY;
+        <span style="color: #F92672;">else</span>
+                *p = fs;  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23558;&#26032;&#25991;&#20214;&#31995;&#32479;&#20018;&#20837;&#38142;&#34920;</span>
+        write_unlock(&amp;file_systems_lock);
+        <span style="color: #F92672;">return</span> res;
 }
 </pre>
 </div>
@@ -347,12 +301,12 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-orgd2e395f" class="outline-2">
-<h2 id="orgd2e395f"><span class="section-number-2">2</span> 命令</h2>
+<div id="outline-container-org8aa7cf5" class="outline-2">
+<h2 id="org8aa7cf5"><span class="section-number-2">2.</span> 命令</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgb3fdaf2" class="outline-3">
-<h3 id="orgb3fdaf2"><span class="section-number-3">2.1</span> mount</h3>
+<div id="outline-container-org50f17b1" class="outline-3">
+<h3 id="org50f17b1"><span class="section-number-3">2.1.</span> mount</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 通过linux专有的虚拟文件 /proc/mounts， 可以查看当前已挂载的文件系统列表。
@@ -374,13 +328,13 @@ mount 和 umount命令会自动维护/etc/mtab 文件， 但是系统调用 moun
 
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;sys/mount.h&gt;</span>
-<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;source&#25351;&#23450;&#35774;&#22791;&#21253;&#21547;&#30340;&#25991;&#20214;&#31995;&#32479; &#25346;&#36733;&#21040;&#30001;target&#25351;&#23450;&#30340;&#30446;&#24405;&#19979;&#12290;</span>
-<span style="color: #8B8878;">//</span><span style="color: #8B8878;">fstype&#26159;&#19968;&#23383;&#31526;&#20018;&#65292; &#29992;&#26469;&#26631;&#35782;&#35774;&#22791;&#25152;&#21547;&#25991;&#20214;&#31995;&#32479;&#30340;&#31867;&#22411;&#65292; &#20363;&#22914;ext4</span>
-<span style="color: #8B8878;">//</span><span style="color: #8B8878;">mountflags&#20026;&#19968;&#20301;&#25513;&#30721;&#12290;</span>
-<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">mount</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">source</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">target</span>,
-	  <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">filesystemtype</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">mountflags</span>,
-	  <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>);
+<pre class="src src-c"><span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;sys/mount.h&gt;</span>
+<span style="color: #75715E;">//</span><span style="color: #75715E;">&#23558;source&#25351;&#23450;&#35774;&#22791;&#21253;&#21547;&#30340;&#25991;&#20214;&#31995;&#32479; &#25346;&#36733;&#21040;&#30001;target&#25351;&#23450;&#30340;&#30446;&#24405;&#19979;&#12290;</span>
+<span style="color: #75715E;">//</span><span style="color: #75715E;">fstype&#26159;&#19968;&#23383;&#31526;&#20018;&#65292; &#29992;&#26469;&#26631;&#35782;&#35774;&#22791;&#25152;&#21547;&#25991;&#20214;&#31995;&#32479;&#30340;&#31867;&#22411;&#65292; &#20363;&#22914;ext4</span>
+<span style="color: #75715E;">//</span><span style="color: #75715E;">mountflags&#20026;&#19968;&#20301;&#25513;&#30721;&#12290;</span>
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">mount</span>(<span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">source</span>, <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">target</span>,
+          <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">filesystemtype</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">mountflags</span>,
+          <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">data</span>);
 </pre>
 </div>
 
@@ -511,20 +465,20 @@ int umount2(const char *target, int flags);
 </div>
 
 
-<div id="outline-container-org4c65dcb" class="outline-4">
-<h4 id="org4c65dcb"><span class="section-number-4">2.1.1</span> bind</h4>
+<div id="outline-container-orge439d99" class="outline-4">
+<h4 id="orge439d99"><span class="section-number-4">2.1.1.</span> bind</h4>
 </div>
 
-<div id="outline-container-orgd5c243e" class="outline-4">
-<h4 id="orgd5c243e"><span class="section-number-4">2.1.2</span> move</h4>
+<div id="outline-container-orgf11f15e" class="outline-4">
+<h4 id="orgf11f15e"><span class="section-number-4">2.1.2.</span> move</h4>
 </div>
 
-<div id="outline-container-orgc0afad4" class="outline-4">
-<h4 id="orgc0afad4"><span class="section-number-4">2.1.3</span> rbind</h4>
+<div id="outline-container-orge5b0a42" class="outline-4">
+<h4 id="orge5b0a42"><span class="section-number-4">2.1.3.</span> rbind</h4>
 </div>
 
-<div id="outline-container-orgaa9dd42" class="outline-4">
-<h4 id="orgaa9dd42"><span class="section-number-4">2.1.4</span> make-shared</h4>
+<div id="outline-container-org866c47d" class="outline-4">
+<h4 id="org866c47d"><span class="section-number-4">2.1.4.</span> make-shared</h4>
 <div class="outline-text-4" id="text-2-1-4">
 <p>
 **
@@ -537,8 +491,8 @@ int umount2(const char *target, int flags);
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-25 Sat 12:21</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

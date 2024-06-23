@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPP 插件</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VPP 插件</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org2f178b6">1. 插件列表</a></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org2f178b6" class="outline-2">
+<h2 id="org2f178b6"><span class="section-number-2">1.</span> 插件列表</h2>
+<div class="outline-text-2" id="text-1">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Plugin</th>
+<th scope="col" class="org-left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">1. <code>ioam_plugin.so</code></td>
+<td class="org-left">Inbound Operations, Administration, and Maintenance (OAM)</td>
+</tr>
+
+<tr>
+<td class="org-left">2. <code>perfmon_plugin.so</code></td>
+<td class="org-left">Performance Monitor</td>
+</tr>
+
+<tr>
+<td class="org-left">3. <code>urpf_plugin.so</code></td>
+<td class="org-left">Unicast Reverse Path Forwarding (uRPF)</td>
+</tr>
+
+<tr>
+<td class="org-left">4. <code>tlspicotls_plugin.so</code></td>
+<td class="org-left">Transport Layer Security (TLS) Engine, Picotls Based</td>
+</tr>
+
+<tr>
+<td class="org-left">5. <code>l3xc_plugin.so</code></td>
+<td class="org-left">L3 Cross-Connect (L3XC)</td>
+</tr>
+
+<tr>
+<td class="org-left">6. <code>mdata_plugin.so</code></td>
+<td class="org-left">Buffer metadata change tracker.</td>
+</tr>
+
+<tr>
+<td class="org-left">7. <code>ping_plugin.so</code></td>
+<td class="org-left">Ping (ping)</td>
+</tr>
+
+<tr>
+<td class="org-left">8. <code>avf_plugin.so</code></td>
+<td class="org-left">Intel Adaptive Virtual Function (AVF) Device Driver</td>
+</tr>
+
+<tr>
+<td class="org-left">9. <code>pppoe_plugin.so</code></td>
+<td class="org-left">PPP over Ethernet (PPPoE)</td>
+</tr>
+
+<tr>
+<td class="org-left">10. <code>crypto_native_plugin.so</code></td>
+<td class="org-left">Intel IA32 Software Crypto Engine</td>
+</tr>
+
+<tr>
+<td class="org-left">11. <code>srv6am_plugin.so</code></td>
+<td class="org-left">Masquerading Segment Routing for IPv6 (SRv6) Proxy</td>
+</tr>
+
+<tr>
+<td class="org-left">12. <code>l2e_plugin.so</code></td>
+<td class="org-left">Layer 2 (L2) Emulation</td>
+</tr>
+
+<tr>
+<td class="org-left">13. <code>dpdk_plugin.so</code></td>
+<td class="org-left">Data Plane Development Kit (DPDK)</td>
+</tr>
+
+<tr>
+<td class="org-left">14. <code>acl_plugin.so</code></td>
+<td class="org-left">Access Control Lists (ACL)</td>
+</tr>
+
+<tr>
+<td class="org-left">15. <code>crypto_openssl_plugin.so</code></td>
+<td class="org-left">OpenSSL Crypto Engine</td>
+</tr>
+
+<tr>
+<td class="org-left">16. <code>dslite_plugin.so</code></td>
+<td class="org-left">Dual-Stack Lite</td>
+</tr>
+
+<tr>
+<td class="org-left">17. <code>tlsmbedtls_plugin.so</code></td>
+<td class="org-left">Transport Layer Security (TLS) Engine, Mbedtls Based</td>
+</tr>
+
+<tr>
+<td class="org-left">18. <code>ikev2_plugin.so</code></td>
+<td class="org-left">Internet Key Exchange (IKEv2) Protocol</td>
+</tr>
+
+<tr>
+<td class="org-left">19. <code>svs_plugin.so</code></td>
+<td class="org-left">Source Virtual Routing and Fowarding (VRF) Select</td>
+</tr>
+
+<tr>
+<td class="org-left">20. <code>vrrp_plugin.so</code></td>
+<td class="org-left">VRRP v3 (RFC 5798)</td>
+</tr>
+
+<tr>
+<td class="org-left">21. <code>hs_apps_plugin.so</code></td>
+<td class="org-left">Host Stack Applications</td>
+</tr>
+
+<tr>
+<td class="org-left">22. <code>nsim_plugin.so</code></td>
+<td class="org-left">Network Delay Simulator</td>
+</tr>
+
+<tr>
+<td class="org-left">23. <code>dns_plugin.so</code></td>
+<td class="org-left">Simple DNS name resolver</td>
+</tr>
+
+<tr>
+<td class="org-left">24. <code>dhcp_plugin.so</code></td>
+<td class="org-left">Dynamic Host Configuration Protocol (DHCP)</td>
+</tr>
+
+<tr>
+<td class="org-left">25. <code>rdma_plugin.so</code></td>
+<td class="org-left">RDMA IBverbs Device Driver</td>
+</tr>
+
+<tr>
+<td class="org-left">26. <code>gbp_plugin.so</code></td>
+<td class="org-left">Group Based Policy (GBP)</td>
+</tr>
+
+<tr>
+<td class="org-left">27. <code>igmp_plugin.so</code></td>
+<td class="org-left">Internet Group Management Protocol (IGMP)</td>
+</tr>
+
+<tr>
+<td class="org-left">28. <code>nat_plugin.so</code></td>
+<td class="org-left">Network Address Translation (NAT)</td>
+</tr>
+
+<tr>
+<td class="org-left">29. <code>memif_plugin.so</code></td>
+<td class="org-left">Packet Memory Interface (memif) &#x2013; Experimental</td>
+</tr>
+
+<tr>
+<td class="org-left">30. <code>crypto_ipsecmb_plugin.so</code></td>
+<td class="org-left">Intel IPSEC Multi-buffer Crypto Engine</td>
+</tr>
+
+<tr>
+<td class="org-left">31. <code>nsh_plugin.so</code></td>
+<td class="org-left">Network Service Header (NSH)</td>
+</tr>
+
+<tr>
+<td class="org-left">32. <code>abf_plugin.so</code></td>
+<td class="org-left">Access Control List (ACL) Based Forwarding</td>
+</tr>
+
+<tr>
+<td class="org-left">33. <code>ila_plugin.so</code></td>
+<td class="org-left">Identifier Locator Addressing (ILA) for IPv6</td>
+</tr>
+
+<tr>
+<td class="org-left">34. <code>srv6mobile_plugin.so</code></td>
+<td class="org-left">SRv6 GTP Endpoint Functions</td>
+</tr>
+
+<tr>
+<td class="org-left">35. <code>tlsopenssl_plugin.so</code></td>
+<td class="org-left">Transport Layer Security (TLS) Engine, OpenSSL Based</td>
+</tr>
+
+<tr>
+<td class="org-left">36. <code>gtpu_plugin.so</code></td>
+<td class="org-left">GPRS Tunnelling Protocol, User Data (GTPv1-U)</td>
+</tr>
+
+<tr>
+<td class="org-left">37. <code>map_plugin.so</code></td>
+<td class="org-left">Mapping of Address and Port (MAP)</td>
+</tr>
+
+<tr>
+<td class="org-left">38. <code>stn_plugin.so</code></td>
+<td class="org-left">VPP Steals the NIC (STN) for Container Integration</td>
+</tr>
+
+<tr>
+<td class="org-left">39. <code>builtinurl_plugin.so</code></td>
+<td class="org-left">vpp built-in URL support</td>
+</tr>
+
+<tr>
+<td class="org-left">40. <code>http_static_plugin.so</code></td>
+<td class="org-left">HTTP Static Server</td>
+</tr>
+
+<tr>
+<td class="org-left">41. <code>ct6_plugin.so</code></td>
+<td class="org-left">IPv6 Connection Tracker</td>
+</tr>
+
+<tr>
+<td class="org-left">42. <code>cdp_plugin.so</code></td>
+<td class="org-left">Cisco Discovery Protocol (CDP)</td>
+</tr>
+
+<tr>
+<td class="org-left">43. <code>lacp_plugin.so</code></td>
+<td class="org-left">Link Aggregation Control Protocol (LACP)</td>
+</tr>
+
+<tr>
+<td class="org-left">44. <code>flowprobe_plugin.so</code></td>
+<td class="org-left">Flow per Packet</td>
+</tr>
+
+<tr>
+<td class="org-left">45. <code>mactime_plugin.so</code></td>
+<td class="org-left">Time-based MAC Source Address Filter</td>
+</tr>
+
+<tr>
+<td class="org-left">46. <code>lb_plugin.so</code></td>
+<td class="org-left">Load Balancer (LB)</td>
+</tr>
+
+<tr>
+<td class="org-left">47. <code>srv6as_plugin.so</code></td>
+<td class="org-left">Static Segment Routing for IPv6 (SRv6) Proxy</td>
+</tr>
+
+<tr>
+<td class="org-left">48. <code>srv6ad_plugin.so</code></td>
+<td class="org-left">Dynamic Segment Routing for IPv6 (SRv6) Proxy</td>
+</tr>
+
+<tr>
+<td class="org-left">49. <code>vmxnet3_plugin.so</code></td>
+<td class="org-left">VMWare Vmxnet3 Device Driver</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

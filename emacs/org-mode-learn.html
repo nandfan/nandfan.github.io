@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 16:53 -->
+<!-- 2024-06-23 Sun 15:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>org mode 学习</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,114 +191,92 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">org mode 学习</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org1c639f5">1. 简介</a></li>
-<li><a href="#org168cae7">2. 文件结构</a>
+<li><a href="#orgca87372">1. 简介</a></li>
+<li><a href="#org2674ddb">2. 文件结构</a>
 <ul>
-<li><a href="#org3488d8a">2.1. 标题</a></li>
-<li><a href="#orgf853c29">2.2. 折叠</a></li>
-<li><a href="#org7ec2303">2.3. 标签&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签介绍</span></span></a>
+<li><a href="#orgf2763a9">2.1. 标题</a></li>
+<li><a href="#orga997f93">2.2. 折叠</a></li>
+<li><a href="#org453360e">2.3. 标签&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签介绍</span></span></a>
 <ul>
-<li><a href="#orgdc07541">2.3.1. 标签命名规则&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签命名</span></span></a></li>
+<li><a href="#org6ac8e4d">2.3.1. 标签命名规则&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签命名</span></span></a></li>
 </ul>
 </li>
-<li><a href="#org6023f22">2.4. 移动</a></li>
-<li><a href="#org69c8356">2.5. 结构编辑</a></li>
-<li><a href="#org530dc03">2.6. 稀疏树</a></li>
-<li><a href="#org9ad549e">2.7. 文本列表</a></li>
+<li><a href="#org7b77c72">2.4. 移动</a></li>
+<li><a href="#org91addc9">2.5. 结构编辑</a></li>
+<li><a href="#org9541b29">2.6. 稀疏树</a></li>
+<li><a href="#org6685e92">2.7. 文本列表</a></li>
 </ul>
 </li>
-<li><a href="#orgbff2aef">3. 表格</a>
+<li><a href="#org932f79a">3. 表格</a>
 <ul>
-<li><a href="#orgc6ebc64">3.1. 表格对齐</a>
+<li><a href="#orgea6f283">3.1. 表格对齐</a>
 <ul>
-<li><a href="#orgd7a2c52">3.1.1. 表格内部对齐</a></li>
-<li><a href="#orgc1ea3e4">3.1.2. 表格在页面中的对齐</a></li>
+<li><a href="#org8e7468c">3.1.1. 表格内部对齐</a></li>
+<li><a href="#org0d0697e">3.1.2. 表格在页面中的对齐</a></li>
 </ul>
 </li>
-<li><a href="#org0cb161d">3.2. 标题行</a></li>
-<li><a href="#org8f99c2f">3.3. 创建和转换</a></li>
-<li><a href="#orgbd72f69">3.4. 调整和区域移动</a></li>
-<li><a href="#org5595c01">3.5. 行和列编辑</a></li>
+<li><a href="#org1caf166">3.2. 标题行</a></li>
+<li><a href="#orgd1cf0ff">3.3. 创建和转换</a></li>
+<li><a href="#org69aae00">3.4. 调整和区域移动</a></li>
+<li><a href="#org678ab08">3.5. 行和列编辑</a></li>
+<li><a href="#org24a83a2">3.6. 表格输入'|'</a></li>
 </ul>
 </li>
-<li><a href="#org84ce8f3">4. 链接</a>
+<li><a href="#orgfa8d400">4. 链接</a>
 <ul>
 <li><a href="#内部链接">4.1. 内部链接</a></li>
-<li><a href="#org721a2d8">4.2. 外部链接</a></li>
-<li><a href="#org78bad9f">4.3. 处理链接</a></li>
+<li><a href="#org53dffbc">4.2. 外部链接</a></li>
+<li><a href="#org36b265a">4.3. 处理链接</a></li>
 </ul>
 </li>
-<li><a href="#orgf069349">5. TODO事项</a>
+<li><a href="#org0419f97">5. TODO事项</a>
 <ul>
-<li><a href="#org4fea82e">5.1. TODO基础</a></li>
-<li><a href="#org103dc9a">5.2. 脚注</a></li>
-<li><a href="#org71cea91">5.3. 待办事项(TODO)</a></li>
-<li><a href="#org6ecfc4e">5.4. <span class="todo TODO">TODO</span> task1</a>
+<li><a href="#org87d4cb8">5.1. TODO基础</a></li>
+<li><a href="#org6ef07e7">5.2. 脚注</a></li>
+<li><a href="#orga7e0225">5.3. 待办事项(TODO)</a></li>
+<li><a href="#orgb67d7e2">5.4. <span class="todo TODO">TODO</span> task1</a>
 <ul>
-<li><a href="#org9dcc2b4">5.4.1. <span class="todo TODO">TODO</span> <span class="priority">[A]</span> task1</a></li>
-<li><a href="#org8cb74c4">5.4.2. <span class="todo TODO">TODO</span> <span class="priority">[B]</span> task2</a></li>
-<li><a href="#org7c5b53c">5.4.3. <span class="todo TODO">TODO</span> total_task<code>[33%]</code></a>
+<li><a href="#org14bc150">5.4.1. <span class="todo TODO">TODO</span> <span class="priority">[A]</span> task1</a></li>
+<li><a href="#orga93ebe1">5.4.2. <span class="todo TODO">TODO</span> <span class="priority">[B]</span> task2</a></li>
+<li><a href="#orgde45aa1">5.4.3. <span class="todo TODO">TODO</span> total_task<code>[33%]</code></a>
 <ul>
-<li><a href="#org8ef86f9">5.4.3.1. <span class="todo TODO">TODO</span> sub_task1<code>[0/2]</code></a></li>
-<li><a href="#orgd679b13">5.4.3.2. <span class="todo TODO">TODO</span> sub_task2<code>[100%]</code></a></li>
-<li><a href="#orgcc95c91">5.4.3.3. <span class="done DONE">DONE</span> sub_finish</a></li>
+<li><a href="#orged2b27b">5.4.3.1. <span class="todo TODO">TODO</span> sub_task1<code>[0/2]</code></a></li>
+<li><a href="#org2a3dce3">5.4.3.2. <span class="todo TODO">TODO</span> sub_task2<code>[100%]</code></a></li>
+<li><a href="#org879eea6">5.4.3.3. <span class="done DONE">DONE</span> sub_finish</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org829f0b4">5.5. TODO标签</a></li>
+<li><a href="#orgfe01b4c">5.5. TODO标签</a></li>
 </ul>
 </li>
-<li><a href="#org40a57f3">6. org文档设置</a>
+<li><a href="#org14e66dd">6. org文档设置</a>
 <ul>
-<li><a href="#orgbb8506d">6.1. Document header</a></li>
-<li><a href="#org429c8a4">6.2. 描述</a></li>
-<li><a href="#orgadd33de">6.3. Section numbering</a></li>
-<li><a href="#org95e9f82">6.4. 目录</a></li>
-<li><a href="#org3a01591">6.5. 字体</a></li>
+<li><a href="#orgd111eb9">6.1. Document header</a></li>
+<li><a href="#org17003cb">6.2. 描述</a></li>
+<li><a href="#orgdf39ea3">6.3. Section numbering</a></li>
+<li><a href="#org1d3b8ed">6.4. 目录</a></li>
+<li><a href="#orgb252ef7">6.5. 字体</a></li>
 </ul>
 </li>
-<li><a href="#orgd025883">7. 图片</a></li>
-<li><a href="#orgb359959">8. Videos</a></li>
+<li><a href="#org565ea94">7. 图片</a></li>
+<li><a href="#org8453882">8. Videos</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org1c639f5" class="outline-2">
-<h2 id="org1c639f5"><span class="section-number-2">1</span> 简介</h2>
+<div id="outline-container-orgca87372" class="outline-2">
+<h2 id="orgca87372"><span class="section-number-2">1.</span> 简介</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 org是一种使用快速有效的纯文本系统记录笔记，维护待办事项清单以及进行项目计划的模式。它也是一个创作和发布系统，它支持使用源代码进行文字编程和可再现的研究。
@@ -306,12 +285,12 @@ org是一种使用快速有效的纯文本系统记录笔记，维护待办事�
 </div>
 
 
-<div id="outline-container-org168cae7" class="outline-2">
-<h2 id="org168cae7"><span class="section-number-2">2</span> 文件结构</h2>
+<div id="outline-container-org2674ddb" class="outline-2">
+<h2 id="org2674ddb"><span class="section-number-2">2.</span> 文件结构</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org3488d8a" class="outline-3">
-<h3 id="org3488d8a"><span class="section-number-3">2.1</span> 标题</h3>
+<div id="outline-container-orgf2763a9" class="outline-3">
+<h3 id="orgf2763a9"><span class="section-number-3">2.1.</span> 标题</h3>
 <div class="outline-text-3" id="text-2-1">
 <p class="verse">
 <code>*</code> 一级标题<br />
@@ -326,8 +305,8 @@ org是一种使用快速有效的纯文本系统记录笔记，维护待办事�
 </p>
 </div>
 </div>
-<div id="outline-container-orgf853c29" class="outline-3">
-<h3 id="orgf853c29"><span class="section-number-3">2.2</span> 折叠</h3>
+<div id="outline-container-orga997f93" class="outline-3">
+<h3 id="orga997f93"><span class="section-number-3">2.2.</span> 折叠</h3>
 <div class="outline-text-3" id="text-2-2">
 <p class="verse">
 <br />
@@ -354,23 +333,23 @@ emacs默认打开org文件时，全局显示为”概览“模式，仅仅一级
 </div>
 
 
-<div id="outline-container-org7ec2303" class="outline-3">
-<h3 id="org7ec2303"><span class="section-number-3">2.3</span> 标签&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签介绍</span></span></h3>
+<div id="outline-container-org453360e" class="outline-3">
+<h3 id="org453360e"><span class="section-number-3">2.3.</span> 标签&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签介绍</span></span></h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 在Org中，标签定义于标题行末端，位于两个或两个以上冒号之间，它提供了进一步的分类方法。
 </p>
 </div>
 
-<div id="outline-container-orgdc07541" class="outline-4">
-<h4 id="orgdc07541"><span class="section-number-4">2.3.1</span> 标签命名规则&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签命名</span></span></h4>
+<div id="outline-container-org6ac8e4d" class="outline-4">
+<h4 id="org6ac8e4d"><span class="section-number-4">2.3.1.</span> 标签命名规则&#xa0;&#xa0;&#xa0;<span class="tag"><span class="____">标签命名</span></span></h4>
 <div class="outline-text-4" id="text-2-3-1">
 <ul class="org-ul">
 <li>位置 标签只能在各级标题的行末端定义，即只有标题文字可以拥有标签</li>
 <li>命名 标签的名字可以是包含字母、数字、下划线 _ 或@</li>
 <li>格式 包含在一对“:”号之间，如：</li>
 </ul>
-<pre class="example" id="org6520add">
+<pre class="example" id="org0acd0ba">
 * HEADLINE 1                                                         :label1:
 </pre>
 
@@ -378,7 +357,7 @@ emacs默认打开org文件时，全局显示为”概览“模式，仅仅一级
 <p>
 一个标题可以有多个标签名称，定义方法如:
 </p>
-<pre class="example" id="org6395d17">
+<pre class="example" id="orgb41e54a">
 * HEADLINE 2                :标签1:标签2:...
 </pre>
 </div>
@@ -386,8 +365,8 @@ emacs默认打开org文件时，全局显示为”概览“模式，仅仅一级
 </div>
 
 
-<div id="outline-container-org6023f22" class="outline-3">
-<h3 id="org6023f22"><span class="section-number-3">2.4</span> 移动</h3>
+<div id="outline-container-org7b77c72" class="outline-3">
+<h3 id="org7b77c72"><span class="section-number-3">2.4.</span> 移动</h3>
 <div class="outline-text-3" id="text-2-4">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -433,8 +412,8 @@ emacs默认打开org文件时，全局显示为”概览“模式，仅仅一级
 </div>
 </div>
 
-<div id="outline-container-org69c8356" class="outline-3">
-<h3 id="org69c8356"><span class="section-number-3">2.5</span> 结构编辑</h3>
+<div id="outline-container-org91addc9" class="outline-3">
+<h3 id="org91addc9"><span class="section-number-3">2.5.</span> 结构编辑</h3>
 <div class="outline-text-3" id="text-2-5">
 <p class="verse">
 <br />
@@ -470,8 +449,8 @@ emacs默认打开org文件时，全局显示为”概览“模式，仅仅一级
 </div>
 </div>
 
-<div id="outline-container-org530dc03" class="outline-3">
-<h3 id="org530dc03"><span class="section-number-3">2.6</span> 稀疏树</h3>
+<div id="outline-container-org9541b29" class="outline-3">
+<h3 id="org9541b29"><span class="section-number-3">2.6.</span> 稀疏树</h3>
 <div class="outline-text-3" id="text-2-6">
 <p class="verse">
 <br />
@@ -484,8 +463,8 @@ emacs默认打开org文件时，全局显示为”概览“模式，仅仅一级
 </p>
 </div>
 </div>
-<div id="outline-container-org9ad549e" class="outline-3">
-<h3 id="org9ad549e"><span class="section-number-3">2.7</span> 文本列表</h3>
+<div id="outline-container-org6685e92" class="outline-3">
+<h3 id="org6685e92"><span class="section-number-3">2.7.</span> 文本列表</h3>
 <div class="outline-text-3" id="text-2-7">
 <p>
 列表是文本中一个比较常用的元素，可以列出各种待完成的事项等。
@@ -503,7 +482,7 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 同一列表中的项需要有相同的缩进。当下一行的缩进与列表项的的开头的符号或者数字相同或者更小时，这一项就结束了。当所有的项都关上时，或者后面有两个空行时，列表就结束了。例如：
 </p>
 
-<pre class="example" id="org9e33070">
+<pre class="example" id="orgcb2feeb">
 =**= Lord of the Rings
    My favorite scenes are (in this order)
    1. The attack of the Rohirrim
@@ -520,7 +499,7 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 <li>有序列表的跳跃</li>
 </ul>
 
-<pre class="example" id="org784bb16">
+<pre class="example" id="org3574c49">
 1. 列表1
 4. [@4] 列表4 从列表4开始
 5. 列表5
@@ -567,8 +546,8 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </div>
 
 
-<div id="outline-container-orgbff2aef" class="outline-2">
-<h2 id="orgbff2aef"><span class="section-number-2">3</span> 表格</h2>
+<div id="outline-container-org932f79a" class="outline-2">
+<h2 id="org932f79a"><span class="section-number-2">3.</span> 表格</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 表格常常用于数据展示, org-mode提供了方便的列表操作, 其中最独特的是支持类似于Excel的表格函数, 可以完成简单的求和等操作
@@ -576,7 +555,7 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </p>
 
 
-<pre class="example" id="org6b2f908">
+<pre class="example" id="orgf7049f7">
 | Name  | Phone | sub1 | sub2 | total |
 |-
 </pre>
@@ -585,7 +564,7 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 在第二行后面按tab 表格会自动生成
 </p>
 
-<pre class="example" id="orge7ed661">
+<pre class="example" id="orgeddf2ed">
 | Name | Phone | sub1 | sub2 | total |
 |------+-------+------+------+-------|
 | ab   |    11 |    1 |    2 |     3 |
@@ -600,23 +579,23 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </p>
 </div>
 
-<div id="outline-container-orgc6ebc64" class="outline-3">
-<h3 id="orgc6ebc64"><span class="section-number-3">3.1</span> 表格对齐</h3>
+<div id="outline-container-orgea6f283" class="outline-3">
+<h3 id="orgea6f283"><span class="section-number-3">3.1.</span> 表格对齐</h3>
 <div class="outline-text-3" id="text-3-1">
 </div>
-<div id="outline-container-orgd7a2c52" class="outline-4">
-<h4 id="orgd7a2c52"><span class="section-number-4">3.1.1</span> 表格内部对齐</h4>
+<div id="outline-container-org8e7468c" class="outline-4">
+<h4 id="org8e7468c"><span class="section-number-4">3.1.1.</span> 表格内部对齐</h4>
 <div class="outline-text-4" id="text-3-1-1">
 <p>
 使用 <code>&lt;r&gt;</code>  <code>&lt;c&gt;</code>  <code>&lt;l&gt;</code> 选择对齐方式
 </p>
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8878; font-style: italic;">#+CAPTION:</span> <span style="color: #FFFAFA; background-color: #3E3E3E;">&#21015;&#23545;&#40784;</span>
-<span style="color: #87D700;">|         &#21491;&#23545;&#40784; |      &#23621;&#20013;      | &#24038;&#23545;&#40784;          |</span>
-<span style="color: #87D700;">|----------------+----------------+-----------------|</span>
-<span style="color: #87D700;">|            </span><span style="color: #CDC673;">&lt;r&gt;</span><span style="color: #87D700;"> |      </span><span style="color: #CDC673;">&lt;c&gt;</span><span style="color: #87D700;">       | </span><span style="color: #CDC673;">&lt;l&gt;</span><span style="color: #87D700;">             |</span>
-<span style="color: #87D700;">|           &#38752;&#21491; |      &#23621;&#20013;      | &#38752;&#24038;            |</span>
-<span style="color: #87D700;">| rrrrrrrrrrrrrr | cccccccccccccc | lllllllllllllll |</span>
+<pre class="src src-org"><span style="color: #75715E;">#+CAPTION:</span> <span style="color: #F8F8F0; background-color: #3E3D31;">&#21015;&#23545;&#40784;</span>
+<span style="color: #A6E22E;">|         &#21491;&#23545;&#40784; |      &#23621;&#20013;      | &#24038;&#23545;&#40784;          |</span>
+<span style="color: #A6E22E;">|----------------+----------------+-----------------|</span>
+<span style="color: #A6E22E;">|            </span><span style="color: #E6DB74;">&lt;r&gt;</span><span style="color: #A6E22E;"> |      </span><span style="color: #E6DB74;">&lt;c&gt;</span><span style="color: #A6E22E;">       | </span><span style="color: #E6DB74;">&lt;l&gt;</span><span style="color: #A6E22E;">             |</span>
+<span style="color: #A6E22E;">|           &#38752;&#21491; |      &#23621;&#20013;      | &#38752;&#24038;            |</span>
+<span style="color: #A6E22E;">| rrrrrrrrrrrrrr | cccccccccccccc | lllllllllllllll |</span>
 </pre>
 </div>
 
@@ -654,21 +633,21 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </div>
 </div>
 
-<div id="outline-container-orgc1ea3e4" class="outline-4">
-<h4 id="orgc1ea3e4"><span class="section-number-4">3.1.2</span> 表格在页面中的对齐</h4>
+<div id="outline-container-org0d0697e" class="outline-4">
+<h4 id="org0d0697e"><span class="section-number-4">3.1.2.</span> 表格在页面中的对齐</h4>
 <div class="outline-text-4" id="text-3-1-2">
 <ul class="org-ul">
 <li><p>
 左对齐
 </p>
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8878; font-style: italic;">#+LATEX: \noindent</span>
-<span style="color: #8B8878; font-style: italic;">#+ATTR_LATEX: :center nil</span>
-<span style="color: #87D700;">| a | b | c |</span>
-<span style="color: #87D700;">|---+---+---|</span>
-<span style="color: #87D700;">| 1 | 2 | 3 |</span>
-<span style="color: #87D700;">| 4 | 5 | 6 |</span>
-<span style="color: #8B8878; font-style: italic;">#+LATEX: \hfill</span>
+<pre class="src src-org"><span style="color: #75715E;">#+LATEX: \noindent</span>
+<span style="color: #75715E;">#+ATTR_LATEX: :center nil</span>
+<span style="color: #A6E22E;">| a | b | c |</span>
+<span style="color: #A6E22E;">|---+---+---|</span>
+<span style="color: #A6E22E;">| 1 | 2 | 3 |</span>
+<span style="color: #A6E22E;">| 4 | 5 | 6 |</span>
+<span style="color: #75715E;">#+LATEX: \hfill</span>
 </pre>
 </div></li>
 </ul>
@@ -709,10 +688,10 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 居中
 </p>
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #87D700;">| a | b | c |</span>
-<span style="color: #87D700;">|---+---+---|</span>
-<span style="color: #87D700;">| 1 | 2 | 3 |</span>
-<span style="color: #87D700;">| 4 | 5 | 6 |</span>
+<pre class="src src-org"><span style="color: #A6E22E;">| a | b | c |</span>
+<span style="color: #A6E22E;">|---+---+---|</span>
+<span style="color: #A6E22E;">| 1 | 2 | 3 |</span>
+<span style="color: #A6E22E;">| 4 | 5 | 6 |</span>
 </pre>
 </div></li>
 </ul>
@@ -755,12 +734,12 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 右对齐
 </p>
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8878; font-style: italic;">#+LATEX: \hifill</span>
-<span style="color: #8B8878; font-style: italic;">#+ATTR_LATEX: :center nil</span>
-<span style="color: #87D700;">| a | b | c |</span>
-<span style="color: #87D700;">|---+---+---|</span>
-<span style="color: #87D700;">| 1 | 2 | 3 |</span>
-<span style="color: #87D700;">| 4 | 5 | 6 |</span>
+<pre class="src src-org"><span style="color: #75715E;">#+LATEX: \hifill</span>
+<span style="color: #75715E;">#+ATTR_LATEX: :center nil</span>
+<span style="color: #A6E22E;">| a | b | c |</span>
+<span style="color: #A6E22E;">|---+---+---|</span>
+<span style="color: #A6E22E;">| 1 | 2 | 3 |</span>
+<span style="color: #A6E22E;">| 4 | 5 | 6 |</span>
 </pre>
 </div></li>
 </ul>
@@ -800,13 +779,13 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </div>
 </div>
 
-<div id="outline-container-org0cb161d" class="outline-3">
-<h3 id="org0cb161d"><span class="section-number-3">3.2</span> 标题行</h3>
+<div id="outline-container-org1caf166" class="outline-3">
+<h3 id="org1caf166"><span class="section-number-3">3.2.</span> 标题行</h3>
 </div>
 
 
-<div id="outline-container-org8f99c2f" class="outline-3">
-<h3 id="org8f99c2f"><span class="section-number-3">3.3</span> 创建和转换</h3>
+<div id="outline-container-orgd1cf0ff" class="outline-3">
+<h3 id="orgd1cf0ff"><span class="section-number-3">3.3.</span> 创建和转换</h3>
 <div class="outline-text-3" id="text-3-3">
 <p class="verse">
 <br />
@@ -817,8 +796,8 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </p>
 </div>
 </div>
-<div id="outline-container-orgbd72f69" class="outline-3">
-<h3 id="orgbd72f69"><span class="section-number-3">3.4</span> 调整和区域移动</h3>
+<div id="outline-container-org69aae00" class="outline-3">
+<h3 id="org69aae00"><span class="section-number-3">3.4.</span> 调整和区域移动</h3>
 <div class="outline-text-3" id="text-3-4">
 <p class="verse">
 <br />
@@ -836,8 +815,8 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </p>
 </div>
 </div>
-<div id="outline-container-org5595c01" class="outline-3">
-<h3 id="org5595c01"><span class="section-number-3">3.5</span> 行和列编辑</h3>
+<div id="outline-container-org678ab08" class="outline-3">
+<h3 id="org678ab08"><span class="section-number-3">3.5.</span> 行和列编辑</h3>
 <div class="outline-text-3" id="text-3-5">
 <p class="verse">
 <br />
@@ -862,11 +841,23 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </p>
 </div>
 </div>
+
+
+<div id="outline-container-org24a83a2" class="outline-3">
+<h3 id="org24a83a2"><span class="section-number-3">3.6.</span> 表格输入'|'</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+输入 '&vert;'
+</p>
+<div class="org-src-container">
+<pre class="src src-org">\vert
+</pre>
 </div>
-
-
-<div id="outline-container-org84ce8f3" class="outline-2">
-<h2 id="org84ce8f3"><span class="section-number-2">4</span> 链接</h2>
+</div>
+</div>
+</div>
+<div id="outline-container-orgfa8d400" class="outline-2">
+<h2 id="orgfa8d400"><span class="section-number-2">4.</span> 链接</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 链接用于链接一些资源地址, 如图片 文件 URL等
@@ -884,14 +875,14 @@ org-mode提供了一种很独特的功能，可以加入checkbok（实际就是�
 </div>
 
 <div id="outline-container-内部链接" class="outline-3">
-<h3 id="内部链接"><span class="section-number-3">4.1</span> 内部链接</h3>
+<h3 id="内部链接"><span class="section-number-3">4.1.</span> 内部链接</h3>
 <div class="outline-text-3" id="text-内部链接">
 <pre class="example">
 CUSTOM_ID: 内部链接
 </pre>
 
 <p>
-<a id="org04c7394"></a>
+<a id="orgd7cdb5f"></a>
 </p>
 
 <p>
@@ -902,7 +893,7 @@ CUSTOM_ID: 内部链接
 <li><p>
 定义CUSTOM_ID
 </p>
-<pre class="example" id="org8007697">
+<pre class="example" id="orgc35fe2b">
 :PROPERTIES:
 :CUSTOM_ID: 内部链接
 :END:
@@ -916,11 +907,11 @@ CUSTOM_ID: 内部链接
 </ul>
 
 <p>
-如果链接不是以上格式, 则会查找以 <code>书名号</code> 包含的字符串,  <code>&lt;&lt;My Target&gt;&gt;</code>  <a id="org9e0ab74"></a>
+如果链接不是以上格式, 则会查找以 <code>书名号</code> 包含的字符串,  <code>&lt;&lt;My Target&gt;&gt;</code>  <a id="orgf0ef70f"></a>
 如果以上都没有匹配, 则会查找以 <code>#+NAME:</code> 定义的名称, 例如
 </p>
 
-<table id="org6c516d8" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="100%">
+<table id="orgee5572f" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" width="100%">
 <caption class="t-above"><span class="table-number">Table 2:</span> My Target</caption>
 
 <colgroup>
@@ -942,7 +933,7 @@ CUSTOM_ID: 内部链接
 </tbody>
 </table>
 
-<pre class="example" id="orgd6e5c54">
+<pre class="example" id="org7bd3b27">
 [[#内部链接][跳转到内部链接(custom-id)]]
 [[*内部链接][跳转到内部链接标题]]
 [[My Target][跳转到以#+NAME:My Target定义的位置]]
@@ -959,24 +950,24 @@ CUSTOM_ID: 内部链接
 </p>
 
 <p>
-<a href="#org9e0ab74">跳转到以#+NAME:My Target定义的位置</a>
+<a href="#orgf0ef70f">跳转到以#+NAME:My Target定义的位置</a>
 </p>
 
 <p>
-<a href="#org9e0ab74">跳转到书名号包含的My Target处</a>
+<a href="#orgf0ef70f">跳转到书名号包含的My Target处</a>
 </p>
 </div>
 </div>
 
 
-<div id="outline-container-org721a2d8" class="outline-3">
-<h3 id="org721a2d8"><span class="section-number-3">4.2</span> 外部链接</h3>
+<div id="outline-container-org53dffbc" class="outline-3">
+<h3 id="org53dffbc"><span class="section-number-3">4.2.</span> 外部链接</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 Org 支持的链接格式包括文件、网页、新闻组、BBDB 数据库项、IRC 会话和记录。外部链接是 URL 格式的定位器。以识别符开头，后面跟着一个冒号，冒号后面不能有空格。下面是一些例子：
 </p>
 
-<pre class="example" id="org6a85af4">
+<pre class="example" id="org323e6f4">
 
 | 'http://www.astro.uva.nl/=dominik'        | on the web                       |
 | 'file:/home/dominik/images/jupiter.jpg'   | file, absolute path              |
@@ -1002,7 +993,7 @@ Org 支持的链接格式包括文件、网页、新闻组、BBDB 数据库项�
 文件链接可以包含其他信息， 可以使emacs在跟随链接时跳至文件中的特定位置。 这可以是行号或者双冒号。
 </p>
 
-<pre class="example" id="org15aa0cb">
+<pre class="example" id="orgd79d5dc">
 
 'file:~/code/main.c::255'	Find line 255
 'file:~/xx.org::My Target'	Find '&lt;&lt;My Target&gt;&gt;'
@@ -1015,8 +1006,8 @@ Org 支持的链接格式包括文件、网页、新闻组、BBDB 数据库项�
 </div>
 </div>
 
-<div id="outline-container-org78bad9f" class="outline-3">
-<h3 id="org78bad9f"><span class="section-number-3">4.3</span> 处理链接</h3>
+<div id="outline-container-org36b265a" class="outline-3">
+<h3 id="org36b265a"><span class="section-number-3">4.3.</span> 处理链接</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
 <code>org-store-link</code> 将当前位置存储为链接，以后插入时可以调用
@@ -1039,8 +1030,8 @@ Org 支持的链接格式包括文件、网页、新闻组、BBDB 数据库项�
 </div>
 
 
-<div id="outline-container-orgf069349" class="outline-2">
-<h2 id="orgf069349"><span class="section-number-2">5</span> TODO事项</h2>
+<div id="outline-container-org0419f97" class="outline-2">
+<h2 id="org0419f97"><span class="section-number-2">5.</span> TODO事项</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Org 模式并不用一个单独的文件来维持 TODO 列表。它是一些笔记的集合体，因为 TODO 列表是在你记录笔记的过程中逐渐形成的。你 Org 模式下可以很容易地将树中的一项标记为一个 TODO 的项。用这种方式，信息内容不会冗余加倍，而且可以显示 TODO 项的上下文环境。
@@ -1051,8 +1042,8 @@ Org 模式并不用一个单独的文件来维持 TODO 列表。它是一些笔�
 </p>
 </div>
 
-<div id="outline-container-org4fea82e" class="outline-3">
-<h3 id="org4fea82e"><span class="section-number-3">5.1</span> TODO基础</h3>
+<div id="outline-container-org87d4cb8" class="outline-3">
+<h3 id="org87d4cb8"><span class="section-number-3">5.1.</span> TODO基础</h3>
 <div class="outline-text-3" id="text-5-1">
 <p>
 任何以 <code>'TODO'</code> 开头标题的都会变为TODO事项
@@ -1082,17 +1073,17 @@ Org 模式并不用一个单独的文件来维持 TODO 列表。它是一些笔�
 
 
 
-<div id="outline-container-org103dc9a" class="outline-3">
-<h3 id="org103dc9a"><span class="section-number-3">5.2</span> 脚注</h3>
+<div id="outline-container-org6ef07e7" class="outline-3">
+<h3 id="org6ef07e7"><span class="section-number-3">5.2.</span> 脚注</h3>
 <div class="outline-text-3" id="text-5-2">
 <p>
-用<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup>的方式插入脚注
+用<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>的方式插入脚注
 </p>
 </div>
 </div>
 
-<div id="outline-container-org71cea91" class="outline-3">
-<h3 id="org71cea91"><span class="section-number-3">5.3</span> 待办事项(TODO)</h3>
+<div id="outline-container-orga7e0225" class="outline-3">
+<h3 id="orga7e0225"><span class="section-number-3">5.3.</span> 待办事项(TODO)</h3>
 <div class="outline-text-3" id="text-5-3">
 <p>
 TODO也是一类标题, 因此也需要用* 来开头
@@ -1100,8 +1091,8 @@ TODO也是一类标题, 因此也需要用* 来开头
 </div>
 </div>
 
-<div id="outline-container-org6ecfc4e" class="outline-3">
-<h3 id="org6ecfc4e"><span class="section-number-3">5.4</span> <span class="todo TODO">TODO</span> task1</h3>
+<div id="outline-container-orgb67d7e2" class="outline-3">
+<h3 id="orgb67d7e2"><span class="section-number-3">5.4.</span> <span class="todo TODO">TODO</span> task1</h3>
 <div class="outline-text-3" id="text-5-4">
 <p>
 此时TODO变为红色, 光标一直上一行, C-c C-t, 会发现 TODO 变成了 DONE.
@@ -1109,18 +1100,18 @@ TODO也是一类标题, 因此也需要用* 来开头
 </p>
 </div>
 
-<div id="outline-container-org9dcc2b4" class="outline-4">
-<h4 id="org9dcc2b4"><span class="section-number-4">5.4.1</span> <span class="todo TODO">TODO</span> <span class="priority">[A]</span> task1</h4>
+<div id="outline-container-org14bc150" class="outline-4">
+<h4 id="org14bc150"><span class="section-number-4">5.4.1.</span> <span class="todo TODO">TODO</span> <span class="priority">[A]</span> task1</h4>
 </div>
-<div id="outline-container-org8cb74c4" class="outline-4">
-<h4 id="org8cb74c4"><span class="section-number-4">5.4.2</span> <span class="todo TODO">TODO</span> <span class="priority">[B]</span> task2</h4>
+<div id="outline-container-orga93ebe1" class="outline-4">
+<h4 id="orga93ebe1"><span class="section-number-4">5.4.2.</span> <span class="todo TODO">TODO</span> <span class="priority">[B]</span> task2</h4>
 </div>
-<div id="outline-container-org7c5b53c" class="outline-4">
-<h4 id="org7c5b53c"><span class="section-number-4">5.4.3</span> <span class="todo TODO">TODO</span> total_task<code>[33%]</code></h4>
+<div id="outline-container-orgde45aa1" class="outline-4">
+<h4 id="orgde45aa1"><span class="section-number-4">5.4.3.</span> <span class="todo TODO">TODO</span> total_task<code>[33%]</code></h4>
 <div class="outline-text-4" id="text-5-4-3">
 </div>
-<div id="outline-container-org8ef86f9" class="outline-5">
-<h5 id="org8ef86f9"><span class="section-number-5">5.4.3.1</span> <span class="todo TODO">TODO</span> sub_task1<code>[0/2]</code></h5>
+<div id="outline-container-orged2b27b" class="outline-5">
+<h5 id="orged2b27b"><span class="section-number-5">5.4.3.1.</span> <span class="todo TODO">TODO</span> sub_task1<code>[0/2]</code></h5>
 <div class="outline-text-5" id="text-5-4-3-1">
 <ul class="org-ul">
 <li class="trans"><code>[-]</code> sub11 <code>[50%]</code>
@@ -1136,8 +1127,8 @@ TODO也是一类标题, 因此也需要用* 来开头
 </ul>
 </div>
 </div>
-<div id="outline-container-orgd679b13" class="outline-5">
-<h5 id="orgd679b13"><span class="section-number-5">5.4.3.2</span> <span class="todo TODO">TODO</span> sub_task2<code>[100%]</code></h5>
+<div id="outline-container-org2a3dce3" class="outline-5">
+<h5 id="org2a3dce3"><span class="section-number-5">5.4.3.2.</span> <span class="todo TODO">TODO</span> sub_task2<code>[100%]</code></h5>
 <div class="outline-text-5" id="text-5-4-3-2">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> sub20</li>
@@ -1149,8 +1140,8 @@ TODO也是一类标题, 因此也需要用* 来开头
 </ul>
 </div>
 </div>
-<div id="outline-container-orgcc95c91" class="outline-5">
-<h5 id="orgcc95c91"><span class="section-number-5">5.4.3.3</span> <span class="done DONE">DONE</span> sub_finish</h5>
+<div id="outline-container-org879eea6" class="outline-5">
+<h5 id="org879eea6"><span class="section-number-5">5.4.3.3.</span> <span class="done DONE">DONE</span> sub_finish</h5>
 <div class="outline-text-5" id="text-5-4-3-3">
 <p>
 快捷键:
@@ -1167,10 +1158,10 @@ TODO也是一类标题, 因此也需要用* 来开头
 
 
 
-<div id="outline-container-org829f0b4" class="outline-3">
-<h3 id="org829f0b4"><span class="section-number-3">5.5</span> TODO标签</h3>
+<div id="outline-container-orgfe01b4c" class="outline-3">
+<h3 id="orgfe01b4c"><span class="section-number-3">5.5.</span> TODO标签</h3>
 <div class="outline-text-3" id="text-5-5">
-<pre class="example" id="org9d7cf1e">
+<pre class="example" id="orgdceb238">
 * TODO 任务1           :紧急任务:
 ** TODO 子任务1        :特急:
 ** TODO 子任务2
@@ -1182,72 +1173,72 @@ TODO也是一类标题, 因此也需要用* 来开头
 </div>
 
 
-<div id="outline-container-org40a57f3" class="outline-2">
-<h2 id="org40a57f3"><span class="section-number-2">6</span> org文档设置</h2>
+<div id="outline-container-org14e66dd" class="outline-2">
+<h2 id="org14e66dd"><span class="section-number-2">6.</span> org文档设置</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orgbb8506d" class="outline-3">
-<h3 id="orgbb8506d"><span class="section-number-3">6.1</span> Document header</h3>
+<div id="outline-container-orgd111eb9" class="outline-3">
+<h3 id="orgd111eb9"><span class="section-number-3">6.1.</span> Document header</h3>
 <div class="outline-text-3" id="text-6-1">
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #aaaaaa;">#+TITLE:</span>     <span style="color: #FFFAFA; font-size: 130%; font-weight: bold;">&#26631;&#39064;</span>
-<span style="color: #aaaaaa;">#+AUTHOR:</span>    <span style="color: #F5F5F5;">&#20316;&#32773;</span>
-<span style="color: #aaaaaa;">#+EMAIL:</span>     <span style="color: #F5F5F5;">&#37038;&#31665;</span>
+<pre class="src src-org"><span style="color: #75715E;">#+TITLE:</span>     <span style="color: #F8F8F0; font-size: 130%; font-weight: bold;">&#26631;&#39064;</span>
+<span style="color: #75715E;">#+AUTHOR:</span>    <span style="color: #F8F8F2;">&#20316;&#32773;</span>
+<span style="color: #75715E;">#+EMAIL:</span>     <span style="color: #F8F8F2;">&#37038;&#31665;</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org429c8a4" class="outline-3">
-<h3 id="org429c8a4"><span class="section-number-3">6.2</span> 描述</h3>
+<div id="outline-container-org17003cb" class="outline-3">
+<h3 id="org17003cb"><span class="section-number-3">6.2.</span> 描述</h3>
 <div class="outline-text-3" id="text-6-2">
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8878; font-style: italic;">#+DESCRIPTION:  &#25991;&#26723;&#25551;&#36848;</span>
-<span style="color: #8B8878; font-style: italic;">#+KEYWORDS:     &#25991;&#26723;&#20851;&#38190;&#23383;</span>
-<span style="color: #8B8878; font-style: italic;">#+LANGUAGE:     en</span>
+<pre class="src src-org"><span style="color: #75715E;">#+DESCRIPTION:  &#25991;&#26723;&#25551;&#36848;</span>
+<span style="color: #75715E;">#+KEYWORDS:     &#25991;&#26723;&#20851;&#38190;&#23383;</span>
+<span style="color: #75715E;">#+LANGUAGE:     en</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgadd33de" class="outline-3">
-<h3 id="orgadd33de"><span class="section-number-3">6.3</span> Section numbering</h3>
+<div id="outline-container-orgdf39ea3" class="outline-3">
+<h3 id="orgdf39ea3"><span class="section-number-3">6.3.</span> Section numbering</h3>
 <div class="outline-text-3" id="text-6-3">
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8878; font-style: italic;">#+OPTIONS:   H:4</span>
+<pre class="src src-org"><span style="color: #75715E;">#+OPTIONS:   H:4</span>
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8878; font-style: italic;">#+OPTIONS:   num:nil</span>
+<pre class="src src-org"><span style="color: #75715E;">#+OPTIONS:   num:nil</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org95e9f82" class="outline-3">
-<h3 id="org95e9f82"><span class="section-number-3">6.4</span> 目录</h3>
+<div id="outline-container-org1d3b8ed" class="outline-3">
+<h3 id="org1d3b8ed"><span class="section-number-3">6.4.</span> 目录</h3>
 <div class="outline-text-3" id="text-6-4">
 <p>
 在 <code>OPTIONS</code> 中设置 <code>toc</code> 属性在文档顶部自动生成 <code>目录</code> (限制为2级标题)
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8878; font-style: italic;">#+OPTIONS:  toc:2</span>
+<pre class="src src-org"><span style="color: #75715E;">#+OPTIONS:  toc:2</span>
 </pre>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-org3a01591" class="outline-3">
-<h3 id="org3a01591"><span class="section-number-3">6.5</span> 字体</h3>
+<div id="outline-container-orgb252ef7" class="outline-3">
+<h3 id="orgb252ef7"><span class="section-number-3">6.5.</span> 字体</h3>
 <div class="outline-text-3" id="text-6-5">
 <ul class="org-ul">
 <li>加粗倾斜</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-org"><span style="font-style: italic;">/&#26012;&#20307;/</span>  <span style="font-weight: bold;">*&#21152;&#31895;*</span>  <span style="font-weight: bold;">*/&#21152;&#31895;&#20542;&#26012;/*</span>
+<pre class="src src-org"><span style="text-decoration: underline;">/&#26012;&#20307;/</span>  <span style="font-weight: bold;">*&#21152;&#31895;*</span>  <span style="font-weight: bold;">*/&#21152;&#31895;&#20542;&#26012;/*</span>
 </pre>
 </div>
 
@@ -1276,8 +1267,8 @@ TODO也是一类标题, 因此也需要用* 来开头
 <li>等宽 上标 脚注</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-org">- monospaced typewriter font for <span style="color: #8B8878;">~inline code~</span>
-- monospaced typewriter font for <span style="color: #cc6600; font-style: italic; text-decoration: underline;">=verbatim text=</span>
+<pre class="src src-org">- monospaced typewriter font for <span style="color: #75715E;">~inline code~</span>
+- monospaced typewriter font for <span style="color: #75715E;">=verbatim text=</span>
 - <span style="text-decoration: line-through;">+deleted text+</span> (vs. <span style="text-decoration: underline;">_inserted text_</span>)
 - text with super^{script}, such as 2^{10}
 - text with sub_{script}, such as H_{2}O
@@ -1303,13 +1294,13 @@ TODO也是一类标题, 因此也需要用* 来开头
 
 
 
-<div id="outline-container-orgd025883" class="outline-2">
-<h2 id="orgd025883"><span class="section-number-2">7</span> 图片</h2>
+<div id="outline-container-org565ea94" class="outline-2">
+<h2 id="org565ea94"><span class="section-number-2">7.</span> 图片</h2>
 </div>
 
 
-<div id="outline-container-orgb359959" class="outline-2">
-<h2 id="orgb359959"><span class="section-number-2">8</span> Videos</h2>
+<div id="outline-container-org8453882" class="outline-2">
+<h2 id="org8453882"><span class="section-number-2">8.</span> Videos</h2>
 <div class="outline-text-2" id="text-8">
 <p>
 <a href="https://orgmode.org/manual/index.html#Top">https://orgmode.org/manual/index.html#Top</a>
@@ -1320,7 +1311,7 @@ TODO也是一类标题, 因此也需要用* 来开头
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
 
-<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
 本文参考:<a href="https://www.cnblogs.com/GarfieldEr007/p/5588979.html">https://www.cnblogs.com/GarfieldEr007/p/5588979.html</a>
 </p></div></div>
 
@@ -1330,7 +1321,7 @@ TODO也是一类标题, 因此也需要用* 来开头
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 16:53</p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

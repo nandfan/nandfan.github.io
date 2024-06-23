@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-02 Thu 23:07 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>google-quic协议</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,183 +191,136 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">google-quic协议</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org393afb7">1. GOOGLE QUIC</a>
+<li><a href="#orgb7d822c">1. GOOGLE QUIC</a>
 <ul>
-<li><a href="#org81a7cfc">1.1. 简介</a></li>
-<li><a href="#org25c6b26">1.2. 术语以及定义</a></li>
-<li><a href="#org20e9d8b">1.3. QUIC概览</a>
+<li><a href="#org25a9aac">1.1. 简介</a></li>
+<li><a href="#org3864091">1.2. 术语以及定义</a></li>
+<li><a href="#orgece8bdc">1.3. QUIC概览</a>
 <ul>
-<li><a href="#orgfedcc34">1.3.1. 建立连接的延迟</a></li>
-<li><a href="#org3b556f9">1.3.2. 灵活的拥塞控制</a></li>
-<li><a href="#org298bc75">1.3.3. Stream和连接的流控</a></li>
-<li><a href="#org337e9c3">1.3.4. 多路复用</a></li>
-<li><a href="#org1a76651">1.3.5. Header和Payload的认证和加密</a></li>
-<li><a href="#org5a448ac">1.3.6. 连接迁移</a></li>
+<li><a href="#orgf513186">1.3.1. 建立连接的延迟</a></li>
+<li><a href="#org65728cd">1.3.2. 灵活的拥塞控制</a></li>
+<li><a href="#orgd597ffc">1.3.3. Stream和连接的流控</a></li>
+<li><a href="#orga0f169b">1.3.4. 多路复用</a></li>
+<li><a href="#org6088ca6">1.3.5. Header和Payload的认证和加密</a></li>
+<li><a href="#org0e2f7e2">1.3.6. 连接迁移</a></li>
 </ul>
 </li>
-<li><a href="#orgf7ec9e6">1.4. 报文类型和格式</a>
+<li><a href="#org764e928">1.4. 报文类型和格式</a>
 <ul>
-<li><a href="#orgce0ddfa">1.4.1. QUIC公共报文头</a></li>
-<li><a href="#org1acdb50">1.4.2. 特殊的报文</a>
+<li><a href="#orga6d1f3d">1.4.1. QUIC公共报文头</a></li>
+<li><a href="#orgb811d41">1.4.2. 特殊的报文</a>
 <ul>
-<li><a href="#orgfded1eb">1.4.2.1. 版本协商报文</a></li>
-<li><a href="#org2eb1161">1.4.2.2. Public Reset报文</a></li>
-<li><a href="#org87db605">1.4.2.3. 常规报文</a></li>
-<li><a href="#org6cf3fe6">1.4.2.4. 帧报文</a></li>
+<li><a href="#org3cfe659">1.4.2.1. 版本协商报文</a></li>
+<li><a href="#orgfd419d4">1.4.2.2. Public Reset报文</a></li>
+<li><a href="#org5b9ff82">1.4.2.3. 常规报文</a></li>
+<li><a href="#orga5d2a11">1.4.2.4. 帧报文</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org2dc2fc9">1.5. QUIC连接的生命周期</a>
+<li><a href="#org1ed0f02">1.5. QUIC连接的生命周期</a>
 <ul>
-<li><a href="#org195e2d5">1.5.1. 连接建立</a></li>
-<li><a href="#orga643496">1.5.2. 数据传输</a>
+<li><a href="#org7c90cdd">1.5.1. 连接建立</a></li>
+<li><a href="#orgd52ce08">1.5.2. 数据传输</a>
 <ul>
-<li><a href="#org972c0b9">1.5.2.1. QUIC stream的声明周期</a></li>
+<li><a href="#org4c5497f">1.5.2.1. QUIC stream的声明周期</a></li>
 </ul>
 </li>
-<li><a href="#orgd1a3d5f">1.5.3. 连接终止</a></li>
+<li><a href="#org42e316b">1.5.3. 连接终止</a></li>
 </ul>
 </li>
-<li><a href="#org7286d10">1.6. 帧类型及格式</a>
+<li><a href="#org0b30256">1.6. 帧类型及格式</a>
 <ul>
-<li><a href="#orgab22d63">1.6.1. 帧类型</a></li>
-<li><a href="#org4f86a0a">1.6.2. STREAM帧</a></li>
-<li><a href="#org5bfb531">1.6.3. ACK帧</a></li>
-<li><a href="#orgf0f8a82">1.6.4. STOP_WAITING帧</a></li>
-<li><a href="#org77ce661">1.6.5. WINDOW_UPDATE帧</a></li>
-<li><a href="#orgfbdbfe1">1.6.6. BLOCKED帧</a></li>
-<li><a href="#org26206f4">1.6.7. CONGESTION_FEEDBACK帧</a></li>
-<li><a href="#org952e21e">1.6.8. PADDING帧</a></li>
-<li><a href="#orgffd5839">1.6.9. RST_STREAM帧</a></li>
-<li><a href="#org8919359">1.6.10. PING帧</a></li>
-<li><a href="#org8381a6a">1.6.11. CONNECTION_CLOSE帧</a></li>
-<li><a href="#org3e851a3">1.6.12. GOAWAY帧</a></li>
+<li><a href="#org4dd25c6">1.6.1. 帧类型</a></li>
+<li><a href="#org73d9489">1.6.2. STREAM帧</a></li>
+<li><a href="#org97363c4">1.6.3. ACK帧</a></li>
+<li><a href="#orgfc96b58">1.6.4. STOP_WAITING帧</a></li>
+<li><a href="#orgdd6957d">1.6.5. WINDOW_UPDATE帧</a></li>
+<li><a href="#org7e256a2">1.6.6. BLOCKED帧</a></li>
+<li><a href="#org26a9545">1.6.7. CONGESTION_FEEDBACK帧</a></li>
+<li><a href="#org9daa0a7">1.6.8. PADDING帧</a></li>
+<li><a href="#orgc2a28f4">1.6.9. RST_STREAM帧</a></li>
+<li><a href="#orgeb15edb">1.6.10. PING帧</a></li>
+<li><a href="#orgcce5329">1.6.11. CONNECTION_CLOSE帧</a></li>
+<li><a href="#org49b0ea6">1.6.12. GOAWAY帧</a></li>
 </ul>
 </li>
-<li><a href="#org6ae8186">1.7. QUIC传输参数</a>
+<li><a href="#orgb88c794">1.7. QUIC传输参数</a>
 <ul>
-<li><a href="#org6d871db">1.7.1. 必须的参数</a></li>
-<li><a href="#org990a4c9">1.7.2. 可选参数</a></li>
+<li><a href="#org35685fb">1.7.1. 必须的参数</a></li>
+<li><a href="#orge6f5a3e">1.7.2. 可选参数</a></li>
 </ul>
 </li>
-<li><a href="#org651b0a8">1.8. QuicErrorCodes</a></li>
-<li><a href="#org2d77a83">1.9. 优先级</a></li>
-<li><a href="#org278c0f2">1.10. 基于QUIC的HTTP/2分层</a>
+<li><a href="#orgbdcb69a">1.8. QuicErrorCodes</a></li>
+<li><a href="#org6bf0a7a">1.9. 优先级</a></li>
+<li><a href="#orga11ee3a">1.10. 基于QUIC的HTTP/2分层</a>
 <ul>
-<li><a href="#orga528bb4">1.10.1. Stream管理</a></li>
-<li><a href="#orgaf1fef5">1.10.2. HTTP/2 头部压缩</a></li>
-<li><a href="#orgaa37922">1.10.3. 解析HTTP/2头</a></li>
-<li><a href="#orgc2d6e2c">1.10.4. HTTP中的QUIC协商</a></li>
+<li><a href="#org5f6295e">1.10.1. Stream管理</a></li>
+<li><a href="#org16700f7">1.10.2. HTTP/2 头部压缩</a></li>
+<li><a href="#org80ba47f">1.10.3. 解析HTTP/2头</a></li>
+<li><a href="#org0a683e9">1.10.4. HTTP中的QUIC协商</a></li>
 </ul>
 </li>
-<li><a href="#org6c11c59">1.11. 握手协议要求</a>
+<li><a href="#org4036aa0">1.11. 握手协议要求</a>
 <ul>
-<li><a href="#org93193f7">1.11.1. 使用0-RTT建立连接</a></li>
-<li><a href="#orgc54664f">1.11.2. 源地址欺骗防御</a></li>
-<li><a href="#org48a109e">1.11.3. 不透明的源地址Token</a></li>
-<li><a href="#org52c5dfc">1.11.4. 协商传输参数</a></li>
-<li><a href="#orge08d79d">1.11.5. 证书压缩</a></li>
-<li><a href="#org2e0b96a">1.11.6. Server配置更新</a></li>
+<li><a href="#org32bd13a">1.11.1. 使用0-RTT建立连接</a></li>
+<li><a href="#org48f7a02">1.11.2. 源地址欺骗防御</a></li>
+<li><a href="#orgf1f1c40">1.11.3. 不透明的源地址Token</a></li>
+<li><a href="#org4d5c639">1.11.4. 协商传输参数</a></li>
+<li><a href="#orgabcbc31">1.11.5. 证书压缩</a></li>
+<li><a href="#org5baaf04">1.11.6. Server配置更新</a></li>
 </ul>
 </li>
-<li><a href="#orgd3931bb">1.12. 最近的版本变更</a></li>
+<li><a href="#org2746cca">1.12. 最近的版本变更</a></li>
 </ul>
 </li>
-<li><a href="#org410aeb2">2. 版本Q044-Q048</a>
+<li><a href="#orgf271327">2. 版本Q044-Q048</a>
 <ul>
-<li><a href="#orga02e2ae">2.1. 在Google QUIC中使用IETF报文头格式</a>
+<li><a href="#orgb0414ce">2.1. 在Google QUIC中使用IETF报文头格式</a>
 <ul>
-<li><a href="#orgf4dc7ed">2.1.1. 概览</a></li>
+<li><a href="#org37da3be">2.1.1. 概览</a></li>
 </ul>
 </li>
-<li><a href="#orgc0d1071">2.2. Long Header 数据包类型的赋值</a></li>
-<li><a href="#org23364f2">2.3. 可变长度的Connection ID</a></li>
-<li><a href="#org11e34a4">2.4. 接收数据包</a></li>
-<li><a href="#org6a14ce0">2.5. 版本协商和无状态的reset</a></li>
-<li><a href="#org3f62be3">2.6. 部署</a></li>
+<li><a href="#org2a79f8a">2.2. Long Header 数据包类型的赋值</a></li>
+<li><a href="#org594c630">2.3. 可变长度的Connection ID</a></li>
+<li><a href="#org33c1baf">2.4. 接收数据包</a></li>
+<li><a href="#orgfdac7cc">2.5. 版本协商和无状态的reset</a></li>
+<li><a href="#org21b6c77">2.6. 部署</a></li>
 </ul>
 </li>
-<li><a href="#org08ead7b">3. 版本Q049及以上</a>
+<li><a href="#org6dffdff">3. 版本Q049及以上</a>
 <ul>
-<li><a href="#org532ca27">3.1. Long Header</a></li>
-<li><a href="#org35ad006">3.2. Short Header</a></li>
-<li><a href="#orgbbc6a55">3.3. Connection ID</a></li>
-<li><a href="#org7e246d9">3.4. Version</a></li>
-<li><a href="#orgf20e4ba">3.5. 版本协商</a></li>
-<li><a href="#orgf144848">3.6. 说明</a></li>
+<li><a href="#org3314e80">3.1. Long Header</a></li>
+<li><a href="#org3050cd2">3.2. Short Header</a></li>
+<li><a href="#org070a0d9">3.3. Connection ID</a></li>
+<li><a href="#orgb94825f">3.4. Version</a></li>
+<li><a href="#orgfd4bc88">3.5. 版本协商</a></li>
+<li><a href="#orga65dc7d">3.6. 说明</a></li>
 </ul>
 </li>
-<li><a href="#orgb019f69">4. QUIC加密设计</a></li>
+<li><a href="#orgab5a10c">4. QUIC加密设计</a></li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-org393afb7" class="outline-2">
-<h2 id="org393afb7"><span class="section-number-2">1</span> GOOGLE QUIC</h2>
+<div id="outline-container-orgb7d822c" class="outline-2">
+<h2 id="orgb7d822c"><span class="section-number-2">1.</span> GOOGLE QUIC</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org81a7cfc" class="outline-3">
-<h3 id="org81a7cfc"><span class="section-number-3">1.1</span> 简介</h3>
+<div id="outline-container-org25a9aac" class="outline-3">
+<h3 id="org25a9aac"><span class="section-number-3">1.1.</span> 简介</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 QUIC（快速 UDP 互联网连接）是一种基于 UDP 的新的多路复用和安全传输设计的协议，针对 HTTP/2 进行了优化。虽然QUIC主要为HTTP/2应用程序协议构建，但是QUIC也实现了一些机制，使其可以作为现代通用传输协议。 QUIC 提供了多路复用和流量控制，TLS 的安全性，类似TCP 的连接语义、可靠性和拥塞控制。
@@ -378,8 +332,8 @@ QUIC 完全在用户空间运行。
 </div>
 </div>
 
-<div id="outline-container-org25c6b26" class="outline-3">
-<h3 id="org25c6b26"><span class="section-number-3">1.2</span> 术语以及定义</h3>
+<div id="outline-container-org3864091" class="outline-3">
+<h3 id="org3864091"><span class="section-number-3">1.2.</span> 术语以及定义</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 QUIC用到的整型（长度、版本、类型）都是小端序，而非网络字节序。
@@ -400,8 +354,8 @@ QUIC用到的整型（长度、版本、类型）都是小端序，而非网络�
 </div>
 </div>
 
-<div id="outline-container-org20e9d8b" class="outline-3">
-<h3 id="org20e9d8b"><span class="section-number-3">1.3</span> QUIC概览</h3>
+<div id="outline-container-orgece8bdc" class="outline-3">
+<h3 id="orgece8bdc"><span class="section-number-3">1.3.</span> QUIC概览</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 QUIC在功能上等同于 TCP+TLS+HTTP/2，但是是基于UDP实现。QUIC相对于 TCP+TLS+HTTP/2的主要优势包含以下方面：
@@ -416,8 +370,8 @@ QUIC在功能上等同于 TCP+TLS+HTTP/2，但是是基于UDP实现。QUIC相对
 </ul>
 </div>
 
-<div id="outline-container-orgfedcc34" class="outline-4">
-<h4 id="orgfedcc34"><span class="section-number-4">1.3.1</span> 建立连接的延迟</h4>
+<div id="outline-container-orgf513186" class="outline-4">
+<h4 id="orgf513186"><span class="section-number-4">1.3.1.</span> 建立连接的延迟</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 QUIC合并了加密和握手传输，减少建立安全连接所需要的往返次数。 QUIC连接通常是0-RTT，也就意味着在大多数的QUIC连接中，数据可以被立即发送而不需要等待server的回复。而TCP+TLS的方式中，应用发送数据前需要1-3次的往返。
@@ -429,8 +383,8 @@ QUIC提供了专门的stream（Stream ID 1）用来握手。完整的握手协�
 </div>
 </div>
 
-<div id="outline-container-org3b556f9" class="outline-4">
-<h4 id="org3b556f9"><span class="section-number-4">1.3.2</span> 灵活的拥塞控制</h4>
+<div id="outline-container-org65728cd" class="outline-4">
+<h4 id="org65728cd"><span class="section-number-4">1.3.2.</span> 灵活的拥塞控制</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <p>
 QUIC有可插拔的拥塞控制以及比TCP更丰富的信令，使得QUIC为拥塞控制算法提供更加丰富的信息。当前默认的拥塞控制是TCP cublic的重新实现。
@@ -445,8 +399,8 @@ QUIC有可插拔的拥塞控制以及比TCP更丰富的信令，使得QUIC为拥
 </p>
 </div>
 </div>
-<div id="outline-container-org298bc75" class="outline-4">
-<h4 id="org298bc75"><span class="section-number-4">1.3.3</span> Stream和连接的流控</h4>
+<div id="outline-container-orgd597ffc" class="outline-4">
+<h4 id="orgd597ffc"><span class="section-number-4">1.3.3.</span> Stream和连接的流控</h4>
 <div class="outline-text-4" id="text-1-3-3">
 <p>
 QUIC实现了stream级别和connnection级别的流控，。
@@ -461,8 +415,8 @@ connection级别的连接控制：
 </div>
 </div>
 
-<div id="outline-container-org337e9c3" class="outline-4">
-<h4 id="org337e9c3"><span class="section-number-4">1.3.4</span> 多路复用</h4>
+<div id="outline-container-orga0f169b" class="outline-4">
+<h4 id="orga0f169b"><span class="section-number-4">1.3.4.</span> 多路复用</h4>
 <div class="outline-text-4" id="text-1-3-4">
 <p>
 基于TCPHTTP/2存在tcp head-of-line阻塞的问题，如果丢失一个tcp segment会导致阻塞所有后续的segment，直到重传的segment到达。
@@ -475,8 +429,8 @@ connection级别的连接控制：
 </div>
 
 
-<div id="outline-container-org1a76651" class="outline-4">
-<h4 id="org1a76651"><span class="section-number-4">1.3.5</span> Header和Payload的认证和加密</h4>
+<div id="outline-container-org6088ca6" class="outline-4">
+<h4 id="org6088ca6"><span class="section-number-4">1.3.5.</span> Header和Payload的认证和加密</h4>
 <div class="outline-text-4" id="text-1-3-5">
 <p>
 QUIC数据包总是经过认证的，且payload通常被全部加密。header中的未被加密的部分仍然需要被接收者认证，使得第三方无法进行数据的注入或修改。QUIC可以保护端到端的连接不会被中间件操控。
@@ -488,8 +442,8 @@ QUIC数据包总是经过认证的，且payload通常被全部加密。header中
 </div>
 </div>
 
-<div id="outline-container-org5a448ac" class="outline-4">
-<h4 id="org5a448ac"><span class="section-number-4">1.3.6</span> 连接迁移</h4>
+<div id="outline-container-org0e2f7e2" class="outline-4">
+<h4 id="org0e2f7e2"><span class="section-number-4">1.3.6.</span> 连接迁移</h4>
 <div class="outline-text-4" id="text-1-3-6">
 <p>
 在TCP中，一条连接由四元组标识（sip、sport、dip、dport），当ip或者端口发生变更时，连接无法继续保持。
@@ -506,8 +460,8 @@ QUIC中的连接通过client随机生成的64位Connection ID来标识。所以Q
 </div>
 </div>
 
-<div id="outline-container-orgf7ec9e6" class="outline-3">
-<h3 id="orgf7ec9e6"><span class="section-number-3">1.4</span> 报文类型和格式</h3>
+<div id="outline-container-org764e928" class="outline-3">
+<h3 id="org764e928"><span class="section-number-3">1.4.</span> 报文类型和格式</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 QUIC报文有特殊特殊报文和普通报文。
@@ -523,8 +477,8 @@ QUIC数据包大小应当适应路径MTU的大小以避免IP分片。当前QUIC�
 </p>
 </div>
 
-<div id="outline-container-orgce0ddfa" class="outline-4">
-<h4 id="orgce0ddfa"><span class="section-number-4">1.4.1</span> QUIC公共报文头</h4>
+<div id="outline-container-orga6d1f3d" class="outline-4">
+<h4 id="orga6d1f3d"><span class="section-number-4">1.4.1.</span> QUIC公共报文头</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 所有的QUIC报文都以公共报文头开始，大小在1-51字节之间。其格式如下：
@@ -651,12 +605,12 @@ QUIC Version present in header
 </div>
 </div>
 
-<div id="outline-container-org1acdb50" class="outline-4">
-<h4 id="org1acdb50"><span class="section-number-4">1.4.2</span> 特殊的报文</h4>
+<div id="outline-container-orgb811d41" class="outline-4">
+<h4 id="orgb811d41"><span class="section-number-4">1.4.2.</span> 特殊的报文</h4>
 <div class="outline-text-4" id="text-1-4-2">
 </div>
-<div id="outline-container-orgfded1eb" class="outline-5">
-<h5 id="orgfded1eb"><span class="section-number-5">1.4.2.1</span> 版本协商报文</h5>
+<div id="outline-container-org3cfe659" class="outline-5">
+<h5 id="org3cfe659"><span class="section-number-5">1.4.2.1.</span> 版本协商报文</h5>
 <div class="outline-text-5" id="text-1-4-2-1">
 <p>
 只有server才会发送版本协商报文。报文的最开头是8-bit的Public Flags和64-bit的Connection ID。 Public Flags中必须设置PUBLIC_FLAG_VERSION并且指示64-bit的Connection ID。版本协商报文的其余部分是server支持的4字节版本列表：
@@ -679,8 +633,8 @@ QUIC Version present in header
 </div>
 </div>
 
-<div id="outline-container-org2eb1161" class="outline-5">
-<h5 id="org2eb1161"><span class="section-number-5">1.4.2.2</span> Public Reset报文</h5>
+<div id="outline-container-orgfd419d4" class="outline-5">
+<h5 id="orgfd419d4"><span class="section-number-5">1.4.2.2.</span> Public Reset报文</h5>
 <div class="outline-text-5" id="text-1-4-2-2">
 <p>
 报文的最开头是8-bit的Public Flags和64-bit的Connection ID。 Public Flags中必须设置PUBLIC_FLAG_RESET并且指示64-bit的Connection ID。报文的其余部分被编码。
@@ -712,8 +666,8 @@ QUIC Version present in header
 </div>
 </div>
 
-<div id="outline-container-org87db605" class="outline-5">
-<h5 id="org87db605"><span class="section-number-5">1.4.2.3</span> 常规报文</h5>
+<div id="outline-container-org5b9ff82" class="outline-5">
+<h5 id="org5b9ff82"><span class="section-number-5">1.4.2.3.</span> 常规报文</h5>
 <div class="outline-text-5" id="text-1-4-2-3">
 <p>
 常规数据包是被认证和加密的。公共包头被认证但是没有被加密，从第一帧开始的数据包的其余部分都被加密。紧随公共头之后，常规数据包包含 AEAD（经过身份验证的加密和相关数据）数据。数据必须经过解密才能解释内容。解密后，明文由一系列帧组成。
@@ -721,8 +675,8 @@ QUIC Version present in header
 </div>
 </div>
 
-<div id="outline-container-org6cf3fe6" class="outline-5">
-<h5 id="org6cf3fe6"><span class="section-number-5">1.4.2.4</span> 帧报文</h5>
+<div id="outline-container-orga5d2a11" class="outline-5">
+<h5 id="orga5d2a11"><span class="section-number-5">1.4.2.4.</span> 帧报文</h5>
 <div class="outline-text-5" id="text-1-4-2-4">
 <p>
 帧数据包的有效载荷是一系列带有类型前缀的帧。帧数据包的一般格式如下：
@@ -738,12 +692,12 @@ QUIC Version present in header
 </div>
 </div>
 
-<div id="outline-container-org2dc2fc9" class="outline-3">
-<h3 id="org2dc2fc9"><span class="section-number-3">1.5</span> QUIC连接的生命周期</h3>
+<div id="outline-container-org1ed0f02" class="outline-3">
+<h3 id="org1ed0f02"><span class="section-number-3">1.5.</span> QUIC连接的生命周期</h3>
 <div class="outline-text-3" id="text-1-5">
 </div>
-<div id="outline-container-org195e2d5" class="outline-4">
-<h4 id="org195e2d5"><span class="section-number-4">1.5.1</span> 连接建立</h4>
+<div id="outline-container-org7c90cdd" class="outline-4">
+<h4 id="org7c90cdd"><span class="section-number-4">1.5.1.</span> 连接建立</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <p>
 QUIC的连接由client端初始化。QUIC建立连接时，将版本协商和加密传输握手交织在一起，以减少连接建立延迟。
@@ -780,8 +734,8 @@ client收到server发送的版本协商报文后，会选择一个能够支持�
 </div>
 
 
-<div id="outline-container-orga643496" class="outline-4">
-<h4 id="orga643496"><span class="section-number-4">1.5.2</span> 数据传输</h4>
+<div id="outline-container-orgd52ce08" class="outline-4">
+<h4 id="orgd52ce08"><span class="section-number-4">1.5.2.</span> 数据传输</h4>
 <div class="outline-text-4" id="text-1-5-2">
 <p>
 QUIC实现了连接的可靠性、拥塞控制和流控。QUIC的流控接近HTTP/2的流控。QUIC连接通过使用单个数据包序号来跨连接共享拥塞控制和丢失恢复。
@@ -796,8 +750,8 @@ QUIC连接中传输的所有数据，包括加密握手数据，都被作为数�
 </p>
 </div>
 
-<div id="outline-container-org972c0b9" class="outline-5">
-<h5 id="org972c0b9"><span class="section-number-5">1.5.2.1</span> QUIC stream的声明周期</h5>
+<div id="outline-container-org4c5497f" class="outline-5">
+<h5 id="org4c5497f"><span class="section-number-5">1.5.2.1.</span> QUIC stream的声明周期</h5>
 <div class="outline-text-5" id="text-1-5-2-1">
 <p>
 Streams是被切分为stream帧的独立双向数据序列。Streams可以由client或者server创建，可以与其他stream同时交错发送数据，也可以取消。
@@ -831,8 +785,8 @@ Stream的创建是隐式完成的，为给定stream发送一个STREAM帧即可�
 </div>
 </div>
 
-<div id="outline-container-orgd1a3d5f" class="outline-4">
-<h4 id="orgd1a3d5f"><span class="section-number-4">1.5.3</span> 连接终止</h4>
+<div id="outline-container-org42e316b" class="outline-4">
+<h4 id="org42e316b"><span class="section-number-4">1.5.3.</span> 连接终止</h4>
 <div class="outline-text-4" id="text-1-5-3">
 <p>
 连接应当保持打开状态，直到在预先协商的时间内空闲。当server决定终止空闲连接时，不应当同志client以避免唤醒移动设备的无线电。QUIC连接一旦被建立，可以通过以下两种方式终止：
@@ -849,16 +803,16 @@ Stream的创建是隐式完成的，为给定stream发送一个STREAM帧即可�
 </div>
 </div>
 
-<div id="outline-container-org7286d10" class="outline-3">
-<h3 id="org7286d10"><span class="section-number-3">1.6</span> 帧类型及格式</h3>
+<div id="outline-container-org0b30256" class="outline-3">
+<h3 id="org0b30256"><span class="section-number-3">1.6.</span> 帧类型及格式</h3>
 <div class="outline-text-3" id="text-1-6">
 <p>
 QUIC帧数据包由帧来填充，帧包含帧类型（自身一个依赖类型的解释），后面紧跟依赖类型的帧头字段。所有帧被包含在一个QUIC数据包中，任何帧都不能跨越QUIC数据包边界。
 </p>
 </div>
 
-<div id="outline-container-orgab22d63" class="outline-4">
-<h4 id="orgab22d63"><span class="section-number-4">1.6.1</span> 帧类型</h4>
+<div id="outline-container-org4dd25c6" class="outline-4">
+<h4 id="org4dd25c6"><span class="section-number-4">1.6.1.</span> 帧类型</h4>
 <div class="outline-text-4" id="text-1-6-1">
 <p>
 interpretation
@@ -902,8 +856,8 @@ Frame Type字节有两种解释，产生两种帧类型：特殊帧类型，常�
 </div>
 </div>
 
-<div id="outline-container-org4f86a0a" class="outline-4">
-<h4 id="org4f86a0a"><span class="section-number-4">1.6.2</span> STREAM帧</h4>
+<div id="outline-container-org73d9489" class="outline-4">
+<h4 id="org73d9489"><span class="section-number-4">1.6.2.</span> STREAM帧</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <p>
 STREAM帧用于隐式的创建stream，并在其上发送数据：
@@ -957,15 +911,15 @@ stream帧必须具有非零长度的数据，否则FIN标志必须置位。
 </p>
 
 
-<div class="figure">
+<div id="org4e87968" class="figure">
 <p><img src="image/quic/frame-type.png" alt="frame-type.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org5bfb531" class="outline-4">
-<h4 id="org5bfb531"><span class="section-number-4">1.6.3</span> ACK帧</h4>
+<div id="outline-container-org97363c4" class="outline-4">
+<h4 id="org97363c4"><span class="section-number-4">1.6.3.</span> ACK帧</h4>
 <div class="outline-text-4" id="text-1-6-3">
 <p>
 ACK帧用来通知对端哪些数据包被接收了。ACK帧包含了1-256个ack块。ACK块是确认数据包的范围，类似TCP的SACK块，但是QUIC没有等效于TCP的累计确认点，因为数据包是使用新的seq号传输的。
@@ -1051,8 +1005,8 @@ ACK帧中的字段描述如下：
 </div>
 </div>
 
-<div id="outline-container-orgf0f8a82" class="outline-4">
-<h4 id="orgf0f8a82"><span class="section-number-4">1.6.4</span> STOP_WAITING帧</h4>
+<div id="outline-container-orgfc96b58" class="outline-4">
+<h4 id="orgfc96b58"><span class="section-number-4">1.6.4.</span> STOP_WAITING帧</h4>
 <div class="outline-text-4" id="text-1-6-4">
 <p>
 STOP_WAINTING帧用来通知对端不应该继续等待小于指定数据包号的数据。数据包号编码为1,2,4,6字节，和为封闭数据包头的数据包编号指定的编码长度相同。
@@ -1077,8 +1031,8 @@ STOP_WAITING帧中的字段：
 </div>
 </div>
 
-<div id="outline-container-org77ce661" class="outline-4">
-<h4 id="org77ce661"><span class="section-number-4">1.6.5</span> WINDOW_UPDATE帧</h4>
+<div id="outline-container-orgdd6957d" class="outline-4">
+<h4 id="orgdd6957d"><span class="section-number-4">1.6.5.</span> WINDOW_UPDATE帧</h4>
 <div class="outline-text-4" id="text-1-6-5">
 <p>
 WINDOW_UPDATE帧用来通知对端增加端点的流控接收窗口。Stream ID为0时表示WINDOW_UPDATE帧是针对连接的流控窗口，大于0表示指定的stream应当增加它的流控窗口。
@@ -1115,8 +1069,8 @@ WINDOW_UPDATE帧的字段如下：
 </div>
 </div>
 
-<div id="outline-container-orgfbdbfe1" class="outline-4">
-<h4 id="orgfbdbfe1"><span class="section-number-4">1.6.6</span> BLOCKED帧</h4>
+<div id="outline-container-org7e256a2" class="outline-4">
+<h4 id="org7e256a2"><span class="section-number-4">1.6.6.</span> BLOCKED帧</h4>
 <div class="outline-text-4" id="text-1-6-6">
 <p>
 BLOCKED帧用来通知对端，本端有数据要发送，但是当前被流控阻塞了。这是一个提示帧，对调试很有帮助。BLOCKED帧的接收端应当直接丢弃。
@@ -1140,8 +1094,8 @@ BLOCKED帧中的字段：
 </div>
 </div>
 
-<div id="outline-container-org26206f4" class="outline-4">
-<h4 id="org26206f4"><span class="section-number-4">1.6.7</span> CONGESTION_FEEDBACK帧</h4>
+<div id="outline-container-org26a9545" class="outline-4">
+<h4 id="org26a9545"><span class="section-number-4">1.6.7.</span> CONGESTION_FEEDBACK帧</h4>
 <div class="outline-text-4" id="text-1-6-7">
 <p>
 CONGESTION_FEEDBACK帧一个实验性的帧，当前未使用。目的是提供标准ack帧范围之外的额外拥塞反馈信息。CONGESTION_FEEDBACK帧的Frame Type的前三个比特为需要设置为001。Frame Type的后5个比特位保留，供未来使用。
@@ -1149,8 +1103,8 @@ CONGESTION_FEEDBACK帧一个实验性的帧，当前未使用。目的是提供�
 </div>
 </div>
 
-<div id="outline-container-org952e21e" class="outline-4">
-<h4 id="org952e21e"><span class="section-number-4">1.6.8</span> PADDING帧</h4>
+<div id="outline-container-org9daa0a7" class="outline-4">
+<h4 id="org9daa0a7"><span class="section-number-4">1.6.8.</span> PADDING帧</h4>
 <div class="outline-text-4" id="text-1-6-8">
 <p>
 PADDING帧使用0x00字节来填充数据包。碰到PADDING帧时，数据包的其余部分为填充字节。PADDING帧中包含0x00字节，一直填充到QUIC数据包末尾。PADDING帧只有一个Frame Type字段，并且8-bit的Frame Type字段设置为0x00。
@@ -1158,8 +1112,8 @@ PADDING帧使用0x00字节来填充数据包。碰到PADDING帧时，数据包�
 </div>
 </div>
 
-<div id="outline-container-orgffd5839" class="outline-4">
-<h4 id="orgffd5839"><span class="section-number-4">1.6.9</span> RST_STREAM帧</h4>
+<div id="outline-container-orgc2a28f4" class="outline-4">
+<h4 id="orgc2a28f4"><span class="section-number-4">1.6.9.</span> RST_STREAM帧</h4>
 <div class="outline-text-4" id="text-1-6-9">
 <p>
 RST_STREAM帧允许异常终止stream。当stream的创建者发送该帧后，表示创建者希望撤销此stream。如果是stream的接收者发送的此帧，表示接收者遇到错误或者不允许创建此stream，此时stream应当被关闭。
@@ -1185,8 +1139,8 @@ RST_STREAM帧的字段：
 </div>
 </div>
 
-<div id="outline-container-org8919359" class="outline-4">
-<h4 id="org8919359"><span class="section-number-4">1.6.10</span> PING帧</h4>
+<div id="outline-container-orgeb15edb" class="outline-4">
+<h4 id="orgeb15edb"><span class="section-number-4">1.6.10.</span> PING帧</h4>
 <div class="outline-text-4" id="text-1-6-10">
 <p>
 PING帧用来测试对端是否仍然存活。PING帧不包含数据载荷。接收到PING帧后应当应答包含此帧的数据包。当stream被打开时用PING帧来保活连接。默认是在空闲15s后发送PING帧，这比多数的NAT超时短。PING帧只有一个Frame Type字段，必须将其设置为0x07。
@@ -1199,8 +1153,8 @@ PING帧用来测试对端是否仍然存活。PING帧不包含数据载荷。接
 </div>
 </div>
 
-<div id="outline-container-org8381a6a" class="outline-4">
-<h4 id="org8381a6a"><span class="section-number-4">1.6.11</span> CONNECTION_CLOSE帧</h4>
+<div id="outline-container-orgcce5329" class="outline-4">
+<h4 id="orgcce5329"><span class="section-number-4">1.6.11.</span> CONNECTION_CLOSE帧</h4>
 <div class="outline-text-4" id="text-1-6-11">
 <p>
 CONNECTION_CLOSE帧用来通知连接将被关闭。当连接关闭时，如果有stream在传输，这些stream都被隐式关闭。
@@ -1227,8 +1181,8 @@ CONNECTION_CLOSE帧的字段：
 </div>
 </div>
 
-<div id="outline-container-org3e851a3" class="outline-4">
-<h4 id="org3e851a3"><span class="section-number-4">1.6.12</span> GOAWAY帧</h4>
+<div id="outline-container-org49b0ea6" class="outline-4">
+<h4 id="org49b0ea6"><span class="section-number-4">1.6.12.</span> GOAWAY帧</h4>
 <div class="outline-text-4" id="text-1-6-12">
 <p>
 GOAWAY帧用来通知此连接应当停止使用，此连接将要被终止。任何活动的stream还可以继续处理，但是GOAWAY的发送端不再会启动新的stream，也不允许新stream。
@@ -1262,16 +1216,16 @@ GOAWAY帧：
 </div>
 </div>
 
-<div id="outline-container-org6ae8186" class="outline-3">
-<h3 id="org6ae8186"><span class="section-number-3">1.7</span> QUIC传输参数</h3>
+<div id="outline-container-orgb88c794" class="outline-3">
+<h3 id="orgb88c794"><span class="section-number-3">1.7.</span> QUIC传输参数</h3>
 <div class="outline-text-3" id="text-1-7">
 <p>
 握手过程，会协商QUIC连接的各种传输参数。
 </p>
 </div>
 
-<div id="outline-container-org6d871db" class="outline-4">
-<h4 id="org6d871db"><span class="section-number-4">1.7.1</span> 必须的参数</h4>
+<div id="outline-container-org35685fb" class="outline-4">
+<h4 id="org35685fb"><span class="section-number-4">1.7.1.</span> 必须的参数</h4>
 <div class="outline-text-4" id="text-1-7-1">
 <ul class="org-ul">
 <li><b>SFCW</b> - Stream流控窗口。stream级别的流控窗口大小（字节）。</li>
@@ -1281,8 +1235,8 @@ GOAWAY帧：
 </div>
 </div>
 
-<div id="outline-container-org990a4c9" class="outline-4">
-<h4 id="org990a4c9"><span class="section-number-4">1.7.2</span> 可选参数</h4>
+<div id="outline-container-orge6f5a3e" class="outline-4">
+<h4 id="orge6f5a3e"><span class="section-number-4">1.7.2.</span> 可选参数</h4>
 <div class="outline-text-4" id="text-1-7-2">
 <ol class="org-ol">
 <li><b>SRBF</b> - Socket接收缓冲区字节大小。如果对端担心有时会延迟从内核缓冲区读取数据包，则可能希望将其CWND（拥塞窗口）最大值设置为近似socket缓冲区的值。默认为256Kbtyes, 最小值为16Kbtytes.</li>
@@ -1296,8 +1250,8 @@ GOAWAY帧：
 </div>
 
 
-<div id="outline-container-org651b0a8" class="outline-3">
-<h3 id="org651b0a8"><span class="section-number-3">1.8</span> QuicErrorCodes</h3>
+<div id="outline-container-orgbdcb69a" class="outline-3">
+<h3 id="orgbdcb69a"><span class="section-number-3">1.8.</span> QuicErrorCodes</h3>
 <div class="outline-text-3" id="text-1-8">
 <p>
 QuicErrorCodes定义在Chromium源码目录的 <code>src/net/quic/quic_proto.h</code> 文件中。
@@ -1335,8 +1289,8 @@ QuicErrorCodes定义在Chromium源码目录的 <code>src/net/quic/quic_proto.h</
 </div>
 </div>
 
-<div id="outline-container-org2d77a83" class="outline-3">
-<h3 id="org2d77a83"><span class="section-number-3">1.9</span> 优先级</h3>
+<div id="outline-container-org6bf0a7a" class="outline-3">
+<h3 id="org6bf0a7a"><span class="section-number-3">1.9.</span> 优先级</h3>
 <div class="outline-text-3" id="text-1-9">
 <p>
 QUIC使用HTTP/2的优先级机制。粗略的讲，一个stream可能会依赖另一个stream。这种情况下，父stream应当使子stream挨饿。另外父stream具有切的优先级。父stream不应当饿死其他的父stream，而应当根据其优先级比例进行处理。
@@ -1344,16 +1298,16 @@ QUIC使用HTTP/2的优先级机制。粗略的讲，一个stream可能会依赖�
 </div>
 </div>
 
-<div id="outline-container-org278c0f2" class="outline-3">
-<h3 id="org278c0f2"><span class="section-number-3">1.10</span> 基于QUIC的HTTP/2分层</h3>
+<div id="outline-container-orga11ee3a" class="outline-3">
+<h3 id="orga11ee3a"><span class="section-number-3">1.10.</span> 基于QUIC的HTTP/2分层</h3>
 <div class="outline-text-3" id="text-1-10">
 <p>
 由于QUIC将HTTP/2的机制和传输层机集成在一起，QUIC实现了许多在HTTP/2中指定的特性。因此QUIC允许使用QUIC的实现替代HTTP/2机制，减少HTTP/2协议的复杂性。本节简要描述如何通过QUIC提供HTTP/2的语义。
 </p>
 </div>
 
-<div id="outline-container-orga528bb4" class="outline-4">
-<h4 id="orga528bb4"><span class="section-number-4">1.10.1</span> Stream管理</h4>
+<div id="outline-container-org5f6295e" class="outline-4">
+<h4 id="org5f6295e"><span class="section-number-4">1.10.1.</span> Stream管理</h4>
 <div class="outline-text-4" id="text-1-10-1">
 <p>
 当使用QUIC发送HTTP/2的头和数据时，由QUIC层处理大部分的stream管理工作。HTTP/2的Stream ID被QUIC的Stream ID替代。使用QUIC时，HTTP/2不需要任何stream帧，HTTP/2的header和body被包含在QUIC的数据中发送。当QUIC stream在相应的方向被关闭时，认为请求和响应已经完成。
@@ -1365,8 +1319,8 @@ Stream的流控也由QUIC处理，因此不需要在HTTP/2中再次实现。QUIC
 </div>
 </div>
 
-<div id="outline-container-orgaf1fef5" class="outline-4">
-<h4 id="orgaf1fef5"><span class="section-number-4">1.10.2</span> HTTP/2 头部压缩</h4>
+<div id="outline-container-org16700f7" class="outline-4">
+<h4 id="org16700f7"><span class="section-number-4">1.10.2.</span> HTTP/2 头部压缩</h4>
 <div class="outline-text-4" id="text-1-10-2">
 <p>
 QUIC为HTTP/2实现了HPACK头部压缩（RFC7541），者同时也引入了Head-of-Line阻塞，因为HTTP/2 header块必须按照压缩的顺序来进行解压缩。
@@ -1387,8 +1341,8 @@ QUIC为HTTP/2实现了HPACK头部压缩（RFC7541），者同时也引入了Head
 </div>
 </div>
 
-<div id="outline-container-orgaa37922" class="outline-4">
-<h4 id="orgaa37922"><span class="section-number-4">1.10.3</span> 解析HTTP/2头</h4>
+<div id="outline-container-org80ba47f" class="outline-4">
+<h4 id="org80ba47f"><span class="section-number-4">1.10.3.</span> 解析HTTP/2头</h4>
 <div class="outline-text-4" id="text-1-10-3">
 <p>
 在专门的header stream上只发送HTTP/2 HEADERS帧。这些帧的格式的说明可以参考[RFC7540]6.2章节。
@@ -1397,14 +1351,14 @@ QUIC为HTTP/2实现了HPACK头部压缩（RFC7541），者同时也引入了Head
 </div>
 
 
-<div id="outline-container-orgc2d6e2c" class="outline-4">
-<h4 id="orgc2d6e2c"><span class="section-number-4">1.10.4</span> HTTP中的QUIC协商</h4>
+<div id="outline-container-org0a683e9" class="outline-4">
+<h4 id="org0a683e9"><span class="section-number-4">1.10.4.</span> HTTP中的QUIC协商</h4>
 <div class="outline-text-4" id="text-1-10-4">
 <p>
 Alternate-Protocol头部用于为未来的http请求协商使用QUIC。如果想指定QUIC作为替代协议，端口为123，则使用以下头部：
 </p>
 <div class="org-src-container">
-<pre class="src src-fundamental"><span style="color: #CDC673;">"Alternate-Protocol: 123:quic"</span>
+<pre class="src src-fundamental">"Alternate-Protocol: 123:quic"
 </pre>
 </div>
 
@@ -1423,16 +1377,16 @@ server也可以通过发送一个header来通知，此域名不可以使用QUIC�
 </div>
 </div>
 
-<div id="outline-container-org6c11c59" class="outline-3">
-<h3 id="org6c11c59"><span class="section-number-3">1.11</span> 握手协议要求</h3>
+<div id="outline-container-org4036aa0" class="outline-3">
+<h3 id="org4036aa0"><span class="section-number-3">1.11.</span> 握手协议要求</h3>
 <div class="outline-text-3" id="text-1-11">
 <p>
 QUIC提供了专门的stream（Stream ID 1）来执行组合连接和安全握手。以下列表记录当前握手原型的属性，未来的握手协议应当提供这些属性。
 </p>
 </div>
 
-<div id="outline-container-org93193f7" class="outline-4">
-<h4 id="org93193f7"><span class="section-number-4">1.11.1</span> 使用0-RTT建立连接</h4>
+<div id="outline-container-org32bd13a" class="outline-4">
+<h4 id="org32bd13a"><span class="section-number-4">1.11.1.</span> 使用0-RTT建立连接</h4>
 <div class="outline-text-4" id="text-1-11-1">
 <p>
 QUIC握手协议成功的为大多数的连接实现了0-RTT，这是减少QUIC延迟的关键。
@@ -1440,8 +1394,8 @@ QUIC握手协议成功的为大多数的连接实现了0-RTT，这是减少QUIC�
 </div>
 </div>
 
-<div id="outline-container-orgc54664f" class="outline-4">
-<h4 id="orgc54664f"><span class="section-number-4">1.11.2</span> 源地址欺骗防御</h4>
+<div id="outline-container-org48f7a02" class="outline-4">
+<h4 id="org48f7a02"><span class="section-number-4">1.11.2.</span> 源地址欺骗防御</h4>
 <div class="outline-text-4" id="text-1-11-2">
 <p>
 TCP通过SYN和SYN_ACK的交换验证client的地址，而QUIC中使用server在先前的连接中递送源地址token来验证。
@@ -1449,8 +1403,8 @@ TCP通过SYN和SYN_ACK的交换验证client的地址，而QUIC中使用server在
 </div>
 </div>
 
-<div id="outline-container-org48a109e" class="outline-4">
-<h4 id="org48a109e"><span class="section-number-4">1.11.3</span> 不透明的源地址Token</h4>
+<div id="outline-container-orgf1f1c40" class="outline-4">
+<h4 id="orgf1f1c40"><span class="section-number-4">1.11.3.</span> 不透明的源地址Token</h4>
 <div class="outline-text-4" id="text-1-11-3">
 <p>
 QUIC中，server在源地址token中存储了多条数据，用于同样的client发起的后续连接。这包含了最近client使用的源地址，测量的client带宽，server指定的connection ID（用于无状态的REJ）。使用源地址token替代握手协议需要满足：client不透明，足够的容量存储这些信息位。 或者，握手协议应当具有不同的方法将这些信息存储在client。
@@ -1458,8 +1412,8 @@ QUIC中，server在源地址token中存储了多条数据，用于同样的clien
 </div>
 </div>
 
-<div id="outline-container-org52c5dfc" class="outline-4">
-<h4 id="org52c5dfc"><span class="section-number-4">1.11.4</span> 协商传输参数</h4>
+<div id="outline-container-org4d5c639" class="outline-4">
+<h4 id="org4d5c639"><span class="section-number-4">1.11.4.</span> 协商传输参数</h4>
 <div class="outline-text-4" id="text-1-11-4">
 <p>
 除了协商加密参数，QUIC 握手协议还协商 QUIC 和 HTTP/2 级别的参数，包括最大打开 QUIC stream和其他 QUIC 连接选项。
@@ -1467,8 +1421,8 @@ QUIC中，server在源地址token中存储了多条数据，用于同样的clien
 </div>
 </div>
 
-<div id="outline-container-orge08d79d" class="outline-4">
-<h4 id="orge08d79d"><span class="section-number-4">1.11.5</span> 证书压缩</h4>
+<div id="outline-container-orgabcbc31" class="outline-4">
+<h4 id="orgabcbc31"><span class="section-number-4">1.11.5.</span> 证书压缩</h4>
 <div class="outline-text-4" id="text-1-11-5">
 <p>
 QUIC握手会压缩证书，以便REJ（包括常见的Google证书链）能够填充到两个1350字节的数据包中。这有助于在不减少QUIC 0-RTT速率的情况下降低放大攻击印迹。
@@ -1476,8 +1430,8 @@ QUIC握手会压缩证书，以便REJ（包括常见的Google证书链）能够�
 </div>
 </div>
 
-<div id="outline-container-org2e0b96a" class="outline-4">
-<h4 id="org2e0b96a"><span class="section-number-4">1.11.6</span> Server配置更新</h4>
+<div id="outline-container-org5baaf04" class="outline-4">
+<h4 id="org5baaf04"><span class="section-number-4">1.11.6.</span> Server配置更新</h4>
 <div class="outline-text-4" id="text-1-11-6">
 <p>
 QUIC使用Server Confing Update(SCUP)消息来刷新 source-address toker（STK）和server配置的mid-connection，延长client可以建立0-RTT连接的期限。
@@ -1486,8 +1440,8 @@ QUIC使用Server Confing Update(SCUP)消息来刷新 source-address toker（STK�
 </div>
 </div>
 
-<div id="outline-container-orgd3931bb" class="outline-3">
-<h3 id="orgd3931bb"><span class="section-number-3">1.12</span> 最近的版本变更</h3>
+<div id="outline-container-org2746cca" class="outline-3">
+<h3 id="org2746cca"><span class="section-number-3">1.12.</span> 最近的版本变更</h3>
 <div class="outline-text-3" id="text-1-12">
 <ul class="org-ul">
 <li>Q009: 在spdy stream前4字节上添加属性。</li>
@@ -1526,16 +1480,16 @@ QUIC使用Server Confing Update(SCUP)消息来刷新 source-address toker（STK�
 </div>
 </div>
 
-<div id="outline-container-org410aeb2" class="outline-2">
-<h2 id="org410aeb2"><span class="section-number-2">2</span> 版本Q044-Q048</h2>
+<div id="outline-container-orgf271327" class="outline-2">
+<h2 id="orgf271327"><span class="section-number-2">2.</span> 版本Q044-Q048</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orga02e2ae" class="outline-3">
-<h3 id="orga02e2ae"><span class="section-number-3">2.1</span> 在Google QUIC中使用IETF报文头格式</h3>
+<div id="outline-container-orgb0414ce" class="outline-3">
+<h3 id="orgb0414ce"><span class="section-number-3">2.1.</span> 在Google QUIC中使用IETF报文头格式</h3>
 <div class="outline-text-3" id="text-2-1">
 </div>
-<div id="outline-container-orgf4dc7ed" class="outline-4">
-<h4 id="orgf4dc7ed"><span class="section-number-4">2.1.1</span> 概览</h4>
+<div id="outline-container-org37da3be" class="outline-4">
+<h4 id="org37da3be"><span class="section-number-4">2.1.1.</span> 概览</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
 在43及其以下版本中，Google QUIC报文以public header开始：
@@ -1610,8 +1564,8 @@ Short Header （在版本和1-RTT keys协商后使用）
 </div>
 </div>
 
-<div id="outline-container-orgc0d1071" class="outline-3">
-<h3 id="orgc0d1071"><span class="section-number-3">2.2</span> Long Header 数据包类型的赋值</h3>
+<div id="outline-container-org2a79f8a" class="outline-3">
+<h3 id="org2a79f8a"><span class="section-number-3">2.2.</span> Long Header 数据包类型的赋值</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 在连接加密级别切换到安全转发之前，Long Header数据包类型纯粹由包的加密级别决定（Retry类型尚未使用）：
@@ -1651,8 +1605,8 @@ Short Header （在版本和1-RTT keys协商后使用）
 </div>
 </div>
 
-<div id="outline-container-org23364f2" class="outline-3">
-<h3 id="org23364f2"><span class="section-number-3">2.3</span> 可变长度的Connection ID</h3>
+<div id="outline-container-org594c630" class="outline-3">
+<h3 id="org594c630"><span class="section-number-3">2.3.</span> 可变长度的Connection ID</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 Google QUIC 连接使用8-byte的Connection ID来标识，并且不支持server到client的负载均衡。这样在IETF头格式中，源 Connection ID和目的 Connection ID 是相同的：
@@ -1715,8 +1669,8 @@ Google QUIC 连接使用8-byte的Connection ID来标识，并且不支持server�
 </div>
 </div>
 
-<div id="outline-container-org11e34a4" class="outline-3">
-<h3 id="org11e34a4"><span class="section-number-3">2.4</span> 接收数据包</h3>
+<div id="outline-container-org33c1baf" class="outline-3">
+<h3 id="org33c1baf"><span class="section-number-3">2.4.</span> 接收数据包</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 client端比较好处理，因为client从一个版本开始。server收到一个数据包后，根据第一个字节的最高有效位和多路复用比特位（0x40）来判定是Google QUIC还是IETF QUIC的数据包。如果最高有效位设置，则认为是一个IETF的Long Header数据包，否则，如果多路用位（0x40）设置，则认为是IETF的Short Header数据包，其他情况则视为Google QUIC数据包。
@@ -1724,8 +1678,8 @@ client端比较好处理，因为client从一个版本开始。server收到一�
 </div>
 </div>
 
-<div id="outline-container-org6a14ce0" class="outline-3">
-<h3 id="org6a14ce0"><span class="section-number-3">2.5</span> 版本协商和无状态的reset</h3>
+<div id="outline-container-orgfdac7cc" class="outline-3">
+<h3 id="orgfdac7cc"><span class="section-number-3">2.5.</span> 版本协商和无状态的reset</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 server需要根据client使用的是IETF QUIC还是Google QUIC来发送正确的版本协商数据包。
@@ -1737,8 +1691,8 @@ server需要根据client使用的是IETF QUIC还是Google QUIC来发送正确的
 </div>
 </div>
 
-<div id="outline-container-org3f62be3" class="outline-3">
-<h3 id="org3f62be3"><span class="section-number-3">2.6</span> 部署</h3>
+<div id="outline-container-org21b6c77" class="outline-3">
+<h3 id="org21b6c77"><span class="section-number-3">2.6.</span> 部署</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 IETF数据包头格式在QUIC的46版本上实现和部署。
@@ -1747,16 +1701,16 @@ IETF数据包头格式在QUIC的46版本上实现和部署。
 </div>
 </div>
 
-<div id="outline-container-org08ead7b" class="outline-2">
-<h2 id="org08ead7b"><span class="section-number-2">3</span> 版本Q049及以上</h2>
+<div id="outline-container-org6dffdff" class="outline-2">
+<h2 id="org6dffdff"><span class="section-number-2">3.</span> 版本Q049及以上</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 QUIC定义了两种类型的报文头：Long 和 Short。Long Header的数据包的首字节的最高有效为被置1，Short Header则置0。
 </p>
 </div>
 
-<div id="outline-container-org532ca27" class="outline-3">
-<h3 id="org532ca27"><span class="section-number-3">3.1</span> Long Header</h3>
+<div id="outline-container-org3314e80" class="outline-3">
+<h3 id="org3314e80"><span class="section-number-3">3.1.</span> Long Header</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 对于特定版本语义的比特位标记为X。
@@ -1804,8 +1758,8 @@ QUIC定义了两种类型的报文头：Long 和 Short。Long Header的数据包
 </div>
 </div>
 
-<div id="outline-container-org35ad006" class="outline-3">
-<h3 id="org35ad006"><span class="section-number-3">3.2</span> Short Header</h3>
+<div id="outline-container-org3050cd2" class="outline-3">
+<h3 id="org3050cd2"><span class="section-number-3">3.2.</span> Short Header</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 对于特定版本语义的比特位标记为X。
@@ -1839,8 +1793,8 @@ QUIC定义了两种类型的报文头：Long 和 Short。Long Header的数据包
 </div>
 </div>
 
-<div id="outline-container-orgbbc6a55" class="outline-3">
-<h3 id="orgbbc6a55"><span class="section-number-3">3.3</span> Connection ID</h3>
+<div id="outline-container-org070a0d9" class="outline-3">
+<h3 id="org070a0d9"><span class="section-number-3">3.3.</span> Connection ID</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 Connection ID是一个任意长度的不透明字段。
@@ -1856,8 +1810,8 @@ Connection ID的主要功能是用来确保如果底层网络协议地址发生�
 </div>
 </div>
 
-<div id="outline-container-org7e246d9" class="outline-3">
-<h3 id="org7e246d9"><span class="section-number-3">3.4</span> Version</h3>
+<div id="outline-container-orgb94825f" class="outline-3">
+<h3 id="orgb94825f"><span class="section-number-3">3.4.</span> Version</h3>
 <div class="outline-text-3" id="text-3-4">
 <p>
 QUIC 版本使用32-bit的整数来标识，采用网络字节序。Version 0保留供版本协商使用。
@@ -1870,8 +1824,8 @@ QUIC 版本使用32-bit的整数来标识，采用网络字节序。Version 0保
 </div>
 
 
-<div id="outline-container-orgf20e4ba" class="outline-3">
-<h3 id="orgf20e4ba"><span class="section-number-3">3.5</span> 版本协商</h3>
+<div id="outline-container-orgfd4bc88" class="outline-3">
+<h3 id="orgfd4bc88"><span class="section-number-3">3.5.</span> 版本协商</h3>
 <div class="outline-text-3" id="text-3-5">
 <p>
 如果QUIC端点收到一个不认识或者不支持的版本的Long Header数据包，则可能会在响应中发送版本协商数据包。带有Short Header的数据包则不会触发版本协商。
@@ -1901,7 +1855,7 @@ QUIC 版本使用32-bit的整数来标识，采用网络字节序。Version 0保
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                   [Supported Version 2 (32)]                  |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-			       ...
+                               ...
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                   [Supported Version N (32)]                  |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1930,8 +1884,8 @@ QUIC 版本使用32-bit的整数来标识，采用网络字节序。Version 0保
 </div>
 </div>
 
-<div id="outline-container-orgf144848" class="outline-3">
-<h3 id="orgf144848"><span class="section-number-3">3.6</span> 说明</h3>
+<div id="outline-container-orga65dc7d" class="outline-3">
+<h3 id="orga65dc7d"><span class="section-number-3">3.6.</span> 说明</h3>
 <div class="outline-text-3" id="text-3-6">
 <p>
 以下说明不保证对每个QUIC版本都适用：
@@ -1958,8 +1912,8 @@ QUIC 版本使用32-bit的整数来标识，采用网络字节序。Version 0保
 </div>
 </div>
 
-<div id="outline-container-orgb019f69" class="outline-2">
-<h2 id="orgb019f69"><span class="section-number-2">4</span> QUIC加密设计</h2>
+<div id="outline-container-orgab5a10c" class="outline-2">
+<h2 id="orgab5a10c"><span class="section-number-2">4.</span> QUIC加密设计</h2>
 <div class="outline-text-2" id="text-4">
 </div>
 </div>
@@ -1967,8 +1921,8 @@ QUIC 版本使用32-bit的整数来标识，采用网络字节序。Version 0保
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-02 Thu 23:07</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

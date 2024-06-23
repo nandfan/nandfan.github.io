@@ -1,0 +1,2303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>nftables</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">nftables</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org9963896">1. 简介</a>
+<ul>
+<li><a href="#orgeeaa7f1">1.1. nftables特性</a></li>
+<li><a href="#orgee832a1">1.2. 为何使用nftables</a></li>
+<li><a href="#orgd1dd429">1.3. 和iptables区别</a></li>
+<li><a href="#orgc74cd98">1.4. 案例</a>
+<ul>
+<li><a href="#org4bcac95">1.4.1. Supporting nftables</a></li>
+<li><a href="#org235ffd3">1.4.2. Supporting iptables only</a></li>
+<li><a href="#org01456a2">1.4.3. virtualization / cloud / infrastructure</a></li>
+<li><a href="#org507d848">1.4.4. others</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org3bb719a">2. 安装</a></li>
+<li><a href="#orga7be78b">3. 规则转换</a></li>
+<li><a href="#org0e918f0">4. 基础操作</a>
+<ul>
+<li><a href="#org5f3178c">4.1. 表</a></li>
+<li><a href="#org7a2b82f">4.2. 链</a>
+<ul>
+<li><a href="#org748e3a3">4.2.1. 添加基础链</a>
+<ul>
+<li><a href="#org451a629">4.2.1.1. 基础链的类型</a></li>
+<li><a href="#orgaf1b3b9">4.2.1.2. 基础链HOOK</a></li>
+<li><a href="#org2b70ab7">4.2.1.3. 基础链优先级</a></li>
+<li><a href="#org94481ff">4.2.1.4. 基础链的策略</a></li>
+</ul>
+</li>
+<li><a href="#org8e52528">4.2.2. 添加常规链</a></li>
+<li><a href="#org1a2430a">4.2.3. 删除链</a></li>
+<li><a href="#org74777f1">4.2.4. 清理链</a></li>
+<li><a href="#orge5e8d92">4.2.5. 练习</a></li>
+</ul>
+</li>
+<li><a href="#org307c042">4.3. 简易规则管理</a>
+<ul>
+<li><a href="#orgff5bca4">4.3.1. 添加新规则</a></li>
+<li><a href="#org46ca59d">4.3.2. Listing 规则</a></li>
+<li><a href="#orgaa52572">4.3.3. 测试规则</a></li>
+<li><a href="#org8d03dce">4.3.4. 添加规则到指定位置</a></li>
+<li><a href="#org3391651">4.3.5. 删除规则</a></li>
+<li><a href="#org0388219">4.3.6. 删除链上所有规则</a></li>
+<li><a href="#org076704f">4.3.7. 添加预置规则</a></li>
+<li><a href="#org2046df1">4.3.8. 规则替换</a></li>
+</ul>
+</li>
+<li><a href="#org3168e52">4.4. 规则原子替换</a>
+<ul>
+<li><a href="#orgcaf318c">4.4.1. Shell脚本使用nftables的注意事项</a></li>
+<li><a href="#org99bd484">4.4.2. 规则的原子替换</a></li>
+<li><a href="#orgd4f6fb2">4.4.3. 替换时的注意事项</a></li>
+</ul>
+</li>
+<li><a href="#org04cb9cc">4.5. 命令行的报错</a></li>
+<li><a href="#org6cad702">4.6. 构建规则</a></li>
+<li><a href="#org21a27d5">4.7. ruleset操作</a>
+<ul>
+<li><a href="#org74b5254">4.7.1. 原生nft语法</a>
+<ul>
+<li><a href="#orge7e92f2">4.7.1.1. listing</a></li>
+<li><a href="#org2d4dc62">4.7.1.2. flushing</a></li>
+<li><a href="#org40d15e7">4.7.1.3. backup/restore</a></li>
+</ul>
+</li>
+<li><a href="#orgff3b6ae">4.7.2. 使用JSON格式输出</a></li>
+</ul>
+</li>
+<li><a href="#org4babd5c">4.8. 监控 ruleset 更新</a></li>
+<li><a href="#org8e23d80">4.9. 脚本</a>
+<ul>
+<li><a href="#org5b906d2">4.9.1. 添加注释</a></li>
+<li><a href="#org28c10dd">4.9.2. 文件包含</a></li>
+<li><a href="#org2c23c40">4.9.3. 定义变量</a></li>
+<li><a href="#org1d03ee1">4.9.4. 文件格式</a></li>
+<li><a href="#org8eab516">4.9.5. 用脚本构建 nft file</a></li>
+<li><a href="#org04f821a">4.9.6. 通过python使用nftables</a></li>
+</ul>
+</li>
+<li><a href="#org03f1905">4.10. Ruleset的调试跟踪</a>
+<ul>
+<li><a href="#orgfc56bef">4.10.1. 开启 nftrace</a></li>
+<li><a href="#orgb0af59b">4.10.2. 使用 chain 开启 tracing</a></li>
+<li><a href="#orgbf3a8bb">4.10.3. 监听 tracing 事件</a></li>
+<li><a href="#org3ffb6a1">4.10.4. 完整示例</a></li>
+</ul>
+</li>
+<li><a href="#org92b87c8">4.11. 输出格式</a></li>
+</ul>
+</li>
+<li><a href="#org920c558">5. 表达式：匹配报文</a>
+<ul>
+<li><a href="#orgf38595b">5.1. 匹配报文元信息</a></li>
+<li><a href="#orgd2311c9">5.2. 匹配报文header</a></li>
+<li><a href="#orgff850b3">5.3. 匹配连接跟踪状态元信息</a></li>
+<li><a href="#orgcbd7b22">5.4. 匹配路由信息</a></li>
+<li><a href="#orge2ccc90">5.5. 限速匹配</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+<a href="https://wiki.nftables.org/wiki-nftables/index.php/Main_Page">https://wiki.nftables.org/wiki-nftables/index.php/Main_Page</a>
+</p>
+
+<div id="outline-container-org9963896" class="outline-2">
+<h2 id="org9963896"><span class="section-number-2">1.</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgeeaa7f1" class="outline-3">
+<h3 id="orgeeaa7f1"><span class="section-number-3">1.1.</span> nftables特性</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+nftables 是linux内核中的新的包分类框架。开发新的功能时，尽可能使用nftables替代传统的{ip,ip6,arp,eb}_tables 。
+</p>
+
+<p>
+nftables 简介：
+</p>
+<ul class="org-ul">
+<li>linux kernels 3.13 引入</li>
+<li>使用新的命令行工具 nft，语法不同于iptables</li>
+<li>兼容iptables命令行</li>
+<li>基础结构中提供了通用的集合，可以构建map以及关联。可以使用这个特性将规则集排列到多维树中，大大减少包的检查次数，更快的匹配到包的最终动作。</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgee832a1" class="outline-3">
+<h3 id="orgee832a1"><span class="section-number-3">1.2.</span> 为何使用nftables</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+过去，我们一直使用iptables来过滤数据包或者数据流，记录可疑的流量，执行NAT等等。过去15年已经贡献了一百多扩展。
+</p>
+
+<p>
+然而，iptables框架存在一些限制，不太容易解决：
+</p>
+<ul class="org-ul">
+<li>无法避免代码重复和冲突：许多iptables扩展都针对特定协议的，没办法合并匹配数据包，只能为每个协议实现一个扩展，使得代码臃肿。</li>
+<li>使用通用的 set 和 map ，实现更快的数据包分类。</li>
+<li>简化的 IPv4/IPv6双栈管理。使用新的 inet 族，可以在其上注册基础链，以同时观察IPv4和IPv6流量。</li>
+<li>动态规则集更新支持更加友好。</li>
+<li>为第三方应用提供了 netlink API</li>
+<li>提供了更加友好简洁的语法</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgd1dd429" class="outline-3">
+<h3 id="orgd1dd429"><span class="section-number-3">1.3.</span> 和iptables区别</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+从使用的角度看，主要有以下区别：
+</p>
+<ul class="org-ul">
+<li>nftables使用的新的语法</li>
+<li>表和链完全可配置</li>
+<li>单个nftables规则可以指定多个动作</li>
+<li>表和链不再有内置的的计数器</li>
+<li>动态规则集支持更好</li>
+<li>简化的 IPv4/IPv6 双栈管理</li>
+<li>新的 set 基础结构</li>
+<li>支持关联（<a href="https://wiki.nftables.org/wiki-nftables/index.php/Concatenations">concatenations</a>）</li>
+<li>支持新协议无需更新内核</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgc74cd98" class="outline-3">
+<h3 id="orgc74cd98"><span class="section-number-3">1.4.</span> 案例</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+主流linux发行版都已经包含了 nftables 框架。
+</p>
+</div>
+
+<div id="outline-container-org4bcac95" class="outline-4">
+<h4 id="org4bcac95"><span class="section-number-4">1.4.1.</span> Supporting nftables</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<p>
+The following projects are known to either directly support nftables or have authors actively
+working on nftables integration.
+</p>
+
+<ul class="org-ul">
+<li><a href="https://www.fail2ban.org/">https://www.fail2ban.org/</a> &#x2013; the fail2ban tool already includes native support for nftables.</li>
+<li><a href="https://firewalld.org/">https://firewalld.org/</a> &#x2013; firewalld by RedHat is currently developing a native integration with nftables.</li>
+<li><a href="https://suricata-ids.org/">https://suricata-ids.org/</a> &#x2013; suricata can work natively with nftables (link)</li>
+<li><a href="https://keepalived.org/">https://keepalived.org/</a> &#x2013; keepalived works natively with nftables ([1])</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org235ffd3" class="outline-4">
+<h4 id="org235ffd3"><span class="section-number-4">1.4.2.</span> Supporting iptables only</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<p>
+The following projects are known to only support iptables/iptables-nft, with no plans to support nftables in the future.
+</p>
+
+<ul class="org-ul">
+<li><a href="http://ferm.foo-projects.org/">http://ferm.foo-projects.org/</a> &#x2013; citation</li>
+<li><a href="https://shorewall.org/">https://shorewall.org/</a> &#x2013; citation</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org01456a2" class="outline-4">
+<h4 id="org01456a2"><span class="section-number-4">1.4.3.</span> virtualization / cloud / infrastructure</h4>
+<div class="outline-text-4" id="text-1-4-3">
+<ul class="org-ul">
+<li><a href="https://github.com/zevenet/nftlb">https://github.com/zevenet/nftlb</a> &#x2013; nftlb by Zevenet is a nftables-based loadbalancer which can outperform LVS by 10x</li>
+<li><a href="https://www.docker.com/">https://www.docker.com/</a> &#x2013; Some discussion happened in the Docker community regarding a native integration with nftables, which could ease some of their use cases (link) (link) (running docker with IPv6 using nftables)</li>
+<li><a href="https://kubernetes.io/">https://kubernetes.io/</a> &#x2013; Kubernetes does not support nftables yes, but some discussion happened already (link). Compat tools may be used to trick kubernetes into using nftables transparently.</li>
+<li><a href="http://openstack.org/">http://openstack.org/</a> &#x2013; Openstack does not support nftables yet. Compat tools may be used to trick neutron and other components into using nftables transparently.</li>
+<li><a href="https://libvirt.org/">https://libvirt.org/</a> &#x2013; there are reports of people running libvirt with nftables for bridge filtering for virtual machines</li>
+<li><a href="https://saltstack.com/">https://saltstack.com/</a> &#x2013; SaltStack includes native support for nftables (link).</li>
+<li><a href="https://coreos.com/">https://coreos.com/</a> &#x2013; the CoreOS ecosystem includes native support for nftables (link)</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org507d848" class="outline-4">
+<h4 id="org507d848"><span class="section-number-4">1.4.4.</span> others</h4>
+<div class="outline-text-4" id="text-1-4-4">
+<ul class="org-ul">
+<li><a href="https://openwrt.org/">https://openwrt.org/</a> &#x2013; there are reports of people running nftables rather than iptables in openwrt systems</li>
+<li><a href="https://www.cica.es/">https://www.cica.es/</a> &#x2013; this regional NREN uses nftables in the datacenter for their perimetral firewalls (slides)</li>
+<li>Nftables from distributions &#x2013; all major Linux distribution already include nftables ready to use</li>
+<li><a href="https://www.nano-editor.org/">https://www.nano-editor.org/</a> &#x2013; The nano editor includes syntax highlighting for nftables in files with .nft name extension or nft shebang</li>
+<li><a href="https://github.com/nfnty/vim-nftables">https://github.com/nfnty/vim-nftables</a> &#x2013; the VIM editor includes syntax highlighting for nftables</li>
+<li>Institut de Physique de Rennes &#x2013; this french research entity seems to be using nftables with ansible (link)</li>
+<li>VPN &#x2013; nftables can be combined with other software packages like OpenVPN to build great VPN solutions (link)</li>
+<li>netlink golang package &#x2013; the Golang Netlink package got batching support to be able to work with nftables (link)</li>
+<li>nftables golang library &#x2013; This nftables golang integration library was made by Google</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3bb719a" class="outline-2">
+<h2 id="org3bb719a"><span class="section-number-2">2.</span> 安装</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>libmnl libnftnl 库</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ git clone git://git.netfilter.org/libnftnl
+$ cd libnftnl
+$ sh autogen.sh
+$ ./configure
+$ make
+$ sudo make install
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>nft</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-sh">% git clone git://git.netfilter.org/nftables
+% cd nftables
+% sh autogen.sh
+% ./configure
+% make
+% make install
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>installing linux kernel with nftables support</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-sh">% modprobe nf_tables
+
+% lsmod | grep nf_tables
+nf_tables             253952  3 nft_compat,nft_counter,nft_chain_nat
+nfnetlink              20480  2 nft_compat,nf_tables
+libcrc32c              16384  4 nf_conntrack,nf_nat,nf_tables,raid456
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga7be78b" class="outline-2">
+<h2 id="orga7be78b"><span class="section-number-2">3.</span> 规则转换</h2>
+</div>
+
+
+
+<div id="outline-container-org0e918f0" class="outline-2">
+<h2 id="org0e918f0"><span class="section-number-2">4.</span> 基础操作</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org5f3178c" class="outline-3">
+<h3 id="org5f3178c"><span class="section-number-3">4.1.</span> 表</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+<pre class="src src-sh">% nft add table ip filter
+
+% nft list tables
+
+% nft delete table ip foo
+
+% nft flush table ip filter
+</pre>
+</div>
+
+<ul class="org-ul">
+<li></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7a2b82f" class="outline-3">
+<h3 id="org7a2b82f"><span class="section-number-3">4.2.</span> 链</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+nftables和iptables类似，也需要将规则附加到链上。但是nftables没有预定义链（INPUT、OUTPUT&#x2026;）。如果想要在特定的步骤中过滤数据包，需要显式创建基础链，并关联到对应的 Netfilter Hook上。这使得配置非常灵活，避免了由于内置链中包含的非必要规则集而减慢netfilter速度。
+</p>
+</div>
+
+
+<div id="outline-container-org748e3a3" class="outline-4">
+<h4 id="org748e3a3"><span class="section-number-4">4.2.1.</span> 添加基础链</h4>
+<div class="outline-text-4" id="text-4-2-1">
+<p>
+注册到netfilter hook上的链称为 基础链，可以观察到流经linux tcp/ip栈的数据包。
+</p>
+
+<p>
+添加基础链的语法：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add chain [&lt;family&gt;] &lt;table_name&gt; &lt;chain_name&gt; { <span style="color: #F92672;">type</span> &lt;type&gt; hook &lt;hook&gt; priority &lt;value&gt; <span style="color: #E6DB74;">\;</span> [policy &lt;policy&gt; <span style="color: #E6DB74;">\;</span>] [comment <span style="color: #E6DB74;">\"</span>text comment<span style="color: #E6DB74;">\"</span> <span style="color: #E6DB74;">\;</span>] }
+</pre>
+</div>
+
+<p>
+以下示例展示了如何添加 基础链input 到foo表：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft <span style="color: #E6DB74;">'add chain ip foo input { type filter hook input priority 0 ; }'</span>
+</pre>
+</div>
+
+<p>
+注意：ntf重用了一些特殊字符，例如大括号、分号等，如果是从shell（bash）解释执行，则需要进行转义特殊字符，或者将nft 语法内容在单引号内。也可以使用以下命令：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -i
+</pre>
+</div>
+<p>
+使用nft的交互模式。
+</p>
+
+<p>
+上面添加链的命令注册了 input 链，并关联到ip layer的 input hook，因此，我们可以观察到目的地址为本机的数据包。
+</p>
+
+<p>
+priority 参数可以决定链的优先级。如果在input hook上有多个链，可以通过 priority 参数决定链的优先顺序。例如：优先级为 -12,-1,0,10 的 input 链将按照该顺序过滤数据包。如果为相同hook上两个链指定了相同的优先级，则顺序无法保证。
+</p>
+
+<p>
+过滤从本机发出的流量可以注册output链：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft <span style="color: #E6DB74;">'add chain ip foo output { type filter hook output priority 0; }'</span>
+</pre>
+</div>
+
+<p>
+注意：如果创建链时，没有在大括号中指定链的配置，则创建的链不会观察到任何数据包。（类似 iptables -N chain-name）
+</p>
+
+<p>
+在nftables 中指定类似iptables的动作：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft <span style="color: #E6DB74;">'add chain ip foo output { type filter hook output priority 0 ; policy accept; }'</span>
+</pre>
+</div>
+
+<p>
+iptables中，默认可能是 accept 或者 drop。
+</p>
+
+<p>
+如果想要在 ingress hook 上添加链，必须指定 设备名称：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft <span style="color: #E6DB74;">'add chain netdev foo dev0filter { type filter hook ingress device eth0 priority 0 ; }'</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org451a629" class="outline-5">
+<h5 id="org451a629"><span class="section-number-5">4.2.1.1.</span> 基础链的类型</h5>
+<div class="outline-text-5" id="text-4-2-1-1">
+<dl class="org-dl">
+<dt>filter</dt><dd>用来过滤数据包，arp bridge ip ip6 inet table families 支持该链。</dd>
+<dt>route</dt><dd>用来重新对数据包进行路由，例如当修改了ip header或者修改数据包mark时。这提供了和iptables 的 mangle表等效的语义，但仅仅用于output hook（其他hook使用filter替代）。ip ip6 inet table families 支持该链。</dd>
+<dt>nat</dt><dd>用于网络地址转换。只有流的首个数据包会命中该链。后续数据包绕过。因此，不要使用该链进行数据包过滤。ip ip6 inet tables families 支持该链。</dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-orgaf1b3b9" class="outline-5">
+<h5 id="orgaf1b3b9"><span class="section-number-5">4.2.1.2.</span> 基础链HOOK</h5>
+<div class="outline-text-5" id="text-4-2-1-2">
+<dl class="org-dl">
+<dt>ingress</dt><dd>netdev family在linux kernel 4.2中支持，inet family 在linux kernel 5.10中支持。当数据包经NIC驱动传递后可以立即看到。</dd>
+<dt>prerouting</dt><dd>查看在路由之前的所有入向数据包。数据包可能发往本机或者其他机器。</dd>
+<dt>input</dt><dd>查看所有到本机或者被路由到本机的数据包。</dd>
+<dt>forward</dt><dd>查看所有入向的地址非本机的数据包。</dd>
+<dt>output</dt><dd>查看本机发出的数据包。</dd>
+<dt>postrouting</dt><dd>查看所有路由后的数据包，也就是离开本机之前。</dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-org2b70ab7" class="outline-5">
+<h5 id="org2b70ab7"><span class="section-number-5">4.2.1.3.</span> 基础链优先级</h5>
+<div class="outline-text-5" id="text-4-2-1-3">
+<p>
+nftables的每个基础链都会被指定优先级，用来控制在同一个hook上的基础链、流表或者netfilter内部操作的顺序。例如：在preouting hook上，指定链的优先级为 -300，则该链会被放置在 connection tracking操作之前。
+</p>
+
+<p>
+注意：如果在同一个hook上存在多个链，优先级高的链判定数据包 accepted，则数据包还会传递到后面的链。如果是DROPs,则会立即生效。
+</p>
+
+<p>
+下面是一个示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">table inet filter {
+        # This chain is evaluated first due to priority
+        chain services {
+                type filter hook input priority 0; policy accept;
+
+                # If matched, this rule will prevent any further evaluation
+                tcp dport http drop
+
+                # If matched, and despite the accept verdict, the packet proceeds to enter the chain below
+                tcp dport ssh accept
+
+                # Likewise for any packets that get this far and hit the default policy
+        }
+
+        # This chain is evaluated last due to priority
+        chain input {
+                type filter hook input priority 1; policy drop;
+                # All ingress packets end up being dropped here!
+        }
+}
+</pre>
+</div>
+<p>
+如果上述的 input 链优先级改为-1，则所有数据包都不可能进入 services 链。
+</p>
+
+<p>
+总之，数据包会遍历给定hook上的所有链，直到被drop或者到链结尾。
+</p>
+
+<p>
+关于Netfilter's hook执行机制的更详细的介绍可参考： <a href="http://people.netfilter.org/pablo/docs/login.pdf">Pablo's paper on connection tracking.</a>
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org94481ff" class="outline-5">
+<h5 id="org94481ff"><span class="section-number-5">4.2.1.4.</span> 基础链的策略</h5>
+<div class="outline-text-5" id="text-4-2-1-4">
+<dl class="org-dl">
+<dt>accept</dt><dd>表示数据包可以继续穿越网络栈（默认）</dd>
+<dt>drop</dt><dd>如果数据包已经到达链的末端，则会被丢弃。</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org8e52528" class="outline-4">
+<h4 id="org8e52528"><span class="section-number-4">4.2.2.</span> 添加常规链</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+类似iptables的用户自定义链，nftables可以创建常规链。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">nft -i</span>
+nft&gt; add chain [family] &lt;table_name&gt; &lt;chain_name&gt; [{ [policy &lt;policy&gt; ;] [comment <span style="color: #E6DB74;">"text comment about this chain"</span> ;] }]
+</pre>
+</div>
+
+<p>
+常规链的名称可以任意字符串。
+</p>
+
+<p>
+注意，添加常规链时，不包含任何的 hook 关键字。因为常规链不会关联到任何 netfilter hook，因此常规链自身不能查看任何流量。但是基础链通过规则跳转到常规链（&#x2013;following），常规链处理数据包的调用过程和基础链相同。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1a2430a" class="outline-4">
+<h4 id="org1a2430a"><span class="section-number-4">4.2.3.</span> 删除链</h4>
+<div class="outline-text-4" id="text-4-2-3">
+<div class="org-src-container">
+<pre class="src src-sh">% nft delete chain [family] &lt;table_name&gt; &lt;chain_name&gt;
+</pre>
+</div>
+
+<p>
+删除链时需要确保链上没有规则集，否则会提示该链正在被使用：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft delete chain ip foo input
+&lt;cmdline&gt;:1:1-28: Error: Could not delete chain: Device or resource busy
+delete chain ip foo input
+^^^^^^^^^^^^^^^^^^^^^^^^^
+</pre>
+</div>
+
+<p>
+如果遇到此类问题，可以先执行flush规则集，再删除链。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org74777f1" class="outline-4">
+<h4 id="org74777f1"><span class="section-number-4">4.2.4.</span> 清理链</h4>
+<div class="outline-text-4" id="text-4-2-4">
+<p>
+以下命令清理了foo表的input链的所有规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft flush chain foo input
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge5e8d92" class="outline-4">
+<h4 id="orge5e8d92"><span class="section-number-4">4.2.5.</span> 练习</h4>
+<div class="outline-text-4" id="text-4-2-5">
+<p>
+创建一个表，包含了两个基础链，并定义规则对入向和出向的流量进行过滤：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add table ip filter
+% nft <span style="color: #E6DB74;">'add chain ip filter input { type filter hook input priority 0 ; }'</span>
+% nft <span style="color: #E6DB74;">'add chain ip filter output { type filter hook output priority 0 ; }'</span>
+</pre>
+</div>
+
+<p>
+创建后，就可以将规则关联到上面创建的链上了。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org307c042" class="outline-3">
+<h3 id="org307c042"><span class="section-number-3">4.3.</span> 简易规则管理</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+每条规则包含了零个或多个表达式，后跟一至多个statements。每个表达式用来检测 包/流的元数据，或者检测payload是否包含特定字段。多个表达式依次从左到右进行匹配：如果首个表达式匹配，则继续向后匹配。如果匹配到末尾的表达式，则说明数据包匹配了规则中的所有表达式，并且规则的statements被执行。 每个 statement 携带一个动作，例如设置 netfilter mark，包统计，记录数据包，或者 accept 、 drop 、跳转其他链。 多个 statements 也是从左到右被线性执行：一条规则可以使用多个 statements 来包含多个 actions 。
+</p>
+</div>
+
+
+<div id="outline-container-orgff5bca4" class="outline-4">
+<h4 id="orgff5bca4"><span class="section-number-4">4.3.1.</span> 添加新规则</h4>
+<div class="outline-text-4" id="text-4-3-1">
+<p>
+添加规则时需要指定对应的 table 和 chain。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">% nft add rule filter output ip daddr 8.8.8.8 counter
+</pre>
+</div>
+
+<p>
+table: filter, chain: output. 该规则匹配 output 链上目的地址为8.8.8.8的数据包，对其进行计数。（nftables 中 counters可选）
+</p>
+
+
+<p>
+类似 iptable 的 -A。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org46ca59d" class="outline-4">
+<h4 id="org46ca59d"><span class="section-number-4">4.3.2.</span> Listing 规则</h4>
+<div class="outline-text-4" id="text-4-3-2">
+<p>
+列出 filter 表的规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft list table filter
+table ip filter {
+        chain input {
+                 <span style="color: #F92672;">type</span> filter hook input priority 0;
+        }
+
+        chain output {
+                 <span style="color: #F92672;">type</span> filter hook output priority 0;
+                 ip daddr 8.8.8.8 counter packets 0 bytes 0
+                 tcp dport ssh counter packets 0 bytes 0
+        }
+}
+</pre>
+</div>
+
+
+<p>
+列出 output 链中 filter 表的规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft list chain filter ouput
+table ip filter {
+        chain output {
+                 <span style="color: #F92672;">type</span> filter hook output priority 0;
+                 ip daddr 8.8.8.8 counter packets 0 bytes 0
+                 tcp dport ssh counter packets 0 bytes 0
+        }
+}
+</pre>
+</div>
+
+<p>
+<a href="https://wiki.nftables.org/wiki-nftables/index.php/Output_text_modifiers">output text modifiers</a>: 其中包含了许多列出规则时使用到的参数，例如将ip转换为DNS name，tcp协议等。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgaa52572" class="outline-4">
+<h4 id="orgaa52572"><span class="section-number-4">4.3.3.</span> 测试规则</h4>
+<div class="outline-text-4" id="text-4-3-3">
+<div class="org-src-container">
+<pre class="src src-sh">% nft -nn list table filter
+table ip filter {
+        chain input {
+                 <span style="color: #F92672;">type</span> filter hook input priority 0;
+        }
+
+        chain output {
+                 <span style="color: #F92672;">type</span> filter hook output priority 0;
+                 ip daddr 8.8.8.8 counter packets 1 bytes 84
+                 tcp dport 22 counter packets 0 bytes 0
+        }
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8d03dce" class="outline-4">
+<h4 id="org8d03dce"><span class="section-number-4">4.3.4.</span> 添加规则到指定位置</h4>
+<div class="outline-text-4" id="text-4-3-4">
+<p>
+如果想要将规则添加到指定位置，需要使用 handle 作为引用：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -n -a list table filter
+table filter {
+        chain output {
+                 <span style="color: #F92672;">type</span> filter hook output priority 0;
+                 ip protocol tcp counter packets 82 bytes 9680 <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 8</span>
+                 ip saddr 127.0.0.1 ip daddr 127.0.0.6 drop <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 7</span>
+        }
+}
+</pre>
+</div>
+
+<p>
+例如：添加规则到 handle 8 后面：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -n -a list table filter
+table filter {
+        chain output {
+                 <span style="color: #F92672;">type</span> filter hook output priority 0;
+                 ip protocol tcp counter packets 190 bytes 21908 <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 8</span>
+                 ip daddr 127.0.0.8 drop <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 10</span>
+                 ip saddr 127.0.0.1 ip daddr 127.0.0.6 drop <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 7</span>
+        }
+}
+</pre>
+</div>
+
+<p>
+插入规则到 handle 8 前面：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft insert rule filter output position 8 ip daddr 127.0.0.8 drop
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3391651" class="outline-4">
+<h4 id="org3391651"><span class="section-number-4">4.3.5.</span> 删除规则</h4>
+<div class="outline-text-4" id="text-4-3-5">
+<p>
+删除规则前，首先需要通过 -a 获取 handle 。handle 由内核指定，保证唯一性。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">% nft -a list table filter
+table ip filter {
+        chain input {
+                 <span style="color: #F92672;">type</span> filter hook input priority 0;
+        }
+
+        chain output {
+                 <span style="color: #F92672;">type</span> filter hook output priority 0;
+                 ip daddr 192.168.1.1 counter packets 1 bytes 84 <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 5</span>
+        }
+}
+</pre>
+</div>
+
+<p>
+删除 handle 为5的规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft delete rule filter output handle 5
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0388219" class="outline-4">
+<h4 id="org0388219"><span class="section-number-4">4.3.6.</span> 删除链上所有规则</h4>
+<div class="outline-text-4" id="text-4-3-6">
+<p>
+删除链上所有规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft flush chain filter output
+</pre>
+</div>
+
+<p>
+删除表中所有规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft flush table filter
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org076704f" class="outline-4">
+<h4 id="org076704f"><span class="section-number-4">4.3.7.</span> 添加预置规则</h4>
+<div class="outline-text-4" id="text-4-3-7">
+<p>
+通过insert命令添加预置规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft insert rule filter output ip daddr 192.168.1.1 counter
+</pre>
+</div>
+
+<p>
+以上预置规则会统计目的地址为 192.168.1.1 的每条规则的 包和字节 计数。
+</p>
+
+<p>
+等同于 iptables 以下命令：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% iptables -I OUTPUT -t filter -d 192.168.1.1
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2046df1" class="outline-4">
+<h4 id="org2046df1"><span class="section-number-4">4.3.8.</span> 规则替换</h4>
+<div class="outline-text-4" id="text-4-3-8">
+<p>
+替换规则，通过指定 handle ，使用 replace 命令进行替换。
+</p>
+
+<p>
+首先通过 -a 列出规则集：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">nft -a list ruleset</span>
+table ip filter {
+        chain input {
+                <span style="color: #F92672;">type</span> filter hook input priority 0; policy accept;
+                ip protocol tcp counter packets 0 bytes 0 <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 2</span>
+        }
+}
+</pre>
+</div>
+
+<p>
+要替换 handle 为 2 的规则时，handle 2 后跟新的规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">nft replace rule filter input handle 2 counter</span>
+</pre>
+</div>
+
+<p>
+经过上面的替换之后，再次列出规则集：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">nft list ruleset</span>
+table ip filter {
+        chain input {
+                <span style="color: #F92672;">type</span> filter hook input priority 0; policy accept;
+                counter packets 0 bytes 0
+        }
+}
+</pre>
+</div>
+
+<p>
+之前只统计 TCP 数据包的计数器已经被替换，现在对所有数据包进行计数。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3168e52" class="outline-3">
+<h3 id="org3168e52"><span class="section-number-3">4.4.</span> 规则原子替换</h3>
+<div class="outline-text-3" id="text-4-4">
+</div>
+<div id="outline-container-orgcaf318c" class="outline-4">
+<h4 id="orgcaf318c"><span class="section-number-4">4.4.1.</span> Shell脚本使用nftables的注意事项</h4>
+<div class="outline-text-4" id="text-4-4-1">
+<p>
+在使用 iptables 时，经常在bash脚本中写入iptables的命令来实现防火墙的功能。这种方式不是原子的，也就是说，在bash脚本运行中到运行结束，期间的规则处于部分配置的状态。
+</p>
+
+<p>
+nftables中引入了原子的规则替换（-f 选项），这和iptables的bash脚本不同，nftables首先会读取文件所有内容（以及包含文件），然后在内存创建配置对象，再通过原子的方式替换旧的配置。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org99bd484" class="outline-4">
+<h4 id="org99bd484"><span class="section-number-4">4.4.2.</span> 规则的原子替换</h4>
+<div class="outline-text-4" id="text-4-4-2">
+<p>
+通过 -f 选项原子更新规则集：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -f file
+</pre>
+</div>
+
+<p>
+保存现有的规则集到文件中：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft list table filter &gt; filter-table
+</pre>
+</div>
+
+<p>
+使用 -f 选项 恢复规则：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -f filter-table
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd4f6fb2" class="outline-4">
+<h4 id="orgd4f6fb2"><span class="section-number-4">4.4.3.</span> 替换时的注意事项</h4>
+<div class="outline-text-4" id="text-4-4-3">
+<ul class="org-ul">
+<li>表的创建：使用 <code>nft list table filter &gt; filter-table</code> 命令导出后，再次加载文件恢复时，可能必须要提前通过 <code>nft create table ip filter</code> 创建表，否则可能由于表不存在而失败。新版本的 nftables 在这方面处理会更好。</li>
+
+<li>重复规则：如果在 filter-table 文件的开始增加了 <code>flush table filter</code> ，实现的功能和 iptables-restore 提供的原子替换功能相同。  内核在单个事物中处理规则命令，所以基本上刷新和加载新规则在瞬间完成。如果选择不刷新表，则在每次重新加载配置时会看到重复的规则。</li>
+
+<li>清空 sets： 使用flush清空filter表时，不会清理表中定义的 sets。要清空 sets，使用 <code>flush ruleset</code> ，或者显式删除 sets。早期版本在导入 sets 时，如果已经存在，则不允许导入，新版本则没有限制。</li>
+
+<li>两个文件都包含一个语句时：如果有两个文件，一个包含的规则：允许 192.168.1.1 的流量，另包含规则：允许 192.168.1.2 的流量，当加载这两个文件后两个规则都会被加入链中，即使一个文件中包含 <code>flush</code> 或者两个文件都包含 <code>flush</code> 也是如此。</li>
+
+<li>两个文件都不包含 <code>flush</code> 指令，或者只有一个文件包含 <code>flush</code> 指令时：如果包含了 <code>flush</code> 指令，则指令在执行配置替换时被运行，而非配置加载时。如果没有包含 <code>flush</code> ，则会出现重复的规则。如果包行了 <code>flush</code> 指令，则不会出现重复规则，并且两个文件的配置都会被加载。</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org04cb9cc" class="outline-3">
+<h3 id="org04cb9cc"><span class="section-number-3">4.5.</span> 命令行的报错</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+如果使用了错误的数据类型，则 nft 命令行会有提示。
+</p>
+
+<p>
+例如：如果将 ipv4地址 当作tcp端口使用：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add rule filter input tcp dport 1.1.1.1 counter drop
+&lt;cmdline&gt;:1:33-39: Error: Could not resolve service: Servname not supported for ai_socktype
+add rule filter input tcp dport 1.1.1.1 counter drop
+                                ^^^^^^^
+</pre>
+</div>
+
+<p>
+如果命令不完整，则会提示：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add rule filter input tcp dport
+&lt;cmdline&gt;:1:32-32: Error: syntax error, unexpected end of file
+add rule filter input tcp dport
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6cad702" class="outline-3">
+<h3 id="org6cad702"><span class="section-number-3">4.6.</span> 构建规则</h3>
+<div class="outline-text-3" id="text-4-6">
+<p>
+nftables提供了一些内置操作符：
+</p>
+<dl class="org-dl">
+<dt>eq</dt><dd>等于，也可使用 ==</dd>
+<dt>ne</dt><dd>不等于， !=</dd>
+<dt>lt</dt><dd>小于， &lt;</dd>
+<dt>gt</dt><dd>大于， &gt;</dd>
+<dt>le</dt><dd>小于等于， &lt;=</dd>
+<dt>ge</dt><dd>大于等于， &gt;=</dd>
+</dl>
+
+<p>
+注意：如果在shell脚本中使用 &lt; 和 &gt; 符号时，由于这两个符号在shell脚本中代表重定向的的含义，所以需要使用转义符， \&lt;  \&gt; 。
+</p>
+
+<p>
+匹配入向的tcp目的端口非22的流量：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add rule filter input tcp dport != 22
+</pre>
+</div>
+
+<p>
+匹配tcp目的端口为 1024以上的流量：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add rule filter input tcp dport &gt;= 1024
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org21a27d5" class="outline-3">
+<h3 id="org21a27d5"><span class="section-number-3">4.7.</span> ruleset操作</h3>
+<div class="outline-text-3" id="text-4-7">
+</div>
+<div id="outline-container-org74b5254" class="outline-4">
+<h4 id="org74b5254"><span class="section-number-4">4.7.1.</span> 原生nft语法</h4>
+<div class="outline-text-4" id="text-4-7-1">
+</div>
+<div id="outline-container-orge7e92f2" class="outline-5">
+<h5 id="orge7e92f2"><span class="section-number-5">4.7.1.1.</span> listing</h5>
+<div class="outline-text-5" id="text-4-7-1-1">
+<p>
+列出全部 ruleset:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft list ruleset
+</pre>
+</div>
+
+
+<p>
+列出每个协议族的 ruleset:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft list ruleset arp
+% nft list ruleset ip
+% nft list ruleset ip6
+% nft list ruleset bridge
+% nft list ruleset inet
+</pre>
+</div>
+
+<p>
+这些命令会打印指定协议族的所有 tables/chains/sets/rules 。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2d4dc62" class="outline-5">
+<h5 id="org2d4dc62"><span class="section-number-5">4.7.1.2.</span> flushing</h5>
+<div class="outline-text-5" id="text-4-7-1-2">
+<p>
+清空全部 ruleset：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">% nft flush ruleset
+</pre>
+</div>
+
+<p>
+清空指定协议族的 ruleset:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft flush ruleset arp
+% nft flush ruleset ip
+% nft flush ruleset ip6
+% nft flush ruleset bridge
+% nft flush ruleset inet
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org40d15e7" class="outline-5">
+<h5 id="org40d15e7"><span class="section-number-5">4.7.1.3.</span> backup/restore</h5>
+<div class="outline-text-5" id="text-4-7-1-3">
+<p>
+You can combine these two commands above to backup your ruleset:
+使用 flush/list 备份 ruleset：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% echo <span style="color: #E6DB74;">"nft flush ruleset"</span> &gt; backup.nft
+% nft list ruleset &gt;&gt; backup.nft
+</pre>
+</div>
+
+
+<p>
+从备份ruleset加载:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -f backup.nft
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgff3b6ae" class="outline-4">
+<h4 id="orgff3b6ae"><span class="section-number-4">4.7.2.</span> 使用JSON格式输出</h4>
+<div class="outline-text-4" id="text-4-7-2">
+<p>
+通过使用 ‘&#x2013;json’ 参数，将使用JSON格式导出：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft --json list ruleset &gt; ruleset.json
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org4babd5c" class="outline-3">
+<h3 id="org4babd5c"><span class="section-number-3">4.8.</span> 监控 ruleset 更新</h3>
+<div class="outline-text-3" id="text-4-8">
+<p>
+nft 可以通过 monitor 命令，显示规则集更新的通知：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft monitor
+</pre>
+</div>
+<p>
+执行后，会订阅所有类型的 ruleset 的更新。
+</p>
+
+
+<p>
+可以过滤的事件类型:
+</p>
+<ul class="org-ul">
+<li>object: tables, chains, rules, sets and elements.</li>
+<li>event: new and destroy.</li>
+</ul>
+
+<p>
+可以指定的输出格式:
+</p>
+<ul class="org-ul">
+<li>plain text (ie. native nft format)</li>
+<li>xml</li>
+<li>json</li>
+</ul>
+
+<p>
+只跟踪 rule 的更新：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft monitor rules
+</pre>
+</div>
+
+<p>
+只接收创建规则的通知：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft monitor new rules
+</pre>
+</div>
+
+
+<p>
+完整示例：
+terminal 1 输入:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">term1% nft monitor
+</pre>
+</div>
+
+<p>
+terminal 2 输入:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">term2% nft add table inet filter
+term2% nft add chain inet filter forward
+term2% nft add rule inet filter forward counter accept
+term2% nft flush table inet filter forward
+term2% nft flush ruleset
+</pre>
+</div>
+
+
+<p>
+terminal 1的输出:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">term1% nft monitor
+add table inet filter
+add chain inet filter forward
+add rule inet filter forward counter packets 0 bytes 0 accept
+delete rule inet filter forward handle 4
+delete chain inet filter forward
+delete table inet filter
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8e23d80" class="outline-3">
+<h3 id="org8e23d80"><span class="section-number-3">4.9.</span> 脚本</h3>
+<div class="outline-text-3" id="text-4-9">
+<p>
+很多人常常使用 shell 脚本来维护 ruleset ，在脚本中添加注释，排列规则，是的可读性更高。但是shell脚本在应用规则时，会破换规则的原子性，因此在加载期间所应用的规则是不一致的。
+</p>
+
+<p>
+nftables中提供了 native scripting environment 来解决上面的问题，可以用于包含其他 ruleset 文件，定义变量，添加注释。 使用时必须通过 <code>nft -f my-ruleset.file</code> 命令来恢复脚本中的规则内容。
+</p>
+
+<p>
+创建 nftables 脚本时，在脚本文件头部添加：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/usr/sbin/</span><span style="color: #F92672;">nft</span><span style="color: #75715E;"> -f</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org5b906d2" class="outline-4">
+<h4 id="org5b906d2"><span class="section-number-4">4.9.1.</span> 添加注释</h4>
+<div class="outline-text-4" id="text-4-9-1">
+<p>
+使用 ‘#’ 添加注释：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/usr/sbin/</span><span style="color: #F92672;">nft</span><span style="color: #75715E;"> -f</span>
+
+<span style="color: #75715E;">#</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">table declaration</span>
+<span style="color: #75715E;">#</span>
+add table filter
+
+<span style="color: #75715E;">#</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">chain declaration</span>
+<span style="color: #75715E;">#</span>
+add chain filter input { <span style="color: #F92672;">type</span> filter hook input priority 0; policy drop; }
+
+<span style="color: #75715E;">#</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">rule declaration</span>
+<span style="color: #75715E;">#</span>
+add rule filter input ct state established,related counter accept
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org28c10dd" class="outline-4">
+<h4 id="org28c10dd"><span class="section-number-4">4.9.2.</span> 文件包含</h4>
+<div class="outline-text-4" id="text-4-9-2">
+<p>
+通过 include 指令，可以包含其他的规则文件。 通过 “-I/&#x2013;includepath” 选项可以添加查找的文件目录。也可以通过在文件前面添加相对目录或者绝对目录来定位文件。
+</p>
+
+<p>
+如果没有指定 “-I/&#x2013;includepath” 选项，则使用编译nft时指定的目录。 可以从 <code>nft -h</code> 命令的输出中看到 默认目录。
+</p>
+
+<p>
+include 指令也支持shell中常用的通配符 (\*,?,[])。如果指定了通配符后没有匹配到文件，也不会报错。
+</p>
+
+<p>
+nft 可以包含目录（目录可以为空），例如：include "<i>etc/firewall/rules</i>" 。通配符按照字母顺序加载。
+</p>
+
+<p>
+注意：include不会匹配以 ’.‘ 开头的文件名。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/usr/sbin/</span><span style="color: #F92672;">nft</span><span style="color: #75715E;"> -f</span>
+
+<span style="color: #75715E;"># </span><span style="color: #75715E;">include a single file using the default search path</span>
+include <span style="color: #E6DB74;">"ipv4-nat.ruleset"</span>
+
+<span style="color: #75715E;"># </span><span style="color: #75715E;">include all files ending in *.nft in the default search path</span>
+include <span style="color: #E6DB74;">"*.nft"</span>
+
+<span style="color: #75715E;"># </span><span style="color: #75715E;">include all files in a given directory using an absolute path</span>
+include <span style="color: #E6DB74;">"/etc/nftables/"</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2c23c40" class="outline-4">
+<h4 id="org2c23c40"><span class="section-number-4">4.9.3.</span> 定义变量</h4>
+<div class="outline-text-4" id="text-4-9-3">
+<p>
+通过 ‘define’ 关键字来定义变量。
+</p>
+
+<p>
+统计来自 8.8.8.8 的流量：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/usr/sbin/</span><span style="color: #F92672;">nft</span><span style="color: #75715E;"> -f</span>
+
+define google_dns = 8.8.8.8
+
+add table filter
+add chain filter input { <span style="color: #F92672;">type</span> filter hook input priority 0; }
+add rule filter input ip saddr $<span style="color: #FD971F;">google_dns</span> counter
+</pre>
+</div>
+
+<p>
+定义一个变量集合：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/usr/sbin/</span><span style="color: #F92672;">nft</span><span style="color: #75715E;"> -f</span>
+
+define ntp_servers = { 84.77.40.132, 176.31.53.99, 81.19.96.148, 138.100.62.8 }
+
+add table filter
+add chain filter input { <span style="color: #F92672;">type</span> filter hook input priority 0; }
+add rule filter input ip saddr $<span style="color: #FD971F;">ntp_servers</span> counter
+</pre>
+</div>
+
+<p>
+注意：大括号在规则中具有特殊含义，此处则代表一个变量集合，因此禁止下面这种使用方式：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">define google_dns = { 8.8.8.8 }
+</pre>
+</div>
+
+<p>
+定义只有一个元素的变量集合时，不加大括号：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">define google_dns = 8.8.8.8
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1d03ee1" class="outline-4">
+<h4 id="org1d03ee1"><span class="section-number-4">4.9.4.</span> 文件格式</h4>
+<div class="outline-text-4" id="text-4-9-4">
+<p>
+<code>nft -f &lt;filename&gt;</code> 允许两种格式： 第一种可以参考 <code>nft list table</code>  指令的输出格式； 第二种则是使用相同的语法，调用 nft 多次（原子的方式）。
+</p>
+
+<p>
+nftables output format:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/usr/sbin/</span><span style="color: #F92672;">nft</span><span style="color: #75715E;"> -f</span>
+
+define ntp_servers = { 84.77.40.132, 176.31.53.99, 81.19.96.148, 138.100.62.8 }
+
+<span style="color: #75715E;">#</span><span style="color: #75715E;">flush table nat</span>
+table ip nat {
+        chain prerouting {
+                <span style="color: #F92672;">type</span> filter hook prerouting priority 0; policy accept;
+                ip saddr $<span style="color: #FD971F;">ntp_servers</span> counter
+        }
+
+        chain postrouting {
+                <span style="color: #F92672;">type</span> filter hook postrouting priority 100; policy accept;
+        }
+}
+</pre>
+</div>
+
+
+<p>
+脚本化的配置格式:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/usr/sbin/</span><span style="color: #F92672;">nft</span><span style="color: #75715E;"> -f</span>
+
+define ntp_servers = { 84.77.40.132, 176.31.53.99, 81.19.96.148, 138.100.62.8 }
+
+add table filter
+add chain filter input { <span style="color: #F92672;">type</span> filter hook input priority 0; }
+add rule filter input ip saddr $<span style="color: #FD971F;">ntp_servers</span> counter
+</pre>
+</div>
+
+<p>
+两种方式可以自由转换，其语法都相同，只是使用不同的组织方式。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org8eab516" class="outline-4">
+<h4 id="org8eab516"><span class="section-number-4">4.9.5.</span> 用脚本构建 nft file</h4>
+<div class="outline-text-4" id="text-4-9-5">
+<p>
+可以选择脚本语言来构建 nft 接收的文件格式，并通过 nft -f &lt;your_file_in_nft_format&gt; 来原子的加载配置。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org04f821a" class="outline-4">
+<h4 id="org04f821a"><span class="section-number-4">4.9.6.</span> 通过python使用nftables</h4>
+<div class="outline-text-4" id="text-4-9-6">
+<p>
+python程序可以通过 libnftables 库实现和 nft命令行 相同的功能。参考以下链接:
+</p>
+
+<p>
+<a href="https://ral-arturo.org/2020/11/22/python-nftables-tutorial.html">How to use nftables from Python</a>, Arturo Borrero, 2020-11-22;
+<a href="https://github.com/aborrero/python-nftables-tutorial">python nftables tutorial</a> code examples to accompany the above.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org03f1905" class="outline-3">
+<h3 id="org03f1905"><span class="section-number-3">4.10.</span> Ruleset的调试跟踪</h3>
+<div class="outline-text-3" id="text-4-10">
+<p>
+nftables也提供了 类似 iptables 的 -J TRACE的功能，但比iptables更强大。
+</p>
+
+<p>
+开启 调试/跟踪 的步骤：
+</p>
+<ul class="org-ul">
+<li>在 ruleset 中添加nftrace支持</li>
+<li>nft 开启监控 trace 事件</li>
+</ul>
+</div>
+
+
+<div id="outline-container-orgfc56bef" class="outline-4">
+<h4 id="orgfc56bef"><span class="section-number-4">4.10.1.</span> 开启 nftrace</h4>
+<div class="outline-text-4" id="text-4-10-1">
+<p>
+开启数据包的 nftrace 的语法：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">meta nftrace set 1
+</pre>
+</div>
+
+<p>
+之后，nftrace 就成为了packet元数据的一部分。
+</p>
+
+<p>
+可以只对匹配的数据包的启 nftrace，例如只开启TCP数据包的nftrace：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">ip protocol tcp meta nftrace set 1
+</pre>
+</div>
+
+<p>
+注意，开启nftrace时，尽量只开启所需要调试数据包的nftarce。否则，会有大量的 debug/tracing 信息。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgb0af59b" class="outline-4">
+<h4 id="orgb0af59b"><span class="section-number-4">4.10.2.</span> 使用 chain 开启 tracing</h4>
+<div class="outline-text-4" id="text-4-10-2">
+<p>
+建议在开启 tracing 时，将其添加到 链 上。
+</p>
+
+<p>
+可以通过注册 trace_chain 来开启 tracing。如果已经存在 prerouting 链，那么需要保证 trace_chain 的优先级在 prerouting 链之前。
+</p>
+
+<p>
+例如：假设已经存在 prerouting 链（优先级 -300），然后在prerouting链之前注册 trace_chain （优先级 -301）。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add chain filter trace_chain { <span style="color: #F92672;">type</span> filter hook prerouting priority -301<span style="color: #E6DB74;">\;</span> }
+% nft add rule filter trace_chain meta nftrace set 1
+</pre>
+</div>
+
+<p>
+完成规则跟踪后，可以通过删除 链 来关闭跟踪：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft delete chain filter trace_chain
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbf3a8bb" class="outline-4">
+<h4 id="orgbf3a8bb"><span class="section-number-4">4.10.3.</span> 监听 tracing 事件</h4>
+<div class="outline-text-4" id="text-4-10-3">
+<p>
+nftables 和 iptables 的 debug/tracing 事件有很大差异，nft 工具使用基于事件的监听从内核接收通知。
+</p>
+
+<p>
+基本格式:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft monitor trace
+</pre>
+</div>
+
+<p>
+每个跟踪事件都会指定 ‘id’，可以通过 ‘id’ 来跟踪同一个trace会话的不同数据包。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3ffb6a1" class="outline-4">
+<h4 id="org3ffb6a1"><span class="section-number-4">4.10.4.</span> 完整示例</h4>
+<div class="outline-text-4" id="text-4-10-4">
+<p>
+假设有以下 ruleset：
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">table ip filter {
+        chain input {
+                type filter hook input priority filter; policy drop;
+                ct state established,related counter packets 2 bytes 292 accept
+                ct state new tcp dport 22 counter packets 0 bytes 0 accept
+        }
+}
+</pre>
+</div>
+
+<p>
+加载该 ruleset:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -f ruleset.nft
+</pre>
+</div>
+
+<p>
+在 input 链前注册 trace_chain 来跟踪：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add chain ip filter trace_chain { <span style="color: #F92672;">type</span> filter hook prerouting priority -1<span style="color: #E6DB74;">\;</span> }
+</pre>
+</div>
+
+<p>
+通过添加规则来开启跟踪:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft add rule ip filter trace_chain meta nftrace set 1
+</pre>
+</div>
+
+
+<p>
+通过ping 主机来测试:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% ping -c 1 8.8.8.8
+</pre>
+</div>
+
+<p>
+另一个终端执行：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft monitor trace
+trace id a95ea7ef ip filter trace_chain packet: iif <span style="color: #E6DB74;">"enp0s25"</span> ether saddr 00:0d:b9:4a:49:3d ether daddr 3c:97:0e:39:aa:20 ip saddr 8.8.8.8 ip daddr 192.168.2.118 ip dscp cs0 ip ecn not-ect ip ttl 115 ip id 0 ip length 84 icmp type echo-reply icmp code net-unreachable icmp id 9253 icmp sequence 1 @th,64,96 24106705117628271805883024640
+trace id a95ea7ef ip filter trace_chain rule meta nftrace set 1 (verdict continue)
+trace id a95ea7ef ip filter trace_chain verdict continue
+trace id a95ea7ef ip filter trace_chain policy accept
+trace id a95ea7ef ip filter input packet: iif <span style="color: #E6DB74;">"enp0s25"</span> ether saddr 00:0d:b9:4a:49:3d ether daddr 3c:97:0e:39:aa:20 ip saddr 8.8.8.8 ip daddr 192.168.2.118 ip dscp cs0 ip ecn not-ect ip ttl 115 ip id 0 ip length 84 icmp type echo-reply icmp code net-unreachable icmp id 9253 icmp sequence 1 @th,64,96 24106705117628271805883024640
+trace id a95ea7ef ip filter input rule ct state established,related counter packets 168 bytes 53513 accept (verdict accept)
+</pre>
+</div>
+
+<p>
+每个 trace id 唯一标识一个数据包。trace描述了最初进入链的数据包。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">trace id a95ea7ef ip filter trace_chain packet: iif <span style="color: #E6DB74;">"enp0s25"</span> ether saddr 00:0d:b9:4a:49:3d ether daddr 3c:97:0e:39:aa:20 ip saddr 8.8.8.8 ip daddr 192.168.2.118 ip dscp cs0 ip ecn not-ect ip ttl 115 ip id 0 ip length 84 icmp type echo-reply icmp code net-unreachable icmp id 9253 icmp sequence 1 @th,64,96 24106705117628271805883024640
+</pre>
+</div>
+
+<p>
+之后，数据包通过 ruleset。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org92b87c8" class="outline-3">
+<h3 id="org92b87c8"><span class="section-number-3">4.11.</span> 输出格式</h3>
+<div class="outline-text-3" id="text-4-11">
+<p>
+nft 命令行支持不同的输出描述。
+</p>
+
+<p>
+通过 nft &#x2013;help 查看所有的输出控制命令：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">-n, numeric                   Print fully numerical output.
+-s, stateless                 Omit stateful information of ruleset.
+-N, reversedns                Translate IP addresses to names.
+-S, service                   Translate ports to service names as described<span style="color: #F92672;"> in</span> /etc/services.
+-a, handle                    Output rule handle.
+-j, json                      Format output<span style="color: #F92672;"> in</span> JSON
+-u, guid                      Print UID/GID as defined<span style="color: #F92672;"> in</span> /etc/passwd and /etc/group.
+-y, numeric-priority          Print chain priority numerically.
+-p, numeric-protocol          Print layer 4 protocols numerically.
+-T, numeric-time              Print time values numerically.
+-t, terse                     Omit contents of sets.
+</pre>
+</div>
+
+<p>
+The default output prints some information in numeric form and for well-known names it will use a string
+instead (like icmp types, conntrack status, chain priorities, etc). Also, state information such as counter
+values and set elements are printed as well.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">% nft list ruleset
+table inet filter {
+        <span style="color: #F92672;">set</span> s {
+                <span style="color: #F92672;">type</span> inet_service
+                elements = { 80, 443 }
+        }
+
+        chain input {
+                <span style="color: #F92672;">type</span> filter hook input priority filter; policy accept;
+                counter packets 4447 bytes 1619415
+                iif <span style="color: #E6DB74;">"lo"</span> counter packets 337 bytes 25076 accept
+                ct state established,related counter packets 44899 bytes 106405802 accept
+                ip6 nexthdr ipv6-icmp icmpv6 type { nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert } counter packets 1 bytes 72 accept
+                tcp dport 22 drop
+                ip saddr 8.8.8.8 drop
+        }
+}
+</pre>
+</div>
+
+<p>
+translation modifiers
+</p>
+
+<p>
+Translate various values to text equivalents, or the other way around. We can group here things like ports,
+DNS names, service names, UID/GID, etc.
+</p>
+
+<p>
+The options can be combined at will. The example below shows service names (instead of the integer number),
+chain priority value (instead of the well-known string), conntrack/protocol numbers and constants (instead of
+well-known strings) and shows reverse DNS names (instead of the numeric IP address):
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -nNSy list ruleset
+table inet filter {
+        <span style="color: #F92672;">set</span> s {
+                <span style="color: #F92672;">type</span> inet_service
+                elements = { <span style="color: #E6DB74;">"http"</span>, <span style="color: #E6DB74;">"https"</span> }
+        }
+
+        chain input {
+                <span style="color: #F92672;">type</span> filter hook input priority 0; policy accept;
+                iif <span style="color: #E6DB74;">"lo"</span> counter packets 365 bytes 27092 accept
+                ct state 0x2,0x4 counter packets 48535 bytes 142472901 accept
+                ip6 nexthdr 58 icmpv6 type { 134, 135, 136 } counter packets 1 bytes 72 accept
+                ip saddr dns.google counter packets 0 bytes 0
+                tcp dport <span style="color: #E6DB74;">"ssh"</span> accept
+        }
+}
+</pre>
+</div>
+
+<p>
+Note that translating some elements might take additional operation time when generating the output. For
+example translating IP addresses to names require queries to DNS servers, which can be very slow for large
+rulesets (and therefore is disabled by default).
+</p>
+
+<p>
+operations and parsing modifiers
+</p>
+
+<p>
+These modifiers add or remove information about the ruleset, generally useful when parsing the output or doing
+related operations.
+</p>
+
+<p>
+You can display the ruleset without stateful information (for example, without counter values), with handles,
+and with no set contents:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -sta list ruleset
+table inet filter { <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 5</span>
+        <span style="color: #F92672;">set</span> s { <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 9</span>
+                <span style="color: #F92672;">type</span> inet_service
+        }
+
+        chain input { <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 1</span>
+                <span style="color: #F92672;">type</span> filter hook input priority filter; policy accept;
+                iif <span style="color: #E6DB74;">"lo"</span> counter accept <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 3</span>
+                ct state established,related counter accept <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 4</span>
+                ip6 nexthdr ipv6-icmp icmpv6 type { nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert } counter accept <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 5</span>
+                ip saddr 8.8.8.8 counter <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 8</span>
+                tcp dport 22 accept <span style="color: #75715E;"># </span><span style="color: #75715E;">handle 10</span>
+        }
+}
+</pre>
+</div>
+<p>
+Special mention to the JSON representation of the ruleset. The JSON will be printed in a single line fashion.
+Here we format the JSON using perl's json_pp utility:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">% nft -j list ruleset | json_pp
+{
+   <span style="color: #E6DB74;">"nftables"</span> : [
+      {
+         <span style="color: #E6DB74;">"metainfo"</span> : {
+            <span style="color: #E6DB74;">"json_schema_version"</span> : 1,
+            <span style="color: #E6DB74;">"release_name"</span> : <span style="color: #E6DB74;">"Capital Idea #2"</span>,
+            <span style="color: #E6DB74;">"version"</span> : <span style="color: #E6DB74;">"0.9.6"</span>
+         }
+      },
+      {
+         <span style="color: #E6DB74;">"table"</span> : {
+            <span style="color: #E6DB74;">"family"</span> : <span style="color: #E6DB74;">"inet"</span>,
+            <span style="color: #E6DB74;">"handle"</span> : 5,
+            <span style="color: #E6DB74;">"name"</span> : <span style="color: #E6DB74;">"filter"</span>
+         }
+      },
+      {
+         <span style="color: #E6DB74;">"set"</span> : {
+            <span style="color: #E6DB74;">"elem"</span> : [
+               80,
+               443
+            ],
+            <span style="color: #E6DB74;">"family"</span> : <span style="color: #E6DB74;">"inet"</span>,
+            <span style="color: #E6DB74;">"handle"</span> : 9,
+            <span style="color: #E6DB74;">"name"</span> : <span style="color: #E6DB74;">"s"</span>,
+            <span style="color: #E6DB74;">"table"</span> : <span style="color: #E6DB74;">"filter"</span>,
+            <span style="color: #E6DB74;">"type"</span> : <span style="color: #E6DB74;">"inet_service"</span>
+         }
+      },
+      {
+         <span style="color: #E6DB74;">"chain"</span> : {
+            <span style="color: #E6DB74;">"family"</span> : <span style="color: #E6DB74;">"inet"</span>,
+            <span style="color: #E6DB74;">"handle"</span> : 1,
+            <span style="color: #E6DB74;">"hook"</span> : <span style="color: #E6DB74;">"input"</span>,
+            <span style="color: #E6DB74;">"name"</span> : <span style="color: #E6DB74;">"input"</span>,
+            <span style="color: #E6DB74;">"policy"</span> : <span style="color: #E6DB74;">"accept"</span>,
+            <span style="color: #E6DB74;">"prio"</span> : 0,
+            <span style="color: #E6DB74;">"table"</span> : <span style="color: #E6DB74;">"filter"</span>,
+            <span style="color: #E6DB74;">"type"</span> : <span style="color: #E6DB74;">"filter"</span>
+         }
+      },
+      {
+         <span style="color: #E6DB74;">"rule"</span> : {
+            <span style="color: #E6DB74;">"chain"</span> : <span style="color: #E6DB74;">"input"</span>,
+            <span style="color: #E6DB74;">"expr"</span> : [
+               {
+                  <span style="color: #E6DB74;">"counter"</span> : {
+                     <span style="color: #E6DB74;">"bytes"</span> : 37707381,
+                     <span style="color: #E6DB74;">"packets"</span> : 8062
+                  }
+               }
+            ],
+            <span style="color: #E6DB74;">"family"</span> : <span style="color: #E6DB74;">"inet"</span>,
+            <span style="color: #E6DB74;">"handle"</span> : 7,
+            <span style="color: #E6DB74;">"table"</span> : <span style="color: #E6DB74;">"filter"</span>
+         }
+      },
+[..]
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org920c558" class="outline-2">
+<h2 id="org920c558"><span class="section-number-2">5.</span> 表达式：匹配报文</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-orgf38595b" class="outline-3">
+<h3 id="orgf38595b"><span class="section-number-3">5.1.</span> 匹配报文元信息</h3>
+<div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li>数据包信息</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Keyword</th>
+<th scope="col" class="org-left">SetTable</th>
+<th scope="col" class="org-left">Data Type</th>
+<th scope="col" class="org-left">Description</th>
+<th scope="col" class="org-left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">pkttype</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">pkt_type</td>
+<td class="org-left">数据包类型</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">length</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">int(32 bit)</td>
+<td class="org-left">数据包长度（字节）</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">protocol</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">ether_type</td>
+<td class="org-left">数据包协议</td>
+<td class="org-left">skb-&gt;protocol</td>
+</tr>
+
+<tr>
+<td class="org-left">nfproto</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">int(32 bit)</td>
+<td class="org-left">netfilter数据包协议族</td>
+<td class="org-left">ipv4 ipv6&#x2026;只用在inet table</td>
+</tr>
+
+<tr>
+<td class="org-left">l4proto</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">int(32 bit)</td>
+<td class="org-left">四层协议</td>
+<td class="org-left">tcp udp&#x2026;</td>
+</tr>
+</tbody>
+</table>
+
+
+<ul class="org-ul">
+<li>接口</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Keyword</th>
+<th scope="col" class="org-left">SetTable</th>
+<th scope="col" class="org-left">Data Type</th>
+<th scope="col" class="org-left">Description</th>
+<th scope="col" class="org-left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">iff</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">iface_index</td>
+<td class="org-left">输入接口的index</td>
+<td class="org-left">使用index比接口名称（字符串）匹配更快</td>
+</tr>
+
+<tr>
+<td class="org-left">iifname</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">ifname</td>
+<td class="org-left">输入接口名称</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">iiftype</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">iface_type</td>
+<td class="org-left">输入接口类型</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">iifkind</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">ifkind</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">iifgroup</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">devgroup</td>
+<td class="org-left">输入接口组</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">oif</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">iface_index</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">oifname</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">ifname</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">oiftype</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">iface_type</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">oifkind</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">oifgroup</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ibrname</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">obrname</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ibrvproto</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ibrpvid</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">sdif</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">sdifname</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgd2311c9" class="outline-3">
+<h3 id="orgd2311c9"><span class="section-number-3">5.2.</span> 匹配报文header</h3>
+</div>
+
+
+
+
+<div id="outline-container-orgff850b3" class="outline-3">
+<h3 id="orgff850b3"><span class="section-number-3">5.3.</span> 匹配连接跟踪状态元信息</h3>
+</div>
+
+
+
+<div id="outline-container-orgcbd7b22" class="outline-3">
+<h3 id="orgcbd7b22"><span class="section-number-3">5.4.</span> 匹配路由信息</h3>
+</div>
+
+
+<div id="outline-container-orge2ccc90" class="outline-3">
+<h3 id="orge2ccc90"><span class="section-number-3">5.5.</span> 限速匹配</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

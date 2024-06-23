@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2022-01-22 Sat 22:35 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>套接口 I/O</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,133 +191,86 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">套接口 I/O</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org0fc2b7f">1. 输入/输出数据的组织</a>
+<li><a href="#org12a4e81">1. 输入/输出数据的组织</a>
 <ul>
-<li><a href="#orgb871d24">1.1. msghdr结构</a></li>
-<li><a href="#orgf66cf3d">1.2. verify_iovec()</a></li>
-<li><a href="#orga32acab">1.3. memcpy_toiovec()</a></li>
-<li><a href="#org86d4556">1.4. memcpy_fromiovec()</a></li>
-<li><a href="#org53a3dac">1.5. memcpy_fromiovecend()</a></li>
-<li><a href="#org3a2d184">1.6. csum_partial_copy_fromiovecend()</a></li>
+<li><a href="#orgd82fb11">1.1. msghdr结构</a></li>
+<li><a href="#orge01576d">1.2. verify_iovec()</a></li>
+<li><a href="#org11359c7">1.3. memcpy_toiovec()</a></li>
+<li><a href="#org7c3c7a6">1.4. memcpy_fromiovec()</a></li>
+<li><a href="#org4594f12">1.5. memcpy_fromiovecend()</a></li>
+<li><a href="#orgafb8b43">1.6. csum_partial_copy_fromiovecend()</a></li>
 </ul>
 </li>
-<li><a href="#org62897d4">2. 输出系统调用</a>
+<li><a href="#org1ec9494">2. 输出系统调用</a>
 <ul>
-<li><a href="#org185f6e7">2.1. sock_sendmsg()</a></li>
-<li><a href="#orgcacdaa7">2.2. sendto</a></li>
-<li><a href="#org3bede68">2.3. send</a></li>
-<li><a href="#orgea416a2">2.4. sendmsg</a></li>
+<li><a href="#org772836d">2.1. sock_sendmsg()</a></li>
+<li><a href="#org7c67b39">2.2. sendto</a></li>
+<li><a href="#org5259bbd">2.3. send</a></li>
+<li><a href="#org0d668c8">2.4. sendmsg</a></li>
 </ul>
 </li>
-<li><a href="#org53ebe8b">3. 输入系统调用</a></li>
+<li><a href="#orga2dae8c">3. 输入系统调用</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org0fc2b7f" class="outline-2">
-<h2 id="org0fc2b7f"><span class="section-number-2">1</span> 输入/输出数据的组织</h2>
+<div id="outline-container-org12a4e81" class="outline-2">
+<h2 id="org12a4e81"><span class="section-number-2">1.</span> 输入/输出数据的组织</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orgb871d24" class="outline-3">
-<h3 id="orgb871d24"><span class="section-number-3">1.1</span> msghdr结构</h3>
+<div id="outline-container-orgd82fb11" class="outline-3">
+<h3 id="orgd82fb11"><span class="section-number-3">1.1.</span> msghdr结构</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 虽然通过发送接口或接收接口可以直接指定数据的地址，但是最终还会将数据组合成 msghdr 结构进行处理。
 </p>
 
 
-<div class="figure">
+<div id="org916ecbc" class="figure">
 <p><img src="image/socket-layer/msghdr.png" alt="msghdr.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>msghdr结构</p>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      As we do 4.4BSD message passing we use a 4.4BSD message passing</span>
-<span style="color: #8B8878;"> *      system, not 4.3. Thus msg_accrights(len) are now missing. They</span>
-<span style="color: #8B8878;"> *      belong in an obscure libc emulation or the bin.</span>
-<span style="color: #8B8878;"> */</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      As we do 4.4BSD message passing we use a 4.4BSD message passing</span>
+<span style="color: #75715E;"> *      system, not 4.3. Thus msg_accrights(len) are now missing. They</span>
+<span style="color: #75715E;"> *      belong in an obscure libc emulation or the bin.</span>
+<span style="color: #75715E;"> */</span>
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> {
-	<span style="color: #5FD7FF;">void</span>               *<span style="color: #FF8C00;">msg_name</span>;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25351;&#21521;sock_addr&#32467;&#26500;&#30340;&#30446;&#30340;&#22320;&#22336;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">int</span>                 <span style="color: #FF8C00;">msg_namelen</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30446;&#30340;&#22320;&#22336;&#30340;&#32531;&#23384;&#21306;&#22823;&#23567;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span>       *<span style="color: #FF8C00;">msg_iov</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24102;&#21457;&#36865;&#25110;&#32773;&#25509;&#25910;&#30340;&#32531;&#23384;&#21306;&#30340;&#25968;&#32452;&#25351;&#38024;&#65292;</span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF;">__kernel_size_t</span> <span style="color: #FF8C00;">msg_iovlen</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32531;&#23384;&#21306;&#30340;&#25968;&#32452;&#22823;&#23567;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">void</span>               *<span style="color: #FF8C00;">msg_control</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25511;&#21046;&#20449;&#24687;&#65292;&#36890;&#24120;&#26159;&#25351;&#21521;cmsghdr&#32467;&#26500;&#30340;&#25968;&#32452;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">__kernel_size_t</span> <span style="color: #FF8C00;">msg_controllen</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25511;&#21046;&#20449;&#24687;&#30340;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">unsigned</span>            <span style="color: #FF8C00;">msg_flags</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25509;&#25910;&#26631;&#24535;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">msghdr</span> {
+        <span style="color: #66D9EF;">void</span>               *<span style="color: #FD971F;">msg_name</span>;   <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25351;&#21521;sock_addr&#32467;&#26500;&#30340;&#30446;&#30340;&#22320;&#22336;&#30340;&#25351;&#38024;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">int</span>                 <span style="color: #FD971F;">msg_namelen</span>;        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#30446;&#30340;&#22320;&#22336;&#30340;&#32531;&#23384;&#21306;&#22823;&#23567;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">iovec</span>       *<span style="color: #FD971F;">msg_iov</span>;    <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#24102;&#21457;&#36865;&#25110;&#32773;&#25509;&#25910;&#30340;&#32531;&#23384;&#21306;&#30340;&#25968;&#32452;&#25351;&#38024;&#65292;</span><span style="color: #75715E;">*/</span>
+        <span style="color: #66D9EF;">__kernel_size_t</span> <span style="color: #FD971F;">msg_iovlen</span>;     <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#32531;&#23384;&#21306;&#30340;&#25968;&#32452;&#22823;&#23567;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">void</span>               *<span style="color: #FD971F;">msg_control</span>;        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25511;&#21046;&#20449;&#24687;&#65292;&#36890;&#24120;&#26159;&#25351;&#21521;cmsghdr&#32467;&#26500;&#30340;&#25968;&#32452;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">__kernel_size_t</span> <span style="color: #FD971F;">msg_controllen</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25511;&#21046;&#20449;&#24687;&#30340;&#38271;&#24230;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">unsigned</span>            <span style="color: #FD971F;">msg_flags</span>;      <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25509;&#25910;&#26631;&#24535;</span><span style="color: #75715E;"> */</span>
 };
 
-<span style="color: #8B8878;">//</span><span style="color: #8B8878;">iovec&#32467;&#26500;&#29992;&#20110;&#25551;&#36848;&#36755;&#20837;/&#36755;&#20986;&#32531;&#23384;&#21306;</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span>
+<span style="color: #75715E;">//</span><span style="color: #75715E;">iovec&#32467;&#26500;&#29992;&#20110;&#25551;&#36848;&#36755;&#20837;/&#36755;&#20986;&#32531;&#23384;&#21306;</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">iovec</span>
 {
-	<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *iov_base;   <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25968;&#25454;&#32531;&#23384;&#21306;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF;">__kernel_size_t</span> <span style="color: #FF8C00;">iov_len</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32531;&#23384;&#21306;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *iov_base;   <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25968;&#25454;&#32531;&#23384;&#21306;&#30340;&#25351;&#38024;</span><span style="color: #75715E;">*/</span>
+        <span style="color: #66D9EF;">__kernel_size_t</span> <span style="color: #FD971F;">iov_len</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#32531;&#23384;&#21306;&#38271;&#24230;</span><span style="color: #75715E;"> */</span>
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cmsghdr</span> {
-	<span style="color: #5FD7FF;">__kernel_size_t</span> <span style="color: #FF8C00;">cmsg_len</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25511;&#21046;&#28040;&#24687;&#30340;&#25968;&#25454;&#38271;&#24230;&#65292;&#20854;&#20013;&#21253;&#21547;cmsghdr&#32467;&#26500;&#30340;&#38271;&#24230;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">cmsg_level</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25511;&#21046;&#20449;&#24687;&#30340;&#32423;&#21035; &#65288;SOL_SOCKET SOL_IP&#31561;&#65289;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">cmsg_type</span>;      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25511;&#21046;&#20449;&#24687;&#30340;&#31867;&#22411; &#65288;IP_RETOPTS IP_TTL&#31561;&#65289;</span><span style="color: #8B8878;"> */</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">cmsghdr</span> {
+        <span style="color: #66D9EF;">__kernel_size_t</span> <span style="color: #FD971F;">cmsg_len</span>;       <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25511;&#21046;&#28040;&#24687;&#30340;&#25968;&#25454;&#38271;&#24230;&#65292;&#20854;&#20013;&#21253;&#21547;cmsghdr&#32467;&#26500;&#30340;&#38271;&#24230;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">int</span>             <span style="color: #FD971F;">cmsg_level</span>;     <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25511;&#21046;&#20449;&#24687;&#30340;&#32423;&#21035; &#65288;SOL_SOCKET SOL_IP&#31561;&#65289;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">int</span>             <span style="color: #FD971F;">cmsg_type</span>;      <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25511;&#21046;&#20449;&#24687;&#30340;&#31867;&#22411; &#65288;IP_RETOPTS IP_TTL&#31561;&#65289;</span><span style="color: #75715E;"> */</span>
 };
 </pre>
 </div>
@@ -401,65 +355,65 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-orgf66cf3d" class="outline-3">
-<h3 id="orgf66cf3d"><span class="section-number-3">1.2</span> verify_iovec()</h3>
+<div id="outline-container-orge01576d" class="outline-3">
+<h3 id="orge01576d"><span class="section-number-3">1.2.</span> verify_iovec()</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 内核态使用该函数校验用户态提供的msghdr结构进行校验。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      Verify iovec. The caller must ensure that the iovec is big enough</span>
-<span style="color: #8B8878;"> *      to hold the message iovec.</span>
-<span style="color: #8B8878;"> *</span>
-<span style="color: #8B8878;"> *      Save time not doing access_ok. copy_*_user will make this work</span>
-<span style="color: #8B8878;"> *      in any case.</span>
-<span style="color: #8B8878;"> */</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      Verify iovec. The caller must ensure that the iovec is big enough</span>
+<span style="color: #75715E;"> *      to hold the message iovec.</span>
+<span style="color: #75715E;"> *</span>
+<span style="color: #75715E;"> *      Save time not doing access_ok. copy_*_user will make this work</span>
+<span style="color: #75715E;"> *      in any case.</span>
+<span style="color: #75715E;"> */</span>
 
-<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">verify_iovec</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> *<span style="color: #FF8C00;">m</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> *<span style="color: #FF8C00;">iov</span>, <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">address</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">mode</span>)
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">verify_iovec</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">msghdr</span> *<span style="color: #FD971F;">m</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">iovec</span> *<span style="color: #FD971F;">iov</span>, <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">address</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">mode</span>)
 {
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">size</span>, <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">ct</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">size</span>, <span style="color: #FD971F;">err</span>, <span style="color: #FD971F;">ct</span>;
 
-	<span style="color: #FF1493;">if</span> (m-&gt;msg_namelen) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#25918;&#22320;&#22336;&#20449;&#24687;&#30340;&#32531;&#23384;&#21306;&#38271;&#24230;&#26377;&#25928;&#65292;&#21017;&#35774;&#32622;&#23384;&#25918;&#22320;&#22336;&#20449;&#24687;&#30340;&#32531;&#23384;&#21306;</span>
-		<span style="color: #FF1493;">if</span> (mode == VERIFY_READ) {
-			err = move_addr_to_kernel(m-&gt;msg_name, m-&gt;msg_namelen,
-						  address);
-			<span style="color: #FF1493;">if</span> (err &lt; 0)
-				<span style="color: #FF1493;">return</span> err;
-		}
-		m-&gt;msg_name = address;
-	} <span style="color: #FF1493;">else</span> {
-		m-&gt;msg_name = <span style="color: #AF87FF;">NULL</span>;
-	}
+        <span style="color: #F92672;">if</span> (m-&gt;msg_namelen) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#23384;&#25918;&#22320;&#22336;&#20449;&#24687;&#30340;&#32531;&#23384;&#21306;&#38271;&#24230;&#26377;&#25928;&#65292;&#21017;&#35774;&#32622;&#23384;&#25918;&#22320;&#22336;&#20449;&#24687;&#30340;&#32531;&#23384;&#21306;</span>
+                <span style="color: #F92672;">if</span> (mode == VERIFY_READ) {
+                        err = move_addr_to_kernel(m-&gt;msg_name, m-&gt;msg_namelen,
+                                                  address);
+                        <span style="color: #F92672;">if</span> (err &lt; 0)
+                                <span style="color: #F92672;">return</span> err;
+                }
+                m-&gt;msg_name = address;
+        } <span style="color: #F92672;">else</span> {
+                m-&gt;msg_name = <span style="color: #AE81FF;">NULL</span>;
+        }
 
-	size = m-&gt;msg_iovlen * <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span>);
-	<span style="color: #FF1493;">if</span> (copy_from_user(iov, m-&gt;msg_iov, size)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#29992;&#25143;&#31354;&#38388;&#22797;&#21046;&#32531;&#23384;&#21306;&#25968;&#25454;</span>
-		<span style="color: #FF1493;">return</span> -EFAULT;
+        size = m-&gt;msg_iovlen * <span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">iovec</span>);
+        <span style="color: #F92672;">if</span> (copy_from_user(iov, m-&gt;msg_iov, size)) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20174;&#29992;&#25143;&#31354;&#38388;&#22797;&#21046;&#32531;&#23384;&#21306;&#25968;&#25454;</span>
+                <span style="color: #F92672;">return</span> -EFAULT;
 
-	m-&gt;msg_iov = iov;
-	err = 0;
+        m-&gt;msg_iov = iov;
+        err = 0;
 
-	<span style="color: #FF1493;">for</span> (ct = 0; ct &lt; m-&gt;msg_iovlen; ct++) {
-		err += iov[ct].iov_len;
-		<span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;">                 * Goal is not to verify user data, but to prevent returning</span>
-<span style="color: #8B8878;">                 * negative value, which is interpreted as errno.</span>
-<span style="color: #8B8878;">                 * Overflow is still possible, but it is harmless.</span>
-<span style="color: #8B8878;">                 */</span>
-		<span style="color: #FF1493;">if</span> (err &lt; 0)
-			<span style="color: #FF1493;">return</span> -EMSGSIZE;
-	}
+        <span style="color: #F92672;">for</span> (ct = 0; ct &lt; m-&gt;msg_iovlen; ct++) {
+                err += iov[ct].iov_len;
+                <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">                 * Goal is not to verify user data, but to prevent returning</span>
+<span style="color: #75715E;">                 * negative value, which is interpreted as errno.</span>
+<span style="color: #75715E;">                 * Overflow is still possible, but it is harmless.</span>
+<span style="color: #75715E;">                 */</span>
+                <span style="color: #F92672;">if</span> (err &lt; 0)
+                        <span style="color: #F92672;">return</span> -EMSGSIZE;
+        }
 
-	<span style="color: #FF1493;">return</span> err;
+        <span style="color: #F92672;">return</span> err;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orga32acab" class="outline-3">
-<h3 id="orga32acab"><span class="section-number-3">1.3</span> memcpy_toiovec()</h3>
+<div id="outline-container-org11359c7" class="outline-3">
+<h3 id="org11359c7"><span class="section-number-3">1.3.</span> memcpy_toiovec()</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 将内核空间中的数据复制到用户空间的iovec结构向量描述的缓存区。
@@ -467,8 +421,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org86d4556" class="outline-3">
-<h3 id="org86d4556"><span class="section-number-3">1.4</span> memcpy_fromiovec()</h3>
+<div id="outline-container-org7c3c7a6" class="outline-3">
+<h3 id="org7c3c7a6"><span class="section-number-3">1.4.</span> memcpy_fromiovec()</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 将用户空间的iovec结构向量描述的缓存区的数据复制到内核空间。
@@ -476,8 +430,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org53a3dac" class="outline-3">
-<h3 id="org53a3dac"><span class="section-number-3">1.5</span> memcpy_fromiovecend()</h3>
+<div id="outline-container-org4594f12" class="outline-3">
+<h3 id="org4594f12"><span class="section-number-3">1.5.</span> memcpy_fromiovecend()</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 将用户空间的iovec结构向量描述的缓存区中的数据从offset偏移处复制到内核空间。
@@ -485,8 +439,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org3a2d184" class="outline-3">
-<h3 id="org3a2d184"><span class="section-number-3">1.6</span> csum_partial_copy_fromiovecend()</h3>
+<div id="outline-container-orgafb8b43" class="outline-3">
+<h3 id="orgafb8b43"><span class="section-number-3">1.6.</span> csum_partial_copy_fromiovecend()</h3>
 <div class="outline-text-3" id="text-1-6">
 <p>
 将用户空间的iovec结构向量描述的缓存区的数据从offset偏移处复制到内核空间中，且支持对复制的数据计算校验和，并累加到原先的校验和。
@@ -496,12 +450,12 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-org62897d4" class="outline-2">
-<h2 id="org62897d4"><span class="section-number-2">2</span> 输出系统调用</h2>
+<div id="outline-container-org1ec9494" class="outline-2">
+<h2 id="org1ec9494"><span class="section-number-2">2.</span> 输出系统调用</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org185f6e7" class="outline-3">
-<h3 id="org185f6e7"><span class="section-number-3">2.1</span> sock_sendmsg()</h3>
+<div id="outline-container-org772836d" class="outline-3">
+<h3 id="org772836d"><span class="section-number-3">2.1.</span> sock_sendmsg()</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 该函数最终会通过 proto_ops 结构跳转到各个传输层各自的实现。
@@ -509,63 +463,63 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgcacdaa7" class="outline-3">
-<h3 id="orgcacdaa7"><span class="section-number-3">2.2</span> sendto</h3>
+<div id="outline-container-org7c67b39" class="outline-3">
+<h3 id="org7c67b39"><span class="section-number-3">2.2.</span> sendto</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 该函数将数据发送到指定的目的地址。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      Send a datagram to a given address. We move the address into kernel</span>
-<span style="color: #8B8878;"> *      space and check the user space data area is readable before invoking</span>
-<span style="color: #8B8878;"> *      the protocol.</span>
-<span style="color: #8B8878;"> */</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      Send a datagram to a given address. We move the address into kernel</span>
+<span style="color: #75715E;"> *      space and check the user space data area is readable before invoking</span>
+<span style="color: #75715E;"> *      the protocol.</span>
+<span style="color: #75715E;"> */</span>
 
-asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_sendto</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *buff, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>,
-			   <span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">flags</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">addr</span>,
-			   <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">addr_len</span>)
+asmlinkage <span style="color: #66D9EF;">long</span> <span style="color: #A6E22E;">sys_sendto</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>, <span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *buff, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">len</span>,
+                           <span style="color: #66D9EF;">unsigned</span> <span style="color: #FD971F;">flags</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sockaddr</span> <span style="color: #66D9EF;">__user</span> *<span style="color: #FD971F;">addr</span>,
+                           <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">addr_len</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
-	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">address</span>[MAX_SOCK_ADDR];
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #FF8C00;">msg</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> <span style="color: #FF8C00;">iov</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fput_needed</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">sock_file</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>;
+        <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">address</span>[MAX_SOCK_ADDR];
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">err</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">msghdr</span> <span style="color: #FD971F;">msg</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">iovec</span> <span style="color: #FD971F;">iov</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fput_needed</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file</span> *<span style="color: #FD971F;">sock_file</span>;
 
-	sock_file = fget_light(fd, &amp;fput_needed); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#22871;&#25509;&#21475;&#25991;&#20214;</span>
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_file)
-		<span style="color: #FF1493;">return</span> -EBADF;
+        sock_file = fget_light(fd, &amp;fput_needed); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#22871;&#25509;&#21475;&#25991;&#20214;</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>sock_file)
+                <span style="color: #F92672;">return</span> -EBADF;
 
-	sock = sock_from_file(sock_file, &amp;err); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#22871;&#25509;&#21475;</span>
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32452;&#32455;&#28040;&#24687;&#22836;</span>
-	iov.iov_base = buff;
-	iov.iov_len = len;
-	msg.msg_name = <span style="color: #AF87FF;">NULL</span>;
-	msg.msg_iov = &amp;iov;
-	msg.msg_iovlen = 1;
-	msg.msg_control = <span style="color: #AF87FF;">NULL</span>;
-	msg.msg_controllen = 0;
-	msg.msg_namelen = 0;
-	<span style="color: #FF1493;">if</span> (addr) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;&#20102;&#30446;&#30340;&#22320;&#22336;&#65292;&#21017;&#22797;&#21046;&#21040;&#28040;&#24687;&#20013;</span>
-		err = move_addr_to_kernel(addr, addr_len, address);
-		<span style="color: #FF1493;">if</span> (err &lt; 0)
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
-		msg.msg_name = address;
-		msg.msg_namelen = addr_len;
-	}
-	<span style="color: #FF1493;">if</span> (sock-&gt;file-&gt;f_flags &amp; O_NONBLOCK) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#20102;&#38750;&#38459;&#22622;</span>
-		flags |= MSG_DONTWAIT;
-	msg.msg_flags = flags;
-	err = sock_sendmsg(sock, &amp;msg, len); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#25968;&#25454;</span>
+        sock = sock_from_file(sock_file, &amp;err); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#22871;&#25509;&#21475;</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>sock)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_put</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#32452;&#32455;&#28040;&#24687;&#22836;</span>
+        iov.iov_base = buff;
+        iov.iov_len = len;
+        msg.msg_name = <span style="color: #AE81FF;">NULL</span>;
+        msg.msg_iov = &amp;iov;
+        msg.msg_iovlen = 1;
+        msg.msg_control = <span style="color: #AE81FF;">NULL</span>;
+        msg.msg_controllen = 0;
+        msg.msg_namelen = 0;
+        <span style="color: #F92672;">if</span> (addr) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25351;&#23450;&#20102;&#30446;&#30340;&#22320;&#22336;&#65292;&#21017;&#22797;&#21046;&#21040;&#28040;&#24687;&#20013;</span>
+                err = move_addr_to_kernel(addr, addr_len, address);
+                <span style="color: #F92672;">if</span> (err &lt; 0)
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_put</span>;
+                msg.msg_name = address;
+                msg.msg_namelen = addr_len;
+        }
+        <span style="color: #F92672;">if</span> (sock-&gt;file-&gt;f_flags &amp; O_NONBLOCK) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#32622;&#20102;&#38750;&#38459;&#22622;</span>
+                flags |= MSG_DONTWAIT;
+        msg.msg_flags = flags;
+        err = sock_sendmsg(sock, &amp;msg, len); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#25968;&#25454;</span>
 
-<span style="color: #AF87FF;">out_put</span>:
-	fput_light(sock_file, fput_needed);
-	<span style="color: #FF1493;">return</span> err;
+<span style="color: #AE81FF;">out_put</span>:
+        fput_light(sock_file, fput_needed);
+        <span style="color: #F92672;">return</span> err;
 }
 </pre>
 </div>
@@ -573,127 +527,127 @@ asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700
 </div>
 
 
-<div id="outline-container-org3bede68" class="outline-3">
-<h3 id="org3bede68"><span class="section-number-3">2.3</span> send</h3>
+<div id="outline-container-org5259bbd" class="outline-3">
+<h3 id="org5259bbd"><span class="section-number-3">2.3.</span> send</h3>
 <div class="outline-text-3" id="text-2-3">
 <div class="org-src-container">
-<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_send</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *buff, <span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">len</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">flags</span>)
+<pre class="src src-c">asmlinkage <span style="color: #66D9EF;">long</span> <span style="color: #A6E22E;">sys_send</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>, <span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *buff, <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">len</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #FD971F;">flags</span>)
 {
-	<span style="color: #FF1493;">return</span> sys_sendto(fd, buff, len, flags, <span style="color: #AF87FF;">NULL</span>, 0);
+        <span style="color: #F92672;">return</span> sys_sendto(fd, buff, len, flags, <span style="color: #AE81FF;">NULL</span>, 0);
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgea416a2" class="outline-3">
-<h3 id="orgea416a2"><span class="section-number-3">2.4</span> sendmsg</h3>
+<div id="outline-container-org0d668c8" class="outline-3">
+<h3 id="org0d668c8"><span class="section-number-3">2.4.</span> sendmsg</h3>
 <div class="outline-text-3" id="text-2-4">
 
-<div class="figure">
+<div id="org294c6ce" class="figure">
 <p><img src="image/socket-layer/sendmsg.png" alt="sendmsg.png" />
 </p>
 <p><span class="figure-number">Figure 2: </span>sendmsg系统调用</p>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_sendmsg</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">msg</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">flags</span>)
+<pre class="src src-c">asmlinkage <span style="color: #66D9EF;">long</span> <span style="color: #A6E22E;">sys_sendmsg</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">msghdr</span> <span style="color: #66D9EF;">__user</span> *<span style="color: #FD971F;">msg</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #FD971F;">flags</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">compat_msghdr</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">msg_compat</span> =
-	    (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">compat_msghdr</span> <span style="color: #5FD7FF;">__user</span> *)msg;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
-	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">address</span>[MAX_SOCK_ADDR];
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span> <span style="color: #FF8C00;">iovstack</span>[UIO_FASTIOV], *<span style="color: #FF8C00;">iov</span> = iovstack;
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">ctl</span>[<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">cmsghdr</span>) + 20]
-	    <span style="color: #FF1493;">__attribute__</span> ((aligned(<span style="color: #FF1493;">sizeof</span>(__kernel_size_t))));
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">20 is size of ipv6_pktinfo</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">ctl_buf</span> = ctl;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span> <span style="color: #FF8C00;">msg_sys</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">ctl_len</span>, <span style="color: #FF8C00;">iov_size</span>, <span style="color: #FF8C00;">total_len</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fput_needed</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">compat_msghdr</span> <span style="color: #66D9EF;">__user</span> *<span style="color: #FD971F;">msg_compat</span> =
+            (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">compat_msghdr</span> <span style="color: #66D9EF;">__user</span> *)msg;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>;
+        <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">address</span>[MAX_SOCK_ADDR];
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">iovec</span> <span style="color: #FD971F;">iovstack</span>[UIO_FASTIOV], *<span style="color: #FD971F;">iov</span> = iovstack;
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">ctl</span>[<span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">cmsghdr</span>) + 20]
+            <span style="color: #F92672;">__attribute__</span> ((aligned(<span style="color: #F92672;">sizeof</span>(__kernel_size_t))));
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">20 is size of ipv6_pktinfo</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">ctl_buf</span> = ctl;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">msghdr</span> <span style="color: #FD971F;">msg_sys</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">err</span>, <span style="color: #FD971F;">ctl_len</span>, <span style="color: #FD971F;">iov_size</span>, <span style="color: #FD971F;">total_len</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fput_needed</span>;
 
-	err = -EFAULT;
-	<span style="color: #FF1493;">if</span> (MSG_CMSG_COMPAT &amp; flags) {
-		<span style="color: #FF1493;">if</span> (get_compat_msghdr(&amp;msg_sys, msg_compat))
-			<span style="color: #FF1493;">return</span> -EFAULT;
-	}
-	<span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (copy_from_user(&amp;msg_sys, msg, <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">msghdr</span>))) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22797;&#21046;&#28040;&#24687;&#22836;&#21040;&#20869;&#26680;&#31354;&#38388;</span>
-		<span style="color: #FF1493;">return</span> -EFAULT;
+        err = -EFAULT;
+        <span style="color: #F92672;">if</span> (MSG_CMSG_COMPAT &amp; flags) {
+                <span style="color: #F92672;">if</span> (get_compat_msghdr(&amp;msg_sys, msg_compat))
+                        <span style="color: #F92672;">return</span> -EFAULT;
+        }
+        <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (copy_from_user(&amp;msg_sys, msg, <span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">msghdr</span>))) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22797;&#21046;&#28040;&#24687;&#22836;&#21040;&#20869;&#26680;&#31354;&#38388;</span>
+                <span style="color: #F92672;">return</span> -EFAULT;
 
-	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>sock)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">do not move before msg_sys is valid</span><span style="color: #8B8878;"> */</span>
-	err = -EMSGSIZE;
-	<span style="color: #FF1493;">if</span> (msg_sys.msg_iovlen &gt; UIO_MAXIOV)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">do not move before msg_sys is valid</span><span style="color: #75715E;"> */</span>
+        err = -EMSGSIZE;
+        <span style="color: #F92672;">if</span> (msg_sys.msg_iovlen &gt; UIO_MAXIOV)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_put</span>;
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Check whether to allocate the iovec area</span><span style="color: #8B8878;"> */</span>
-	err = -ENOMEM;
-	iov_size = msg_sys.msg_iovlen * <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">iovec</span>);
-	<span style="color: #FF1493;">if</span> (msg_sys.msg_iovlen &gt; UIO_FASTIOV) {
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#20869;&#26680;&#31354;&#38388;&#20998;&#37197;&#32531;&#23384;</span>
-		iov = sock_kmalloc(sock-&gt;sk, iov_size, GFP_KERNEL);
-		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>iov)
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
-	}
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Check whether to allocate the iovec area</span><span style="color: #75715E;"> */</span>
+        err = -ENOMEM;
+        iov_size = msg_sys.msg_iovlen * <span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">iovec</span>);
+        <span style="color: #F92672;">if</span> (msg_sys.msg_iovlen &gt; UIO_FASTIOV) {
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22312;&#20869;&#26680;&#31354;&#38388;&#20998;&#37197;&#32531;&#23384;</span>
+                iov = sock_kmalloc(sock-&gt;sk, iov_size, GFP_KERNEL);
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>iov)
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_put</span>;
+        }
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This will also move the address data into kernel space</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">if</span> (MSG_CMSG_COMPAT &amp; flags) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;64&#20301;&#31995;&#32479;&#19978;&#20860;&#23481;32&#20301;&#31995;&#32479;&#30340;&#25805;&#20316;</span>
-		err = verify_compat_iovec(&amp;msg_sys, iov, address, VERIFY_READ);
-	} <span style="color: #FF1493;">else</span>
-		err = verify_iovec(&amp;msg_sys, iov, address, VERIFY_READ);
-	<span style="color: #FF1493;">if</span> (err &lt; 0)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_freeiov</span>;
-	total_len = err;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">This will also move the address data into kernel space</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">if</span> (MSG_CMSG_COMPAT &amp; flags) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22312;64&#20301;&#31995;&#32479;&#19978;&#20860;&#23481;32&#20301;&#31995;&#32479;&#30340;&#25805;&#20316;</span>
+                err = verify_compat_iovec(&amp;msg_sys, iov, address, VERIFY_READ);
+        } <span style="color: #F92672;">else</span>
+                err = verify_iovec(&amp;msg_sys, iov, address, VERIFY_READ);
+        <span style="color: #F92672;">if</span> (err &lt; 0)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_freeiov</span>;
+        total_len = err;
 
-	err = -ENOBUFS;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#25511;&#21046;&#20449;&#24687;&#30340;&#38271;&#24230;</span>
-	<span style="color: #FF1493;">if</span> (msg_sys.msg_controllen &gt; INT_MAX)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_freeiov</span>;
-	ctl_len = msg_sys.msg_controllen;
-	<span style="color: #FF1493;">if</span> ((MSG_CMSG_COMPAT &amp; flags) &amp;&amp; ctl_len) {
-		err =
-		    cmsghdr_from_user_compat_to_kern(&amp;msg_sys, sock-&gt;sk, ctl,
-						     <span style="color: #FF1493;">sizeof</span>(ctl));
-		<span style="color: #FF1493;">if</span> (err)
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_freeiov</span>;
-		ctl_buf = msg_sys.msg_control;
-		ctl_len = msg_sys.msg_controllen;
-	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (ctl_len) {
-		<span style="color: #FF1493;">if</span> (ctl_len &gt; <span style="color: #FF1493;">sizeof</span>(ctl)) {
-			ctl_buf = sock_kmalloc(sock-&gt;sk, ctl_len, GFP_KERNEL);
-			<span style="color: #FF1493;">if</span> (ctl_buf == <span style="color: #AF87FF;">NULL</span>)
-				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_freeiov</span>;
-		}
-		err = -EFAULT;
-		<span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;">                 * Careful! Before this, msg_sys.msg_control contains a user pointer.</span>
-<span style="color: #8B8878;">                 * Afterwards, it will be a kernel pointer. Thus the compiler-assisted</span>
-<span style="color: #8B8878;">                 * checking falls down on this.</span>
-<span style="color: #8B8878;">                 */</span>
-		<span style="color: #FF1493;">if</span> (copy_from_user(ctl_buf, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)msg_sys.msg_control,
-				   ctl_len))
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_freectl</span>;
-		msg_sys.msg_control = ctl_buf;
-	}
-	msg_sys.msg_flags = flags;
+        err = -ENOBUFS;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26816;&#27979;&#25511;&#21046;&#20449;&#24687;&#30340;&#38271;&#24230;</span>
+        <span style="color: #F92672;">if</span> (msg_sys.msg_controllen &gt; INT_MAX)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_freeiov</span>;
+        ctl_len = msg_sys.msg_controllen;
+        <span style="color: #F92672;">if</span> ((MSG_CMSG_COMPAT &amp; flags) &amp;&amp; ctl_len) {
+                err =
+                    cmsghdr_from_user_compat_to_kern(&amp;msg_sys, sock-&gt;sk, ctl,
+                                                     <span style="color: #F92672;">sizeof</span>(ctl));
+                <span style="color: #F92672;">if</span> (err)
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_freeiov</span>;
+                ctl_buf = msg_sys.msg_control;
+                ctl_len = msg_sys.msg_controllen;
+        } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (ctl_len) {
+                <span style="color: #F92672;">if</span> (ctl_len &gt; <span style="color: #F92672;">sizeof</span>(ctl)) {
+                        ctl_buf = sock_kmalloc(sock-&gt;sk, ctl_len, GFP_KERNEL);
+                        <span style="color: #F92672;">if</span> (ctl_buf == <span style="color: #AE81FF;">NULL</span>)
+                                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_freeiov</span>;
+                }
+                err = -EFAULT;
+                <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">                 * Careful! Before this, msg_sys.msg_control contains a user pointer.</span>
+<span style="color: #75715E;">                 * Afterwards, it will be a kernel pointer. Thus the compiler-assisted</span>
+<span style="color: #75715E;">                 * checking falls down on this.</span>
+<span style="color: #75715E;">                 */</span>
+                <span style="color: #F92672;">if</span> (copy_from_user(ctl_buf, (<span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *)msg_sys.msg_control,
+                                   ctl_len))
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_freectl</span>;
+                msg_sys.msg_control = ctl_buf;
+        }
+        msg_sys.msg_flags = flags;
 
-	<span style="color: #FF1493;">if</span> (sock-&gt;file-&gt;f_flags &amp; O_NONBLOCK)
-		msg_sys.msg_flags |= MSG_DONTWAIT; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#25991;&#20214;&#31995;&#32479;&#26631;&#24535;&#36716;&#25442;&#20026;&#32593;&#32476;&#27169;&#22359;&#30340;&#26631;&#24535;</span>
-	err = sock_sendmsg(sock, &amp;msg_sys, total_len);
+        <span style="color: #F92672;">if</span> (sock-&gt;file-&gt;f_flags &amp; O_NONBLOCK)
+                msg_sys.msg_flags |= MSG_DONTWAIT; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23558;&#25991;&#20214;&#31995;&#32479;&#26631;&#24535;&#36716;&#25442;&#20026;&#32593;&#32476;&#27169;&#22359;&#30340;&#26631;&#24535;</span>
+        err = sock_sendmsg(sock, &amp;msg_sys, total_len);
 
-<span style="color: #AF87FF;">out_freectl</span>:
-	<span style="color: #FF1493;">if</span> (ctl_buf != ctl)
-		sock_kfree_s(sock-&gt;sk, ctl_buf, ctl_len);
-<span style="color: #AF87FF;">out_freeiov</span>:
-	<span style="color: #FF1493;">if</span> (iov != iovstack)
-		sock_kfree_s(sock-&gt;sk, iov, iov_size);
-<span style="color: #AF87FF;">out_put</span>:
-	fput_light(sock-&gt;file, fput_needed);
-<span style="color: #AF87FF;">out</span>:
-	<span style="color: #FF1493;">return</span> err;
+<span style="color: #AE81FF;">out_freectl</span>:
+        <span style="color: #F92672;">if</span> (ctl_buf != ctl)
+                sock_kfree_s(sock-&gt;sk, ctl_buf, ctl_len);
+<span style="color: #AE81FF;">out_freeiov</span>:
+        <span style="color: #F92672;">if</span> (iov != iovstack)
+                sock_kfree_s(sock-&gt;sk, iov, iov_size);
+<span style="color: #AE81FF;">out_put</span>:
+        fput_light(sock-&gt;file, fput_needed);
+<span style="color: #AE81FF;">out</span>:
+        <span style="color: #F92672;">return</span> err;
 }
 
 </pre>
@@ -702,11 +656,11 @@ asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700
 </div>
 </div>
 
-<div id="outline-container-org53ebe8b" class="outline-2">
-<h2 id="org53ebe8b"><span class="section-number-2">3</span> 输入系统调用</h2>
+<div id="outline-container-orga2dae8c" class="outline-2">
+<h2 id="orga2dae8c"><span class="section-number-2">3.</span> 输入系统调用</h2>
 <div class="outline-text-2" id="text-3">
 
-<div class="figure">
+<div id="org6f53f07" class="figure">
 <p><img src="image/socket-layer/recvmsg.png" alt="recvmsg.png" />
 </p>
 <p><span class="figure-number">Figure 3: </span>recvmsg系统调用</p>
@@ -717,8 +671,8 @@ asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2022-01-22 Sat 22:35</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

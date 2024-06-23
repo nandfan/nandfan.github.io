@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2024-06-23 Sun 15:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>CGROUP</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,60 +191,37 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">CGROUP</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org3fa0293">1. cgroup介绍</a>
+<li><a href="#org3c3f309">1. cgroup介绍</a>
 <ul>
-<li><a href="#org0ef5877">1.1. 概述</a></li>
-<li><a href="#orgb2416a3">1.2. 功能</a></li>
-<li><a href="#org295a410">1.3. 基础概念</a></li>
+<li><a href="#orgd0abf97">1.1. 概述</a></li>
+<li><a href="#orgf9561e6">1.2. 功能</a></li>
+<li><a href="#org94fbe05">1.3. 基础概念</a></li>
 </ul>
 </li>
-<li><a href="#org262ee4a">2. cgroup使用</a>
+<li><a href="#orgfedd660">2. cgroup使用</a>
 <ul>
-<li><a href="#org50d22db">2.1. 挂载</a></li>
-<li><a href="#org06e0915">2.2. hierarchy和subsystem关联规则</a></li>
-<li><a href="#orgd121aaa">2.3. hierarchy和cgorup操作</a>
+<li><a href="#org62db133">2.1. 挂载</a></li>
+<li><a href="#org39c1e6d">2.2. hierarchy和subsystem关联规则</a></li>
+<li><a href="#org04b72a3">2.3. hierarchy和cgorup操作</a>
 <ul>
-<li><a href="#org52a78d9">2.3.1. hierarchy</a></li>
+<li><a href="#org0578906">2.3.1. hierarchy</a></li>
 </ul>
 </li>
-<li><a href="#org32da0b4">2.4. ?</a></li>
-<li><a href="#org1064cd7">2.5. ?</a></li>
-<li><a href="#org900d25e">2.6. cgroups挂载</a></li>
-<li><a href="#org18422d9">2.7. 系统支持的subsystem</a></li>
+<li><a href="#org98e8268">2.4. ?</a></li>
+<li><a href="#org518b40f">2.5. ?</a></li>
+<li><a href="#org5a3892e">2.6. cgroups挂载</a></li>
+<li><a href="#org9846c8d">2.7. 系统支持的subsystem</a></li>
 </ul>
 </li>
 </ul>
@@ -251,12 +229,12 @@
 </div>
 
 
-<div id="outline-container-org3fa0293" class="outline-2">
-<h2 id="org3fa0293"><span class="section-number-2">1</span> cgroup介绍</h2>
+<div id="outline-container-org3c3f309" class="outline-2">
+<h2 id="org3c3f309"><span class="section-number-2">1.</span> cgroup介绍</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org0ef5877" class="outline-3">
-<h3 id="org0ef5877"><span class="section-number-3">1.1</span> 概述</h3>
+<div id="outline-container-orgd0abf97" class="outline-3">
+<h3 id="orgd0abf97"><span class="section-number-3">1.1.</span> 概述</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 CGroup 是 Control Groups 的缩写，是 Linux 内核提供的一种可以限制、记录、隔离进程组 (process groups) 所使用的物力资源 (如 cpu memory i/o 等等) 的机制。
@@ -264,8 +242,8 @@ CGroup 是 Control Groups 的缩写，是 Linux 内核提供的一种可以限�
 </div>
 </div>
 
-<div id="outline-container-orgb2416a3" class="outline-3">
-<h3 id="orgb2416a3"><span class="section-number-3">1.2</span> 功能</h3>
+<div id="outline-container-orgf9561e6" class="outline-3">
+<h3 id="orgf9561e6"><span class="section-number-3">1.2.</span> 功能</h3>
 <div class="outline-text-3" id="text-1-2">
 <ul class="org-ul">
 <li>Resource limitation: 限制进程组可以使用的资源数量。 比如 磁盘、内存、网络等。</li>
@@ -277,8 +255,8 @@ CGroup 是 Control Groups 的缩写，是 Linux 内核提供的一种可以限�
 </div>
 </div>
 
-<div id="outline-container-org295a410" class="outline-3">
-<h3 id="org295a410"><span class="section-number-3">1.3</span> 基础概念</h3>
+<div id="outline-container-org94fbe05" class="outline-3">
+<h3 id="org94fbe05"><span class="section-number-3">1.3.</span> 基础概念</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 cgroup是linux下的一种将进程按照组进行管理的机制， 从用户层面来看，cgroup将系统中的所有进程组织成一棵或者多棵独立的树，每棵树都包含系统中所有的进程，树的节点是进程组， 每棵树可以和一个或者多个subsystem关联， 树的作用是将进程分组， subsystem作用于进程组。
@@ -297,8 +275,8 @@ cgroup是linux下的一种将进程按照组进行管理的机制， 从用户�
 
 
 
-<div id="outline-container-org262ee4a" class="outline-2">
-<h2 id="org262ee4a"><span class="section-number-2">2</span> cgroup使用</h2>
+<div id="outline-container-orgfedd660" class="outline-2">
+<h2 id="orgfedd660"><span class="section-number-2">2.</span> cgroup使用</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 cgroup相关的操作都是基于内核中的cgroup virtual filesystem， 使用cgroup很简单， 挂载这个文件系统就可以。一般挂载到/sys/fs/cgroup目录下。
@@ -309,17 +287,17 @@ cgroup相关的操作都是基于内核中的cgroup virtual filesystem， 使用
 </p>
 </div>
 
-<div id="outline-container-org50d22db" class="outline-3">
-<h3 id="org50d22db"><span class="section-number-3">2.1</span> 挂载</h3>
+<div id="outline-container-org62db133" class="outline-3">
+<h3 id="org62db133"><span class="section-number-3">2.1.</span> 挂载</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 在很多使用systemd的系统中， systemd已经帮我们将各个subsystem和cgroup树关联并挂在好了
 </p>
 <div class="org-src-container">
 <pre class="src src-sh">$  mount -l | grep cgroup
-tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,<span style="color: #FF8C00; font-weight: bold;">mode</span>=755)
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,<span style="color: #FD971F;">mode</span>=755)
 cgroup2 on /sys/fs/cgroup/unified type cgroup2 (rw,nosuid,nodev,noexec,relatime,nsdelegate)
-cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,<span style="color: #FF8C00; font-weight: bold;">name</span>=systemd)
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,<span style="color: #FD971F;">name</span>=systemd)
 cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
 cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpu,cpuacct)
 cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,net_cls,net_prio)
@@ -366,7 +344,7 @@ mount -t cgroup -o cpu,cpuacct xxx /sys/fs/cgroup/cpu,cpuacct
 </ul>
 <div class="org-src-container">
 <pre class="src src-sh">mkdir /sys/fs/cgroup/systemd
-mount -t cgroup -o none,<span style="color: #FF8C00; font-weight: bold;">name</span>=systemd xxx /sys/fs/cgroup/systemd
+mount -t cgroup -o none,<span style="color: #FD971F;">name</span>=systemd xxx /sys/fs/cgroup/systemd
 </pre>
 </div>
 
@@ -377,8 +355,8 @@ mount -t cgroup -o none,<span style="color: #FF8C00; font-weight: bold;">name</s
 </div>
 
 
-<div id="outline-container-org06e0915" class="outline-3">
-<h3 id="org06e0915"><span class="section-number-3">2.2</span> hierarchy和subsystem关联规则</h3>
+<div id="outline-container-org39c1e6d" class="outline-3">
+<h3 id="org39c1e6d"><span class="section-number-3">2.2.</span> hierarchy和subsystem关联规则</h3>
 <div class="outline-text-3" id="text-2-2">
 <ol class="org-ol">
 <li>同一个hierarchy能够附加一个或多个subsystem。</li>
@@ -389,12 +367,12 @@ mount -t cgroup -o none,<span style="color: #FF8C00; font-weight: bold;">name</s
 </div>
 </div>
 
-<div id="outline-container-orgd121aaa" class="outline-3">
-<h3 id="orgd121aaa"><span class="section-number-3">2.3</span> hierarchy和cgorup操作</h3>
+<div id="outline-container-org04b72a3" class="outline-3">
+<h3 id="org04b72a3"><span class="section-number-3">2.3.</span> hierarchy和cgorup操作</h3>
 <div class="outline-text-3" id="text-2-3">
 </div>
-<div id="outline-container-org52a78d9" class="outline-4">
-<h4 id="org52a78d9"><span class="section-number-4">2.3.1</span> hierarchy</h4>
+<div id="outline-container-org0578906" class="outline-4">
+<h4 id="org0578906"><span class="section-number-4">2.3.1.</span> hierarchy</h4>
 <div class="outline-text-4" id="text-2-3-1">
 <ul class="org-ul">
 <li>新建hierarchy</li>
@@ -431,12 +409,12 @@ mount -t cgroup -o none,<span style="color: #FF8C00; font-weight: bold;">name</s
 </div>
 </div>
 
-<div id="outline-container-org32da0b4" class="outline-3">
-<h3 id="org32da0b4"><span class="section-number-3">2.4</span> ?</h3>
+<div id="outline-container-org98e8268" class="outline-3">
+<h3 id="org98e8268"><span class="section-number-3">2.4.</span> ?</h3>
 </div>
 
-<div id="outline-container-org1064cd7" class="outline-3">
-<h3 id="org1064cd7"><span class="section-number-3">2.5</span> ?</h3>
+<div id="outline-container-org518b40f" class="outline-3">
+<h3 id="org518b40f"><span class="section-number-3">2.5.</span> ?</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 cgexec 可以用来指定control group 来运行程序
@@ -445,8 +423,8 @@ cgexec 可以用来指定control group 来运行程序
 </div>
 
 
-<div id="outline-container-org900d25e" class="outline-3">
-<h3 id="org900d25e"><span class="section-number-3">2.6</span> cgroups挂载</h3>
+<div id="outline-container-org5a3892e" class="outline-3">
+<h3 id="org5a3892e"><span class="section-number-3">2.6.</span> cgroups挂载</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 cgroups文件系统挂载
@@ -467,8 +445,8 @@ Linux中，用户可以使用mount命令挂载 cgroups 文件系统，格式为:
 </div>
 
 
-<div id="outline-container-org18422d9" class="outline-3">
-<h3 id="org18422d9"><span class="section-number-3">2.7</span> 系统支持的subsystem</h3>
+<div id="outline-container-org9846c8d" class="outline-3">
+<h3 id="org9846c8d"><span class="section-number-3">2.7.</span> 系统支持的subsystem</h3>
 <div class="outline-text-3" id="text-2-7">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -613,7 +591,7 @@ Linux中，用户可以使用mount命令挂载 cgroups 文件系统，格式为:
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

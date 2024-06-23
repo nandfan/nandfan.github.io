@@ -1,0 +1,1168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPP学习</title>
+<meta name="author" content="nandfan" />
+<meta name="keywords" content="vpp" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VPP学习</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org6401de9">1. 内存管理</a>
+<ul>
+<li><a href="#orga6357b3">1.1. main_heap初始化</a>
+<ul>
+<li><a href="#org7ca0815">1.1.1. 临时初始化内存</a></li>
+<li><a href="#org70c23f6">1.1.2. main heap初始化</a></li>
+</ul>
+</li>
+<li><a href="#org93b03e1">1.2. vlib内存库</a></li>
+<li><a href="#org4b97b22">1.3. buffer初始化</a></li>
+</ul>
+</li>
+<li><a href="#orgd2fc87d">2. BinaryAPI</a>
+<ul>
+<li><a href="#org3ff97d9">2.1. BAPI</a>
+<ul>
+<li><a href="#org601292f">2.1.1. 消息分配</a></li>
+<li><a href="#orgbd3a43d">2.1.2. 消息跟踪和重放</a></li>
+<li><a href="#orge301bf4">2.1.3. 客户端连接细节</a></li>
+<li><a href="#org5c464f6">2.1.4. 二进制API消息接收线程</a></li>
+<li><a href="#orgbdf74fb">2.1.5. 客户端连接断开细节</a></li>
+<li><a href="#org2e9c685">2.1.6. 发送API MSG到VPP</a></li>
+<li><a href="#org1b7ad1b">2.1.7. 从VPP接收API MSG</a></li>
+</ul>
+</li>
+<li><a href="#orgef5d01b">2.2. 共享内存通信</a></li>
+</ul>
+</li>
+<li><a href="#orge1dd764">3. 协议栈/LDP/VCL</a>
+<ul>
+<li><a href="#org7deddd8">3.1. 数据结构</a></li>
+<li><a href="#orgadbb043">3.2. app注册逻辑</a>
+<ul>
+<li><a href="#orga21b743">3.2.1. ldp_constructor</a></li>
+<li><a href="#orgb4442d0">3.2.2. vcl_api_attach</a></li>
+</ul>
+</li>
+<li><a href="#org3e6478b">3.3. session queue相关的node</a></li>
+<li><a href="#org2c59a57">3.4. socket过程</a></li>
+<li><a href="#org747dacd">3.5. connect过程</a></li>
+<li><a href="#org5d542fc">3.6. listen-accept</a></li>
+<li><a href="#org43c05ee">3.7. 发送数据</a></li>
+<li><a href="#orga71c2eb">3.8. 接受数据</a></li>
+<li><a href="#orgf4747c3">3.9. 协议栈</a>
+<ul>
+<li><a href="#orge90f218">3.9.1. 连接被动关闭</a></li>
+</ul>
+</li>
+<li><a href="#org5ddf2db">3.10. VCL</a></li>
+<li><a href="#orgef70256">3.11. 通信</a>
+<ul>
+<li><a href="#org3e6acfe">3.11.1. eventfd</a></li>
+<li><a href="#org6e1addc">3.11.2. 条件变量</a></li>
+<li><a href="#org1f3bce0">3.11.3. 通知函数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgd626349">4. NODE功能梳理</a>
+<ul>
+<li><a href="#org543385a">4.1. 收包类的node</a>
+<ul>
+<li><a href="#orgfc1feb6">4.1.1. dpdk-input</a></li>
+<li><a href="#org4817f29">4.1.2. tuntap-input</a></li>
+</ul>
+</li>
+<li><a href="#org811ffa9">4.2. flow-report-process</a></li>
+<li><a href="#orgcc2bc85">4.3. ip4-input</a></li>
+<li><a href="#orgdab2a67">4.4. dpdk-input</a></li>
+</ul>
+</li>
+<li><a href="#orgc687d47">5. 单向共享内存队列 svm queue</a>
+<ul>
+<li><a href="#org1632214">5.1. 数据结构</a></li>
+<li><a href="#org6d1390f">5.2. 接口</a></li>
+<li><a href="#orga57e6d9">5.3. 内存结构</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="orgd220600" class="figure">
+<p><img src="dot/framwork.svg" alt="framwork.svg" class="org-svg" />
+</p>
+</div>
+
+
+<div id="outline-container-org6401de9" class="outline-2">
+<h2 id="org6401de9"><span class="section-number-2">1.</span> 内存管理</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orga6357b3" class="outline-3">
+<h3 id="orga6357b3"><span class="section-number-3">1.1.</span> main_heap初始化</h3>
+<div class="outline-text-3" id="text-1-1">
+</div>
+<div id="outline-container-org7ca0815" class="outline-4">
+<h4 id="org7ca0815"><span class="section-number-4">1.1.1.</span> 临时初始化内存</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+此处初始化的内存稍后调用 clib_mem_destroy() 初始化. 主要用来作为解析内存参数时的内存分配.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">clib_mem_init &gt;&gt; clib_mem_init_internal
+        1. clib_mem_main_init
+        2. clib_mem_vm_map_internal
+                clib_mem_vm_reserve
+        3. create_mspace_with_base
+        4. clib_mem_set_heap
+
+1. &#33719;&#21462;&#31995;&#32479;pagesize
+   &#22312;&#22823;&#39029;&#25991;&#20214;&#31995;&#32479;&#20013;&#21019;&#24314;&#21311;&#21517;&#25991;&#20214;&#25551;&#36848;&#31526;(memfd_create).
+   mmap&#26144;&#23556;&#19968;&#39029;&#31354;&#38388;, &#20351;&#29992;move_pages&#27979;&#35797;&#31995;&#32479;numa-node&#25968;&#37327;
+2. &#39044;&#30041;&#31995;&#32479;&#21551;&#21160;&#21021;&#22987;&#21270;&#38656;&#35201;&#30340;&#20869;&#23384;
+   &#35843;&#29992;mmap&#39044;&#30041;&#20869;&#23384;(&#38656;&#35201;&#22810;&#39044;&#30041;&#19968;&#39029;&#20869;&#23384;, &#29992;&#20316;&#31649;&#29702;&#20869;&#23384;&#30340;header(clib_mem_vm_map_hdr_t))
+   &#35774;&#32622;&#20869;&#23384;&#23646;&#24615;
+   &#21021;&#22987;&#21270;&#20869;&#23384;header&#32467;&#26500;
+3. &#21021;&#22987;&#21270;&#29992;&#25143;&#22534;&#20869;&#23384;&#31649;&#29702;&#32467;&#26500;
+4. &#35774;&#32622;&#40664;&#35748;&#20998;&#37197;&#30340;&#22534;&#20869;&#23384;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org70c23f6" class="outline-4">
+<h4 id="org70c23f6"><span class="section-number-4">1.1.2.</span> main heap初始化</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<p>
+解析完内存参数后, 重新初始化默认的堆内存.
+</p>
+
+<ul class="org-ul">
+<li>标记 main thread 运行的numa node</li>
+<li>使用 main heap 作为其他numa node的堆内存</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org93b03e1" class="outline-3">
+<h3 id="org93b03e1"><span class="section-number-3">1.2.</span> vlib内存库</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-fundamental">vlib_physmem_init
+        linux_vfio_init
+
+
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4b97b22" class="outline-3">
+<h3 id="org4b97b22"><span class="section-number-3">1.3.</span> buffer初始化</h3>
+</div>
+</div>
+
+
+<div id="outline-container-orgd2fc87d" class="outline-2">
+<h2 id="orgd2fc87d"><span class="section-number-2">2.</span> BinaryAPI</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+vpp提供了一种二进制API的方案,可以允许各种各样的客户端对数据平面进行编程.
+</p>
+
+<p>
+通讯消息定义在 *.api的文件中, API的编译器位于 src/tools/vppapigen/ 目录下.
+</p>
+
+<p>
+下面是一个示例, 文件位置: src/vnet/interface.api, 定义了典型的请求/响应消息格式:
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #E6DB74;">/** \brief Set flags on the interface</span>
+<span style="color: #E6DB74;">    </span><span style="color: #AE81FF;">@param</span><span style="color: #E6DB74;"> client_index - opaque cookie to identify the sender</span>
+<span style="color: #E6DB74;">    </span><span style="color: #AE81FF;">@param</span><span style="color: #E6DB74;"> context - sender context, to match reply w/ request</span>
+<span style="color: #E6DB74;">    </span><span style="color: #AE81FF;">@param</span><span style="color: #E6DB74;"> sw_if_index - index of the interface to set flags on</span>
+<span style="color: #E6DB74;">    </span><span style="color: #AE81FF;">@param</span><span style="color: #E6DB74;"> flags - interface_status flags</span>
+<span style="color: #E6DB74;">        (only IF_STATUS_API_FLAG_ADMIN_UP used in config)</span>
+<span style="color: #E6DB74;">*/</span>
+autoreply <span style="color: #66D9EF;">define</span> <span style="color: #FD971F;">sw_interface_set_flags</span>
+{
+  <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">client_index</span>;
+  <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">context</span>;
+  <span style="color: #66D9EF;">vl_api_interface_index_t</span> <span style="color: #FD971F;">sw_if_index</span>;
+  <span style="color: #66D9EF;">vl_api_if_status_flags_t</span> <span style="color: #FD971F;">flags</span>;
+};
+</pre>
+</div>
+
+<p>
+在api编译器编译此文件后, 会在 build-root/install-vpp_debug-native/vpp/include/vnet/interface.api.h 文件中生成如下内容:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">#ifdef</span> vl_msg_id
+<span style="color: #A6E22E;">vl_msg_id</span>(VL_API_SW_INTERFACE_SET_FLAGS, vl_api_sw_interface_set_flags_t_handler)
+<span style="color: #A6E22E;">vl_msg_id</span>(VL_API_SW_INTERFACE_SET_FLAGS_REPLY, vl_api_sw_interface_set_flags_reply_t_handler)
+
+<span style="color: #F92672;">#endif</span>
+
+<span style="color: #F92672;">#ifdef</span> vl_msg_name
+<span style="color: #A6E22E;">vl_msg_name</span>(<span style="color: #66D9EF;">vl_api_sw_interface_set_flags_t</span>, 1)
+<span style="color: #A6E22E;">vl_msg_name</span>(<span style="color: #66D9EF;">vl_api_sw_interface_set_flags_reply_t</span>, 1)
+
+<span style="color: #F92672;">#endif</span>
+
+<span style="color: #F92672;">#ifdef</span> vl_msg_name_crc_list
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">foreach_vl_msg_name_crc_interface</span> \
+_(VL_API_SW_INTERFACE_SET_FLAGS, sw_interface_set_flags, 6a2b491a) \
+_(VL_API_SW_INTERFACE_SET_FLAGS_REPLY, sw_interface_set_flags_reply, e8d4e804) \
+;
+<span style="color: #F92672;">#endif</span>
+
+<span style="color: #F92672;">#ifdef</span> vl_typedefs
+
+<span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> <span style="color: #F92672;">__attribute__</span> ((packed)) <span style="color: #66D9EF;">_vl_api_sw_interface_set_flags</span> {
+    <span style="color: #66D9EF;">u16</span> <span style="color: #FD971F;">_vl_msg_id</span>;
+    <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">client_index</span>;
+    <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">context</span>;
+    <span style="color: #66D9EF;">vl_api_interface_index_t</span> <span style="color: #FD971F;">sw_if_index</span>;
+    <span style="color: #66D9EF;">vl_api_if_status_flags_t</span> <span style="color: #FD971F;">flags</span>;
+} <span style="color: #66D9EF;">vl_api_sw_interface_set_flags_t</span>;
+<span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> <span style="color: #F92672;">__attribute__</span> ((packed)) <span style="color: #66D9EF;">_vl_api_sw_interface_set_flags_reply</span> {
+    <span style="color: #66D9EF;">u16</span> <span style="color: #FD971F;">_vl_msg_id</span>;
+    <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">context</span>;
+    <span style="color: #66D9EF;">i32</span> <span style="color: #FD971F;">retval</span>;
+} <span style="color: #66D9EF;">vl_api_sw_interface_set_flags_reply_t</span>;
+<span style="color: #F92672;">#endif</span>
+</pre>
+</div>
+
+<p>
+要更改接口的管理状态, 二进制api客户端会发送 vl_api_sw_interface_set_flags_t到vpp, vpp会以 vl_api_sw_interface_set_flags_reply_t的消息格式进行响应.
+</p>
+
+<p>
+多层次的软件 传输类型 以及共享库实现了多种功能:
+</p>
+<ul class="org-ul">
+<li>API消息分配 跟踪 打印 重放</li>
+<li>通过全局的共享内存 成对/专用的共享内存和套接字的消息传输</li>
+<li>跨越非线程安全消息处理程序的工作线程的屏障同步</li>
+</ul>
+
+<p>
+消息处理例程对于向vpp递送消息或者从vpp获取消息的传输方式不关心,  可以同时使用多种API消息的传输类型.
+</p>
+</div>
+
+<div id="outline-container-org3ff97d9" class="outline-3">
+<h3 id="org3ff97d9"><span class="section-number-3">2.1.</span> BAPI</h3>
+<div class="outline-text-3" id="text-2-1">
+</div>
+<div id="outline-container-org601292f" class="outline-4">
+<h4 id="org601292f"><span class="section-number-4">2.1.1.</span> 消息分配</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+二进制api消息总是顺序处理的, 当ring分配器可用时用它作为消息的分配器, 相对于传统的内存分配器来说,此方案非常快, 并且不会引起内存碎片. 参照 src/vlibmemory/memory_shared.c vl_api_msg_alloc_internal()
+</p>
+
+<p>
+无论采用何种传输方式, 二进制api消息始终遵循 msgbuf_t 头部:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #E6DB74;">/** Message header structure */</span>
+<span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">msgbuf_</span>
+{
+  <span style="color: #66D9EF;">svm_queue_t</span> *<span style="color: #FD971F;">q</span>; <span style="color: #E6DB74;">/**&lt; message allocated in this shmem ring  */</span>
+  <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">data_len</span>;                  <span style="color: #E6DB74;">/**&lt; message length not including header  */</span>
+  <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">gc_mark_timestamp</span>;         <span style="color: #E6DB74;">/**&lt; message garbage collector mark TS  */</span>
+  <span style="color: #66D9EF;">u8</span> <span style="color: #FD971F;">data</span>[0];                    <span style="color: #E6DB74;">/**&lt; actual message begins here  */</span>
+} <span style="color: #66D9EF;">msgbuf_t</span>;
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #66D9EF;">void</span>
+<span style="color: #A6E22E;">vl_msg_api_free</span> (<span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">a</span>)
+{
+  <span style="color: #66D9EF;">api_main_t</span> *<span style="color: #FD971F;">am</span> = vlibapi_get_main ();
+  vl_msg_api_free_w_region (am-&gt;vlib_rp, a);
+  {
+
+    <span style="color: #66D9EF;">msgbuf_t</span> *<span style="color: #FD971F;">rv</span>;
+    <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">oldheap</span>;
+
+    rv = (<span style="color: #66D9EF;">msgbuf_t</span> *) (((<span style="color: #66D9EF;">u8</span> *) a) - offsetof (msgbuf_t, data));
+
+    <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">     * &#30001;&#20110;&#21482;&#26377;&#19968;&#20010;&#20363;&#31243;/&#32447;&#31243;&#23545;&#28040;&#24687;&#32531;&#20914;&#21306;&#20855;&#26377;&#25511;&#21046;&#26435;.</span>
+<span style="color: #75715E;">     * &#27492;&#22788;&#20165;&#20165;&#28165;&#38500;rv-&gt;q&#23383;&#27573;&#26469;&#37322;&#25918;&#32531;&#20914;&#21306;</span>
+<span style="color: #75715E;">     */</span>
+    <span style="color: #F92672;">if</span> (rv-&gt;q)
+    {
+      rv-&gt;q = 0;
+      rv-&gt;gc_mark_timestamp = 0;
+      VL_MSG_API_POISON (rv-&gt;data);
+      <span style="color: #F92672;">return</span>;
+    }
+    <span style="color: #75715E;">/*  </span><span style="color: #75715E;">&lt;snip&gt;</span><span style="color: #75715E;"> */</span>
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbd3a43d" class="outline-4">
+<h4 id="orgbd3a43d"><span class="section-number-4">2.1.2.</span> 消息跟踪和重放</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+vpp可以捕获和重放相当数量的二进制API trace, 涉及数十万的api事物的系统级别的问题可以在一秒内重新运行.  可以添加一些条件点在特定条件下触发.
+</p>
+
+<p>
+有了二进制API的跟踪 重放 打印 系统级别的bug上报, 即使系统在经过300000次的api处理之后停止转发, 仍然可以可以离线分析定位问题.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge301bf4" class="outline-4">
+<h4 id="orge301bf4"><span class="section-number-4">2.1.3.</span> 客户端连接细节</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+用c语言建立一个到VPP的二进制API连接:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">int</span>
+<span style="color: #A6E22E;">connect_to_vpe</span> (<span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">name</span>)
+{
+  <span style="color: #66D9EF;">vat_main_t</span> *<span style="color: #FD971F;">vam</span> = &amp;vat_main;
+  <span style="color: #66D9EF;">api_main_t</span> *<span style="color: #FD971F;">am</span> = vlibapi_get_main ();
+
+  <span style="color: #F92672;">if</span> (vl_client_connect_to_vlib (<span style="color: #E6DB74;">"/vpe-api"</span>, name, 32) &lt; 0)
+    <span style="color: #F92672;">return</span> -1;
+
+  vam-&gt;vl_input_queue = am-&gt;shmem_hdr-&gt;vl_input_queue;
+  vam-&gt;my_client_index = am-&gt;my_client_index;
+
+  <span style="color: #F92672;">return</span> 0;
+}
+</pre>
+</div>
+
+<p>
+vpp在发送二进制API消息到客户端时不可以阻塞, vpp端的消息处理例程必须在短时间内完成, 在发送异步消息时, 尽可能积极的读取API的rx ring.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org5c464f6" class="outline-4">
+<h4 id="org5c464f6"><span class="section-number-4">2.1.4.</span> 二进制API消息接收线程</h4>
+<div class="outline-text-4" id="text-2-1-4">
+<p>
+调用 vl_client_connect_to_vlib 将会启动一个二进制api消息接收线程.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> *
+<span style="color: #A6E22E;">rx_thread_fn</span> (<span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">arg</span>)
+{
+  <span style="color: #66D9EF;">rx_thread_fn_arg_t</span> *<span style="color: #FD971F;">a</span> = (<span style="color: #66D9EF;">rx_thread_fn_arg_t</span> *) arg;
+  <span style="color: #66D9EF;">memory_client_main_t</span> *<span style="color: #FD971F;">mm</span>;
+  <span style="color: #66D9EF;">svm_queue_t</span> *<span style="color: #FD971F;">q</span>;
+
+  vlibapi_set_main (a-&gt;am);
+  vlibapi_set_memory_client_main (a-&gt;mm);
+  free (a);
+
+  mm = vlibapi_get_memory_client_main ();
+  q = vlibapi_get_main ()-&gt;vl_input_queue;
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">So we can make the rx thread terminate cleanly</span><span style="color: #75715E;"> */</span>
+  <span style="color: #F92672;">if</span> (setjmp (mm-&gt;rx_thread_jmpbuf) == 0)
+    {
+      mm-&gt;rx_thread_jmpbuf_valid = 1;
+      clib_mem_set_thread_index ();
+      <span style="color: #F92672;">while</span> (1)
+        vl_msg_api_queue_handler (q);
+    }
+  pthread_exit (0);
+}
+</pre>
+</div>
+
+<p>
+要处理自己的二进制API消息队列, 请使用vl_client_connect_to_vlib_no_rx_pthread.
+vl_msg_api_queue_handler() 使用条件变量或者事件fd(eventfd)与vpp通信, 处理vpp-&gt;客户端的流量, 然后睡眠.当消息队列由空变为非空时, vpp使用条件变量广播此事件.
+</p>
+
+<p>
+VPP以很高的速度检查二进制API消息输入队列. vpp依据数据平面包处理的要求, 以可变的速度在协程的上下文调用消息处理程序.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbdf74fb" class="outline-4">
+<h4 id="orgbdf74fb"><span class="section-number-4">2.1.5.</span> 客户端连接断开细节</h4>
+<div class="outline-text-4" id="text-2-1-5">
+<p>
+要和vpp断开链接, 需要调用 vl_client_disconnect_from_vlib, 如果客户端异常终止, 请调用此函数. vpp尽可能的释放资源, 但无法保证回收泄露的共享内存的资源.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org2e9c685" class="outline-4">
+<h4 id="org2e9c685"><span class="section-number-4">2.1.6.</span> 发送API MSG到VPP</h4>
+<div class="outline-text-4" id="text-2-1-6">
+<p>
+许多vpp的二进制API包含客户端的请求消息和简单的状态响应.
+下面是一个示例, 设置接口的管理状态:
+</p>
+<pre class="example" id="orgab0648c">
+void
+set_flags (test_main_t * tm, int up_down)
+{
+  vl_api_sw_interface_set_flags_t *mp;
+
+  mp = vl_msg_api_alloc (sizeof (*mp));
+  clib_memset (mp, 0, sizeof (*mp));
+
+  mp-&gt;_vl_msg_id = ntohs (VL_API_SW_INTERFACE_SET_FLAGS);
+  mp-&gt;client_index = tm-&gt;my_client_index;
+  mp-&gt;context = 0xdeadbeef;
+  mp-&gt;sw_if_index = ntohl (5);
+  mp-&gt;admin_up_down = up_down;
+  vl_msg_api_send_shmem (tm-&gt;vl_input_queue, (u8 *) &amp; mp);
+}
+</pre>
+
+<ul class="org-ul">
+<li>vl_msg_api_alloc分配消息缓冲区</li>
+<li>分配的缓冲区并未初始化, 必须进行初始化</li>
+<li>设置_vl_msg_id成员(消息类型)</li>
+<li>客户端的library中的全局数据结构 api_main用于在与vpp通讯时跟踪句柄和指针.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1b7ad1b" class="outline-4">
+<h4 id="org1b7ad1b"><span class="section-number-4">2.1.7.</span> 从VPP接收API MSG</h4>
+<div class="outline-text-4" id="text-2-1-7">
+<p>
+除非使用了vl_client_connect_to_vlib_no_rx_pthread, 否则将在单独的线程中接收消息. 由应用程序来保证与接收线程的同步.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">#define</span> <span style="color: #FD971F;">vl_typedefs</span>             <span style="color: #75715E;">/* </span><span style="color: #75715E;">define message structures</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;vpp/api/vpe_all_api_h.h&gt;</span>
+<span style="color: #F92672;">#undef</span> vl_typedefs
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">declare message handlers for each api</span><span style="color: #75715E;"> */</span>
+
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">vl_endianfun</span>            <span style="color: #75715E;">/* </span><span style="color: #75715E;">define message structures</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;vpp/api/vpe_all_api_h.h&gt;</span>
+<span style="color: #F92672;">#undef</span> vl_endianfun
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">instantiate all the print functions we know about</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #A6E22E;">vl_print</span>(<span style="color: #FD971F;">handle</span>, ...)
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">vl_printfun</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;vpp/api/vpe_all_api_h.h&gt;</span>
+<span style="color: #F92672;">#undef</span> vl_printfun
+
+
+
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">foreach_sock_msg</span>                                                \
+_(SESSION_ENABLE_DISABLE_REPLY, session_enable_disable_reply)           \
+_(APP_ATTACH_REPLY, app_attach_reply)                                   \
+_(APPLICATION_TLS_CERT_ADD_REPLY, application_tls_cert_add_reply)       \
+_(APPLICATION_TLS_KEY_ADD_REPLY, application_tls_key_add_reply)         \
+_(APP_WORKER_ADD_DEL_REPLY, app_worker_add_del_reply)                   \
+
+<span style="color: #66D9EF;">void</span>
+<span style="color: #A6E22E;">vppcom_api_hookup</span> (<span style="color: #66D9EF;">void</span>)
+{
+<span style="color: #F92672;">#define</span> <span style="color: #A6E22E;">_</span>(<span style="color: #FD971F;">N</span>, <span style="color: #FD971F;">n</span>)                                                 \
+    vl_msg_api_set_handlers(VL_API_##N, #n,                     \
+                           vl_api_##n##_t_handler,              \
+                           vl_noop_handler,                     \
+                           vl_api_##n##_t_endian,               \
+                           vl_api_##n##_t_print,                \
+                           <span style="color: #F92672;">sizeof</span>(vl_api_##n##_t), 1);
+  foreach_sock_msg;
+<span style="color: #F92672;">#undef</span> _
+}
+</pre>
+</div>
+
+<p>
+vl_msg_api_set_handlers()用来建立消息处理程序.  它为api_main_t结构中的一些并行向量(二级指针/二维数组)设置值.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgef5d01b" class="outline-3">
+<h3 id="orgef5d01b"><span class="section-number-3">2.2.</span> 共享内存通信</h3>
+</div>
+</div>
+
+
+<div id="outline-container-orge1dd764" class="outline-2">
+<h2 id="orge1dd764"><span class="section-number-2">3.</span> 协议栈/LDP/VCL</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org7deddd8" class="outline-3">
+<h3 id="org7deddd8"><span class="section-number-3">3.1.</span> 数据结构</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<div id="orgc7854b2" class="figure">
+<p><img src="./dot/app_worker_st.svg" alt="app_worker_st.svg" class="org-svg" />
+</p>
+</div>
+
+
+
+<div id="org705c1b5" class="figure">
+<p><img src="./dot/vls_vcl_st.svg" alt="vls_vcl_st.svg" class="org-svg" />
+</p>
+</div>
+
+
+<div id="org1f1b1f3" class="figure">
+<p><img src="./dot/ldp_st.svg" alt="ldp_st.svg" class="org-svg" />
+</p>
+</div>
+
+
+<div id="orge45de7a" class="figure">
+<p><img src="./dot/session_queue.svg" alt="session_queue.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgadbb043" class="outline-3">
+<h3 id="orgadbb043"><span class="section-number-3">3.2.</span> app注册逻辑</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+在指定LD_PRELOAD环境变量后， ldp_constructor在main函数之前被执行，然后调用ldp_init进行初始化操作。
+</p>
+</div>
+
+<div id="outline-container-orga21b743" class="outline-4">
+<h4 id="orga21b743"><span class="section-number-4">3.2.1.</span> ldp_constructor</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">ldp_constructor
+      ldp_init
+            vls_app_create
+                    vppcom_app_create
+                            vppcom_cfg //&#26681;&#25454;vcl&#37197;&#32622;&#25991;&#20214;&#21021;&#22987;&#21270;vcl&#37197;&#32622;
+                            fifo_segment_main_init
+                            atexit(vppcom_app_exit)
+                            vcl_elog_init
+                            vcl_worker_alloc_and_init //&#20998;&#37197;vcl_worker_t &#24182;&#21021;&#22987;&#21270;
+                            vcl_api_attach //&#21644;VPP&#20851;&#32852;
+                    pthread_affork(vls_app_pre_fork, vls_app_fork_parent_handler&#65292;vls_app_fork_child_handler)
+            ldp_alloc_workers
+            "&#33719;&#21462;&#29615;&#22659;&#21464;&#37327;&#37197;&#32622;&#30456;&#20851;"
+</pre>
+</div>
+
+
+<div id="org91e51ce" class="figure">
+<p><img src="./plantuml/ldp_constructor.svg" alt="ldp_constructor.svg" class="org-svg" />
+</p>
+</div>
+
+<p>
+初始化相关的环境变量：
+</p>
+<dl class="org-dl">
+<dt>LDP_ENV_SID_BIT</dt><dd>设置可用linux的fd数量</dd>
+<dt>LDP_ENV_DEBUG</dt><dd>设置日志级别</dd>
+<dt>LDP_ENV_APP_NAME</dt><dd>app名称</dd>
+<dt>LDP_ENV_TLS_TRANS</dt><dd>使用TLS</dd>
+</dl>
+<dl class="org-dl">
+<dt>vcl_worker_alloc_and_init</dt><dd>此函数主要分配vcl_worker_t结构，判断是否使用epoll事件来通知消息，初始化 <code>mqs_epfd</code> (vcl.conf中的use-mq-eventfd)，初始化mq_msg_vector（消息队列的缓冲区）长度和unhandled_evts_vector（存储未处理的事件缓冲区）长度。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-orgb4442d0" class="outline-4">
+<h4 id="orgb4442d0"><span class="section-number-4">3.2.2.</span> vcl_api_attach</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<dl class="org-dl">
+<dt>vcl_sapi_attach</dt><dd>使用socket连接到vpp</dd>
+</dl>
+
+<div id="orge169445" class="figure">
+<p><img src="plantuml/sapi-attach.svg" alt="sapi-attach.svg" class="org-svg" />
+</p>
+</div>
+
+<dl class="org-dl">
+<dt>vcl_bapi_attach</dt><dd></dd>
+</dl>
+
+
+<div id="orgc4d77c0" class="figure">
+<p><img src="plantuml/bapi-attach.svg" alt="bapi-attach.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3e6478b" class="outline-3">
+<h3 id="org3e6478b"><span class="section-number-3">3.3.</span> session queue相关的node</h3>
+</div>
+<div id="outline-container-org2c59a57" class="outline-3">
+<h3 id="org2c59a57"><span class="section-number-3">3.4.</span> socket过程</h3>
+<div class="outline-text-3" id="text-3-4">
+
+<div id="orga088bf3" class="figure">
+<p><img src="./plantuml/socket.svg" alt="socket.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org747dacd" class="outline-3">
+<h3 id="org747dacd"><span class="section-number-3">3.5.</span> connect过程</h3>
+<div class="outline-text-3" id="text-3-5">
+
+<div id="org22c8d30" class="figure">
+<p><img src="./plantuml/connect.svg" alt="connect.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5d542fc" class="outline-3">
+<h3 id="org5d542fc"><span class="section-number-3">3.6.</span> listen-accept</h3>
+</div>
+<div id="outline-container-org43c05ee" class="outline-3">
+<h3 id="org43c05ee"><span class="section-number-3">3.7.</span> 发送数据</h3>
+</div>
+<div id="outline-container-orga71c2eb" class="outline-3">
+<h3 id="orga71c2eb"><span class="section-number-3">3.8.</span> 接受数据</h3>
+</div>
+<div id="outline-container-orgf4747c3" class="outline-3">
+<h3 id="orgf4747c3"><span class="section-number-3">3.9.</span> 协议栈</h3>
+<div class="outline-text-3" id="text-3-9">
+</div>
+<div id="outline-container-orge90f218" class="outline-4">
+<h4 id="orge90f218"><span class="section-number-4">3.9.1.</span> 连接被动关闭</h4>
+<div class="outline-text-4" id="text-3-9-1">
+<div class="org-src-container">
+<pre class="src src-fundamental">tcp46-established-inline
+        tcp_rcv_fin
+        tcp_handle_disconnects
+                session_transport_closing_notify
+
+vpp   attach handle
+app   attach reply handle
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5ddf2db" class="outline-3">
+<h3 id="org5ddf2db"><span class="section-number-3">3.10.</span> VCL</h3>
+<div class="outline-text-3" id="text-3-10">
+<ul class="org-ul">
+<li>vls_create  ==&gt; socket</li>
+<li>vls_close</li>
+<li>vls_listen</li>
+<li>vls_connnect</li>
+<li>vls_accept</li>
+<li>vls_read</li>
+<li>vls_recvfrom</li>
+<li>vls_write</li>
+<li>vls_wirte_msg</li>
+<li>vls_sendto</li>
+<li>vls_attr</li>
+<li>vls_epoll_create</li>
+<li>vls_epoll_ctl</li>
+<li>vls_epoll_wait</li>
+<li>vls_selsct</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgef70256" class="outline-3">
+<h3 id="orgef70256"><span class="section-number-3">3.11.</span> 通信</h3>
+<div class="outline-text-3" id="text-3-11">
+<p>
+基于共享内存的单向队列
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">ssvm_client_init_memfd
+fifo_segment_attach
+vcl_segnemt_attach
+vcl_session_app_add_segment_handler
+segment_manager_alloc_session_fifos
+app_worker_add_segment_notify
+app_worker_alloc_session_fifos
+vl_api_send_fd_msg
+vl_sock_api_send_fd_msg
+session_send_fds
+mq_send_add_segment_cb
+app_worker_add_segment_notify
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">session_cb_vft_t</span> <span style="color: #FD971F;">session_mq_cb_vft</span> = {
+  .session_accept_callback = mq_send_session_accepted_cb,
+  .session_disconnect_callback = mq_send_session_disconnected_cb,
+  .session_connected_callback = mq_send_session_connected_cb,
+  .session_reset_callback = mq_send_session_reset_cb,
+  .session_migrate_callback = mq_send_session_migrate_cb,
+  .session_cleanup_callback = mq_send_session_cleanup_cb,
+  .add_segment_callback = mq_send_add_segment_cb,
+  .del_segment_callback = mq_send_del_segment_cb,
+};
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">init_fn</span> <span style="color: #FD971F;">server_init_fns</span>[SSVM_N_SEGMENT_TYPES] =
+  { ssvm_server_init_shm, ssvm_server_init_memfd, ssvm_server_init_private };
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">init_fn</span> <span style="color: #FD971F;">client_init_fns</span>[SSVM_N_SEGMENT_TYPES] =
+  { ssvm_client_init_shm, ssvm_client_init_memfd, ssvm_client_init_private };
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">delete_fn</span> <span style="color: #FD971F;">delete_fns</span>[SSVM_N_SEGMENT_TYPES] =
+  { ssvm_delete_shm, ssvm_delete_memfd, ssvm_delete_private };
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org3e6acfe" class="outline-4">
+<h4 id="org3e6acfe"><span class="section-number-4">3.11.1.</span> eventfd</h4>
+<div class="outline-text-4" id="text-3-11-1">
+<p>
+svm_msg_q_alloc_producer_eventfd
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org6e1addc" class="outline-4">
+<h4 id="org6e1addc"><span class="section-number-4">3.11.2.</span> 条件变量</h4>
+<div class="outline-text-4" id="text-3-11-2">
+<p>
+pthread_cond_broadcast(&amp;q.condvar)
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1f3bce0" class="outline-4">
+<h4 id="org1f3bce0"><span class="section-number-4">3.11.3.</span> 通知函数</h4>
+<div class="outline-text-4" id="text-3-11-3">
+<p>
+svm_queue_send_singnal_inline
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd626349" class="outline-2">
+<h2 id="orgd626349"><span class="section-number-2">4.</span> NODE功能梳理</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org543385a" class="outline-3">
+<h3 id="org543385a"><span class="section-number-3">4.1.</span> 收包类的node</h3>
+<div class="outline-text-3" id="text-4-1">
+</div>
+<div id="outline-container-orgfc1feb6" class="outline-4">
+<h4 id="orgfc1feb6"><span class="section-number-4">4.1.1.</span> dpdk-input</h4>
+</div>
+
+
+<div id="outline-container-org4817f29" class="outline-4">
+<h4 id="org4817f29"><span class="section-number-4">4.1.2.</span> tuntap-input</h4>
+</div>
+</div>
+
+<div id="outline-container-org811ffa9" class="outline-3">
+<h3 id="org811ffa9"><span class="section-number-3">4.2.</span> flow-report-process</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+完成流量上报功能, 可以设置接受流量信息的ip 端口, 发送流量信息的ip
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgcc2bc85" class="outline-3">
+<h3 id="orgcc2bc85"><span class="section-number-3">4.3.</span> ip4-input</h3>
+</div>
+
+
+<div id="outline-container-orgdab2a67" class="outline-3">
+<h3 id="orgdab2a67"><span class="section-number-3">4.4.</span> dpdk-input</h3>
+</div>
+</div>
+
+
+<div id="outline-container-orgc687d47" class="outline-2">
+<h2 id="orgc687d47"><span class="section-number-2">5.</span> 单向共享内存队列 svm queue</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org1632214" class="outline-3">
+<h3 id="org1632214"><span class="section-number-3">5.1.</span> 数据结构</h3>
+<div class="outline-text-3" id="text-5-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">_svm_queue</span>
+{
+        <span style="color: #66D9EF;">pthread_mutex_t</span> <span style="color: #FD971F;">mutex</span>;  <span style="color: #75715E;">/* </span><span style="color: #75715E;">8 bytes</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">pthread_cond_t</span> <span style="color: #FD971F;">condvar</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">8 bytes</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">head</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">tail</span>;
+        <span style="color: #F92672;">volatile</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">cursize</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">maxsize</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">elsize</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">consumer_pid</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">producer_evtfd</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">consumer_evtfd</span>;
+        <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">data</span>[0];
+} <span style="color: #66D9EF;">svm_queue_t</span>;
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6d1390f" class="outline-3">
+<h3 id="org6d1390f"><span class="section-number-3">5.2.</span> 接口</h3>
+<div class="outline-text-3" id="text-5-2">
+<dl class="org-dl">
+<dt>分配并初始化svm queue</dt><dd><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">参数</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">nels</td>
+<td class="org-left">queue中的元素数量</td>
+</tr>
+
+<tr>
+<td class="org-left">elsize</td>
+<td class="org-left">queue中的元素大小， 一般为4或calineline-size</td>
+</tr>
+
+<tr>
+<td class="org-left">pid</td>
+<td class="org-left">队列消费者的pid</td>
+</tr>
+
+<tr>
+<td class="org-left">return</td>
+<td class="org-left">新初始化的svn queue</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+在调用此函数前，先将堆切换为svm数据堆。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">svm_queue_t</span> *<span style="color: #A6E22E;">svm_queue_alloc_and_init</span> (<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">nels</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">elsize</span>,<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">consumer_pid</span>);
+</pre>
+</div></dd>
+
+<dt>等待队列事件</dt><dd><p>
+在获取到q-&gt;mutex的前提下调用。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">svm_queue_wait</span> (<span style="color: #66D9EF;">svm_queue_t</span> * <span style="color: #FD971F;">q</span>);
+</pre>
+</div></dd>
+
+<dt>等待队列事件，并设置超时</dt><dd><p>
+在获取到q-&gt;mutex的前提下调用。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">svm_queue_timedwait</span> (<span style="color: #66D9EF;">svm_queue_t</span> * <span style="color: #FD971F;">q</span>, <span style="color: #66D9EF;">double</span> <span style="color: #FD971F;">timeout</span>);
+</pre>
+</div></dd>
+
+<dt>向队列添加元素</dt><dd><div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">svm_queue_add_raw</span> (<span style="color: #66D9EF;">svm_queue_t</span> * <span style="color: #FD971F;">q</span>, <span style="color: #66D9EF;">u8</span> * <span style="color: #FD971F;">elem</span>);
+</pre>
+</div></dd>
+
+<dt>设置生产者event fd</dt><dd><p>
+当生产者产生事件时，会向fd中写入1。
+</p>
+
+<p>
+生产者event fd被设置后，将不再使用队列的condvars字段来通知事件。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">svm_queue_set_producer_event_fd</span> (<span style="color: #66D9EF;">svm_queue_t</span> * <span style="color: #FD971F;">q</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>);
+</pre>
+</div></dd>
+
+<dt>设置消费者event fd</dt><dd><p>
+当消费者要生成一个事件时，向这个fd中写入1。
+</p>
+
+<p>
+虽然实际上，生产者和消费者的fd都指向同一个底层文件描述符，但由于是两个不同进程，其文件描述符表不同。调用者需要确保两个对等点之间正确的交换两个文件描述符。
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">svm_queue_set_consumer_event_fd</span> (<span style="color: #66D9EF;">svm_queue_t</span> * <span style="color: #FD971F;">q</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>);
+</pre>
+</div></dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-orga57e6d9" class="outline-3">
+<h3 id="orga57e6d9"><span class="section-number-3">5.3.</span> 内存结构</h3>
+<div class="outline-text-3" id="text-5-3">
+
+<div id="org76ff662" class="figure">
+<p><img src="./dot/svm_queue.svg" alt="svm_queue.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

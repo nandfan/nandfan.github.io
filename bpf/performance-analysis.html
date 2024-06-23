@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-09-05 Sun 16:29 -->
+<!-- 2024-06-23 Sun 15:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>性能分析</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,75 +191,52 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">性能分析</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgcb152cc">1. Linux 60S分析</a>
+<li><a href="#org7b563d2">1. Linux 60S分析</a>
 <ul>
-<li><a href="#org0784f7b">1.1. uptime</a></li>
-<li><a href="#org099bc03">1.2. dmesg | tail</a></li>
-<li><a href="#org2f34e9c">1.3. vmstat 1</a></li>
-<li><a href="#org580d288">1.4. mpstat -P ALL 1</a></li>
-<li><a href="#org77ad9f0">1.5. pidstat 1</a></li>
-<li><a href="#orgb38b22e">1.6. iostat -xz 1</a></li>
-<li><a href="#org0d149b6">1.7. free -m</a></li>
-<li><a href="#org06eb557">1.8. sar -n DEV 1</a></li>
-<li><a href="#org6a7787f">1.9. sar -n TCP,ETCP 1</a></li>
-<li><a href="#org8ce5b48">1.10. top</a></li>
+<li><a href="#org96987c4">1.1. uptime</a></li>
+<li><a href="#orgb091d19">1.2. dmesg | tail</a></li>
+<li><a href="#org53b0f1e">1.3. vmstat 1</a></li>
+<li><a href="#org3c47f01">1.4. mpstat -P ALL 1</a></li>
+<li><a href="#orga01d779">1.5. pidstat 1</a></li>
+<li><a href="#org9e90c02">1.6. iostat -xz 1</a></li>
+<li><a href="#org8a60cb7">1.7. free -m</a></li>
+<li><a href="#org72603cb">1.8. sar -n DEV 1</a></li>
+<li><a href="#org9a7631d">1.9. sar -n TCP,ETCP 1</a></li>
+<li><a href="#org3398980">1.10. top</a></li>
 </ul>
 </li>
-<li><a href="#org15f1606">2. BCC工具检查清单</a>
+<li><a href="#orgdaaccfb">2. BCC工具检查清单</a>
 <ul>
-<li><a href="#org24057d4">2.1. execsnoop</a></li>
-<li><a href="#org2988680">2.2. opensnoop</a></li>
-<li><a href="#orgb988153">2.3. ext4slower</a></li>
-<li><a href="#org2fd5196">2.4. biolatency</a></li>
-<li><a href="#org93476fa">2.5. biosnoop</a></li>
-<li><a href="#orgb4d8f14">2.6. cachestat</a></li>
-<li><a href="#orgd85ebff">2.7. tcpconnect</a></li>
-<li><a href="#orgc17c51c">2.8. tcpaccept</a></li>
-<li><a href="#org0b5bf0c">2.9. tcpretrans</a></li>
-<li><a href="#org69f173d">2.10. runqlat</a></li>
-<li><a href="#orgb96d422">2.11. profile</a></li>
+<li><a href="#org0369f20">2.1. execsnoop</a></li>
+<li><a href="#org5310734">2.2. opensnoop</a></li>
+<li><a href="#orgb61af73">2.3. ext4slower</a></li>
+<li><a href="#org00f977f">2.4. biolatency</a></li>
+<li><a href="#org0a0e5ea">2.5. biosnoop</a></li>
+<li><a href="#orgcc86f46">2.6. cachestat</a></li>
+<li><a href="#org99f8d97">2.7. tcpconnect</a></li>
+<li><a href="#org7025fc4">2.8. tcpaccept</a></li>
+<li><a href="#orgc3c982b">2.9. tcpretrans</a></li>
+<li><a href="#org35fa1eb">2.10. runqlat</a></li>
+<li><a href="#org514957b">2.11. profile</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgcb152cc" class="outline-2">
-<h2 id="orgcb152cc"><span class="section-number-2">1.</span> Linux 60S分析</h2>
+<div id="outline-container-org7b563d2" class="outline-2">
+<h2 id="org7b563d2"><span class="section-number-2">1.</span> Linux 60S分析</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 在遇到性能问题进行排查时，可以首先尝试使用一下步骤进行排查。
@@ -278,8 +256,8 @@
 </ul>
 </div>
 
-<div id="outline-container-org0784f7b" class="outline-3">
-<h3 id="org0784f7b"><span class="section-number-3">1.1.</span> uptime</h3>
+<div id="outline-container-org96987c4" class="outline-3">
+<h3 id="org96987c4"><span class="section-number-3">1.1.</span> uptime</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-shell">$ uptime
@@ -306,12 +284,12 @@ uptime 可以快速检查系统的平均负载， load average之后的3列数�
 </div>
 </div>
 
-<div id="outline-container-org099bc03" class="outline-3">
-<h3 id="org099bc03"><span class="section-number-3">1.2.</span> dmesg | tail</h3>
+<div id="outline-container-orgb091d19" class="outline-3">
+<h3 id="orgb091d19"><span class="section-number-3">1.2.</span> dmesg | tail</h3>
 </div>
 
-<div id="outline-container-org2f34e9c" class="outline-3">
-<h3 id="org2f34e9c"><span class="section-number-3">1.3.</span> vmstat 1</h3>
+<div id="outline-container-org53b0f1e" class="outline-3">
+<h3 id="org53b0f1e"><span class="section-number-3">1.3.</span> vmstat 1</h3>
 <div class="outline-text-3" id="text-1-3">
 <div class="org-src-container">
 <pre class="src src-shell">$ vmstat 1
@@ -347,8 +325,8 @@ vmstat是虚拟内存统计工具， 参数1代表每隔1秒钟打印一次摘�
 </div>
 </div>
 
-<div id="outline-container-org580d288" class="outline-3">
-<h3 id="org580d288"><span class="section-number-3">1.4.</span> mpstat -P ALL 1</h3>
+<div id="outline-container-org3c47f01" class="outline-3">
+<h3 id="org3c47f01"><span class="section-number-3">1.4.</span> mpstat -P ALL 1</h3>
 <div class="outline-text-3" id="text-1-4">
 <div class="org-src-container">
 <pre class="src src-shell">$ mpstat -P ALL 1
@@ -392,12 +370,12 @@ Average:       3    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00
 </div>
 
 
-<div id="outline-container-org77ad9f0" class="outline-3">
-<h3 id="org77ad9f0"><span class="section-number-3">1.5.</span> pidstat 1</h3>
+<div id="outline-container-orga01d779" class="outline-3">
+<h3 id="orga01d779"><span class="section-number-3">1.5.</span> pidstat 1</h3>
 <div class="outline-text-3" id="text-1-5">
 <div class="org-src-container">
 <pre class="src src-shell">$ pidstat 1
-Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_        (4 CPU)
 
 08:27:34 PM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
 08:27:35 PM     0       757    0.99    0.00    0.00    0.00    0.99     2  Xorg
@@ -431,12 +409,12 @@ pidstat 命令展示每个进程的CPU使用情况，支持滚动输出，能够
 </div>
 
 
-<div id="outline-container-orgb38b22e" class="outline-3">
-<h3 id="orgb38b22e"><span class="section-number-3">1.6.</span> iostat -xz 1</h3>
+<div id="outline-container-org9e90c02" class="outline-3">
+<h3 id="org9e90c02"><span class="section-number-3">1.6.</span> iostat -xz 1</h3>
 <div class="outline-text-3" id="text-1-6">
 <div class="org-src-container">
 <pre class="src src-shell">$ iostat -xz 1
-Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_        (4 CPU)
 
 avg-cpu:  %user   %nice %system %iowait  %steal   %idle
 0.81    0.00    0.35    0.08    0.00   98.76
@@ -481,8 +459,8 @@ Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB
 </div>
 </div>
 
-<div id="outline-container-org0d149b6" class="outline-3">
-<h3 id="org0d149b6"><span class="section-number-3">1.7.</span> free -m</h3>
+<div id="outline-container-org8a60cb7" class="outline-3">
+<h3 id="org8a60cb7"><span class="section-number-3">1.7.</span> free -m</h3>
 <div class="outline-text-3" id="text-1-7">
 <div class="org-src-container">
 <pre class="src src-shell">$ free -m
@@ -498,12 +476,12 @@ Swap:           7628           0        7628
 </div>
 </div>
 
-<div id="outline-container-org06eb557" class="outline-3">
-<h3 id="org06eb557"><span class="section-number-3">1.8.</span> sar -n DEV 1</h3>
+<div id="outline-container-org72603cb" class="outline-3">
+<h3 id="org72603cb"><span class="section-number-3">1.8.</span> sar -n DEV 1</h3>
 <div class="outline-text-3" id="text-1-8">
 <div class="org-src-container">
 <pre class="src src-shell">$ sar -n DEV 1
-Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_        (4 CPU)
 
 08:56:42 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
 08:56:43 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
@@ -538,8 +516,8 @@ sar工具具有不同的运行模式，上述命令使用sar来查看网络设�
 </div>
 </div>
 
-<div id="outline-container-org6a7787f" class="outline-3">
-<h3 id="org6a7787f"><span class="section-number-3">1.9.</span> sar -n TCP,ETCP 1</h3>
+<div id="outline-container-org9a7631d" class="outline-3">
+<h3 id="org9a7631d"><span class="section-number-3">1.9.</span> sar -n TCP,ETCP 1</h3>
 <div class="outline-text-3" id="text-1-9">
 <div class="org-src-container">
 <pre class="src src-shell">$ sar -n TCP,ETCP 1
@@ -584,14 +562,14 @@ Average:         0.00      0.00      0.00      0.00      0.00
 </div>
 </div>
 
-<div id="outline-container-org8ce5b48" class="outline-3">
-<h3 id="org8ce5b48"><span class="section-number-3">1.10.</span> top</h3>
+<div id="outline-container-org3398980" class="outline-3">
+<h3 id="org3398980"><span class="section-number-3">1.10.</span> top</h3>
 </div>
 </div>
 
 
-<div id="outline-container-org15f1606" class="outline-2">
-<h2 id="org15f1606"><span class="section-number-2">2.</span> BCC工具检查清单</h2>
+<div id="outline-container-orgdaaccfb" class="outline-2">
+<h2 id="orgdaaccfb"><span class="section-number-2">2.</span> BCC工具检查清单</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li>execsnoop</li>
@@ -614,55 +592,55 @@ profile
 </ul>
 </div>
 
-<div id="outline-container-org24057d4" class="outline-3">
-<h3 id="org24057d4"><span class="section-number-3">2.1.</span> execsnoop</h3>
+<div id="outline-container-org0369f20" class="outline-3">
+<h3 id="org0369f20"><span class="section-number-3">2.1.</span> execsnoop</h3>
 </div>
 
-<div id="outline-container-org2988680" class="outline-3">
-<h3 id="org2988680"><span class="section-number-3">2.2.</span> opensnoop</h3>
+<div id="outline-container-org5310734" class="outline-3">
+<h3 id="org5310734"><span class="section-number-3">2.2.</span> opensnoop</h3>
 </div>
 
-<div id="outline-container-orgb988153" class="outline-3">
-<h3 id="orgb988153"><span class="section-number-3">2.3.</span> ext4slower</h3>
+<div id="outline-container-orgb61af73" class="outline-3">
+<h3 id="orgb61af73"><span class="section-number-3">2.3.</span> ext4slower</h3>
 </div>
 
-<div id="outline-container-org2fd5196" class="outline-3">
-<h3 id="org2fd5196"><span class="section-number-3">2.4.</span> biolatency</h3>
+<div id="outline-container-org00f977f" class="outline-3">
+<h3 id="org00f977f"><span class="section-number-3">2.4.</span> biolatency</h3>
 </div>
 
-<div id="outline-container-org93476fa" class="outline-3">
-<h3 id="org93476fa"><span class="section-number-3">2.5.</span> biosnoop</h3>
+<div id="outline-container-org0a0e5ea" class="outline-3">
+<h3 id="org0a0e5ea"><span class="section-number-3">2.5.</span> biosnoop</h3>
 </div>
 
-<div id="outline-container-orgb4d8f14" class="outline-3">
-<h3 id="orgb4d8f14"><span class="section-number-3">2.6.</span> cachestat</h3>
+<div id="outline-container-orgcc86f46" class="outline-3">
+<h3 id="orgcc86f46"><span class="section-number-3">2.6.</span> cachestat</h3>
 </div>
 
-<div id="outline-container-orgd85ebff" class="outline-3">
-<h3 id="orgd85ebff"><span class="section-number-3">2.7.</span> tcpconnect</h3>
+<div id="outline-container-org99f8d97" class="outline-3">
+<h3 id="org99f8d97"><span class="section-number-3">2.7.</span> tcpconnect</h3>
 </div>
 
-<div id="outline-container-orgc17c51c" class="outline-3">
-<h3 id="orgc17c51c"><span class="section-number-3">2.8.</span> tcpaccept</h3>
+<div id="outline-container-org7025fc4" class="outline-3">
+<h3 id="org7025fc4"><span class="section-number-3">2.8.</span> tcpaccept</h3>
 </div>
 
-<div id="outline-container-org0b5bf0c" class="outline-3">
-<h3 id="org0b5bf0c"><span class="section-number-3">2.9.</span> tcpretrans</h3>
+<div id="outline-container-orgc3c982b" class="outline-3">
+<h3 id="orgc3c982b"><span class="section-number-3">2.9.</span> tcpretrans</h3>
 </div>
 
-<div id="outline-container-org69f173d" class="outline-3">
-<h3 id="org69f173d"><span class="section-number-3">2.10.</span> runqlat</h3>
+<div id="outline-container-org35fa1eb" class="outline-3">
+<h3 id="org35fa1eb"><span class="section-number-3">2.10.</span> runqlat</h3>
 </div>
 
-<div id="outline-container-orgb96d422" class="outline-3">
-<h3 id="orgb96d422"><span class="section-number-3">2.11.</span> profile</h3>
+<div id="outline-container-org514957b" class="outline-3">
+<h3 id="org514957b"><span class="section-number-3">2.11.</span> profile</h3>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-09-05 Sun 16:29</p>
+<p class="date">Created: 2024-06-23 Sun 15:53</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

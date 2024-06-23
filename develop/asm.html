@@ -3,14 +3,14 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2022-07-30 Sat 12:45 -->
+<!-- 2024-06-23 Sun 15:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>汇编语言</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,108 +191,61 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">汇编语言</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orga7a473a">1. 基础知识</a>
+<li><a href="#org7d8df40">1. 基础知识</a>
 <ul>
-<li><a href="#orgfeea125">1.1. CPU对存储器的读写</a></li>
-<li><a href="#org616fad6">1.2. 地址总线</a></li>
-<li><a href="#orgfe2ce39">1.3. 数据总线</a></li>
-<li><a href="#org86e9507">1.4. 控制总线</a></li>
-<li><a href="#org4bb3af2">1.5. 各类存储器芯片</a></li>
-<li><a href="#org32dcc68">1.6. 内存地址空间</a></li>
+<li><a href="#orgb3645c3">1.1. CPU对存储器的读写</a></li>
+<li><a href="#orgc408385">1.2. 地址总线</a></li>
+<li><a href="#org935ee52">1.3. 数据总线</a></li>
+<li><a href="#org5c1634c">1.4. 控制总线</a></li>
+<li><a href="#org268d0bf">1.5. 各类存储器芯片</a></li>
+<li><a href="#orge9fd5dd">1.6. 内存地址空间</a></li>
 </ul>
 </li>
-<li><a href="#org678f9dd">2. 寄存器</a>
+<li><a href="#org647788b">2. 寄存器</a>
 <ul>
-<li><a href="#orgc120fd5">2.1. 通用寄存器</a></li>
-<li><a href="#org0f035c2">2.2. 字在寄存器中的存储</a></li>
-<li><a href="#org475bd29">2.3. 汇编指令</a></li>
-<li><a href="#org7995261">2.4. 8086CPU给出物理地址的方法</a></li>
-<li><a href="#orgdcbd799">2.5. ”段地址x16+偏移地址=物理地址“的本质含义</a></li>
-<li><a href="#org240cf4f">2.6. 段的概念</a></li>
-<li><a href="#orgc6f51e3">2.7. 段寄存器</a></li>
-<li><a href="#org9ea4fa4">2.8. CS和IP</a></li>
-<li><a href="#org1233c1f">2.9. 修改CS、IP的指令</a></li>
-<li><a href="#org845cc03">2.10. 代码段</a></li>
+<li><a href="#org07a7c30">2.1. 通用寄存器</a></li>
+<li><a href="#orgb731a72">2.2. 字在寄存器中的存储</a></li>
+<li><a href="#orgaf586fc">2.3. 汇编指令</a></li>
+<li><a href="#org082e996">2.4. 8086CPU给出物理地址的方法</a></li>
+<li><a href="#org58a6663">2.5. ”段地址x16+偏移地址=物理地址“的本质含义</a></li>
+<li><a href="#org2be73f1">2.6. 段的概念</a></li>
+<li><a href="#orgfdabda9">2.7. 段寄存器</a></li>
+<li><a href="#org70b32f2">2.8. CS和IP</a></li>
+<li><a href="#orgd8f7c13">2.9. 修改CS、IP的指令</a></li>
+<li><a href="#org93b1441">2.10. 代码段</a></li>
 </ul>
 </li>
-<li><a href="#org9b3b5aa">3. DEBUG程序的使用</a></li>
-<li><a href="#org5da7ae9">4. 寄存器</a>
+<li><a href="#org1cee040">3. DEBUG程序的使用</a></li>
+<li><a href="#org3f9b1eb">4. 寄存器</a>
 <ul>
-<li><a href="#org35a2f24">4.1. 内存中字的存储</a></li>
-<li><a href="#org4fdead9">4.2. DS和[address]</a></li>
-<li><a href="#org9e51a0c">4.3. 字的传送</a></li>
-<li><a href="#org7dc404e">4.4. mov、add、sub指令</a></li>
-<li><a href="#org5134038">4.5. 数据段</a></li>
-<li><a href="#orgd5992e1">4.6. CPU提供的栈机制</a></li>
-<li><a href="#org5490879">4.7. 栈顶越界的问题</a></li>
-<li><a href="#orga7dc5ee">4.8. push、pop指令</a></li>
-<li><a href="#orgd74be29">4.9. 栈段</a></li>
+<li><a href="#orgc1936f1">4.1. 内存中字的存储</a></li>
+<li><a href="#org653b9f9">4.2. DS和[address]</a></li>
+<li><a href="#org2bfce47">4.3. 字的传送</a></li>
+<li><a href="#org2641272">4.4. mov、add、sub指令</a></li>
+<li><a href="#org8c4a7f4">4.5. 数据段</a></li>
+<li><a href="#org9fd5fc8">4.6. CPU提供的栈机制</a></li>
+<li><a href="#org7bdc946">4.7. 栈顶越界的问题</a></li>
+<li><a href="#org0d09210">4.8. push、pop指令</a></li>
+<li><a href="#orgc0aec5d">4.9. 栈段</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orga7a473a" class="outline-2">
-<h2 id="orga7a473a"><span class="section-number-2">1</span> 基础知识</h2>
+<div id="outline-container-org7d8df40" class="outline-2">
+<h2 id="org7d8df40"><span class="section-number-2">1.</span> 基础知识</h2>
 <div class="outline-text-2" id="text-1">
 <ul class="org-ul">
 <li>CPU(Central Processing Unit，中央处理单元)</li>
@@ -311,8 +265,8 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 
-<div id="outline-container-orgfeea125" class="outline-3">
-<h3 id="orgfeea125"><span class="section-number-3">1.1</span> CPU对存储器的读写</h3>
+<div id="outline-container-orgb3645c3" class="outline-3">
+<h3 id="orgb3645c3"><span class="section-number-3">1.1.</span> CPU对存储器的读写</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 CPU要从内存读取数据，首先要指定存储单元的地址。
@@ -338,7 +292,7 @@ CPU从3号单元读取数据的过程如下：
 </p>
 
 
-<div class="figure">
+<div id="org55d1614" class="figure">
 <p><img src="image/asm/cpu-read-mem.png" alt="cpu-read-mem.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>CPU从3号单元读取数据的过程</p>
@@ -353,8 +307,8 @@ CPU从3号单元读取数据的过程如下：
 </div>
 
 
-<div id="outline-container-org616fad6" class="outline-3">
-<h3 id="org616fad6"><span class="section-number-3">1.2</span> 地址总线</h3>
+<div id="outline-container-orgc408385" class="outline-3">
+<h3 id="orgc408385"><span class="section-number-3">1.2.</span> 地址总线</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 CPU通过地址总线指定存储器单元。地址总线能够传送多少个不同信息，CPU就可以寻址多少个存储单元。
@@ -372,8 +326,8 @@ CPU通过地址总线指定存储器单元。地址总线能够传送多少个�
 </div>
 
 
-<div id="outline-container-orgfe2ce39" class="outline-3">
-<h3 id="orgfe2ce39"><span class="section-number-3">1.3</span> 数据总线</h3>
+<div id="outline-container-org935ee52" class="outline-3">
+<h3 id="org935ee52"><span class="section-number-3">1.3.</span> 数据总线</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 数据总线的宽度决定了CPU和外界的数据数据传送速度。8根数据总线一次可以传送8位二进制数据（1字节）。16根数据总线一次可传送2字节。
@@ -394,8 +348,8 @@ CPU通过地址总线指定存储器单元。地址总线能够传送多少个�
 </div>
 
 
-<div id="outline-container-org86e9507" class="outline-3">
-<h3 id="org86e9507"><span class="section-number-3">1.4</span> 控制总线</h3>
+<div id="outline-container-org5c1634c" class="outline-3">
+<h3 id="org5c1634c"><span class="section-number-3">1.4.</span> 控制总线</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 CPU对外部器件的控制通过控制总线进行。控制总线是一些不同控制线的集合。有多少根控制总线，就意味着CPU提供了对外部器件的多少种控制。控制总线的宽度决定了CPU对外部器件的控制能力。
@@ -403,11 +357,11 @@ CPU对外部器件的控制通过控制总线进行。控制总线是一些不�
 </div>
 </div>
 
-<div id="outline-container-org4bb3af2" class="outline-3">
-<h3 id="org4bb3af2"><span class="section-number-3">1.5</span> 各类存储器芯片</h3>
+<div id="outline-container-org268d0bf" class="outline-3">
+<h3 id="org268d0bf"><span class="section-number-3">1.5.</span> 各类存储器芯片</h3>
 <div class="outline-text-3" id="text-1-5">
 
-<div class="figure">
+<div id="org59ab7a9" class="figure">
 <p><img src="image/asm/pc-cache.png" alt="pc-cache.png" />
 </p>
 </div>
@@ -415,18 +369,18 @@ CPU对外部器件的控制通过控制总线进行。控制总线是一些不�
 </div>
 
 
-<div id="outline-container-org32dcc68" class="outline-3">
-<h3 id="org32dcc68"><span class="section-number-3">1.6</span> 内存地址空间</h3>
+<div id="outline-container-orge9fd5dd" class="outline-3">
+<h3 id="orge9fd5dd"><span class="section-number-3">1.6.</span> 内存地址空间</h3>
 <div class="outline-text-3" id="text-1-6">
 <p>
 对于不同的存储器，CPU在操作时都将其作为内存来对待，将它们看作一个有若干存储单元组成的逻辑存储器，这个逻辑存储器就是我们所说的内存地址空间。
 </p>
 
 
-<div class="figure">
+<div id="orgfb84a7e" class="figure">
 <p><img src="image/asm/logical-cache.png" alt="logical-cache.png" />
 </p>
-<p><span class="figure-number">Figure 3: </span>将各类存储器看作一个逻辑存储器</p>
+<p><span class="figure-number">Figure 2: </span>将各类存储器看作一个逻辑存储器</p>
 </div>
 
 
@@ -438,8 +392,8 @@ CPU对外部器件的控制通过控制总线进行。控制总线是一些不�
 </div>
 
 
-<div id="outline-container-org678f9dd" class="outline-2">
-<h2 id="org678f9dd"><span class="section-number-2">2</span> 寄存器</h2>
+<div id="outline-container-org647788b" class="outline-2">
+<h2 id="org647788b"><span class="section-number-2">2.</span> 寄存器</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 CPU由运算器、控制器、寄存器等器件构成，这些器件通过CPU内部总线相连。
@@ -457,8 +411,8 @@ CPU由运算器、控制器、寄存器等器件构成，这些器件通过CPU�
 </div>
 
 
-<div id="outline-container-orgc120fd5" class="outline-3">
-<h3 id="orgc120fd5"><span class="section-number-3">2.1</span> 通用寄存器</h3>
+<div id="outline-container-org07a7c30" class="outline-3">
+<h3 id="org07a7c30"><span class="section-number-3">2.1.</span> 通用寄存器</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 8086CPU的所有寄存器都是16位，可存放2字节。AX、BX、CX、DX用来存放一般数据，称为通用寄存器。
@@ -476,8 +430,8 @@ CPU由运算器、控制器、寄存器等器件构成，这些器件通过CPU�
 </div>
 </div>
 
-<div id="outline-container-org0f035c2" class="outline-3">
-<h3 id="org0f035c2"><span class="section-number-3">2.2</span> 字在寄存器中的存储</h3>
+<div id="outline-container-orgb731a72" class="outline-3">
+<h3 id="orgb731a72"><span class="section-number-3">2.2.</span> 字在寄存器中的存储</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 8086CPU可以一次性处理两种尺寸的数据：
@@ -493,8 +447,8 @@ CPU由运算器、控制器、寄存器等器件构成，这些器件通过CPU�
 </div>
 </div>
 
-<div id="outline-container-org475bd29" class="outline-3">
-<h3 id="org475bd29"><span class="section-number-3">2.3</span> 汇编指令</h3>
+<div id="outline-container-orgaf586fc" class="outline-3">
+<h3 id="orgaf586fc"><span class="section-number-3">2.3.</span> 汇编指令</h3>
 <div class="outline-text-3" id="text-2-3">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -549,8 +503,8 @@ CPU由运算器、控制器、寄存器等器件构成，这些器件通过CPU�
 </div>
 
 
-<div id="outline-container-org7995261" class="outline-3">
-<h3 id="org7995261"><span class="section-number-3">2.4</span> 8086CPU给出物理地址的方法</h3>
+<div id="outline-container-org082e996" class="outline-3">
+<h3 id="org082e996"><span class="section-number-3">2.4.</span> 8086CPU给出物理地址的方法</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 8086CPU是16位的CPU，能够一次处理、传输、暂存信息的最大长度为16位。
@@ -568,10 +522,10 @@ CPU由运算器、控制器、寄存器等器件构成，这些器件通过CPU�
 8086CPU相关部件的逻辑结构：
 </p>
 
-<div class="figure">
+<div id="org4a21cb3" class="figure">
 <p><img src="image/asm/8086cpu-addr.png" alt="8086cpu-addr.png" />
 </p>
-<p><span class="figure-number">Figure 4: </span>8086CPU相关部件的逻辑结构</p>
+<p><span class="figure-number">Figure 3: </span>8086CPU相关部件的逻辑结构</p>
 </div>
 
 <p>
@@ -592,17 +546,17 @@ CPU由运算器、控制器、寄存器等器件构成，这些器件通过CPU�
 </p>
 
 
-<div class="figure">
+<div id="org01e76b0" class="figure">
 <p><img src="image/asm/addr-add-process.png" alt="addr-add-process.png" />
 </p>
-<p><span class="figure-number">Figure 5: </span>地址加法器的工作过程</p>
+<p><span class="figure-number">Figure 4: </span>地址加法器的工作过程</p>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-orgdcbd799" class="outline-3">
-<h3 id="orgdcbd799"><span class="section-number-3">2.5</span> ”段地址x16+偏移地址=物理地址“的本质含义</h3>
+<div id="outline-container-org58a6663" class="outline-3">
+<h3 id="org58a6663"><span class="section-number-3">2.5.</span> ”段地址x16+偏移地址=物理地址“的本质含义</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 CPU在访问内存时，用一个基础地址（段地址x16，即左移4位）和一个相对与基础地址的偏移地址相加，给出内存单元的物理地址。
@@ -615,8 +569,8 @@ CPU在访问内存时，用一个基础地址（段地址x16，即左移4位）�
 </div>
 
 
-<div id="outline-container-org240cf4f" class="outline-3">
-<h3 id="org240cf4f"><span class="section-number-3">2.6</span> 段的概念</h3>
+<div id="outline-container-org2be73f1" class="outline-3">
+<h3 id="org2be73f1"><span class="section-number-3">2.6.</span> 段的概念</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 段的划分来自于CPU，由于8086CPU用”基础地址（段地址x16）+偏移地址=物理地址“的方式给出内存单元的物理地址，使得我们可以用分段的方式来管理内存。
@@ -627,10 +581,10 @@ CPU在访问内存时，用一个基础地址（段地址x16，即左移4位）�
 </p>
 
 
-<div class="figure">
+<div id="org3d849dd" class="figure">
 <p><img src="image/asm/segment-addr.png" alt="segment-addr.png" />
 </p>
-<p><span class="figure-number">Figure 6: </span>分段</p>
+<p><span class="figure-number">Figure 5: </span>分段</p>
 </div>
 
 
@@ -641,8 +595,8 @@ CPU在访问内存时，用一个基础地址（段地址x16，即左移4位）�
 </div>
 
 
-<div id="outline-container-orgc6f51e3" class="outline-3">
-<h3 id="orgc6f51e3"><span class="section-number-3">2.7</span> 段寄存器</h3>
+<div id="outline-container-orgfdabda9" class="outline-3">
+<h3 id="orgfdabda9"><span class="section-number-3">2.7.</span> 段寄存器</h3>
 <div class="outline-text-3" id="text-2-7">
 <p>
 8086CPU有4个段寄存器：CS DS SS ES。
@@ -650,8 +604,8 @@ CPU在访问内存时，用一个基础地址（段地址x16，即左移4位）�
 </div>
 </div>
 
-<div id="outline-container-org9ea4fa4" class="outline-3">
-<h3 id="org9ea4fa4"><span class="section-number-3">2.8</span> CS和IP</h3>
+<div id="outline-container-org70b32f2" class="outline-3">
+<h3 id="org70b32f2"><span class="section-number-3">2.8.</span> CS和IP</h3>
 <div class="outline-text-3" id="text-2-8">
 <p>
 CS和IP是8086CPU中两个最关键的寄存器，指示了CPU当前要读取指令的地址。CS是代码段寄存器，IP为指令指针寄存器。
@@ -662,10 +616,10 @@ CS和IP是8086CPU中两个最关键的寄存器，指示了CPU当前要读取指
 </p>
 
 
-<div class="figure">
+<div id="org349e0d0" class="figure">
 <p><img src="image/asm/8086-re.png" alt="8086-re.png" />
 </p>
-<p><span class="figure-number">Figure 7: </span>8086PC读取和执行指令的相关部件</p>
+<p><span class="figure-number">Figure 6: </span>8086PC读取和执行指令的相关部件</p>
 </div>
 
 <p>
@@ -674,8 +628,8 @@ CS和IP是8086CPU中两个最关键的寄存器，指示了CPU当前要读取指
 </div>
 </div>
 
-<div id="outline-container-org1233c1f" class="outline-3">
-<h3 id="org1233c1f"><span class="section-number-3">2.9</span> 修改CS、IP的指令</h3>
+<div id="outline-container-orgd8f7c13" class="outline-3">
+<h3 id="orgd8f7c13"><span class="section-number-3">2.9.</span> 修改CS、IP的指令</h3>
 <div class="outline-text-3" id="text-2-9">
 <p>
 jmp指令可以修改CS、IP寄存器的值。
@@ -691,8 +645,8 @@ jmp指令可以修改CS、IP寄存器的值。
 </div>
 </div>
 
-<div id="outline-container-org845cc03" class="outline-3">
-<h3 id="org845cc03"><span class="section-number-3">2.10</span> 代码段</h3>
+<div id="outline-container-org93b1441" class="outline-3">
+<h3 id="org93b1441"><span class="section-number-3">2.10.</span> 代码段</h3>
 <div class="outline-text-3" id="text-2-10">
 <p>
 对于8086PC机，编程时可以根据需要将一组内存单元定义为一个段。段长度为N（N&lt;=64KB），存在一组地址连续、起始地址为16的倍数的内存单元中。
@@ -711,8 +665,8 @@ jmp指令可以修改CS、IP寄存器的值。
 </div>
 
 
-<div id="outline-container-org9b3b5aa" class="outline-2">
-<h2 id="org9b3b5aa"><span class="section-number-2">3</span> DEBUG程序的使用</h2>
+<div id="outline-container-org1cee040" class="outline-2">
+<h2 id="org1cee040"><span class="section-number-2">3.</span> DEBUG程序的使用</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 debug是DOS、windows都提供的是模式（8086）程序的调试工具。使用debug可以查看CPU各种寄存器的内容、内存情况和在机器码级跟踪程序的运行。
@@ -735,12 +689,12 @@ Debug常用命令：
 </div>
 
 
-<div id="outline-container-org5da7ae9" class="outline-2">
-<h2 id="org5da7ae9"><span class="section-number-2">4</span> 寄存器</h2>
+<div id="outline-container-org3f9b1eb" class="outline-2">
+<h2 id="org3f9b1eb"><span class="section-number-2">4.</span> 寄存器</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org35a2f24" class="outline-3">
-<h3 id="org35a2f24"><span class="section-number-3">4.1</span> 内存中字的存储</h3>
+<div id="outline-container-orgc1936f1" class="outline-3">
+<h3 id="orgc1936f1"><span class="section-number-3">4.1.</span> 内存中字的存储</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 CPU中用16位寄存器存储一个字，高8位存放高位字节，低8位存放低位字节。
@@ -752,13 +706,13 @@ CPU中用16位寄存器存储一个字，高8位存放高位字节，低8位存�
 </div>
 </div>
 
-<div id="outline-container-org4fdead9" class="outline-3">
-<h3 id="org4fdead9"><span class="section-number-3">4.2</span> DS和[address]</h3>
+<div id="outline-container-org653b9f9" class="outline-3">
+<h3 id="org653b9f9"><span class="section-number-3">4.2.</span> DS和[address]</h3>
 <div class="outline-text-3" id="text-4-2">
 <div class="org-src-container">
-<pre class="src src-asm"><span style="color: #87D700;">mov</span> <span style="color: #FF1493;">bx</span>,1000H
-<span style="color: #87D700;">mov</span> <span style="color: #FF1493;">ds</span>,bx
-<span style="color: #87D700;">mov</span> <span style="color: #FF1493;">al</span>,[0]
+<pre class="src src-asm"><span style="color: #A6E22E;">mov</span> <span style="color: #F92672;">bx</span>,1000H
+<span style="color: #A6E22E;">mov</span> <span style="color: #F92672;">ds</span>,bx
+<span style="color: #A6E22E;">mov</span> <span style="color: #F92672;">al</span>,[0]
 </pre>
 </div>
 
@@ -772,12 +726,12 @@ CPU中用16位寄存器存储一个字，高8位存放高位字节，低8位存�
 </div>
 </div>
 
-<div id="outline-container-org9e51a0c" class="outline-3">
-<h3 id="org9e51a0c"><span class="section-number-3">4.3</span> 字的传送</h3>
+<div id="outline-container-org2bfce47" class="outline-3">
+<h3 id="org2bfce47"><span class="section-number-3">4.3.</span> 字的传送</h3>
 </div>
 
-<div id="outline-container-org7dc404e" class="outline-3">
-<h3 id="org7dc404e"><span class="section-number-3">4.4</span> mov、add、sub指令</h3>
+<div id="outline-container-org2641272" class="outline-3">
+<h3 id="org2641272"><span class="section-number-3">4.4.</span> mov、add、sub指令</h3>
 <div class="outline-text-3" id="text-4-4">
 <p>
 mov指令形式：
@@ -816,8 +770,8 @@ sub指令形式：
 </div>
 </div>
 
-<div id="outline-container-org5134038" class="outline-3">
-<h3 id="org5134038"><span class="section-number-3">4.5</span> 数据段</h3>
+<div id="outline-container-org8c4a7f4" class="outline-3">
+<h3 id="org8c4a7f4"><span class="section-number-3">4.5.</span> 数据段</h3>
 <div class="outline-text-3" id="text-4-5">
 <p>
 ds寄存器存放数据段的段地址。
@@ -825,8 +779,8 @@ ds寄存器存放数据段的段地址。
 </div>
 </div>
 
-<div id="outline-container-orgd5992e1" class="outline-3">
-<h3 id="orgd5992e1"><span class="section-number-3">4.6</span> CPU提供的栈机制</h3>
+<div id="outline-container-org9fd5fc8" class="outline-3">
+<h3 id="org9fd5fc8"><span class="section-number-3">4.6.</span> CPU提供的栈机制</h3>
 <div class="outline-text-3" id="text-4-6">
 <p>
 8086CPU提供入栈和出栈指令，最基本的两个是 push和pop 。 例如 push ax 表示将ax寄存器入栈，pop ax 表示从栈顶取出数据存入ax。 8086CPU的入栈和出栈都是以 字 为单位进行的。
@@ -836,10 +790,10 @@ ds寄存器存放数据段的段地址。
 8086CPU的栈操作：
 </p>
 
-<div class="figure">
+<div id="org3798316" class="figure">
 <p><img src="image/asm/8086-stack.png" alt="8086-stack.png" />
 </p>
-<p><span class="figure-number">Figure 8: </span>8086CPU的栈操作</p>
+<p><span class="figure-number">Figure 7: </span>8086CPU的栈操作</p>
 </div>
 
 
@@ -855,7 +809,7 @@ push ax 的执行步骤：
 <li>将ax中的内容送入SS:SP指向的内存单元处，SS:SP此时指向的新栈顶。</li>
 </ol>
 
-<div class="figure">
+<div id="orgf2a316c" class="figure">
 <p><img src="image/asm/push-ing.png" alt="push-ing.png" />
 </p>
 </div>
@@ -863,8 +817,8 @@ push ax 的执行步骤：
 </div>
 
 
-<div id="outline-container-org5490879" class="outline-3">
-<h3 id="org5490879"><span class="section-number-3">4.7</span> 栈顶越界的问题</h3>
+<div id="outline-container-org7bdc946" class="outline-3">
+<h3 id="org7bdc946"><span class="section-number-3">4.7.</span> 栈顶越界的问题</h3>
 <div class="outline-text-3" id="text-4-7">
 <p>
 8086CPU中需要注意栈顶越界的问题；执行出栈操作时也要注意，防止栈空的时候继续出栈而导致的超界。
@@ -872,8 +826,8 @@ push ax 的执行步骤：
 </div>
 </div>
 
-<div id="outline-container-orga7dc5ee" class="outline-3">
-<h3 id="orga7dc5ee"><span class="section-number-3">4.8</span> push、pop指令</h3>
+<div id="outline-container-org0d09210" class="outline-3">
+<h3 id="org0d09210"><span class="section-number-3">4.8.</span> push、pop指令</h3>
 <div class="outline-text-3" id="text-4-8">
 <p>
 push和pop指令形式：
@@ -898,8 +852,8 @@ push和pop指令与mov指令不同，CPU执行mov指令只需要一步操作，�
 </div>
 </div>
 
-<div id="outline-container-orgd74be29" class="outline-3">
-<h3 id="orgd74be29"><span class="section-number-3">4.9</span> 栈段</h3>
+<div id="outline-container-orgc0aec5d" class="outline-3">
+<h3 id="orgc0aec5d"><span class="section-number-3">4.9.</span> 栈段</h3>
 <div class="outline-text-3" id="text-4-9">
 <p>
 如果将 10000H～1FFFFH 这段空间当作栈段，初始状态栈是空的，此时SS=1000H，SP=0。（SP指向栈顶的下一个单元）。
@@ -915,8 +869,8 @@ CPU将某段内存当作代码，是由于CS:IP的指向；CPU将某段内存当
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2022-07-30 Sat 12:45</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

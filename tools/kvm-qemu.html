@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2024-06-23 Sun 15:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>KVM</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,61 +191,38 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">KVM</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org2a62898">1. 安装过程</a></li>
-<li><a href="#org0f27804">2. vrish操作</a></li>
-<li><a href="#org448a99d">3. 硬件直通</a>
+<li><a href="#org9c6d141">1. 安装过程</a></li>
+<li><a href="#org3f7af19">2. vrish操作</a></li>
+<li><a href="#org88ebb98">3. 硬件直通</a>
 <ul>
-<li><a href="#orge14e6dd">3.1. PCI直通</a>
+<li><a href="#org791cf95">3.1. PCI直通</a>
 <ul>
-<li><a href="#orga000870">3.1.1. 前期准备</a></li>
-<li><a href="#orgc7ee530">3.1.2. 直通nvme步骤</a></li>
-<li><a href="#org2aac883">3.1.3. nvme 引导(设备中存在系统)</a></li>
+<li><a href="#orgb87312a">3.1.1. 前期准备</a></li>
+<li><a href="#org244fafd">3.1.2. 直通nvme步骤</a></li>
+<li><a href="#orgefc0a8a">3.1.3. nvme 引导(设备中存在系统)</a></li>
 </ul>
 </li>
-<li><a href="#org2f2792e">3.2. 显卡直通</a></li>
+<li><a href="#org10d913f">3.2. 显卡直通</a></li>
 </ul>
 </li>
-<li><a href="#org88a054f">4. 问题记录</a></li>
+<li><a href="#org1542771">4. 问题记录</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org2a62898" class="outline-2">
-<h2 id="org2a62898"><span class="section-number-2">1</span> 安装过程</h2>
+<div id="outline-container-org9c6d141" class="outline-2">
+<h2 id="org9c6d141"><span class="section-number-2">1.</span> 安装过程</h2>
 <div class="outline-text-2" id="text-1">
 <ul class="org-ul">
 <li>安装命令</li>
@@ -284,21 +262,21 @@ sudo virsh net-autostart default
 </div>
 
 
-<div id="outline-container-org0f27804" class="outline-2">
-<h2 id="org0f27804"><span class="section-number-2">2</span> vrish操作</h2>
+<div id="outline-container-org3f7af19" class="outline-2">
+<h2 id="org3f7af19"><span class="section-number-2">2.</span> vrish操作</h2>
 </div>
 
 
-<div id="outline-container-org448a99d" class="outline-2">
-<h2 id="org448a99d"><span class="section-number-2">3</span> 硬件直通</h2>
+<div id="outline-container-org88ebb98" class="outline-2">
+<h2 id="org88ebb98"><span class="section-number-2">3.</span> 硬件直通</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-orge14e6dd" class="outline-3">
-<h3 id="orge14e6dd"><span class="section-number-3">3.1</span> PCI直通</h3>
+<div id="outline-container-org791cf95" class="outline-3">
+<h3 id="org791cf95"><span class="section-number-3">3.1.</span> PCI直通</h3>
 <div class="outline-text-3" id="text-3-1">
 </div>
-<div id="outline-container-orga000870" class="outline-4">
-<h4 id="orga000870"><span class="section-number-4">3.1.1</span> 前期准备</h4>
+<div id="outline-container-orgb87312a" class="outline-4">
+<h4 id="orgb87312a"><span class="section-number-4">3.1.1.</span> 前期准备</h4>
 <div class="outline-text-4" id="text-3-1-1">
 <p>
 在bios中开启 <code>VT-d或者AMD-Vi</code>, 并且开启内核的 <code>iommu</code>.
@@ -333,8 +311,8 @@ amd cpu 添加: <code>amd_iommu=on</code>
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=5
 GRUB_DISTRIBUTOR=`lsb_release -i -s 2&gt; /dev/null || echo Debian`
-GRUB_CMDLINE_LINUX_DEFAULT=<span style="color: #CDC673;">"quiet amd_iommu=on"</span>
-GRUB_CMDLINE_LINUX=<span style="color: #CDC673;">""</span>
+GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on"
+GRUB_CMDLINE_LINUX=""
 </pre>
 </div>
 
@@ -356,15 +334,15 @@ GRUB_CMDLINE_LINUX=<span style="color: #CDC673;">""</span>
 </div>
 </div>
 
-<div id="outline-container-orgc7ee530" class="outline-4">
-<h4 id="orgc7ee530"><span class="section-number-4">3.1.2</span> 直通nvme步骤</h4>
+<div id="outline-container-org244fafd" class="outline-4">
+<h4 id="org244fafd"><span class="section-number-4">3.1.2.</span> 直通nvme步骤</h4>
 <div class="outline-text-4" id="text-3-1-2">
 <ul class="org-ul">
 <li>首先查找设备的pci</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-shell">$ sudo nvme list-subsys                 <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#26174;&#31034;&#20449;&#24687;&#20013;&#21253;&#21547;&#20102;pic&#21495;</span>
-$ virsh nodedev-list --tree |grep pci   <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#20174;&#21015;&#34920;&#20013;&#25214;&#21040;&#23545;&#24212;&#30340;pic, &#22797;&#21046;&#21517;&#31216; e.g. pci_xxxx_xx_xx_x</span>
+<pre class="src src-shell">$ sudo nvme list-subsys                 <span style="color: #75715E;">#</span><span style="color: #75715E;">&#26174;&#31034;&#20449;&#24687;&#20013;&#21253;&#21547;&#20102;pic&#21495;</span>
+$ virsh nodedev-list --tree |grep pci   <span style="color: #75715E;">#</span><span style="color: #75715E;">&#20174;&#21015;&#34920;&#20013;&#25214;&#21040;&#23545;&#24212;&#30340;pic, &#22797;&#21046;&#21517;&#31216; e.g. pci_xxxx_xx_xx_x</span>
   +- pci_0000_00_00_0
   +- pci_0000_00_00_2
   +- pci_0000_00_01_0
@@ -386,17 +364,17 @@ $ virsh nodedev-list --tree |grep pci   <span style="color: #8B8878;">#</span><s
   &lt;driver&gt;
     &lt;name&gt;vfio-pci&lt;/name&gt;
   &lt;/driver&gt;
-  &lt;capability <span style="color: #FF8C00; font-weight: bold;">type</span>=<span style="color: #CDC673;">'pci'</span>&gt;
+  &lt;capability <span style="color: #FD971F;">type</span>=<span style="color: #E6DB74;">'pci'</span>&gt;
     &lt;domain&gt;0&lt;/domain&gt;
     &lt;bus&gt;1&lt;/bus&gt;
     &lt;slot&gt;0&lt;/slot&gt;
-    &lt;<span style="color: #FF1493;">function</span>&gt;0&lt;/function&gt;
-    &lt;product <span style="color: #FF8C00; font-weight: bold;">id</span>=<span style="color: #CDC673;">'0x5013'</span> /&gt;
-    &lt;vendor <span style="color: #FF8C00; font-weight: bold;">id</span>=<span style="color: #CDC673;">'0x1987'</span> /&gt;
-    &lt;iommuGroup <span style="color: #FF8C00; font-weight: bold;">number</span>=<span style="color: #CDC673;">'12'</span>&gt;
-      &lt;address <span style="color: #FF8C00; font-weight: bold;">domain</span>=<span style="color: #CDC673;">'0x0000'</span> <span style="color: #FF8C00; font-weight: bold;">bus</span>=<span style="color: #CDC673;">'0x01'</span> <span style="color: #FF8C00; font-weight: bold;">slot</span>=<span style="color: #CDC673;">'0x00'</span> <span style="color: #FF8C00; font-weight: bold;">function</span>=<span style="color: #CDC673;">'0x0'</span>/&gt;
+    &lt;<span style="color: #F92672;">function</span>&gt;0&lt;/function&gt;
+    &lt;product <span style="color: #FD971F;">id</span>=<span style="color: #E6DB74;">'0x5013'</span> /&gt;
+    &lt;vendor <span style="color: #FD971F;">id</span>=<span style="color: #E6DB74;">'0x1987'</span> /&gt;
+    &lt;iommuGroup <span style="color: #FD971F;">number</span>=<span style="color: #E6DB74;">'12'</span>&gt;
+      &lt;address <span style="color: #FD971F;">domain</span>=<span style="color: #E6DB74;">'0x0000'</span> <span style="color: #FD971F;">bus</span>=<span style="color: #E6DB74;">'0x01'</span> <span style="color: #FD971F;">slot</span>=<span style="color: #E6DB74;">'0x00'</span> <span style="color: #FD971F;">function</span>=<span style="color: #E6DB74;">'0x0'</span>/&gt;
     &lt;/iommuGroup&gt;
-    &lt;numa <span style="color: #FF8C00; font-weight: bold;">node</span>=<span style="color: #CDC673;">'0'</span>/&gt;
+    &lt;numa <span style="color: #FD971F;">node</span>=<span style="color: #E6DB74;">'0'</span>/&gt;
   &lt;/capability&gt;
 &lt;/device&gt;
 </pre>
@@ -446,15 +424,15 @@ $ virsh nodedev-list --tree |grep pci   <span style="color: #8B8878;">#</span><s
 </div>
 </div>
 
-<div id="outline-container-org2aac883" class="outline-4">
-<h4 id="org2aac883"><span class="section-number-4">3.1.3</span> nvme 引导(设备中存在系统)</h4>
+<div id="outline-container-orgefc0a8a" class="outline-4">
+<h4 id="orgefc0a8a"><span class="section-number-4">3.1.3.</span> nvme 引导(设备中存在系统)</h4>
 <div class="outline-text-4" id="text-3-1-3">
 <p>
 如果nvme中存在系统, 则无需重新安装, 直接引导启动, 通过 <code>virt-manager</code> 设置刚刚添加的 pci作为boot 引导, 或者修改xml配置文件
 </p>
 
 
-<div id="org4aa5f05" class="figure">
+<div id="org5aca8a7" class="figure">
 <p><img src="./image/kvm-nvme_boot.png" alt="kvm-nvme_boot.png" />
 </p>
 </div>
@@ -467,7 +445,7 @@ $ virsh nodedev-list --tree |grep pci   <span style="color: #8B8878;">#</span><s
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">$ sudo apt install ovmf                         <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">debian or ubuntu</span>
+<pre class="src src-shell">$ sudo apt install ovmf                         <span style="color: #75715E;"># </span><span style="color: #75715E;">debian or ubuntu</span>
 </pre>
 </div>
 
@@ -489,7 +467,7 @@ kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添
 </p>
 
 
-<div id="orgf694522" class="figure">
+<div id="orgdeb8e7b" class="figure">
 <p><img src="./image/kvm-boot_menu.png" alt="kvm-boot_menu.png" />
 </p>
 </div>
@@ -499,7 +477,7 @@ kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添
 </p>
 
 
-<div id="org73397aa" class="figure">
+<div id="orgc7126f9" class="figure">
 <p><img src="./image/kvm-boot0.png" alt="kvm-boot0.png" />
 </p>
 </div>
@@ -509,7 +487,7 @@ kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添
 </p>
 
 
-<div id="org242def4" class="figure">
+<div id="org005120d" class="figure">
 <p><img src="./image/kvm-boot1.png" alt="kvm-boot1.png" />
 </p>
 </div>
@@ -519,7 +497,7 @@ kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添
 </p>
 
 
-<div id="org40d7e04" class="figure">
+<div id="org2186120" class="figure">
 <p><img src="./image/kvm-boot2.png" alt="kvm-boot2.png" />
 </p>
 </div>
@@ -529,7 +507,7 @@ kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添
 </p>
 
 
-<div id="orgc118eae" class="figure">
+<div id="orgc3d9a60" class="figure">
 <p><img src="./image/kvm-boot3.png" alt="kvm-boot3.png" />
 </p>
 </div>
@@ -539,7 +517,7 @@ kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添
 </p>
 
 
-<div id="orgba4ed4c" class="figure">
+<div id="orgd7d8432" class="figure">
 <p><img src="./image/kvm-boot4.png" alt="kvm-boot4.png" />
 </p>
 </div>
@@ -549,28 +527,28 @@ kvm默认是BIOS启动, 如果要修改为UEFI启动, 需要修改xml文件, 添
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-shell">$ efibootmgr                  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#21015;&#20986;boot&#24341;&#23548;&#39034;&#24207;&#21015;&#34920;</span>
-$ efibootmgr -0 xxxx,xxxx,xxxx.......   <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#35843;&#25972;&#24341;&#23548;&#39034;&#24207;</span>
+<pre class="src src-shell">$ efibootmgr                  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#21015;&#20986;boot&#24341;&#23548;&#39034;&#24207;&#21015;&#34920;</span>
+$ efibootmgr -0 xxxx,xxxx,xxxx.......   <span style="color: #75715E;"># </span><span style="color: #75715E;">&#35843;&#25972;&#24341;&#23548;&#39034;&#24207;</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org2f2792e" class="outline-3">
-<h3 id="org2f2792e"><span class="section-number-3">3.2</span> 显卡直通</h3>
+<div id="outline-container-org10d913f" class="outline-3">
+<h3 id="org10d913f"><span class="section-number-3">3.2.</span> 显卡直通</h3>
 </div>
 </div>
 
 
-<div id="outline-container-org88a054f" class="outline-2">
-<h2 id="org88a054f"><span class="section-number-2">4</span> 问题记录</h2>
+<div id="outline-container-org1542771" class="outline-2">
+<h2 id="org1542771"><span class="section-number-2">4.</span> 问题记录</h2>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

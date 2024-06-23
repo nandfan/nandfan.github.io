@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-31 Fri 22:48 -->
+<!-- 2024-06-23 Sun 15:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux网络子系统结构关系</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,83 +191,36 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">Linux网络子系统结构关系</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgb517daa">1. socket函数调用</a></li>
-<li><a href="#org3793641">2. socket层，传输层，网络层</a>
+<li><a href="#org666246b">1. socket函数调用</a></li>
+<li><a href="#org5611f64">2. socket层，传输层，网络层</a>
 <ul>
-<li><a href="#orgca418f4">2.1. 创建socket</a></li>
-<li><a href="#org89f6c85">2.2. 各结构关联关系</a></li>
-<li><a href="#org90ac86e">2.3. inet_create</a></li>
+<li><a href="#org449366b">2.1. 创建socket</a></li>
+<li><a href="#org8ce50e8">2.2. 各结构关联关系</a></li>
+<li><a href="#orga1d0840">2.3. inet_create</a></li>
 </ul>
 </li>
-<li><a href="#org67b528a">3. 协议处理函数</a></li>
+<li><a href="#org131e799">3. 协议处理函数</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgb517daa" class="outline-2">
-<h2 id="orgb517daa"><span class="section-number-2">1</span> socket函数调用</h2>
+<div id="outline-container-org666246b" class="outline-2">
+<h2 id="org666246b"><span class="section-number-2">1.</span> socket函数调用</h2>
 <div class="outline-text-2" id="text-1">
 
-<div class="figure">
-<p><img src="dot/net/sys-socketcall.png" alt="sys-socketcall.png" />
+<div id="org5cdc000" class="figure">
+<p><img src="dot/net/sys-socketcall.svg" alt="sys-socketcall.svg" class="org-svg" />
 </p>
 </div>
 
@@ -276,27 +230,27 @@ for the JavaScript code in this tag.
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_proto_family</span> {
-	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">family</span>;
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">create</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net</span> *<span style="color: #FF8C00;">net</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_proto_family</span> {
+        <span style="color: #66D9EF;">int</span>             <span style="color: #FD971F;">family</span>;
+        <span style="color: #66D9EF;">int</span>             (*<span style="color: #A6E22E;">create</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net</span> *<span style="color: #FD971F;">net</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">protocol</span>);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">module</span>   *<span style="color: #FD971F;">owner</span>;
 };
 
-<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">sock_register</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_proto_family</span> *<span style="color: #FF8C00;">ops</span>);
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">sock_register</span>(<span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_proto_family</span> *<span style="color: #FD971F;">ops</span>);
 </pre>
 </div>
 
 
-<div class="figure">
-<p><img src="dot/net/net-proto-family.png" alt="net-proto-family.png" />
+<div id="orgdd97db4" class="figure">
+<p><img src="dot/net/net-proto-family.svg" alt="net-proto-family.svg" class="org-svg" />
 </p>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-org3793641" class="outline-2">
-<h2 id="org3793641"><span class="section-number-2">2</span> socket层，传输层，网络层</h2>
+<div id="outline-container-org5611f64" class="outline-2">
+<h2 id="org5611f64"><span class="section-number-2">2.</span> socket层，传输层，网络层</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 socket 层到传输层的接口通过 struct proto 结构定义。
@@ -317,34 +271,34 @@ socket 层到传输层的接口通过 struct proto 结构定义。
 </ul>
 </div>
 
-<div id="outline-container-orgca418f4" class="outline-3">
-<h3 id="orgca418f4"><span class="section-number-3">2.1</span> 创建socket</h3>
+<div id="outline-container-org449366b" class="outline-3">
+<h3 id="org449366b"><span class="section-number-3">2.1.</span> 创建socket</h3>
 <div class="outline-text-3" id="text-2-1">
 
-<div class="figure">
+<div id="orgc5d8adc" class="figure">
 <p><img src="plantuml/net/socket-create.png" alt="socket-create.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org89f6c85" class="outline-3">
-<h3 id="org89f6c85"><span class="section-number-3">2.2</span> 各结构关联关系</h3>
+<div id="outline-container-org8ce50e8" class="outline-3">
+<h3 id="org8ce50e8"><span class="section-number-3">2.2.</span> 各结构关联关系</h3>
 <div class="outline-text-3" id="text-2-2">
 
-<div class="figure">
-<p><img src="dot/net/inet-protosw.png" alt="inet-protosw.png" />
+<div id="orga7ef195" class="figure">
+<p><img src="dot/net/inet-protosw.svg" alt="inet-protosw.svg" class="org-svg" />
 </p>
 </div>
 </div>
 </div>
 
 
-<div id="outline-container-org90ac86e" class="outline-3">
-<h3 id="org90ac86e"><span class="section-number-3">2.3</span> inet_create</h3>
+<div id="outline-container-orga1d0840" class="outline-3">
+<h3 id="orga1d0840"><span class="section-number-3">2.3.</span> inet_create</h3>
 <div class="outline-text-3" id="text-2-3">
 
-<div class="figure">
+<div id="orge7e05a4" class="figure">
 <p><img src="plantuml/net/inet-create.png" alt="inet-create.png" />
 </p>
 </div>
@@ -353,8 +307,8 @@ socket 层到传输层的接口通过 struct proto 结构定义。
 </div>
 
 
-<div id="outline-container-org67b528a" class="outline-2">
-<h2 id="org67b528a"><span class="section-number-2">3</span> 协议处理函数</h2>
+<div id="outline-container-org131e799" class="outline-2">
+<h2 id="org131e799"><span class="section-number-2">3.</span> 协议处理函数</h2>
 <div class="outline-text-2" id="text-3">
 <ul class="org-ul">
 <li>inet_add_protocol</li>
@@ -366,18 +320,18 @@ socket 层到传输层的接口通过 struct proto 结构定义。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> <span style="color: #FF8C00;">tcp_protocol</span> = {
-	.handler =      tcp_v4_rcv,
-	.err_handler =  tcp_v4_err,
-	.gso_send_check = tcp_v4_gso_send_check,
-	.gso_segment =  tcp_tso_segment,
-	.no_policy =    1,
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_protocol</span> <span style="color: #FD971F;">tcp_protocol</span> = {
+        .handler =      tcp_v4_rcv,
+        .err_handler =  tcp_v4_err,
+        .gso_send_check = tcp_v4_gso_send_check,
+        .gso_segment =  tcp_tso_segment,
+        .no_policy =    1,
 };
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> <span style="color: #FF8C00;">udp_protocol</span> = {
-	.handler =      udp_rcv,
-	.err_handler =  udp_err,
-	.no_policy =    1,
+<span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_protocol</span> <span style="color: #FD971F;">udp_protocol</span> = {
+        .handler =      udp_rcv,
+        .err_handler =  udp_err,
+        .no_policy =    1,
 };
 
 inet_add_protocol(&amp;icmp_protocol, IPPROTO_ICMP);
@@ -390,7 +344,7 @@ inet_add_protocol(&amp;sctp_protocol, IPPROTO_SCTP);
 </div>
 
 
-<div class="figure">
+<div id="orgc67ce08" class="figure">
 <p><img src="plantuml/net/ip-local-deliver-finish.png" alt="ip-local-deliver-finish.png" />
 </p>
 </div>
@@ -400,8 +354,8 @@ inet_add_protocol(&amp;sctp_protocol, IPPROTO_SCTP);
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-31 Fri 22:48</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

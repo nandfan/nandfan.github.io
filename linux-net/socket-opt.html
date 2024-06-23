@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2022-04-25 Mon 22:45 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>套接口选项</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,121 +191,74 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">套接口选项</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orga5a8236">1. setsockopt</a></li>
-<li><a href="#orgb1e933b">2. ioctl</a>
+<li><a href="#org7f4bd2d">1. setsockopt</a></li>
+<li><a href="#orgbb9c865">2. ioctl</a>
 <ul>
-<li><a href="#org1afa5c5">2.1. ioctl在文件系统内的调用过程</a></li>
-<li><a href="#orgee0cdf1">2.2. 套接口文件ioctl调用接口的实现</a></li>
-<li><a href="#orgb613bd8">2.3. 套接口层的实现</a></li>
+<li><a href="#org4138769">2.1. ioctl在文件系统内的调用过程</a></li>
+<li><a href="#org679e119">2.2. 套接口文件ioctl调用接口的实现</a></li>
+<li><a href="#orgc470b91">2.3. 套接口层的实现</a></li>
 </ul>
 </li>
-<li><a href="#org30ade46">3. getsockname</a></li>
-<li><a href="#org207aa43">4. getpeername</a></li>
+<li><a href="#org7174c56">3. getsockname</a></li>
+<li><a href="#org79cda92">4. getpeername</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orga5a8236" class="outline-2">
-<h2 id="orga5a8236"><span class="section-number-2">1</span> setsockopt</h2>
+<div id="outline-container-org7f4bd2d" class="outline-2">
+<h2 id="org7f4bd2d"><span class="section-number-2">1.</span> setsockopt</h2>
 <div class="outline-text-2" id="text-1">
 
-<div class="figure">
+<div id="org8eaa55b" class="figure">
 <p><img src="image/socket-opt/setsockopt.png" alt="setsockopt.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>setsockopt系统调用</p>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      Set a socket option. Because we don't know the option lengths we have</span>
-<span style="color: #8B8878;"> *      to pass the user mode parameter for the protocols to sort out.</span>
-<span style="color: #8B8878;"> */</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      Set a socket option. Because we don't know the option lengths we have</span>
+<span style="color: #75715E;"> *      to pass the user mode parameter for the protocols to sort out.</span>
+<span style="color: #75715E;"> */</span>
 
-asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_setsockopt</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">level</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optname</span>,
-			       <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *optval, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">optlen</span>)
+asmlinkage <span style="color: #66D9EF;">long</span> <span style="color: #A6E22E;">sys_setsockopt</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">level</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">optname</span>,
+                               <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">__user</span> *optval, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">optlen</span>)
 {
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">fput_needed</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">err</span>, <span style="color: #FD971F;">fput_needed</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>;
 
-	<span style="color: #FF1493;">if</span> (optlen &lt; 0)
-		<span style="color: #FF1493;">return</span> -EINVAL;
+        <span style="color: #F92672;">if</span> (optlen &lt; 0)
+                <span style="color: #F92672;">return</span> -EINVAL;
 
-	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
-	<span style="color: #FF1493;">if</span> (sock != <span style="color: #AF87FF;">NULL</span>) {
-		err = security_socket_setsockopt(sock, level, optname);
-		<span style="color: #FF1493;">if</span> (err)
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
+        sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+        <span style="color: #F92672;">if</span> (sock != <span style="color: #AE81FF;">NULL</span>) {
+                err = security_socket_setsockopt(sock, level, optname);
+                <span style="color: #F92672;">if</span> (err)
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_put</span>;
 
-		<span style="color: #FF1493;">if</span> (level == SOL_SOCKET) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36890;&#29992;&#30340;&#22871;&#25509;&#21475;&#36873;&#39033;</span>
-			err =
-			    sock_setsockopt(sock, level, optname, optval,
-					    optlen);
-		<span style="color: #FF1493;">else</span>  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21542;&#21017;&#35843;&#29992;&#22871;&#25509;&#21475;&#23545;&#24212;&#30340; proto_ops &#32467;&#26500;&#30340;setsockopt&#20989;&#25968;</span>
-			err =
-			    sock-&gt;ops-&gt;setsockopt(sock, level, optname, optval,
-						  optlen);
-<span style="color: #AF87FF;">out_put</span>:
-		fput_light(sock-&gt;file, fput_needed);
-	}
-	<span style="color: #FF1493;">return</span> err;
+                <span style="color: #F92672;">if</span> (level == SOL_SOCKET) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36890;&#29992;&#30340;&#22871;&#25509;&#21475;&#36873;&#39033;</span>
+                        err =
+                            sock_setsockopt(sock, level, optname, optval,
+                                            optlen);
+                <span style="color: #F92672;">else</span>  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21542;&#21017;&#35843;&#29992;&#22871;&#25509;&#21475;&#23545;&#24212;&#30340; proto_ops &#32467;&#26500;&#30340;setsockopt&#20989;&#25968;</span>
+                        err =
+                            sock-&gt;ops-&gt;setsockopt(sock, level, optname, optval,
+                                                  optlen);
+<span style="color: #AE81FF;">out_put</span>:
+                fput_light(sock-&gt;file, fput_needed);
+        }
+        <span style="color: #F92672;">return</span> err;
 }
 </pre>
 </div>
@@ -413,19 +367,19 @@ SO_LINGER 设置或者获取关闭套接口的延迟时间值。
 </div>
 </div>
 
-<div id="outline-container-orgb1e933b" class="outline-2">
-<h2 id="orgb1e933b"><span class="section-number-2">2</span> ioctl</h2>
+<div id="outline-container-orgbb9c865" class="outline-2">
+<h2 id="orgbb9c865"><span class="section-number-2">2.</span> ioctl</h2>
 <div class="outline-text-2" id="text-2">
 
-<div class="figure">
+<div id="org43046b4" class="figure">
 <p><img src="image/socket-opt/ioctl.png" alt="ioctl.png" />
 </p>
 <p><span class="figure-number">Figure 2: </span>ioctl系统调用流程</p>
 </div>
 </div>
 
-<div id="outline-container-org1afa5c5" class="outline-3">
-<h3 id="org1afa5c5"><span class="section-number-3">2.1</span> ioctl在文件系统内的调用过程</h3>
+<div id="outline-container-org4138769" class="outline-3">
+<h3 id="org4138769"><span class="section-number-3">2.1.</span> ioctl在文件系统内的调用过程</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 ioctl系统调用 -&gt;  vfs_ioctl -&gt; do_ioctl -&gt; sock_file_ops -&gt; ioctl
@@ -437,156 +391,156 @@ ioctl系统调用 -&gt;  vfs_ioctl -&gt; do_ioctl -&gt; sock_file_ops -&gt; ioct
 </div>
 </div>
 
-<div id="outline-container-orgee0cdf1" class="outline-3">
-<h3 id="orgee0cdf1"><span class="section-number-3">2.2</span> 套接口文件ioctl调用接口的实现</h3>
+<div id="outline-container-org679e119" class="outline-3">
+<h3 id="org679e119"><span class="section-number-3">2.2.</span> 套接口文件ioctl调用接口的实现</h3>
 <div class="outline-text-3" id="text-2-2">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      With an ioctl, arg may well be a user mode pointer, but we don't know</span>
-<span style="color: #8B8878;"> *      what to do with it - that's up to the protocol still.</span>
-<span style="color: #8B8878;"> */</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      With an ioctl, arg may well be a user mode pointer, but we don't know</span>
+<span style="color: #75715E;"> *      what to do with it - that's up to the protocol still.</span>
+<span style="color: #75715E;"> */</span>
 
-<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sock_ioctl</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #FF8C00;">cmd</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>)
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">long</span> <span style="color: #A6E22E;">sock_ioctl</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file</span> *<span style="color: #FD971F;">file</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #FD971F;">cmd</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">arg</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
-	<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *argp = (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)arg;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">pid</span>, <span style="color: #FF8C00;">err</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>;
+        <span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *argp = (<span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *)arg;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">pid</span>, <span style="color: #FD971F;">err</span>;
 
-	sock = file-&gt;private_data;
-	<span style="color: #FF1493;">if</span> (cmd &gt;= SIOCDEVPRIVATE &amp;&amp; cmd &lt;= (SIOCDEVPRIVATE + 15)) {
-		err = dev_ioctl(cmd, argp);
-	} <span style="color: #FF1493;">else</span>
-<span style="color: #FF1493;">#ifdef</span> CONFIG_WIRELESS_EXT
-	<span style="color: #FF1493;">if</span> (cmd &gt;= SIOCIWFIRST &amp;&amp; cmd &lt;= SIOCIWLAST) {
-		err = dev_ioctl(cmd, argp);
-	} <span style="color: #FF1493;">else</span>
-<span style="color: #FF1493;">#endif</span>                          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">CONFIG_WIRELESS_EXT</span><span style="color: #8B8878;"> */</span>
-		<span style="color: #FF1493;">switch</span> (cmd) {
-		<span style="color: #FF1493;">case</span> FIOSETOWN:
-		<span style="color: #FF1493;">case</span> SIOCSPGRP:
-			err = -EFAULT;
-			<span style="color: #FF1493;">if</span> (get_user(pid, (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)argp))
-				<span style="color: #FF1493;">break</span>;
-			err = f_setown(sock-&gt;file, pid, 1);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">case</span> FIOGETOWN:
-		<span style="color: #FF1493;">case</span> SIOCGPGRP:
-			err = put_user(f_getown(sock-&gt;file),
-				       (<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *)argp);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">case</span> SIOCGIFBR:
-		<span style="color: #FF1493;">case</span> SIOCSIFBR:
-		<span style="color: #FF1493;">case</span> SIOCBRADDBR:
-		<span style="color: #FF1493;">case</span> SIOCBRDELBR:
-			err = -ENOPKG;
-			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>br_ioctl_hook)
-				request_module(<span style="color: #CDC673;">"bridge"</span>);
+        sock = file-&gt;private_data;
+        <span style="color: #F92672;">if</span> (cmd &gt;= SIOCDEVPRIVATE &amp;&amp; cmd &lt;= (SIOCDEVPRIVATE + 15)) {
+                err = dev_ioctl(cmd, argp);
+        } <span style="color: #F92672;">else</span>
+<span style="color: #F92672;">#ifdef</span> CONFIG_WIRELESS_EXT
+        <span style="color: #F92672;">if</span> (cmd &gt;= SIOCIWFIRST &amp;&amp; cmd &lt;= SIOCIWLAST) {
+                err = dev_ioctl(cmd, argp);
+        } <span style="color: #F92672;">else</span>
+<span style="color: #F92672;">#endif</span>                          <span style="color: #75715E;">/* </span><span style="color: #75715E;">CONFIG_WIRELESS_EXT</span><span style="color: #75715E;"> */</span>
+                <span style="color: #F92672;">switch</span> (cmd) {
+                <span style="color: #F92672;">case</span> FIOSETOWN:
+                <span style="color: #F92672;">case</span> SIOCSPGRP:
+                        err = -EFAULT;
+                        <span style="color: #F92672;">if</span> (get_user(pid, (<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">__user</span> *)argp))
+                                <span style="color: #F92672;">break</span>;
+                        err = f_setown(sock-&gt;file, pid, 1);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> FIOGETOWN:
+                <span style="color: #F92672;">case</span> SIOCGPGRP:
+                        err = put_user(f_getown(sock-&gt;file),
+                                       (<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">__user</span> *)argp);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> SIOCGIFBR:
+                <span style="color: #F92672;">case</span> SIOCSIFBR:
+                <span style="color: #F92672;">case</span> SIOCBRADDBR:
+                <span style="color: #F92672;">case</span> SIOCBRDELBR:
+                        err = -ENOPKG;
+                        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>br_ioctl_hook)
+                                request_module(<span style="color: #E6DB74;">"bridge"</span>);
 
-			mutex_lock(&amp;br_ioctl_mutex);
-			<span style="color: #FF1493;">if</span> (br_ioctl_hook)
-				err = br_ioctl_hook(cmd, argp);
-			mutex_unlock(&amp;br_ioctl_mutex);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">case</span> SIOCGIFVLAN:
-		<span style="color: #FF1493;">case</span> SIOCSIFVLAN:
-			err = -ENOPKG;
-			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>vlan_ioctl_hook)
-				request_module(<span style="color: #CDC673;">"8021q"</span>);
+                        mutex_lock(&amp;br_ioctl_mutex);
+                        <span style="color: #F92672;">if</span> (br_ioctl_hook)
+                                err = br_ioctl_hook(cmd, argp);
+                        mutex_unlock(&amp;br_ioctl_mutex);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> SIOCGIFVLAN:
+                <span style="color: #F92672;">case</span> SIOCSIFVLAN:
+                        err = -ENOPKG;
+                        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>vlan_ioctl_hook)
+                                request_module(<span style="color: #E6DB74;">"8021q"</span>);
 
-			mutex_lock(&amp;vlan_ioctl_mutex);
-			<span style="color: #FF1493;">if</span> (vlan_ioctl_hook)
-				err = vlan_ioctl_hook(argp);
-			mutex_unlock(&amp;vlan_ioctl_mutex);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">case</span> SIOCADDDLCI:
-		<span style="color: #FF1493;">case</span> SIOCDELDLCI:
-			err = -ENOPKG;
-			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>dlci_ioctl_hook)
-				request_module(<span style="color: #CDC673;">"dlci"</span>);
+                        mutex_lock(&amp;vlan_ioctl_mutex);
+                        <span style="color: #F92672;">if</span> (vlan_ioctl_hook)
+                                err = vlan_ioctl_hook(argp);
+                        mutex_unlock(&amp;vlan_ioctl_mutex);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> SIOCADDDLCI:
+                <span style="color: #F92672;">case</span> SIOCDELDLCI:
+                        err = -ENOPKG;
+                        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>dlci_ioctl_hook)
+                                request_module(<span style="color: #E6DB74;">"dlci"</span>);
 
-			<span style="color: #FF1493;">if</span> (dlci_ioctl_hook) {
-				mutex_lock(&amp;dlci_ioctl_mutex);
-				err = dlci_ioctl_hook(cmd, argp);
-				mutex_unlock(&amp;dlci_ioctl_mutex);
-			}
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">default</span>:
-			err = sock-&gt;ops-&gt;ioctl(sock, cmd, arg);
+                        <span style="color: #F92672;">if</span> (dlci_ioctl_hook) {
+                                mutex_lock(&amp;dlci_ioctl_mutex);
+                                err = dlci_ioctl_hook(cmd, argp);
+                                mutex_unlock(&amp;dlci_ioctl_mutex);
+                        }
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">default</span>:
+                        err = sock-&gt;ops-&gt;ioctl(sock, cmd, arg);
 
-			<span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;">                         * If this ioctl is unknown try to hand it down</span>
-<span style="color: #8B8878;">                         * to the NIC driver.</span>
-<span style="color: #8B8878;">                         */</span>
-			<span style="color: #FF1493;">if</span> (err == -ENOIOCTLCMD)
-				err = dev_ioctl(cmd, argp);
-			<span style="color: #FF1493;">break</span>;
-		}
-	<span style="color: #FF1493;">return</span> err;
+                        <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">                         * If this ioctl is unknown try to hand it down</span>
+<span style="color: #75715E;">                         * to the NIC driver.</span>
+<span style="color: #75715E;">                         */</span>
+                        <span style="color: #F92672;">if</span> (err == -ENOIOCTLCMD)
+                                err = dev_ioctl(cmd, argp);
+                        <span style="color: #F92672;">break</span>;
+                }
+        <span style="color: #F92672;">return</span> err;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgb613bd8" class="outline-3">
-<h3 id="orgb613bd8"><span class="section-number-3">2.3</span> 套接口层的实现</h3>
+<div id="outline-container-orgc470b91" class="outline-3">
+<h3 id="orgc470b91"><span class="section-number-3">2.3.</span> 套接口层的实现</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 IPv4协议族的套接口层ioctl接口是 inet_ioctl()。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      ioctl() calls you can issue on an INET socket. Most of these are</span>
-<span style="color: #8B8878;"> *      device configuration and stuff and very rarely used. Some ioctls</span>
-<span style="color: #8B8878;"> *      pass on to the socket itself.</span>
-<span style="color: #8B8878;"> *</span>
-<span style="color: #8B8878;"> *      NOTE: I like the idea of a module for the config stuff. ie ifconfig</span>
-<span style="color: #8B8878;"> *      loads the devconfigure module does its configuring and unloads it.</span>
-<span style="color: #8B8878;"> *      There's a good 20K of config code hanging around the kernel.</span>
-<span style="color: #8B8878;"> */</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      ioctl() calls you can issue on an INET socket. Most of these are</span>
+<span style="color: #75715E;"> *      device configuration and stuff and very rarely used. Some ioctls</span>
+<span style="color: #75715E;"> *      pass on to the socket itself.</span>
+<span style="color: #75715E;"> *</span>
+<span style="color: #75715E;"> *      NOTE: I like the idea of a module for the config stuff. ie ifconfig</span>
+<span style="color: #75715E;"> *      loads the devconfigure module does its configuring and unloads it.</span>
+<span style="color: #75715E;"> *      There's a good 20K of config code hanging around the kernel.</span>
+<span style="color: #75715E;"> */</span>
 
-<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_ioctl</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cmd</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">arg</span>)
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">inet_ioctl</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">cmd</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">arg</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = sock-&gt;sk;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span> = 0;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span> = sock-&gt;sk;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">err</span> = 0;
 
-	<span style="color: #FF1493;">switch</span> (cmd) {
-		<span style="color: #FF1493;">case</span> SIOCGSTAMP:
-			err = sock_get_timestamp(sk, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">timeval</span> <span style="color: #5FD7FF;">__user</span> *)arg);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">case</span> SIOCADDRT:
-		<span style="color: #FF1493;">case</span> SIOCDELRT:
-		<span style="color: #FF1493;">case</span> SIOCRTMSG:
-			err = ip_rt_ioctl(cmd, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)arg);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">case</span> SIOCDARP:
-		<span style="color: #FF1493;">case</span> SIOCGARP:
-		<span style="color: #FF1493;">case</span> SIOCSARP:
-			err = arp_ioctl(cmd, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)arg);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">case</span> SIOCGIFADDR:
-		<span style="color: #FF1493;">case</span> SIOCSIFADDR:
-		<span style="color: #FF1493;">case</span> SIOCGIFBRDADDR:
-		<span style="color: #FF1493;">case</span> SIOCSIFBRDADDR:
-		<span style="color: #FF1493;">case</span> SIOCGIFNETMASK:
-		<span style="color: #FF1493;">case</span> SIOCSIFNETMASK:
-		<span style="color: #FF1493;">case</span> SIOCGIFDSTADDR:
-		<span style="color: #FF1493;">case</span> SIOCSIFDSTADDR:
-		<span style="color: #FF1493;">case</span> SIOCSIFPFLAGS:
-		<span style="color: #FF1493;">case</span> SIOCGIFPFLAGS:
-		<span style="color: #FF1493;">case</span> SIOCSIFFLAGS:
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#21475;&#30456;&#20851;&#30340;&#25805;&#20316;</span>
-			err = devinet_ioctl(cmd, (<span style="color: #5FD7FF;">void</span> <span style="color: #FF8C00;">__user</span> *)arg);
-			<span style="color: #FF1493;">break</span>;
-		<span style="color: #FF1493;">default</span>:
-			<span style="color: #FF1493;">if</span> (sk-&gt;sk_prot-&gt;ioctl) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#32593;&#32476;&#25509;&#21475;&#23618;&#30340;ioctl</span>
-				err = sk-&gt;sk_prot-&gt;ioctl(sk, cmd, arg);
-			<span style="color: #FF1493;">else</span>
-				err = -ENOIOCTLCMD;
-			<span style="color: #FF1493;">break</span>;
-	}
-	<span style="color: #FF1493;">return</span> err;
+        <span style="color: #F92672;">switch</span> (cmd) {
+                <span style="color: #F92672;">case</span> SIOCGSTAMP:
+                        err = sock_get_timestamp(sk, (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">timeval</span> <span style="color: #66D9EF;">__user</span> *)arg);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> SIOCADDRT:
+                <span style="color: #F92672;">case</span> SIOCDELRT:
+                <span style="color: #F92672;">case</span> SIOCRTMSG:
+                        err = ip_rt_ioctl(cmd, (<span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *)arg);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> SIOCDARP:
+                <span style="color: #F92672;">case</span> SIOCGARP:
+                <span style="color: #F92672;">case</span> SIOCSARP:
+                        err = arp_ioctl(cmd, (<span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *)arg);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> SIOCGIFADDR:
+                <span style="color: #F92672;">case</span> SIOCSIFADDR:
+                <span style="color: #F92672;">case</span> SIOCGIFBRDADDR:
+                <span style="color: #F92672;">case</span> SIOCSIFBRDADDR:
+                <span style="color: #F92672;">case</span> SIOCGIFNETMASK:
+                <span style="color: #F92672;">case</span> SIOCSIFNETMASK:
+                <span style="color: #F92672;">case</span> SIOCGIFDSTADDR:
+                <span style="color: #F92672;">case</span> SIOCSIFDSTADDR:
+                <span style="color: #F92672;">case</span> SIOCSIFPFLAGS:
+                <span style="color: #F92672;">case</span> SIOCGIFPFLAGS:
+                <span style="color: #F92672;">case</span> SIOCSIFFLAGS:
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25509;&#21475;&#30456;&#20851;&#30340;&#25805;&#20316;</span>
+                        err = devinet_ioctl(cmd, (<span style="color: #66D9EF;">void</span> <span style="color: #FD971F;">__user</span> *)arg);
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">default</span>:
+                        <span style="color: #F92672;">if</span> (sk-&gt;sk_prot-&gt;ioctl) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35843;&#29992;&#32593;&#32476;&#25509;&#21475;&#23618;&#30340;ioctl</span>
+                                err = sk-&gt;sk_prot-&gt;ioctl(sk, cmd, arg);
+                        <span style="color: #F92672;">else</span>
+                                err = -ENOIOCTLCMD;
+                        <span style="color: #F92672;">break</span>;
+        }
+        <span style="color: #F92672;">return</span> err;
 }
 </pre>
 </div>
@@ -594,73 +548,73 @@ IPv4协议族的套接口层ioctl接口是 inet_ioctl()。
 </div>
 </div>
 
-<div id="outline-container-org30ade46" class="outline-2">
-<h2 id="org30ade46"><span class="section-number-2">3</span> getsockname</h2>
+<div id="outline-container-org7174c56" class="outline-2">
+<h2 id="org7174c56"><span class="section-number-2">3.</span> getsockname</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 获取绑定在套接口fd上的本地地址。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c">asmlinkage <span style="color: #5FD7FF;">long</span> <span style="color: #87D700;">sys_getsockname</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> <span style="color: #5FD7FF;">__user</span> *<span style="color: #FF8C00;">usockaddr</span>,
-				<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">__user</span> *usockaddr_len)
+<pre class="src src-c">asmlinkage <span style="color: #66D9EF;">long</span> <span style="color: #A6E22E;">sys_getsockname</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sockaddr</span> <span style="color: #66D9EF;">__user</span> *<span style="color: #FD971F;">usockaddr</span>,
+                                <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">__user</span> *usockaddr_len)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>;
-	<span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">address</span>[MAX_SOCK_ADDR];
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">len</span>, <span style="color: #FF8C00;">err</span>, <span style="color: #FF8C00;">fput_needed</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>;
+        <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">address</span>[MAX_SOCK_ADDR];
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">len</span>, <span style="color: #FD971F;">err</span>, <span style="color: #FD971F;">fput_needed</span>;
 
-	sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed);
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>sock)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
 
-	err = security_socket_getsockname(sock);
-	<span style="color: #FF1493;">if</span> (err)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#22871;&#25509;&#21475;&#30340;proto_ops&#30340;getname&#25509;&#21475;&#65292;IPv4&#20013;&#26159; inet_getname()</span>
-	err = sock-&gt;ops-&gt;getname(sock, (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *)address, &amp;len, 0);
-	<span style="color: #FF1493;">if</span> (err)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_put</span>;
-	err = move_addr_to_user(address, len, usockaddr, usockaddr_len);
+        err = security_socket_getsockname(sock);
+        <span style="color: #F92672;">if</span> (err)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_put</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35843;&#29992;&#22871;&#25509;&#21475;&#30340;proto_ops&#30340;getname&#25509;&#21475;&#65292;IPv4&#20013;&#26159; inet_getname()</span>
+        err = sock-&gt;ops-&gt;getname(sock, (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sockaddr</span> *)address, &amp;len, 0);
+        <span style="color: #F92672;">if</span> (err)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_put</span>;
+        err = move_addr_to_user(address, len, usockaddr, usockaddr_len);
 
-<span style="color: #AF87FF;">out_put</span>:
-	fput_light(sock-&gt;file, fput_needed);
-<span style="color: #AF87FF;">out</span>:
-	<span style="color: #FF1493;">return</span> err;
+<span style="color: #AE81FF;">out_put</span>:
+        fput_light(sock-&gt;file, fput_needed);
+<span style="color: #AE81FF;">out</span>:
+        <span style="color: #F92672;">return</span> err;
 }
 
-<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">inet_getname</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr</span> *<span style="color: #FF8C00;">uaddr</span>,
-			<span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">uaddr_len</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">peer</span>)
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">inet_getname</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sockaddr</span> *<span style="color: #FD971F;">uaddr</span>,
+                        <span style="color: #66D9EF;">int</span> *<span style="color: #FD971F;">uaddr_len</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">peer</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>         = sock-&gt;sk;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span> *<span style="color: #FF8C00;">inet</span>  = inet_sk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *<span style="color: #FF8C00;">sin</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sockaddr_in</span> *)uaddr;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>         = sock-&gt;sk;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_sock</span> *<span style="color: #FD971F;">inet</span>  = inet_sk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sockaddr_in</span> *<span style="color: #FD971F;">sin</span> = (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sockaddr_in</span> *)uaddr;
 
-	sin-&gt;sin_family = AF_INET;
-	<span style="color: #FF1493;">if</span> (peer) {
-		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>inet-&gt;dport ||
-		    (((1 &lt;&lt; sk-&gt;sk_state) &amp; (TCPF_CLOSE | TCPF_SYN_SENT)) &amp;&amp;
-		     peer == 1))
-			<span style="color: #FF1493;">return</span> -ENOTCONN;
-		sin-&gt;sin_port = inet-&gt;dport;
-		sin-&gt;sin_addr.s_addr = inet-&gt;daddr;
-	} <span style="color: #FF1493;">else</span> {
-		<span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">addr</span> = inet-&gt;rcv_saddr;
-		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>addr)
-			addr = inet-&gt;saddr;
-		sin-&gt;sin_port = inet-&gt;sport;
-		sin-&gt;sin_addr.s_addr = addr;
-	}
-	memset(sin-&gt;sin_zero, 0, <span style="color: #FF1493;">sizeof</span>(sin-&gt;sin_zero));
-	*uaddr_len = <span style="color: #FF1493;">sizeof</span>(*sin);
-	<span style="color: #FF1493;">return</span> 0;
+        sin-&gt;sin_family = AF_INET;
+        <span style="color: #F92672;">if</span> (peer) {
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>inet-&gt;dport ||
+                    (((1 &lt;&lt; sk-&gt;sk_state) &amp; (TCPF_CLOSE | TCPF_SYN_SENT)) &amp;&amp;
+                     peer == 1))
+                        <span style="color: #F92672;">return</span> -ENOTCONN;
+                sin-&gt;sin_port = inet-&gt;dport;
+                sin-&gt;sin_addr.s_addr = inet-&gt;daddr;
+        } <span style="color: #F92672;">else</span> {
+                <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">addr</span> = inet-&gt;rcv_saddr;
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>addr)
+                        addr = inet-&gt;saddr;
+                sin-&gt;sin_port = inet-&gt;sport;
+                sin-&gt;sin_addr.s_addr = addr;
+        }
+        memset(sin-&gt;sin_zero, 0, <span style="color: #F92672;">sizeof</span>(sin-&gt;sin_zero));
+        *uaddr_len = <span style="color: #F92672;">sizeof</span>(*sin);
+        <span style="color: #F92672;">return</span> 0;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org207aa43" class="outline-2">
-<h2 id="org207aa43"><span class="section-number-2">4</span> getpeername</h2>
+<div id="outline-container-org79cda92" class="outline-2">
+<h2 id="org79cda92"><span class="section-number-2">4.</span> getpeername</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 获取套接口上的对端地址。
@@ -671,8 +625,8 @@ IPv4协议族的套接口层ioctl接口是 inet_ioctl()。
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2022-04-25 Mon 22:45</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

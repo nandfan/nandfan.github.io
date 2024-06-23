@@ -3,250 +3,20 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-10-29 Fri 21:15 -->
+<!-- 2023-08-20 Sun 11:23 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BPF</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center;
-	     margin-bottom: .2em; }
-  .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { font-family: monospace; color: green; }
-  .priority { font-family: monospace; color: orange; }
-  .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  /* Languages per Org manual */
-  pre.src-asymptote:before { content: 'Asymptote'; }
-  pre.src-awk:before { content: 'Awk'; }
-  pre.src-C:before { content: 'C'; }
-  /* pre.src-C++ doesn't work in CSS */
-  pre.src-clojure:before { content: 'Clojure'; }
-  pre.src-css:before { content: 'CSS'; }
-  pre.src-D:before { content: 'D'; }
-  pre.src-ditaa:before { content: 'ditaa'; }
-  pre.src-dot:before { content: 'Graphviz'; }
-  pre.src-calc:before { content: 'Emacs Calc'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-fortran:before { content: 'Fortran'; }
-  pre.src-gnuplot:before { content: 'gnuplot'; }
-  pre.src-haskell:before { content: 'Haskell'; }
-  pre.src-hledger:before { content: 'hledger'; }
-  pre.src-java:before { content: 'Java'; }
-  pre.src-js:before { content: 'Javascript'; }
-  pre.src-latex:before { content: 'LaTeX'; }
-  pre.src-ledger:before { content: 'Ledger'; }
-  pre.src-lisp:before { content: 'Lisp'; }
-  pre.src-lilypond:before { content: 'Lilypond'; }
-  pre.src-lua:before { content: 'Lua'; }
-  pre.src-matlab:before { content: 'MATLAB'; }
-  pre.src-mscgen:before { content: 'Mscgen'; }
-  pre.src-ocaml:before { content: 'Objective Caml'; }
-  pre.src-octave:before { content: 'Octave'; }
-  pre.src-org:before { content: 'Org mode'; }
-  pre.src-oz:before { content: 'OZ'; }
-  pre.src-plantuml:before { content: 'Plantuml'; }
-  pre.src-processing:before { content: 'Processing.js'; }
-  pre.src-python:before { content: 'Python'; }
-  pre.src-R:before { content: 'R'; }
-  pre.src-ruby:before { content: 'Ruby'; }
-  pre.src-sass:before { content: 'Sass'; }
-  pre.src-scheme:before { content: 'Scheme'; }
-  pre.src-screen:before { content: 'Gnu Screen'; }
-  pre.src-sed:before { content: 'Sed'; }
-  pre.src-sh:before { content: 'shell'; }
-  pre.src-sql:before { content: 'SQL'; }
-  pre.src-sqlite:before { content: 'SQLite'; }
-  /* additional languages in org.el's org-babel-load-languages alist */
-  pre.src-forth:before { content: 'Forth'; }
-  pre.src-io:before { content: 'IO'; }
-  pre.src-J:before { content: 'J'; }
-  pre.src-makefile:before { content: 'Makefile'; }
-  pre.src-maxima:before { content: 'Maxima'; }
-  pre.src-perl:before { content: 'Perl'; }
-  pre.src-picolisp:before { content: 'Pico Lisp'; }
-  pre.src-scala:before { content: 'Scala'; }
-  pre.src-shell:before { content: 'Shell Script'; }
-  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
-  /* additional language identifiers per "defun org-babel-execute"
-       in ob-*.el */
-  pre.src-cpp:before  { content: 'C++'; }
-  pre.src-abc:before  { content: 'ABC'; }
-  pre.src-coq:before  { content: 'Coq'; }
-  pre.src-groovy:before  { content: 'Groovy'; }
-  /* additional language identifiers from org-babel-shell-names in
-     ob-shell.el: ob-shell is the only babel language using a lambda to put
-     the execution function name together. */
-  pre.src-bash:before  { content: 'bash'; }
-  pre.src-csh:before  { content: 'csh'; }
-  pre.src-ash:before  { content: 'ash'; }
-  pre.src-dash:before  { content: 'dash'; }
-  pre.src-ksh:before  { content: 'ksh'; }
-  pre.src-mksh:before  { content: 'mksh'; }
-  pre.src-posh:before  { content: 'posh'; }
-  /* Additional Emacs modes also supported by the LaTeX listings package */
-  pre.src-ada:before { content: 'Ada'; }
-  pre.src-asm:before { content: 'Assembler'; }
-  pre.src-caml:before { content: 'Caml'; }
-  pre.src-delphi:before { content: 'Delphi'; }
-  pre.src-html:before { content: 'HTML'; }
-  pre.src-idl:before { content: 'IDL'; }
-  pre.src-mercury:before { content: 'Mercury'; }
-  pre.src-metapost:before { content: 'MetaPost'; }
-  pre.src-modula-2:before { content: 'Modula-2'; }
-  pre.src-pascal:before { content: 'Pascal'; }
-  pre.src-ps:before { content: 'PostScript'; }
-  pre.src-prolog:before { content: 'Prolog'; }
-  pre.src-simula:before { content: 'Simula'; }
-  pre.src-tcl:before { content: 'tcl'; }
-  pre.src-tex:before { content: 'TeX'; }
-  pre.src-plain-tex:before { content: 'Plain TeX'; }
-  pre.src-verilog:before { content: 'Verilog'; }
-  pre.src-vhdl:before { content: 'VHDL'; }
-  pre.src-xml:before { content: 'XML'; }
-  pre.src-nxml:before { content: 'XML'; }
-  /* add a generic configuration mode; LaTeX export needs an additional
-     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
-  pre.src-conf:before { content: 'Configuration File'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.org-right  { text-align: center;  }
-  th.org-left   { text-align: center;   }
-  th.org-center { text-align: center; }
-  td.org-right  { text-align: right;  }
-  td.org-left   { text-align: left;   }
-  td.org-center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara { display: inline; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .equation-container {
-    display: table;
-    text-align: center;
-    width: 100%;
-  }
-  .equation {
-    vertical-align: middle;
-  }
-  .equation-label {
-    display: table-cell;
-    text-align: right;
-    vertical-align: middle;
-  }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
-</style>
+<meta name="generator" content="Org Mode" />
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">BPF</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
 <li><a href="#org8a59f5b">1. 引言</a>
 <ul>
@@ -260,29 +30,114 @@ for the JavaScript code in this tag.
 <li><a href="#org00322d4">1.8. BCC：跟踪open()</a></li>
 </ul>
 </li>
-<li><a href="#org9f582fc">2. BPF</a>
+<li><a href="#org36fc588">2. 技术背景</a>
 <ul>
-<li><a href="#org47ca131">2.1. 调用栈回溯</a></li>
-<li><a href="#org0ac3ae3">2.2. 火焰图</a></li>
-<li><a href="#org6bf0300">2.3. 事件源</a></li>
-<li><a href="#orga43690e">2.4. kprobes</a></li>
-<li><a href="#org761858b">2.5. uprobes</a></li>
-<li><a href="#orgde79de4">2.6. 跟踪点</a></li>
-<li><a href="#org6f96f8f">2.7. USDT</a></li>
-<li><a href="#org8b61b6a">2.8. 性能监控计数器（PMC）</a></li>
-<li><a href="#org63e9f77">2.9. perf_events</a></li>
+<li><a href="#org93bfe14">2.1. ebpf</a>
+<ul>
+<li><a href="#orgc9fa3e6">2.1.1. bpftool</a></li>
+<li><a href="#org6d6b18f">2.1.2. bpftrace查看BPF指令集</a></li>
+<li><a href="#orgd96486c">2.1.3. bpf API</a></li>
+<li><a href="#org5d42709">2.1.4. 映射表类型</a></li>
+<li><a href="#org2aefd68">2.1.5. bpf并发控制</a></li>
+<li><a href="#orgbf48a73">2.1.6. BPF sysfs接口</a></li>
+<li><a href="#org99b6c5a">2.1.7. BPF类型格式（BTF）</a></li>
+<li><a href="#org8ec11c5">2.1.8. BPF扩展</a></li>
 </ul>
 </li>
+<li><a href="#org47ca131">2.2. 调用栈回溯</a></li>
+<li><a href="#org0ac3ae3">2.3. 火焰图</a></li>
+<li><a href="#org6bf0300">2.4. 事件源</a></li>
+<li><a href="#orga43690e">2.5. kprobes</a>
+<ul>
+<li><a href="#orgb9e3cdc">2.5.1. 插桩过程</a></li>
+<li><a href="#org808e55e">2.5.2. kprobes接口</a></li>
+<li><a href="#org3618c7f">2.5.3. BPF和kprobes</a></li>
+<li><a href="#orga24af8a">2.5.4. kprobe扩展</a></li>
+</ul>
+</li>
+<li><a href="#org761858b">2.6. uprobes</a>
+<ul>
+<li><a href="#org59ae09a">2.6.1. uprobes如何工作</a></li>
+<li><a href="#org157aa2f">2.6.2. uprobes接口</a></li>
+<li><a href="#org6b97069">2.6.3. BPF与uprobes</a></li>
+<li><a href="#orgcbfcd51">2.6.4. uprobe扩展</a></li>
+</ul>
+</li>
+<li><a href="#orgde79de4">2.7. 跟踪点</a>
+<ul>
+<li><a href="#orgabe1cff">2.7.1. 添加跟踪点</a></li>
+<li><a href="#org99fb2d6">2.7.2. 跟踪点工作原理</a></li>
+<li><a href="#orga50223d">2.7.3. 跟踪点接口</a></li>
+<li><a href="#org6de8421">2.7.4. 跟踪点和BPF</a></li>
+<li><a href="#org3140f79">2.7.5. BPF原始跟踪点</a></li>
+<li><a href="#org2e66d60">2.7.6. 跟踪点扩展</a></li>
+</ul>
+</li>
+<li><a href="#org6f96f8f">2.8. USDT</a>
+<ul>
+<li><a href="#org1063c87">2.8.1. 添加USDT探针</a></li>
+<li><a href="#orgcb0a58a">2.8.2. UDST如何工作</a></li>
+<li><a href="#orgfd87bfe">2.8.3. BPF与USDT</a></li>
+<li><a href="#org0c0cc10">2.8.4. UDST扩展</a></li>
+</ul>
+</li>
+<li><a href="#org1518030">2.9. 动态DSDT</a></li>
+<li><a href="#org8b61b6a">2.10. 性能监控计数器（PMC）</a></li>
+<li><a href="#org63e9f77">2.11. perf_events</a></li>
+</ul>
+</li>
+<li><a href="#orgc046fa2">3. 性能分析</a>
+<ul>
+<li><a href="#orgb6e7d32">3.1. Linux 60S分析（传统工具）</a>
+<ul>
+<li><a href="#org77b7266">3.1.1. uptime</a></li>
+<li><a href="#org21f6068">3.1.2. dmesg | tail</a></li>
+<li><a href="#orgdf75bd3">3.1.3. vmstat 1</a></li>
+<li><a href="#org1b47253">3.1.4. mpstat -P ALL 1</a></li>
+<li><a href="#org5c6685d">3.1.5. pidstat 1</a></li>
+<li><a href="#orgfb33512">3.1.6. iostat -xz 1</a></li>
+<li><a href="#orgfc79136">3.1.7. free -m</a></li>
+<li><a href="#org98c6448">3.1.8. sar -n DEV 1</a></li>
+<li><a href="#org93d0c08">3.1.9. sar -n TCP,ETCP 1</a></li>
+<li><a href="#orgc60a70f">3.1.10. top</a></li>
+</ul>
+</li>
+<li><a href="#orgc1e3176">3.2. BCC工具检查清单</a>
+<ul>
+<li><a href="#orgc6ad227">3.2.1. execsnoop</a></li>
+<li><a href="#orgcf749f3">3.2.2. opensnoop</a></li>
+<li><a href="#orgcbb2b6e">3.2.3. ext4slower</a></li>
+<li><a href="#org312e74f">3.2.4. biolatency</a></li>
+<li><a href="#orgadf6121">3.2.5. biosnoop</a></li>
+<li><a href="#org8d3cbbf">3.2.6. cachestat</a></li>
+<li><a href="#org3802fc5">3.2.7. tcpconnect</a></li>
+<li><a href="#org54c22a9">3.2.8. tcpaccept</a></li>
+<li><a href="#org938731f">3.2.9. tcpretrans</a></li>
+<li><a href="#orgc4c07fb">3.2.10. runqlat</a></li>
+<li><a href="#org89e0f1f">3.2.11. profile</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org2f16c62">4. BCC</a>
+<ul>
+<li><a href="#orge350db0">4.1. BCC的组件</a></li>
+<li><a href="#org375c797">4.2. BCC特性</a></li>
+<li><a href="#org9c75953">4.3. BCC安装</a></li>
+<li><a href="#orgc9704c7">4.4. BCC的工具</a></li>
+</ul>
+</li>
+<li><a href="#org2361c96">5. ？</a></li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-org8a59f5b" class="outline-2">
-<h2 id="org8a59f5b"><span class="section-number-2">1</span> 引言</h2>
+<h2 id="org8a59f5b"><span class="section-number-2">1.</span> 引言</h2>
 <div class="outline-text-2" id="text-1">
 </div>
 <div id="outline-container-org652b7b9" class="outline-3">
-<h3 id="org652b7b9"><span class="section-number-3">1.1</span> BPF和eBPF</h3>
+<h3 id="org652b7b9"><span class="section-number-3">1.1.</span> BPF和eBPF</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 BPF是伯克利数据包过滤器的缩写，最初作用是提升网络包过滤工具的性能，后来BPF进化为一个更通用的执行引擎，能够完成多种任务，例如创建先进的性能分析工具。
@@ -298,16 +153,15 @@ BPF由指令集、存储对象和辅助函数等及部分组成。由于BPF采�
 </div>
 </div>
 
-
 <div id="outline-container-org67daa26" class="outline-3">
-<h3 id="org67daa26"><span class="section-number-3">1.2</span> 跟踪、嗅探、采样、剖析和可观测性</h3>
+<h3 id="org67daa26"><span class="section-number-3">1.2.</span> 跟踪、嗅探、采样、剖析和可观测性</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 跟踪、嗅探、事件记录通常指的是同一回事，是基于事件的记录方式。
 </p>
 
 <p>
-采样工具通过获取全部观测量的子集来描绘目标的大致图像;这也被称为性能剖析样本或profiling。
+采样(sampling)工具通过获取全部观测量的子集来描绘目标的大致图像;这也被称为性能剖析样本或profiling。
 </p>
 
 <p>
@@ -317,7 +171,7 @@ BPF由指令集、存储对象和辅助函数等及部分组成。由于BPF采�
 </div>
 
 <div id="outline-container-org8c48b79" class="outline-3">
-<h3 id="org8c48b79"><span class="section-number-3">1.3</span> BCC、bpftrace和IO Visor</h3>
+<h3 id="org8c48b79"><span class="section-number-3">1.3.</span> BCC、bpftrace和IO Visor</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 直接通过BPF指令编写BPF程序相当繁琐，所以诞生了提供高级语言编程支持的BPF前端；在跟踪用途方面，主要的前端是BCC和bpftrace。
@@ -346,7 +200,7 @@ BCC和bpftrace不在内核代码仓库中，而是属于Github上的一个名为
 </div>
 
 <div id="outline-container-org631dc11" class="outline-3">
-<h3 id="org631dc11"><span class="section-number-3">1.4</span> BPF跟踪的能见度</h3>
+<h3 id="org631dc11"><span class="section-number-3">1.4.</span> BPF跟踪的能见度</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 BPF可以在整个软件栈范围内提供能见度，允许我们随时根据需要开发新的工具和监测功能。在生产环境中可以立即部署BPF跟踪程序，不需要重启系统，也不需要以特殊方式重启应用。
@@ -354,9 +208,8 @@ BPF可以在整个软件栈范围内提供能见度，允许我们随时根据�
 </div>
 </div>
 
-
 <div id="outline-container-org34b7bc0" class="outline-3">
-<h3 id="org34b7bc0"><span class="section-number-3">1.5</span> 动态插桩：kprobes和uprobes</h3>
+<h3 id="org34b7bc0"><span class="section-number-3">1.5.</span> 动态插桩：kprobes和uprobes</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 动态插桩也叫动态跟踪技术&#x2013;在生产环境中对正在运行的软件插入观测点的能力。
@@ -414,7 +267,7 @@ Linux以uprobes形式增加了对用户态函数的动态插桩支持。BPF跟�
 </div>
 
 <div id="outline-container-orgb487c6b" class="outline-3">
-<h3 id="orgb487c6b"><span class="section-number-3">1.6</span> 静态插桩：tracepoint和UDST</h3>
+<h3 id="orgb487c6b"><span class="section-number-3">1.6.</span> 静态插桩：tracepoint和UDST</h3>
 <div class="outline-text-3" id="text-1-6">
 <p>
 静态插桩技术会将稳定的时间名称编码到软件代码中，由开发者进行维护。BPF跟踪工具支持内核的静态插桩技术，也支持用户态的静态定义跟踪插桩技术USDT。
@@ -455,7 +308,7 @@ Linux以uprobes形式增加了对用户态函数的动态插桩支持。BPF跟�
 </div>
 
 <div id="outline-container-orgec4f1b0" class="outline-3">
-<h3 id="orgec4f1b0"><span class="section-number-3">1.7</span> bpftrace跟踪open()</h3>
+<h3 id="orgec4f1b0"><span class="section-number-3">1.7.</span> bpftrace跟踪open()</h3>
 <div class="outline-text-3" id="text-1-7">
 <p>
 可以使用现有的静态插桩点（syscall:sys_enter_open）。
@@ -507,9 +360,8 @@ open跟踪点的详细信息可以参考 <b>opensnoop.bt</b> 的实现，bpftrac
 </div>
 </div>
 
-
 <div id="outline-container-org00322d4" class="outline-3">
-<h3 id="org00322d4"><span class="section-number-3">1.8</span> BCC：跟踪open()</h3>
+<h3 id="org00322d4"><span class="section-number-3">1.8.</span> BCC：跟踪open()</h3>
 <div class="outline-text-3" id="text-1-8">
 <p>
 BCC也提供了跟踪open系统调用的工具 <b>opensnoop</b> 。
@@ -569,8 +421,8 @@ examples:
 </div>
 
 
-<div id="outline-container-org9f582fc" class="outline-2">
-<h2 id="org9f582fc"><span class="section-number-2">2</span> BPF</h2>
+<div id="outline-container-org36fc588" class="outline-2">
+<h2 id="org36fc588"><span class="section-number-2">2.</span> 技术背景</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 BPF工作方式： 最终用户使用BPF虚拟机的指令集（BPF字节码）定义过滤表达式，然后传递给内核，由解释器执行。这使得包过滤可以在内核中直接进行，避免了向用户态进程复制每个数据包，从而提升数据包过滤的性能。BPF还提供了安全性保障，用户定义的过滤器在执行前必须首先通过安全性验证。早期的包过滤必须在内核空间执行，安全是一个硬性要求。
@@ -579,7 +431,11 @@ BPF工作方式： 最终用户使用BPF虚拟机的指令集（BPF字节码）�
 <p>
 最初的BPF现在被称为“经典BPF”，是一个功能有限的虚拟机，有两个寄存器，一个由16个内存槽位组成的临时存储区和一个程序计数器。以上部件均按32位寄存器大小运行。
 </p>
+</div>
 
+<div id="outline-container-org93bfe14" class="outline-3">
+<h3 id="org93bfe14"><span class="section-number-3">2.1.</span> ebpf</h3>
+<div class="outline-text-3" id="text-2-1">
 <p>
 扩展版的BPF中增加了更多寄存器，并将字长从32位增加至64位，创建了灵活的BPF映射型存储（map），并允许调用一些受限制的内核功能。同时eBPF被设计为可以使用即时编译（JIT），机器指令与寄存器可以一对一映射。这就使得先前的处理器本地指令优化技术，可以重用于BPF之上。BPF验证器也进行了更新以便支持这些扩展，而且能够拒绝任何不安全的代码。
 </p>
@@ -638,70 +494,1594 @@ BPF工作方式： 最终用户使用BPF虚拟机的指令集（BPF字节码）�
 </tr>
 </tbody>
 </table>
-</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div id="outline-container-org47ca131" class="outline-3">
-<h3 id="org47ca131"><span class="section-number-3">2.1</span> 调用栈回溯</h3>
-</div>
-
-<div id="outline-container-org0ac3ae3" class="outline-3">
-<h3 id="org0ac3ae3"><span class="section-number-3">2.2</span> 火焰图</h3>
-</div>
-
-<div id="outline-container-org6bf0300" class="outline-3">
-<h3 id="org6bf0300"><span class="section-number-3">2.3</span> 事件源</h3>
-</div>
-
-<div id="outline-container-orga43690e" class="outline-3">
-<h3 id="orga43690e"><span class="section-number-3">2.4</span> kprobes</h3>
-</div>
-
-<div id="outline-container-org761858b" class="outline-3">
-<h3 id="org761858b"><span class="section-number-3">2.5</span> uprobes</h3>
-</div>
-
-<div id="outline-container-orgde79de4" class="outline-3">
-<h3 id="orgde79de4"><span class="section-number-3">2.6</span> 跟踪点</h3>
-</div>
-
-<div id="outline-container-org6f96f8f" class="outline-3">
-<h3 id="org6f96f8f"><span class="section-number-3">2.7</span> USDT</h3>
-</div>
-
-<div id="outline-container-org8b61b6a" class="outline-3">
-<h3 id="org8b61b6a"><span class="section-number-3">2.8</span> 性能监控计数器（PMC）</h3>
-<div class="outline-text-3" id="text-2-8">
 <p>
-性能监控计数器（performance monitoring counter, PEC）
+bpf优势：
+</p>
+<ol class="org-ol">
+<li>bpf程序可以执行自定义的延迟计算，统计摘要。</li>
+<li>具备高效率、生产环境安全的特点。</li>
+<li>避免从内核向用户空间复制大量数据，直接在内核执行生成结果，传回用户态。</li>
+</ol>
+
+<p>
+bpf vs 内核模块：
+</p>
+<ol class="org-ol">
+<li>bpf程序会通过验证器安全性检查，内核模块则可能引入bug</li>
+<li>bpf通过映射提供丰富的数据结构支持</li>
+<li>bpf可以一次编译，在任何地方执行。</li>
+<li>bpf编译不依赖内核编译过程的中间结果。</li>
+<li>bpf提供可以原子性替换bpf程序的能力，在网络领域，如果是内核模块，则需要先卸载，可能中断服务。</li>
+</ol>
+
+<p>
+当然，内核模块也有优势：在模块中可以使用内核设施和内核函数。
+</p>
+
+<p>
+bpf程序编写：
+</p>
+<ol class="org-ol">
+<li>LLVM：LLVM编译器可以将BPF作为编译目标体系结构，可以使用LLVM支持的高级语言来编写</li>
+<li>BCC：支持C语言编写</li>
+<li>bpftrace：提供自定义的高级语言</li>
+</ol>
+</div>
+
+<div id="outline-container-orgc9fa3e6" class="outline-4">
+<h4 id="orgc9fa3e6"><span class="section-number-4">2.1.1.</span> bpftool</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+该工具可以查看和操作BPF对象，包括BPF程序和对应的映射表。
+</p>
+
+<p>
+bpftool对象类型：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ bpftool --help
+Usage: bpftool [OPTIONS] OBJECT { COMMAND | <span style="color: #FF1493;">help</span> }
+       bpftool batch file FILE
+       bpftool version
+
+       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }
+       OPTIONS := { {-j|--json} [{-p|--pretty}] | {-d|--debug} | {-l|--legacy} |
+	    {-V|--version} }
+</pre>
+</div>
+
+<p>
+每类对象可以都有帮助文档：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ bpftool prog help
+Usage: bpftool prog { show | list } [PROG]
+       bpftool prog dump xlated PROG [{ file FILE | opcodes | visual | linum }]
+       bpftool prog dump jited  PROG [{ file FILE | opcodes | linum }]
+       bpftool prog pin   PROG FILE
+       bpftool prog { load | loadall } OBJ  PATH <span style="color: #CDC673; font-weight: bold;">\</span>
+	     [type TYPE] [dev NAME] <span style="color: #CDC673; font-weight: bold;">\</span>
+	     [map { idx IDX | name NAME } MAP]<span style="color: #CDC673; font-weight: bold;">\</span>
+	     [pinmaps MAP_DIR]
+       bpftool prog attach PROG ATTACH_TYPE [MAP]
+       bpftool prog detach PROG ATTACH_TYPE [MAP]
+       bpftool prog run PROG <span style="color: #CDC673; font-weight: bold;">\</span>
+	     data_in FILE <span style="color: #CDC673; font-weight: bold;">\</span>
+	     [data_out FILE [data_size_out L]] <span style="color: #CDC673; font-weight: bold;">\</span>
+	     [ctx_in FILE [ctx_out FILE [ctx_size_out M]]] <span style="color: #CDC673; font-weight: bold;">\</span>
+	     [repeat N]
+       bpftool prog profile PROG [duration DURATION] METRICs
+       bpftool prog tracelog
+       bpftool prog help
+
+       MAP := { id MAP_ID | pinned FILE | name MAP_NAME }
+       PROG := { id PROG_ID | pinned FILE | tag PROG_TAG | name PROG_NAME }
+       TYPE := { socket | kprobe | kretprobe | classifier | action |
+	 tracepoint | raw_tracepoint | xdp | perf_event | cgroup/skb |
+	 cgroup/sock | cgroup/dev | lwt_in | lwt_out | lwt_xmit |
+	 lwt_seg6local | sockops | sk_skb | sk_msg | lirc_mode2 |
+	 sk_reuseport | flow_dissector | cgroup/sysctl |
+	 cgroup/bind4 | cgroup/bind6 | cgroup/post_bind4 |
+	 cgroup/post_bind6 | cgroup/connect4 | cgroup/connect6 |
+	 cgroup/getpeername4 | cgroup/getpeername6 |
+	 cgroup/getsockname4 | cgroup/getsockname6 | cgroup/sendmsg4 |
+	 cgroup/sendmsg6 | cgroup/recvmsg4 | cgroup/recvmsg6 |
+	 cgroup/getsockopt | cgroup/setsockopt | cgroup/sock_release |
+	 struct_ops | fentry | fexit | freplace | sk_lookup }
+       ATTACH_TYPE := { sk_msg_verdict | sk_skb_verdict | sk_skb_stream_verdict |
+	    sk_skb_stream_parser | flow_dissector }
+       METRIC := { cycles | instructions | l1d_loads | llc_misses | itlb_misses | dtlb_misses }
+       OPTIONS := { {-j|--json} [{-p|--pretty}] | {-d|--debug} | {-l|--legacy} |
+	    {-f|--bpffs} | {-m|--mapcompat} | {-n|--nomount} |
+	    {-L|--use-loader} }
+
+</pre>
+</div>
+
+
+<dl class="org-dl">
+<dt>bpftool perf</dt><dd>perf指令显示了那些BPF程序正在通过perf_event_open()进行挂载</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-sh">$ bpftool perf
+pid 5034  fd 6: prog_id 33  kprobe  func __x64_sys_execve  offset 0
+pid 5034  fd 8: prog_id 34  kretprobe  func __x64_sys_execve  offset 0
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>bpftool prog show</dt><dd>列出BPF全部程序</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-sh">  $ sudo bpftool prog show
+3: cgroup_device  name sd_devices  tag 3650d9673c54ce30  gpl
+    loaded_at 2023-08-19T08:50:07+0800  uid 0
+    xlated 504B  jited 310B  memlock 4096B
+4: cgroup_skb  name sd_fw_egress  tag 6deef7357e7b4530  gpl
+    loaded_at 2023-08-19T08:50:07+0800  uid 0
+    xlated 64B  jited 55B  memlock 4096B
+5: cgroup_skb  name sd_fw_ingress  tag 6deef7357e7b4530  gpl
+    loaded_at 2023-08-19T08:50:07+0800  uid 0
+    xlated 64B  jited 55B  memlock 4096B
+6: cgroup_skb  name sd_fw_egress  tag 6deef7357e7b4530  gpl
+    loaded_at 2023-08-19T08:50:07+0800  uid 0
+    xlated 64B  jited 55B  memlock 4096B
+......
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>bpftool prog dump xlated id [ID]</dt><dd>每个BPF程序都可以通过其ID打印。xlated模式将BPF指令翻译为汇编指令打印出来。</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo bpftool perf
+  pid 7312  fd 6: prog_id 41  kprobe  func __x64_sys_execve  offset 0
+  pid 7312  fd 8: prog_id 42  kretprobe  func __x64_sys_execve  offset 0
+
+
+$ sudo bpftool prog dump xlated id 41
+  int syscall__execve(struct pt_regs * ctx):
+  ; int syscall__execve(struct pt_regs *ctx)
+     0: (bf) r6 = r1
+  ; struct pt_regs * __ctx = (void *)ctx-&gt;di;
+     1: (79) r7 = *(u64 *)(r6 +112)
+  ; const char __user *filename; bpf_probe_read(&amp;filename, sizeof(filename), &amp;__ctx-&gt;di);
+     2: (bf) r3 = r7
+     3: (07) r3 += 112
+     4: (bf) r1 = r10
+  ;
+     5: (07) r1 += -16
+  ; const char __user *filename; bpf_probe_read(&amp;filename, sizeof(filename), &amp;__ctx-&gt;di);
+  ......
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>bpftool prog dump xlated id 41 linum</dt><dd>linum修饰符在输出中增加源代码文件和行信息</dd>
+<dt>bpftool prog dump xlated id 41 opcodes</dt><dd>opcodes修饰符输出中增加BPF指令的opcode</dd>
+<dt>bpftool prog dump xlated id 41 visual </dt><dd><b>visual</b> 修饰符可以输出 <b>DOT</b> 格式的控制流信息，用于生成图片。</dd>
+
+<dt>bpftool prog dump jited </dt><dd>展示经过JIT编译之后的机器码</dd>
+
+<dt>bpftool btf</dt><dd>可以打印BTF的ID,例如 bpftool btf dump id 5</dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-org6d6b18f" class="outline-4">
+<h4 id="org6d6b18f"><span class="section-number-4">2.1.2.</span> bpftrace查看BPF指令集</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+bpftrace -v 脚本名称
+</p>
+</div>
+</div>
+<div id="outline-container-orgd96486c" class="outline-4">
+<h4 id="orgd96486c"><span class="section-number-4">2.1.3.</span> bpf API</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<dl class="org-dl">
+<dt>bpf辅助函数</dt><dd>bpf不允许随意调用内核函数，内核专门提供bpf可调用的辅助函数。内核源代码中 include/uapi/linux/bpf.h 文件提供了辅助函数。</dd>
+
+<dt>bpf_probe_read()</dt><dd>BPF中内存访问仅限于BPF寄存器和栈空间（以及通过辅助函数访问的BPF映射表）。访问其他内存需要通过该函数读取，该函数进行安全检查并禁止缺页中断的发生。 还可以将用户空间内容读取到内核空间。</dd>
+
+<dt>BPF部分系统调用命令</dt><dd>用户程序可以通过 bpf() 系统调用的首个参数指定对应的动作</dd>
+</dl>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">bpf_cmd</th>
+<th scope="col" class="org-left">功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">BPF_MAP_CREATE</td>
+<td class="org-left">创建BPF映射表</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_LOOKUP_ELEM</td>
+<td class="org-left">使用key查找元素</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_UPDATE_ELEM</td>
+<td class="org-left">根据key更新元素</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_DELETE_ELEM</td>
+<td class="org-left">删除</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_GET_NEXT_KEY</td>
+<td class="org-left">遍历映射表中的key</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_LOAD</td>
+<td class="org-left">验证并加载BPF程序</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_OBJ_PIN</td>
+<td class="org-left">在/sys/fs/bpf下创建一个bpf实例对象</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_ATTACH</td>
+<td class="org-left">将bpf程序挂载到某个事件</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_DETACH</td>
+<td class="org-left">将bpf程序从某个事件卸载</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+通过streace观察execsnoop工具的bpf系统调用：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">  <span style="color: #8B8878;"># </span><span style="color: #8B8878;">strace -ebpf execsnoop-bpfcc</span>
+<span style="color: #87D700;">bpf</span>(BPF_PROG_LOAD, {<span style="color: #FF8C00;">prog_type</span>=BPF_PROG_TYPE_SOCKET_FILTER, <span style="color: #FF8C00;">insn_cnt</span>=2, <span style="color: #FF8C00;">insns</span>=0x7ffe99b388d0, <span style="color: #FF8C00;">license</span>=<span style="color: #CDC673;">"GPL"</span>, <span style="color: #FF8C00;">log_level</span>=0, <span style="color: #FF8C00;">log_size</span>=0, <span style="color: #FF8C00;">log_buf</span>=NULL, <span style="color: #FF8C00;">kern_version</span>=KERNEL_VERSION(0, 0, 0), <span style="color: #FF8C00;">prog_flags</span>=0, <span style="color: #FF8C00;">prog_name</span>=<span style="color: #CDC673;">""</span>, <span style="color: #FF8C00;">prog_ifindex</span>=0, <span style="color: #FF8C00;">expected_attach_type</span>=BPF_CGROUP_INET_INGRESS, <span style="color: #FF8C00;">prog_btf_fd</span>=0, <span style="color: #FF8C00;">func_info_rec_size</span>=0, <span style="color: #FF8C00;">func_info</span>=NULL, <span style="color: #FF8C00;">func_info_cnt</span>=0, <span style="color: #FF8C00;">line_info_rec_size</span>=0, <span style="color: #FF8C00;">line_info</span>=NULL, <span style="color: #FF8C00;">line_info_cnt</span>=0, <span style="color: #FF8C00;">attach_btf_id</span>=0, <span style="color: #FF8C00;">attach_prog_fd</span>=0}, 116) = 3
+<span style="color: #87D700;">bpf</span>(BPF_BTF_LOAD, {<span style="color: #FF8C00;">btf</span>=<span style="color: #CDC673;">"\237\353\1\0\30\0\0\0\0\0\0\0\10\3\0\0\10\3\0\0\233\7\0\0\0\0\0\0\0\0\0\2"</span>..., <span style="color: #FF8C00;">btf_log_buf</span>=NULL, <span style="color: #FF8C00;">btf_size</span>=2747, <span style="color: #FF8C00;">btf_log_size</span>=0, <span style="color: #FF8C00;">btf_log_level</span>=0}, 28) = 3
+<span style="color: #87D700;">bpf</span>(BPF_PROG_LOAD, {<span style="color: #FF8C00;">prog_type</span>=BPF_PROG_TYPE_SOCKET_FILTER, <span style="color: #FF8C00;">insn_cnt</span>=2, <span style="color: #FF8C00;">insns</span>=0x7ffe99b38580, <span style="color: #FF8C00;">license</span>=<span style="color: #CDC673;">"GPL"</span>, <span style="color: #FF8C00;">log_level</span>=0, <span style="color: #FF8C00;">log_size</span>=0, <span style="color: #FF8C00;">log_buf</span>=NULL, <span style="color: #FF8C00;">kern_version</span>=KERNEL_VERSION(0, 0, 0), <span style="color: #FF8C00;">prog_flags</span>=0, <span style="color: #FF8C00;">prog_name</span>=<span style="color: #CDC673;">"libbpf_nametest"</span>}, 64) = 4
+<span style="color: #87D700;">bpf</span>(BPF_MAP_CREATE, {<span style="color: #FF8C00;">map_type</span>=BPF_MAP_TYPE_PERF_EVENT_ARRAY, <span style="color: #FF8C00;">key_size</span>=4, <span style="color: #FF8C00;">value_size</span>=4, <span style="color: #FF8C00;">max_entries</span>=4, <span style="color: #FF8C00;">map_flags</span>=0, <span style="color: #FF8C00;">inner_map_fd</span>=0, <span style="color: #FF8C00;">map_name</span>=<span style="color: #CDC673;">"events"</span>, <span style="color: #FF8C00;">map_ifindex</span>=0, <span style="color: #FF8C00;">btf_fd</span>=0, <span style="color: #FF8C00;">btf_key_type_id</span>=0, <span style="color: #FF8C00;">btf_value_type_id</span>=0, <span style="color: #FF8C00;">btf_vmlinux_value_type_id</span>=0, <span style="color: #FF8C00;">map_extra</span>=0}, 72) = 4
+<span style="color: #87D700;">bpf</span>(BPF_PROG_LOAD, {<span style="color: #FF8C00;">prog_type</span>=BPF_PROG_TYPE_KPROBE, <span style="color: #FF8C00;">insn_cnt</span>=509, <span style="color: #FF8C00;">insns</span>=0x7f70f8172000, <span style="color: #FF8C00;">license</span>=<span style="color: #CDC673;">"GPL"</span>, <span style="color: #FF8C00;">log_level</span>=0, <span style="color: #FF8C00;">log_size</span>=0, <span style="color: #FF8C00;">log_buf</span>=NULL, <span style="color: #FF8C00;">kern_version</span>=KERNEL_VERSION(6, 1, 38), <span style="color: #FF8C00;">prog_flags</span>=0, <span style="color: #FF8C00;">prog_name</span>=<span style="color: #CDC673;">"syscall__execve"</span>, <span style="color: #FF8C00;">prog_ifindex</span>=0, <span style="color: #FF8C00;">expected_attach_type</span>=BPF_CGROUP_INET_INGRESS, <span style="color: #FF8C00;">prog_btf_fd</span>=3, <span style="color: #FF8C00;">func_info_rec_size</span>=8, <span style="color: #FF8C00;">func_info</span>=0x3142130, <span style="color: #FF8C00;">func_info_cnt</span>=1, <span style="color: #FF8C00;">line_info_rec_size</span>=16, <span style="color: #FF8C00;">line_info</span>=0x3142150, <span style="color: #FF8C00;">line_info_cnt</span>=252, <span style="color: #FF8C00;">attach_btf_id</span>=0, <span style="color: #FF8C00;">attach_prog_fd</span>=0, <span style="color: #FF8C00;">fd_array</span>=NULL}, 128) = 5
+<span style="color: #87D700;">bpf</span>(BPF_PROG_LOAD, {<span style="color: #FF8C00;">prog_type</span>=BPF_PROG_TYPE_KPROBE, <span style="color: #FF8C00;">insn_cnt</span>=82, <span style="color: #FF8C00;">insns</span>=0x7f70f71e4000, <span style="color: #FF8C00;">license</span>=<span style="color: #CDC673;">"GPL"</span>, <span style="color: #FF8C00;">log_level</span>=0, <span style="color: #FF8C00;">log_size</span>=0, <span style="color: #FF8C00;">log_buf</span>=NULL, <span style="color: #FF8C00;">kern_version</span>=KERNEL_VERSION(6, 1, 38), <span style="color: #FF8C00;">prog_flags</span>=0, <span style="color: #FF8C00;">prog_name</span>=<span style="color: #CDC673;">"do_ret_sys_exec"</span>, <span style="color: #FF8C00;">prog_ifindex</span>=0, <span style="color: #FF8C00;">expected_attach_type</span>=BPF_CGROUP_INET_INGRESS, <span style="color: #FF8C00;">prog_btf_fd</span>=3, <span style="color: #FF8C00;">func_info_rec_size</span>=8, <span style="color: #FF8C00;">func_info</span>=0x3142130, <span style="color: #FF8C00;">func_info_cnt</span>=1, <span style="color: #FF8C00;">line_info_rec_size</span>=16, <span style="color: #FF8C00;">line_info</span>=0x1da3d10, <span style="color: #FF8C00;">line_info_cnt</span>=28, <span style="color: #FF8C00;">attach_btf_id</span>=0, <span style="color: #FF8C00;">attach_prog_fd</span>=0, <span style="color: #FF8C00;">fd_array</span>=NULL}, 128) = 7
+PCOMM            PID     PPID    RET ARGS
+<span style="color: #87D700;">bpf</span>(BPF_MAP_UPDATE_ELEM, {<span style="color: #FF8C00;">map_fd</span>=4, <span style="color: #FF8C00;">key</span>=0x7f70f724fa00, <span style="color: #FF8C00;">value</span>=0x7f70f724f970, <span style="color: #FF8C00;">flags</span>=BPF_ANY}, 32) = 0
+<span style="color: #87D700;">bpf</span>(BPF_MAP_UPDATE_ELEM, {<span style="color: #FF8C00;">map_fd</span>=4, <span style="color: #FF8C00;">key</span>=0x7f70f724f970, <span style="color: #FF8C00;">value</span>=0x7f70f724fa00, <span style="color: #FF8C00;">flags</span>=BPF_ANY}, 32) = 0
+<span style="color: #87D700;">bpf</span>(BPF_MAP_UPDATE_ELEM, {<span style="color: #FF8C00;">map_fd</span>=4, <span style="color: #FF8C00;">key</span>=0x7f70f724fa00, <span style="color: #FF8C00;">value</span>=0x7f70f724f970, <span style="color: #FF8C00;">flags</span>=BPF_ANY}, 32) = 0
+<span style="color: #87D700;">bpf</span>(BPF_MAP_UPDATE_ELEM, {<span style="color: #FF8C00;">map_fd</span>=4, <span style="color: #FF8C00;">key</span>=0x7f70f724f970, <span style="color: #FF8C00;">value</span>=0x7f70f724fa00, <span style="color: #FF8C00;">flags</span>=BPF_ANY}, 32) = 0
+^Cstrace: Process 8807 detached
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>BPF程序类型</dt><dd>不同BPF程序类型定义了BPF程序可以挂载的事件类型、参数。
+跟踪程序类型：</dd>
+</dl>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">bpf_prog_type</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">BPF_PROG_TYPE_KPROBE</td>
+<td class="org-left">内核动态插桩kprobes和用户态动态插桩uprobes</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_TYPE_TRACEPOINT</td>
+<td class="org-left">内核静态跟踪点</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_TYPE_PERF_EVENT</td>
+<td class="org-left">perf_events，包含PMC</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_TYPE_RAW_TRACEPOINT</td>
+<td class="org-left">用于跟踪点，不处理参数</td>
+</tr>
+</tbody>
+</table>
+<p>
+用于网络的及其他用途的部分程序类型：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">bpf_prog_type</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">BPF_PROG_TYPE_SOCKET_FILTER</td>
+<td class="org-left">挂载到网络套接字</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_TYPE_SCHED_CLS</td>
+<td class="org-left">流量控制分类</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_TYPE_XDP</td>
+<td class="org-left">XDP（eXpress Data Path）</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_PROG_TYPE_CGROUP_SKB</td>
+<td class="org-left">cgroup包过滤</td>
+</tr>
+
+<tr>
+<td class="org-left">&#x2026;&#x2026;</td>
+<td class="org-left">&#x2026;&#x2026;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org5d42709" class="outline-4">
+<h4 id="org5d42709"><span class="section-number-4">2.1.4.</span> 映射表类型</h4>
+<div class="outline-text-4" id="text-2-1-4">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">bpf_map_type</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">BPF_MAP_TYPE_HASH</td>
+<td class="org-left">hash表：key/value</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_TYPE_ARRAY</td>
+<td class="org-left">数组</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_TYPE_PERF_EVENT_ARRAY</td>
+<td class="org-left">到perf_evetns环形缓冲区的接口，用于将记录发送到用户空间</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_TYPE_PERCPU_HASH</td>
+<td class="org-left">基于每个CPU的hash</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_TYPE_PERCPU_ARRAY</td>
+<td class="org-left">基于每个CPU的数组</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_TYPE_STACK_TRACE</td>
+<td class="org-left">存储调用栈，使用栈id进行索引</td>
+</tr>
+
+<tr>
+<td class="org-left">BPF_MAP_TYPE_STACK</td>
+<td class="org-left">存储调用栈</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org2aefd68" class="outline-4">
+<h4 id="org2aefd68"><span class="section-number-4">2.1.5.</span> bpf并发控制</h4>
+<div class="outline-text-4" id="text-2-1-5">
+<p>
+linux5.1前，bpf跟踪时，并行的多个线程可能同时对映射表进行查找和更新，使得更新丢失。
+</p>
+
+<p>
+使用per-CPU的hash和array，能够尽可能的避免冲突。
+</p>
+
+<p>
+per-PCU hash示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">strace -febpf bpftrace -e 'k:vfs_read { @ = count(); }'</span>
+</pre>
+</div>
+<p>
+普通hash示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">strace -febpf bpftrace -e 'k:vfs_read { @++; }'</span>
+</pre>
+</div>
+<p>
+多核上的对比示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">strace -febpf bpftrace -e 'k:vfs_read { @cpuhash = count(); @hash++; }'</span>
+......
+@cpuhash: 1986
+@hash: 1985
+^C
+</pre>
+</div>
+
+<p>
+其他并发控制方式： 互斥加（BPF_XADD）、整个映射的原子操作、BPF自旋锁等。
 </p>
 </div>
 </div>
 
-<div id="outline-container-org63e9f77" class="outline-3">
-<h3 id="org63e9f77"><span class="section-number-3">2.9</span> perf_events</h3>
+<div id="outline-container-orgbf48a73" class="outline-4">
+<h4 id="orgbf48a73"><span class="section-number-4">2.1.6.</span> BPF sysfs接口</h4>
+<div class="outline-text-4" id="text-2-1-6">
+<p>
+通过sysfs接口，可以将BPF程序和BPF映射开放到用户空间。
+</p>
+
+<p>
+BPF sysfs接口的使用场景：
+</p>
+<ol class="org-ol">
+<li>允许创建持续运行的BPF程序（类似daemon）</li>
+<li>用户态程序可以和BPF交互：用户态程序读取和修改BPF映射表</li>
+</ol>
 </div>
+</div>
+
+<div id="outline-container-org99b6c5a" class="outline-4">
+<h4 id="org99b6c5a"><span class="section-number-4">2.1.7.</span> BPF类型格式（BTF）</h4>
+<div class="outline-text-4" id="text-2-1-7">
+<p>
+参考linux内核： Documentation/bpf/btf.rst
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8ec11c5" class="outline-4">
+<h4 id="org8ec11c5"><span class="section-number-4">2.1.8.</span> BPF扩展</h4>
+<div class="outline-text-4" id="text-2-1-8">
+<ul class="org-ul">
+<li>内核代码：Documentation/networking/filter.txt</li>
+<li>内核代码：Documentation/bpf/bpf_design_QA.txt</li>
+<li>bpf(2)man手册</li>
+<li>bpf-helper(7)man手册</li>
+<li><a id="org0640f46"></a></li>
+<li><a id="orgcf1312d"></a></li>
+<li>Cilium项目：<a id="org706a340"></a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org47ca131" class="outline-3">
+<h3 id="org47ca131"><span class="section-number-3">2.2.</span> 调用栈回溯</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+调用栈可以用于理解事件产生的代码路径，也可以用于剖析内核和用户代码。
+</p>
+
+<p>
+BPF提供了存储调用栈的专用映射表结构，可以保存基于帧指针和基于ORC的调用栈回溯信息。
+</p>
+
+<dl class="org-dl">
+<dt>基于帧指针的调用栈回溯</dt><dd>x86_64使用rbp寄存器保存栈基址（并非强制要求），栈基址+8的位置就是返回地址。gcc编译器默认不启用函数帧指针，而是将rbp作为通用寄存器使用，这样就无法通过帧指针进行栈回溯，可以通过 gcc 的命令行参数 -fno-omit-frame-pointer 来改变这个默认行为。</dd>
+
+<dt>调试信息</dt><dd>软件的额外调试信息通过调试信息包的形式提供，这其中包含了DWARF格式的ELF调试信息，ELF中的调试相关文件段是.eh_frame 和 .debug_frame。BPF目前不支持这种技术</dd>
+
+<dt>最后分支记录</dt><dd>Last Branch Record(LBR)是intel处理器的特性，BPF暂不支持</dd>
+
+<dt>ORC</dt><dd>针对栈回溯设计的新的调试信息格式&#x2014;Oops回滚能力，ELF中使用 .orc_unwind 和 .orc_unwind_ip 的ELF文件段。内核中可以通过 perf_callchain_kernel()函数利用ORC信息。因此BPF也可以支持该技术。</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org0ac3ae3" class="outline-3">
+<h3 id="org0ac3ae3"><span class="section-number-3">2.3.</span> 火焰图</h3>
+</div>
+
+<div id="outline-container-org6bf0300" class="outline-3">
+<h3 id="org6bf0300"><span class="section-number-3">2.4.</span> 事件源</h3>
+</div>
+
+<div id="outline-container-orga43690e" class="outline-3">
+<h3 id="orga43690e"><span class="section-number-3">2.5.</span> kprobes</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+kprobes可以对任何函数进行插桩，也可以对函数内部指令进行插桩。
+</p>
+
+<p>
+kretprobes用来对内核函数返回时插桩。
+</p>
+
+<p>
+kprobes kretprobes共用可以记录函数时长。
+</p>
+</div>
+
+<div id="outline-container-orgb9e3cdc" class="outline-4">
+<h4 id="orgb9e3cdc"><span class="section-number-4">2.5.1.</span> 插桩过程</h4>
+<div class="outline-text-4" id="text-2-5-1">
+<ul class="org-ul">
+<li>kprobe插桩
+<ol class="org-ol">
+<li>将要插桩的目标地址中的字节复制并保存（为的是给单步断点指令腾出位置）</li>
+<li>以单步中断指令覆盖目标地址：在x86_64上是int3指令。kprobes如果开启优化，则使用jmp指令。</li>
+<li>当指令流执行到断点时，断点处理函数检查断点是否由kprobes注册的，如果是，执行kprobes处理函数</li>
+<li>原始的指令会接着继续执行，指令流继续</li>
+<li>不再需要kprobes时，原始的字节内容会被复制回目标地址上，这样指令就回到初始状态。</li>
+</ol></li>
+<li>如果kprobe是一个Ftrace已经做过插桩的地址（一般位于函数入口处），则可以基于Ftrace优化kprobe
+<ol class="org-ol">
+<li>将一个Ftrace kprobe处理函数注册为对应函数的Ftrace处理器</li>
+<li>当在函数起始处执行内建函数时（例如 __fentry__）,该函数调用Ftrace，Ftrace接下来调用kprobe处理函数</li>
+<li>kprobe不再使用时，从Ftrace中移除Ftrace-kprobe处理函数</li>
+</ol></li>
+<li>如果是kretprobe
+<ol class="org-ol">
+<li>对函数入口进行kprobe插桩</li>
+<li>当函数入口被kprobe命中时，将返回地址保存并替换为一个trampoline(蹦床)函数</li>
+<li>当函数最终返回时（ret指令），CPU将控制交给trampoline函数处理</li>
+<li>在kretprobe处理完成后在返回到之前保存的地址。</li>
+<li>不再需要kretprobe时，函数入口的kprobe就被移除了</li>
+</ol></li>
+</ul>
+
+
+<p>
+kprobe从设计上保证了自身的安全性，其中包含一个不允许kprobes胴体啊插桩的函数黑名单，kprobes就在黑名单中，以防止出现递归陷阱。 kprobes使用的是安全的断点插入，例如x86的int3指令。如果使用jmp时，会先调用stop_machine()函数，保证修改代码时，其他CPU核心不会执行指令。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org808e55e" class="outline-4">
+<h4 id="org808e55e"><span class="section-number-4">2.5.2.</span> kprobes接口</h4>
+<div class="outline-text-4" id="text-2-5-2">
+<p>
+最初使用kprobes需要编写内核模块，通常用C语言编写入口处理函数和返回处理函数，在通过调用register_kprobe来注册。接下来需要加载该内核模块，完成后通过unregister_kprobe()结束。
+</p>
+
+<p>
+现在可通过一下三种接口访问kprobes：
+</p>
+<ol class="org-ol">
+<li>kprobe API: register_kprobe()等</li>
+<li>基于Ftrace，通过/sys/kernel/debug/tracing/kprobe_events：通过向此文件写入字符串，可以配置开启和停止kprobes。</li>
+<li>perf_event_open()：与perf工具相同，BPF工具也开始通过该函数跟踪。</li>
+</ol>
+
+<p>
+BCC内核插桩示例： vfsstat工具对vfs接口的关键调用插桩
+</p>
+
+<p>
+bpftrace示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">bpftrace -e 'kprobe:vfs_* { @[probe] = count() }'</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3618c7f" class="outline-4">
+<h4 id="org3618c7f"><span class="section-number-4">2.5.3.</span> BPF和kprobes</h4>
+<div class="outline-text-4" id="text-2-5-3">
+<p>
+kprobes向BCC和bpftrace提供了内核动态插桩的机制。
+</p>
+
+<dl class="org-dl">
+<dt>BCC 插桩接口</dt><dd>attach_kprobe()和attach_kretprobe()</dd>
+<dt>bpftrace 插桩接口</dt><dd>kprobe 和 kretprobe探针类型</dd>
+</dl>
+
+<p>
+BCC的kprobe接口可以对函数的开始和某一偏移位置进行插桩，bpftrace则支持在函数入口位置插桩。kretprobes则只对函数返回位置插桩。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga24af8a" class="outline-4">
+<h4 id="orga24af8a"><span class="section-number-4">2.5.4.</span> kprobe扩展</h4>
+<div class="outline-text-4" id="text-2-5-4">
+<ul class="org-ul">
+<li>linux内核源码 Documentation/kprobes.txt</li>
+<li><a id="org896c7e7"></a></li>
+<li><a id="orgeba632c"></a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org761858b" class="outline-3">
+<h3 id="org761858b"><span class="section-number-3">2.6.</span> uprobes</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+uprobes提供了用户态的动态插桩，uprobes和kprobes类似，只是在用户态程序中使用。
+</p>
+
+<p>
+uprobes可以在用户态程序的一下位置插桩：
+</p>
+<ul class="org-ul">
+<li>函数入口</li>
+<li>特定偏移处</li>
+<li>函数返回处</li>
+</ul>
+
+<p>
+uprobes是基于文件的，可执行文件的函数被跟踪时，所有用到该文件的进程都会被插桩。
+</p>
+</div>
+
+<div id="outline-container-org59ae09a" class="outline-4">
+<h4 id="org59ae09a"><span class="section-number-4">2.6.1.</span> uprobes如何工作</h4>
+<div class="outline-text-4" id="text-2-6-1">
+<p>
+参考kprobes
+</p>
+</div>
+</div>
+
+<div id="outline-container-org157aa2f" class="outline-4">
+<h4 id="org157aa2f"><span class="section-number-4">2.6.2.</span> uprobes接口</h4>
+<div class="outline-text-4" id="text-2-6-2">
+<ul class="org-ul">
+<li>基于Ftrace的，通过/sys/kernel/debug/tracing/uprobe_events: 可以通过向该文件写入特定字符串打开或者关闭uprobes.</li>
+<li>perf_event_open()</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6b97069" class="outline-4">
+<h4 id="org6b97069"><span class="section-number-4">2.6.3.</span> BPF与uprobes</h4>
+<div class="outline-text-4" id="text-2-6-3">
+<dl class="org-dl">
+<dt>BCC插桩</dt><dd>attach_uprobe() attach_uretprobe()</dd>
+<dt>bpftrace插桩</dt><dd>uprobe和uretprobe探针类型</dd>
+</dl>
+
+<p>
+BCC的 uprobes可以对函数入口和任意位置的插桩，bpftrace则只支持函数入口。
+</p>
+
+<p>
+BCC用户态插桩示例： gethostlatency 工具对库函数getaddrinfo和gethostbyname进行插桩。
+</p>
+
+<p>
+bpftrace示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">bpftrace -l 'uprobe:/lib/x86_64-linux-gnu/libc.so.6:gethost*'</span>
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:gethostbyaddr
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:gethostbyaddr_r
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:gethostbyaddr_r@@GLIBC_2.2.5
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:gethostbyname
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:gethostbyname2
+
+<span style="color: #8B8878;"># </span><span style="color: #8B8878;">bpftrace -e 'uprobe:/lib/x86_64-linux-gnu/libc.so.6:gethost* { @[probe] = count(); }'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcbfcd51" class="outline-4">
+<h4 id="orgcbfcd51"><span class="section-number-4">2.6.4.</span> uprobe扩展</h4>
+<div class="outline-text-4" id="text-2-6-4">
+<p>
+linux内核源码： Documentation/trace/uprobetracer.txt
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgde79de4" class="outline-3">
+<h3 id="orgde79de4"><span class="section-number-3">2.7.</span> 跟踪点</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+跟踪点（tracepoints）可以用来对内核进行静态插桩。内核开发者在内核函数中的特定逻辑位置处，有意放置插桩点：这些跟踪点会被编译到内核的二进制文件中。
+</p>
+
+<p>
+跟踪点的优势是API稳定，基于跟踪点的工具，即使在内核升级后，仍可以工作。
+</p>
+
+<p>
+跟踪点格式： subsystem:eventname(子系统：事件名)，例如 kmem:kmalloc 。
+</p>
+</div>
+
+<div id="outline-container-orgabe1cff" class="outline-4">
+<h4 id="orgabe1cff"><span class="section-number-4">2.7.1.</span> 添加跟踪点</h4>
+<div class="outline-text-4" id="text-2-7-1">
+<p>
+sched:sched_process_exec 跟踪点的实现：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">  #define</span> <span style="color: #FF8C00;">TRACE_SYSTEM</span> sched
+......
+  <span style="color: #8B8878;">/*</span>
+<span style="color: #8B8878;">   * Tracepoint for exec:</span>
+<span style="color: #8B8878;">  */</span>
+    TRACE_EVENT(sched_process_exec,
+
+	    TP_PROTO(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">p</span>, <span style="color: #5FD7FF;">pid_t</span> <span style="color: #FF8C00;">old_pid</span>,
+		     <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binprm</span> *<span style="color: #FF8C00;">bprm</span>),
+
+	    TP_ARGS(p, old_pid, bprm),
+
+	    TP_STRUCT__entry(
+		    __string(   filename,       bprm-&gt;filename  )
+		    <span style="color: #87D700;">__field</span>(    <span style="color: #5FD7FF;">pid_t</span>,          pid             )
+		    <span style="color: #87D700;">__field</span>(    <span style="color: #5FD7FF;">pid_t</span>,          old_pid         )
+	    ),
+
+	    TP_fast_assign(
+		    __assign_str(filename, bprm-&gt;filename);
+		    __entry-&gt;pid                = p-&gt;pid;
+		    __entry-&gt;old_pid    = old_pid;
+	    ),
+
+	    TP_printk(<span style="color: #CDC673;">"filename=%s pid=%d old_pid=%d"</span>, __get_str(filename),
+		      __entry-&gt;pid, __entry-&gt;old_pid)
+    );
+</pre>
+</div>
+
+<p>
+跟踪点的信息会通过/sys目录下的Ftrace框架显露出来，对每个跟踪点都有对应格式的文件，例如：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">cat /sys/kernel/debug/tracing/events/sched/sched_process_exec/format</span>
+name: sched_process_exec
+ID: 310
+format:
+    field:unsigned short common_type;   offset:0;   size:2; signed:0;
+    field:unsigned char common_flags;   offset:2;   size:1; signed:0;
+    field:unsigned char common_preempt_count;   offset:3;   size:1; signed:0;
+    field:int common_pid;   offset:4;   size:4; signed:1;
+
+    field:__data_loc char[] filename;   offset:8;   size:4; signed:1;
+    field:pid_t pid;    offset:12;  size:4; signed:1;
+    field:pid_t old_pid;    offset:16;  size:4; signed:1;
+
+print fmt: <span style="color: #CDC673;">"filename=%s pid=%d old_pid=%d"</span>, __get_str(filename), REC-&gt;pid, REC-&gt;old_pid
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org99fb2d6" class="outline-4">
+<h4 id="org99fb2d6"><span class="section-number-4">2.7.2.</span> 跟踪点工作原理</h4>
+<div class="outline-text-4" id="text-2-7-2">
+<ol class="org-ol">
+<li>在内核编译阶段会在跟踪点位置插入一条不做任何具体工作的指令。在x86_64上，这是一个5字节的nop指令，5字节长度是为了确保之后可以将它替换为5字节的jmp指令。</li>
+<li>在函数尾部插入一个跟踪点处理函数，也叫做trampoline（蹦床）函数。该函数遍历一个存储跟踪点探针回调函数的数组。（之所以较蹦床函数，是由于执行过程中函数会跳入，然后在跳出这个函数）。</li>
+<li>执行过程中，当某个跟踪器启用跟踪点时（该跟踪点可能已经被其他跟踪器启用）：
+<ul class="org-ul">
+<li>在跟踪点回调函数数组中插入一条新的跟踪器回调函数，以RCU形式进行同步更新</li>
+<li>如果之前跟踪点处于禁用状态，nop指令的地址会重写为条状态蹦床函数的指令。</li>
+</ul></li>
+<li>当跟踪器禁用某个跟踪点时：
+<ul class="org-ul">
+<li>在跟踪点回调函数数组中删掉该跟踪函数，并且以RCU形式进行同步更新</li>
+<li>如果最后一个回调函数也被去除了，则将jmp指令重写为nop指令</li>
+</ul></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orga50223d" class="outline-4">
+<h4 id="orga50223d"><span class="section-number-4">2.7.3.</span> 跟踪点接口</h4>
+<div class="outline-text-4" id="text-2-7-3">
+<dl class="org-dl">
+<dt>基于Ftrace的接口</dt><dd>通过/sys/kernel/debug/tracing/events: 每个跟踪点都有一个子目录，每个跟踪点则对应目录下的一个文件（通过向这些文件中写入内容来开启或关闭跟踪点）。</dd>
+<dt>perf_event_open()</dt><dd>perf工具一直使用的接口，BPF也使用该接口</dd>
+</dl>
+</div>
+</div>
+
+
+<div id="outline-container-org6de8421" class="outline-4">
+<h4 id="org6de8421"><span class="section-number-4">2.7.4.</span> 跟踪点和BPF</h4>
+<div class="outline-text-4" id="text-2-7-4">
+<p>
+跟踪点为BCC和bpftrace提供了内核的静态插桩支持，接口如下：
+</p>
+<ul class="org-ul">
+<li>BCC TRACEPOINT_TPROBE()</li>
+<li>bpftrace 跟踪点探针类型</li>
+</ul>
+
+<p>
+BCC中使用跟踪点的示例： tcplife
+</p>
+
+<p>
+bpftrace跟踪点示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">bpftrace -e 'tracepoing:sched:sched_process_exec { printf("exec by %s\n", comm); }'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3140f79" class="outline-4">
+<h4 id="org3140f79"><span class="section-number-4">2.7.5.</span> BPF原始跟踪点</h4>
+<div class="outline-text-4" id="text-2-7-5">
+<p>
+BPF_RAW_TRACEPOINT（在linux4.17加入），该类型的接口向跟踪点暴漏原始参数，这样可以避免因为需要创建稳定的跟踪点而导致的开销（这些参数可能压根没有必要），有点类似kprobes方式使用跟踪点，使得API不稳定，但是可以访问更多字段，也不需要承当跟踪点的性能损失。但是这种跟踪点比kprobes更加稳定，因为其名称是固定的，只是参数不稳定。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2e66d60" class="outline-4">
+<h4 id="org2e66d60"><span class="section-number-4">2.7.6.</span> 跟踪点扩展</h4>
+<div class="outline-text-4" id="text-2-7-6">
+<p>
+linux： Documentation/trace/tracepoints.rst
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org6f96f8f" class="outline-3">
+<h3 id="org6f96f8f"><span class="section-number-3">2.8.</span> USDT</h3>
+<div class="outline-text-3" id="text-2-8">
+<p>
+用户态预定义静态跟踪（user-level statically defined tracing, USDT）提供了用户空间版的跟踪点机制。
+</p>
+
+<p>
+用户态软件有很多跟踪及日志相关的技术，应用程序自身也内置了事件日志系统，可以根据需要随时开启。 UDST与之不同，其依赖于外部的系统跟踪器来唤起，如果没有外部跟踪器，则USTD跟踪点不会做任何事。
+</p>
+</div>
+
+<div id="outline-container-org1063c87" class="outline-4">
+<h4 id="org1063c87"><span class="section-number-4">2.8.1.</span> 添加USDT探针</h4>
+<div class="outline-text-4" id="text-2-8-1">
+<p>
+给应用程序添加USDT探针的两种方式：
+</p>
+<ol class="org-ol">
+<li>通过systemtap-sdt-dev包提供的头文件和工具，</li>
+<li>使用自定义的头文件。</li>
+</ol>
+
+<p>
+这些探针定义了可以被放置在代码中各个逻辑位置上的宏，以此生成USDT探针。
+</p>
+
+<p>
+BCC项目 examples/usdt_sample 目录下包含了USDT示例。
+</p>
+
+<p>
+facebook 的 Folly<sup>2</sup>C++ 库也提供了添加USDT的工具。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcb0a58a" class="outline-4">
+<h4 id="orgcb0a58a"><span class="section-number-4">2.8.2.</span> UDST如何工作</h4>
+<div class="outline-text-4" id="text-2-8-2">
+<p>
+当编译应用程序时，在USDT探针的地址放置了一个nop指令。在插桩时，这个地址会由内核使用uprobes动态的将其修改为一个断点指令（例如int3）。DSDT探针禁用后，将断点指令恢复为nop。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfd87bfe" class="outline-4">
+<h4 id="orgfd87bfe"><span class="section-number-4">2.8.3.</span> BPF与USDT</h4>
+<div class="outline-text-4" id="text-2-8-3">
+<p>
+USDT为BCC和bpftrace提供了用户态的静态探针支持：
+</p>
+<ul class="org-ul">
+<li>BCC  USDT().enable_probe()</li>
+<li>bpftace  USDT探针类型</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">bpftrace -e 'usdt:/tmp/tick:loop { printf("got: %d\n", arg0); }'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0c0cc10" class="outline-4">
+<h4 id="org0c0cc10"><span class="section-number-4">2.8.4.</span> UDST扩展</h4>
+<div class="outline-text-4" id="text-2-8-4">
+<ul class="org-ul">
+<li><a id="org50b7f66"></a></li>
+<li><a id="org8fadfa7"></a></li>
+<li><a id="org1a8f7f6"></a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1518030" class="outline-3">
+<h3 id="org1518030"><span class="section-number-3">2.9.</span> 动态DSDT</h3>
+<div class="outline-text-3" id="text-2-9">
+<p>
+USDT技术需要在编译程序前加入插桩点，编译后插桩点留下nop指令。但是部分语言是解释性语言或者运行时编译的。动态USDT是为这部分语言使用的，例如动态USDT可以为java代码增加插桩点。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org8b61b6a" class="outline-3">
+<h3 id="org8b61b6a"><span class="section-number-3">2.10.</span> 性能监控计数器（PMC）</h3>
+<div class="outline-text-3" id="text-2-10">
+<p>
+性能监控计数器（performance monitoring counter, PMC）
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org63e9f77" class="outline-3">
+<h3 id="org63e9f77"><span class="section-number-3">2.11.</span> perf_events</h3>
+<div class="outline-text-3" id="text-2-11">
+<p>
+perf_events 是perf命令所依赖的采样和跟踪机制。
+</p>
+
+<p>
+现在BPF跟踪工具也可以调用perf_events来使用其特性。BCC和bpftrace先是使用perf_events作为它们的环形缓冲区，之后又增加了PMC支持，后续又通过 perf_event_open()对所有的事件进行观测。
+</p>
+
+<p>
+perf也开发了使用BPF的接口，这也使得perf成为BPF跟踪器。与BCC和bpftrace不同，perf代码位于内核，因此perf是唯一内置在Linux中的BPF前端。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc046fa2" class="outline-2">
+<h2 id="orgc046fa2"><span class="section-number-2">3.</span> 性能分析</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgb6e7d32" class="outline-3">
+<h3 id="orgb6e7d32"><span class="section-number-3">3.1.</span> Linux 60S分析（传统工具）</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+在遇到性能问题进行排查时，可以首先尝试使用一下步骤进行排查。
+</p>
+
+<ul class="org-ul">
+<li>uptime</li>
+<li>dmesg | tail</li>
+<li>vmstat 1</li>
+<li>mpstat -P ALL 1</li>
+<li>pidstat 1</li>
+<li>ipstat -xz 1</li>
+<li>free -m</li>
+<li>sar -n DEV 1</li>
+<li>sar -n TCP,ETCP 1</li>
+<li>top</li>
+</ul>
+</div>
+
+<div id="outline-container-org77b7266" class="outline-4">
+<h4 id="org77b7266"><span class="section-number-4">3.1.1.</span> uptime</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<div class="org-src-container">
+<pre class="src src-shell">$ uptime
+ 12:35:53 up  2:33, 15 users,  load average: 0.05, 0.10, 0.06
+</pre>
+</div>
+
+<p>
+uptime 可以快速检查系统的平均负载， load average之后的3列数值分别代表系统过去1,5,15分钟的平均负载情况。
+</p>
+
+
+<p>
+系统平均负载值是处于可运行或不可中断状态的进程的平均数。处于可运行状态的进程要么正在使用 CPU，要么正在等待使用 CPU。处于不可中断状态的进程正在等待一些 I/O 访问，例如等待磁盘。平均值取自三个时间间隔。负载平均值没有针对系统中的 CPU 数量进行标准化，因此负载平均值为 1 意味着单个 CPU 系统一直在加载，而在 4 个 CPU 系统上则意味着它有 75% 的时间处于空闲状态。
+</p>
+
+<p>
+通过这三个值的变化可以大致了解负载随时间的变化。
+</p>
+
+<p>
+在排查过程中，首先需要检查负载平均值，来确认性能问题是否仍然存在，因为可能已经错过问题发生的现场。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org21f6068" class="outline-4">
+<h4 id="org21f6068"><span class="section-number-4">3.1.2.</span> dmesg | tail</h4>
+</div>
+<div id="outline-container-orgdf75bd3" class="outline-4">
+<h4 id="orgdf75bd3"><span class="section-number-4">3.1.3.</span> vmstat 1</h4>
+<div class="outline-text-4" id="text-3-1-3">
+<div class="org-src-container">
+<pre class="src src-shell">$ vmstat 1
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+r  b   swpd   free   buff  cache   si   so    bi    bo  <span style="color: #FF1493;"> in</span>   cs us sy id wa st
+0  0      0 6619528  66924 875476    0    0   555   172   80  158  1  1 98  0  0
+0  0      0 6619608  66924 875436    0    0     0     8  150  338  0  0 100  0  0
+0  0      0 6619356  66924 875564    0    0   128    12  406  986  2  4 94  0  0
+2  0      0 6619324  66924 875680    0    0     0     0  270  641  2  3 95  0  0
+0  0      0 6619324  66924 875680    0    0     0     0  199  458  1  1 98  0  0
+0  0      0 6619324  66924 875636    0    0     0     0  126  226  0  0 100  0  0
+0  0      0 6619324  66924 875600    0    0     0     8  132  260  0  0 100  0  0
+0  0      0 6619324  66924 875600    0    0     0     0  135  278  0  0 100  0  0
+</pre>
+</div>
+
+<p>
+vmstat是虚拟内存统计工具， 参数1代表每隔1秒钟打印一次摘要信息。
+</p>
+
+<p>
+列信息：
+</p>
+<ul class="org-ul">
+<li>r： CPU上正在执行的和等待执行的进程数量。 相对于平均负载（uptime）来说，这个能更好的排查cpu饱和度的指标，因为其不包含I/O。 一个比CPU数量多的r值代表CPU资源处于饱和状态。</li>
+
+<li>free： 空闲内存，单位KB。（也可以使用 <code>free -m</code> 查看空闲内存）。</li>
+
+<li>si和so：页换入和页换出。 如果值不为零，代表系统内存紧张。此值只会在配置开启了交换分区后才起作用。</li>
+
+<li>us、sy、id、wa和st： 用户态时间、内核态时间、空闲、等待I/O、以及被窃取时间。（所有CPU取平均值的结果）</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1b47253" class="outline-4">
+<h4 id="org1b47253"><span class="section-number-4">3.1.4.</span> mpstat -P ALL 1</h4>
+<div class="outline-text-4" id="text-3-1-4">
+<div class="org-src-container">
+<pre class="src src-shell">$ mpstat -P ALL 1
+Linux 5.10.0-8-amd64 (nanddebian-work)        08/22/2021      _x86_64_  (4 CPU)
+
+08:15:17 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+08:15:18 PM  all    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.50
+08:15:18 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:18 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:18 PM    2    0.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+08:15:18 PM    3    0.00    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   99.01
+
+08:15:18 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+08:15:19 PM  all    0.25    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.75
+08:15:19 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:19 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+08:15:19 PM    2    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+08:15:19 PM    3    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+^C
+Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+Average:     all    0.12    0.00    0.25    0.00    0.00    0.00    0.00    0.00    0.00   99.62
+Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:       2    0.50    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+Average:       3    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.50
+</pre>
+</div>
+
+<p>
+此命令会打印CPU分解到各个状态的时间。
+</p>
+
+<p>
+对于较高的%iowait时间需要注意，可以使用磁盘I/O工具进一步分析。
+</p>
+
+<p>
+如果是较高的%sys值，可以使用系统调用（syscall）跟踪和内核跟踪，以及CPU剖析等手段进一步分析。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5c6685d" class="outline-4">
+<h4 id="org5c6685d"><span class="section-number-4">3.1.5.</span> pidstat 1</h4>
+<div class="outline-text-4" id="text-3-1-5">
+<div class="org-src-container">
+<pre class="src src-shell">$ pidstat 1
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+
+08:27:34 PM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+08:27:35 PM     0       757    0.99    0.00    0.00    0.00    0.99     2  Xorg
+08:27:35 PM  1000      1573    0.99    0.00    0.00    0.00    0.99     3  i3bar
+08:27:35 PM     0      1798    0.00    0.99    0.00    0.00    0.99     3  kworker/u8:0-phy0
+08:27:35 PM  1000      1987    0.99    0.00    0.00    0.00    0.99     1  pidstat
+
+08:27:35 PM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+08:27:36 PM     0       757    1.00    0.00    0.00    0.00    1.00     2  Xorg
+
+08:27:36 PM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+08:27:37 PM     0       757    1.00    0.00    0.00    0.00    1.00     2  Xorg
+08:27:37 PM     0      1971    0.00    1.00    0.00    0.00    1.00     0  kworker/u8:1-phy0
+08:27:37 PM  1000      1987    1.00    1.00    0.00    0.00    2.00     1  pidstat
+^C
+
+Average:      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+Average:        0       757    1.00    0.00    0.00    0.00    1.00     -  Xorg
+Average:     1000      1573    0.33    0.00    0.00    0.00    0.33     -  i3bar
+Average:        0      1798    0.00    0.33    0.00    0.00    0.33     -  kworker/u8:0-phy0
+Average:        0      1971    0.00    0.33    0.00    0.00    0.33     -  kworker/u8:1-phy0
+Average:     1000      1987    0.66    0.33    0.00    0.00    1.00     -  pidstat
+
+</pre>
+</div>
+
+<p>
+pidstat 命令展示每个进程的CPU使用情况，支持滚动输出，能够采集到不同时间段的数据变化。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfb33512" class="outline-4">
+<h4 id="orgfb33512"><span class="section-number-4">3.1.6.</span> iostat -xz 1</h4>
+<div class="outline-text-4" id="text-3-1-6">
+<div class="org-src-container">
+<pre class="src src-shell">$ iostat -xz 1
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.81    0.00    0.35    0.08    0.00   98.76
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+sda              7.67    436.10     6.82  47.07    0.48    56.86    1.81    134.56     0.67  27.09    5.21    74.37    0.00      0.00     0.00   0.00    0.00     0.00    0.19    2.58    0.01   0.68
+sdb              0.35      9.60     0.13  26.87    3.48    27.16    0.01      0.03     0.01  25.64   15.52     2.10    0.00      0.00     0.00   0.00    0.00     0.00    0.01   15.00    0.00   0.11
+
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.25    0.00    0.25    0.00    0.00   99.50
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.25    0.00    0.25    0.00    0.00   99.50
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+0.25    0.00    0.00    0.00    0.00   99.75
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+
+^C
+</pre>
+</div>
+
+
+<p>
+此工具展示存储设备的I/O指标。 要检查的列包括如下：
+</p>
+
+<ul class="org-ul">
+<li>r/s、w/s、rkB/s和wkB/s： 分别为每秒向设备发送的读、写次数，以及读、写字节数。</li>
+<li>await： I/O的平均响应时间，以毫秒为单位。包含了I/O队列时间和服务时间。</li>
+<li>avgqu-sz： 设备请求队列的平均长度。</li>
+<li>%util： 设备使用率。代表设备繁忙的百分比，显示了每秒设备开展实际工作的时间占比。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfc79136" class="outline-4">
+<h4 id="orgfc79136"><span class="section-number-4">3.1.7.</span> free -m</h4>
+<div class="outline-text-4" id="text-3-1-7">
+<div class="org-src-container">
+<pre class="src src-shell">$ free -m
+total        used        free      shared  buff/cache   available
+Mem:            7847         871        5666         154        1309        6559
+Swap:           7628           0        7628
+</pre>
+</div>
+
+<p>
+系统可用内存（MB），available列展示了系统实际剩余的可用内存，包括缓冲区和页缓存区。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org98c6448" class="outline-4">
+<h4 id="org98c6448"><span class="section-number-4">3.1.8.</span> sar -n DEV 1</h4>
+<div class="outline-text-4" id="text-3-1-8">
+<div class="org-src-container">
+<pre class="src src-shell">$ sar -n DEV 1
+Linux 5.10.0-8-amd64 (nanddebian-work)  08/22/2021      _x86_64_    (4 CPU)
+
+08:56:42 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+08:56:43 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    virbr0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    virbr2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM    virbr1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:43 PM wlx488ad25147fe      0.00      1.00      0.00      0.08      0.00      0.00      0.00      0.00
+
+08:56:43 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+08:56:44 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    virbr0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    virbr2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM    virbr1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+08:56:44 PM wlx488ad25147fe      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+^C
+
+Average:        IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+Average:           lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       virbr0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       virbr2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:       virbr1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    wlx488ad25147fe      0.00      0.50      0.00      0.04      0.00      0.00      0.00      0.00
+</pre>
+</div>
+
+<p>
+sar工具具有不同的运行模式，上述命令使用sar来查看网络设备指标。 通过接口吞吐量信息rxkB/s和txkB/s来检查是否有指标达到了上限。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org93d0c08" class="outline-4">
+<h4 id="org93d0c08"><span class="section-number-4">3.1.9.</span> sar -n TCP,ETCP 1</h4>
+<div class="outline-text-4" id="text-3-1-9">
+<div class="org-src-container">
+<pre class="src src-shell">$ sar -n TCP,ETCP 1
+Linux 5.10.0-8-amd64 (nanddebian-work)        08/22/2021      _x86_64_  (4 CPU)
+
+08:58:56 PM  active/s passive/s    iseg/s    oseg/s
+08:58:57 PM      0.00      0.00      0.00      0.00
+
+08:58:56 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+08:58:57 PM      0.00      0.00      0.00      0.00      0.00
+
+08:58:57 PM  active/s passive/s    iseg/s    oseg/s
+08:58:58 PM      0.00      0.00      0.00      0.00
+
+08:58:57 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+08:58:58 PM      0.00      0.00      0.00      0.00      0.00
+
+08:58:58 PM  active/s passive/s    iseg/s    oseg/s
+08:58:59 PM      0.00      0.00      0.00      0.00
+
+08:58:58 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+08:58:59 PM      0.00      0.00      0.00      0.00      0.00
+^C
+
+Average:     active/s passive/s    iseg/s    oseg/s
+Average:         0.00      0.00      0.00      0.00
+
+Average:     atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+Average:         0.00      0.00      0.00      0.00      0.00
+</pre>
+</div>
+
+<p>
+上述命令使用sar来查看TCP指标和TCP错误信息。
+</p>
+
+<ul class="org-ul">
+<li>active/s： 每秒钟本地发起TCP连接的数量。（connect）</li>
+<li>passive/s： 每秒远端发起TCP连接的数量。（accept）</li>
+<li>retrans/s： 每秒TCP重传的数量。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgc60a70f" class="outline-4">
+<h4 id="orgc60a70f"><span class="section-number-4">3.1.10.</span> top</h4>
+</div>
+</div>
+
+
+<div id="outline-container-orgc1e3176" class="outline-3">
+<h3 id="orgc1e3176"><span class="section-number-3">3.2.</span> BCC工具检查清单</h3>
+<div class="outline-text-3" id="text-3-2">
+<ul class="org-ul">
+<li>execsnoop</li>
+<li>opensnoop</li>
+<li>ext4slower</li>
+<li>biolatency</li>
+<li>biosnoop</li>
+<li>cachestat</li>
+<li>tcpconnect</li>
+<li>tcpaccept</li>
+<li>tcpretrans</li>
+<li>runqlat</li>
+<li><p>
+profile
+</p>
+
+<p>
+这些工具对于创建新进程、打开文件、文件系统延迟、磁盘I/O延迟、文件系统缓存性能、TCP新建连接与重传、调度延迟，以及CPU使用情况，提供了更多信息。
+</p></li>
+</ul>
+</div>
+
+<div id="outline-container-orgc6ad227" class="outline-4">
+<h4 id="orgc6ad227"><span class="section-number-4">3.2.1.</span> execsnoop</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<p>
+通过跟踪execve系统调用，为每个新创建进程打印信息。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcf749f3" class="outline-4">
+<h4 id="orgcf749f3"><span class="section-number-4">3.2.2.</span> opensnoop</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<p>
+跟踪open以及相关变体。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcbb2b6e" class="outline-4">
+<h4 id="orgcbb2b6e"><span class="section-number-4">3.2.3.</span> ext4slower</h4>
+<div class="outline-text-4" id="text-3-2-3">
+<p>
+跟踪ext4文件系统中常见的操作。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org312e74f" class="outline-4">
+<h4 id="org312e74f"><span class="section-number-4">3.2.4.</span> biolatency</h4>
+<div class="outline-text-4" id="text-3-2-4">
+<p>
+跟踪磁盘I/O延迟（从向设备发出请求到请求完成的时间），并以直方图显示。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgadf6121" class="outline-4">
+<h4 id="orgadf6121"><span class="section-number-4">3.2.5.</span> biosnoop</h4>
+<div class="outline-text-4" id="text-3-2-5">
+<p>
+打印每次磁盘I/O请求，包含延迟之类的细节。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8d3cbbf" class="outline-4">
+<h4 id="org8d3cbbf"><span class="section-number-4">3.2.6.</span> cachestat</h4>
+<div class="outline-text-4" id="text-3-2-6">
+<p>
+按指定间隔打印文件系统缓存信息。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3802fc5" class="outline-4">
+<h4 id="org3802fc5"><span class="section-number-4">3.2.7.</span> tcpconnect</h4>
+<div class="outline-text-4" id="text-3-2-7">
+<p>
+跟踪主动建立tcp连接的详情。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org54c22a9" class="outline-4">
+<h4 id="org54c22a9"><span class="section-number-4">3.2.8.</span> tcpaccept</h4>
+<div class="outline-text-4" id="text-3-2-8">
+<p>
+跟踪被动建立tcp连接。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org938731f" class="outline-4">
+<h4 id="org938731f"><span class="section-number-4">3.2.9.</span> tcpretrans</h4>
+<div class="outline-text-4" id="text-3-2-9">
+<p>
+跟踪tcp重传。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc4c07fb" class="outline-4">
+<h4 id="orgc4c07fb"><span class="section-number-4">3.2.10.</span> runqlat</h4>
+<div class="outline-text-4" id="text-3-2-10">
+<p>
+对线程等待CPU的使劲按进行统计，以直方图打印。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org89e0f1f" class="outline-4">
+<h4 id="org89e0f1f"><span class="section-number-4">3.2.11.</span> profile</h4>
+<div class="outline-text-4" id="text-3-2-11">
+<p>
+CPU剖析器，可以用来理解哪些代码路径消耗了CPU资源。
+</p>
+
+<p>
+profile周期性的对栈进行采样，然后将去重后的调用栈连同出现的次数一并打印。
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2f16c62" class="outline-2">
+<h2 id="org2f16c62"><span class="section-number-2">4.</span> BCC</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+BPF Compiler Collection，BPF编译器集合。
+</p>
+</div>
+
+<div id="outline-container-orge350db0" class="outline-3">
+<h3 id="orge350db0"><span class="section-number-3">4.1.</span> BCC的组件</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+BCC包含了相关工具的文档、man帮助手册和示例文件，还有使用BCC工具的入门指南，以及开发BCC工具的指导和参考。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org375c797" class="outline-3">
+<h3 id="org375c797"><span class="section-number-3">4.2.</span> BCC特性</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+BCC使用了很多内核态特性，例如BPF、kprobes、uprobes等。
+</p>
+
+<ul class="org-ul">
+<li>BCC的内核态特性
+<ul class="org-ul">
+<li>动态插桩，内核态（kprobes的BPF支持）</li>
+<li>动态插桩，用于态（uprobes的BPF支持）</li>
+<li>静态跟踪，内核态（跟踪点tracepoint的BPF支持）</li>
+<li>时间采样事件（BPF，使用perf_event_open()）</li>
+<li>PMC事件（BPF，使用perf_event_open()）</li>
+<li>过滤（使用BPF程序）</li>
+<li>调试打印输出（bpf_trace_printk()）</li>
+<li>基于每个时间的输出（bpf_perf_event_open()）</li>
+<li>基础变量（全局和每线程专属变量，通过BPF映射表实现）</li>
+<li>关联数组（通过BPF映射表实现）</li>
+<li>频率统计（通过BPF映射表实现）</li>
+<li>直方图（支持以2的幂为区间，或线性以及自定义区间，通过BPF映射表实现）</li>
+<li>时间戳和时间差（通过bpf_ktime_get_ns()和BPF程序实现）</li>
+<li>内核态调用栈信息（通过BPF stackmap实现）</li>
+<li>用户态调用栈信息（通过BPF stackmap实现）</li>
+<li>可覆盖的环形缓冲区（perf_event_attr.write_backward）</li>
+<li>低成本开销的插桩支持（BPF JIT，以及在BPF映射表中进行统计）</li>
+<li>生产环境安全（BPF验证器）</li>
+</ul></li>
+</ul>
+
+
+
+<p>
+BCC用户态前端和BCC代码仓库中提供了以下用户态特性：
+</p>
+<ul class="org-ul">
+<li>BCC用户态特性
+<ul class="org-ul">
+<li>用户态静态跟踪（通过uprobes实现的SystemTab风格的USDT探针）</li>
+<li>调试打印输出（通过Python使用BPF.trace_pipe()和BPF.trace_fields()）</li>
+<li>基于每个事件的输出（BPF_PERF_OUTPUT宏和BPF.open_perf_buffer()）</li>
+<li>周期性的输出（BPF.get_table()和table.clear()）</li>
+<li>直方图打印（table.print_log2_hist()）</li>
+<li>内核态C结构体成员访问（将BCC重写器映射到bpf_probe_read()结果上）</li>
+<li>内核态的符号解析（ksym()和ksymaddr()）</li>
+<li>用户态的符号解析（usymaddr()）</li>
+<li>调试信息符号的解析支持</li>
+<li>BPF跟踪点支持（TRACEPOINT_PROBE）</li>
+<li>BPF调用栈回溯支持（BPF_STACK_TRACE）</li>
+<li>各种其他辅助宏和函数</li>
+<li>示例（/example目录）</li>
+<li>工具（/tools目录）</li>
+<li>新手指引（/docs/tutorial*.md）</li>
+<li>参考手册（/docs/reference_guide.md）</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9c75953" class="outline-3">
+<h3 id="org9c75953"><span class="section-number-3">4.3.</span> BCC安装</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+内核支持：主要的内核BPF组件在linux4.1 到 linux4.9之间发布，推荐内核linux4.9，使用最新内核最好。
+</p>
+
+<p>
+编译时需要开启内核配置：cONFIG_BPF=y、CONFIG_BPF_SYSCALL=y、CONFIG_BPF_EVENTS=y、CONFIG_BPF_JIT=y、CONFIG_HAVE_EBPF_JIT=y，许多发行版默认开启。
+</p>
+
+<p>
+debian、ubuntu: 安装目录位于 /user/sbin
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">  $ sudo apt install bpfcc-tools linux-headers-$(<span style="color: #AF87FF; font-weight: bold;">uname -r</span>)
+<span style="color: #8B8878;">#</span><span style="color: #8B8878;">+end_srcn</span>
+
+RHEL:&#23433;&#35013;&#30446;&#24405;&#20301;&#20110; /usr/share/bcc/tools
+<span style="color: #8B8878;">#</span><span style="color: #8B8878;">+begin_src sh</span>
+  $ sudo yum install bcc-tools
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc9704c7" class="outline-3">
+<h3 id="orgc9704c7"><span class="section-number-3">4.4.</span> BCC的工具</h3>
+<div class="outline-text-3" id="text-4-4">
+
+<div id="orgaf578cd" class="figure">
+<p><img src="image/bcc_tracing_tools_2019.png" alt="bcc_tracing_tools_2019.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2361c96" class="outline-2">
+<h2 id="org2361c96"><span class="section-number-2">5.</span> ？</h2>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-10-29 Fri 21:15</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2023-08-20 Sun 11:23</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

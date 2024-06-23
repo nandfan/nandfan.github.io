@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2024-06-23 Sun 15:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Oracle折腾记录</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,58 +191,35 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">Oracle折腾记录</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org5fcd53d">1. Oracle操作</a></li>
-<li><a href="#org63eb360">2. RAC集群</a>
+<li><a href="#org25b8045">1. Oracle操作</a></li>
+<li><a href="#orgd4a00fc">2. RAC集群</a>
 <ul>
-<li><a href="#org0b6df66">2.1. rac集群启动和关闭顺序</a></li>
+<li><a href="#orgc8c06a1">2.1. rac集群启动和关闭顺序</a></li>
 </ul>
 </li>
-<li><a href="#org0263b4d">3. ASM存储</a>
+<li><a href="#org444621f">3. ASM存储</a>
 <ul>
-<li><a href="#org77628aa">3.1. 确定asm存储设备</a></li>
-<li><a href="#orgbac4112">3.2. asm磁盘格式解析</a></li>
+<li><a href="#orgb5668c6">3.1. 确定asm存储设备</a></li>
+<li><a href="#org8e712fc">3.2. asm磁盘格式解析</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org5fcd53d" class="outline-2">
-<h2 id="org5fcd53d"><span class="section-number-2">1</span> Oracle操作</h2>
+<div id="outline-container-org25b8045" class="outline-2">
+<h2 id="org25b8045"><span class="section-number-2">1.</span> Oracle操作</h2>
 <div class="outline-text-2" id="text-1">
 <dl class="org-dl">
 <dt>切换实例归档</dt><dd><div class="org-src-container">
@@ -267,11 +245,11 @@
        round(total.MB - <span style="color: #FF1493;">free</span>.MB, 2) <span style="color: #FF1493;">as</span> Used_MB,
        round((1 - <span style="color: #FF1493;">free</span>.MB / total.MB) * 100, 2) || <span style="color: #CDC673;">'%'</span> <span style="color: #FF1493;">as</span> Used_Pct
        <span style="color: #FF1493;">from</span> (<span style="color: #FF1493;">select</span> tablespace_name, <span style="color: #FF1493;">sum</span>(bytes) / 1024 / 1024 <span style="color: #FF1493;">as</span> MB
-		    <span style="color: #FF1493;">from</span> dba_free_space
-		    <span style="color: #FF1493;">group</span> <span style="color: #FF1493;">by</span> tablespace_name) <span style="color: #FF1493;">free</span>,
+                    <span style="color: #FF1493;">from</span> dba_free_space
+                    <span style="color: #FF1493;">group</span> <span style="color: #FF1493;">by</span> tablespace_name) <span style="color: #FF1493;">free</span>,
        (<span style="color: #FF1493;">select</span> tablespace_name, <span style="color: #FF1493;">sum</span>(bytes) / 1024 / 1024 <span style="color: #FF1493;">as</span> MB
-	       <span style="color: #FF1493;">from</span> dba_data_files
-	       <span style="color: #FF1493;">group</span> <span style="color: #FF1493;">by</span> tablespace_name) total
+               <span style="color: #FF1493;">from</span> dba_data_files
+               <span style="color: #FF1493;">group</span> <span style="color: #FF1493;">by</span> tablespace_name) total
        <span style="color: #FF1493;">where</span> <span style="color: #FF1493;">free</span>.tablespace_name = total.tablespace_name;
 </pre>
 </div></dd>
@@ -333,7 +311,7 @@ $ srvctl status database -d db
 </div></dd>
 
 <dt>oracle 10g rac 磁盘组增加磁盘</dt><dd><div class="org-src-container">
-<pre class="src src-sh"><span style="color: #FF1493;">export</span> <span style="color: #FF8C00; font-weight: bold;">ORACLE_SID</span>=+ASM1
+<pre class="src src-sh"><span style="color: #FF1493;">export</span> <span style="color: #FF8C00;">ORACLE_SID</span>=+ASM1
 </pre>
 </div>
 
@@ -353,12 +331,12 @@ $ srvctl status database -d db
 </dl>
 </div>
 </div>
-<div id="outline-container-org63eb360" class="outline-2">
-<h2 id="org63eb360"><span class="section-number-2">2</span> RAC集群</h2>
+<div id="outline-container-orgd4a00fc" class="outline-2">
+<h2 id="orgd4a00fc"><span class="section-number-2">2.</span> RAC集群</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org0b6df66" class="outline-3">
-<h3 id="org0b6df66"><span class="section-number-3">2.1</span> rac集群启动和关闭顺序</h3>
+<div id="outline-container-orgc8c06a1" class="outline-3">
+<h3 id="orgc8c06a1"><span class="section-number-3">2.1.</span> rac集群启动和关闭顺序</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 实例名称为 qssecdb
@@ -408,33 +386,33 @@ $ srvctl stop nodeapps -n node-rac4
 以root用户执行:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">crsctl stop cluster -all   //&#20572;&#27490;&#25152;&#26377;&#33410;&#28857;&#26381;&#21153;</span>
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">crsctl stop cluster -all   //&#20572;&#27490;&#25152;&#26377;&#33410;&#28857;&#26381;&#21153;</span>
 </pre>
 </div>
 <p>
 或者每个节点执行:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">crsctl stop cluster</span>
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">crsctl stop cluster</span>
 </pre>
 </div>
 <p>
 或者 执行
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">crsctl stop cluster -n qssecdb1 qssecdb2 qssecdb3 qssecdb4</span>
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">crsctl stop cluster -n qssecdb1 qssecdb2 qssecdb3 qssecdb4</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org0263b4d" class="outline-2">
-<h2 id="org0263b4d"><span class="section-number-2">3</span> ASM存储</h2>
+<div id="outline-container-org444621f" class="outline-2">
+<h2 id="org444621f"><span class="section-number-2">3.</span> ASM存储</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org77628aa" class="outline-3">
-<h3 id="org77628aa"><span class="section-number-3">3.1</span> 确定asm存储设备</h3>
+<div id="outline-container-orgb5668c6" class="outline-3">
+<h3 id="orgb5668c6"><span class="section-number-3">3.1.</span> 确定asm存储设备</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 配置确定方法
@@ -445,8 +423,8 @@ $ srvctl stop nodeapps -n node-rac4
 确定盘符挂载路径
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">/usr/sbin/oracleasm status</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">/usr/sbin/oracleasm listdisks            #&#26597;&#30475;&#30913;&#30424;&#36335;&#24452;</span>
+<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">/usr/sbin/oracleasm status</span>
+<span style="color: #8B8878;"># </span><span style="color: #8B8878;">/usr/sbin/oracleasm listdisks            #&#26597;&#30475;&#30913;&#30424;&#36335;&#24452;</span>
 </pre>
 </div></li>
 
@@ -485,15 +463,15 @@ $ srvctl stop nodeapps -n node-rac4
 </div>
 </div>
 
-<div id="outline-container-orgbac4112" class="outline-3">
-<h3 id="orgbac4112"><span class="section-number-3">3.2</span> asm磁盘格式解析</h3>
+<div id="outline-container-org8e712fc" class="outline-3">
+<h3 id="org8e712fc"><span class="section-number-3">3.2.</span> asm磁盘格式解析</h3>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="date">Created: 2024-06-23 Sun 15:53</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

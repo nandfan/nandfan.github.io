@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-25 Sat 12:21 -->
+<!-- 2024-06-23 Sun 15:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>PROC文件系统</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,117 +191,69 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
-	displayAlign: "center",
-	displayIndent: "0em",
+        displayAlign: "center",
+        displayIndent: "0em",
 
-	"HTML-CSS": { scale: 100,
-			linebreaks: { automatic: "false" },
-			webFont: "TeX"
-		       },
-	SVG: {scale: 100,
-	      linebreaks: { automatic: "false" },
-	      font: "TeX"},
-	NativeMML: {scale: 100},
-	TeX: { equationNumbers: {autoNumber: "AMS"},
-	       MultLineWidth: "85%",
-	       TagSide: "right",
-	       TagIndent: ".8em"
-	     }
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
 });
 </script>
-<script type="text/javascript"
-	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">PROC文件系统</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org580d7f7">1. /proc的内容</a>
+<li><a href="#org0933066">1. /proc的内容</a>
 <ul>
-<li><a href="#org62e2175">1.1. 特定于进程的数据</a></li>
-<li><a href="#org7c84369">1.2. 一般性的系统信息</a></li>
-<li><a href="#org3dc33c6">1.3. 网络信息</a></li>
-<li><a href="#org94725ef">1.4. 系统控制参数</a></li>
+<li><a href="#org5263cd3">1.1. 特定于进程的数据</a></li>
+<li><a href="#org3ca4592">1.2. 一般性的系统信息</a></li>
+<li><a href="#orgf430d10">1.3. 网络信息</a></li>
+<li><a href="#orgea5dfeb">1.4. 系统控制参数</a></li>
 </ul>
 </li>
-<li><a href="#orgbfd81bf">2. 数据结构</a>
+<li><a href="#orgd08b32e">2. 数据结构</a>
 <ul>
-<li><a href="#orgb50829a">2.1. proc数据项的表示</a></li>
-<li><a href="#org874eb89">2.2. proc inode</a></li>
+<li><a href="#orgca3a329">2.1. proc数据项的表示</a></li>
+<li><a href="#org8f93e0a">2.2. proc inode</a></li>
 </ul>
 </li>
-<li><a href="#orgc375cc3">3. 初始化</a></li>
-<li><a href="#orgf9cc42f">4. proc文件系统的装载</a></li>
-<li><a href="#org8e3c4d7">5. 管理/proc数据项</a>
+<li><a href="#org6e3e3db">3. 初始化</a></li>
+<li><a href="#org8688d0b">4. proc文件系统的装载</a></li>
+<li><a href="#org3d934bd">5. 管理/proc数据项</a>
 <ul>
-<li><a href="#org2d2dc98">5.1. 数据项的创建和注册</a></li>
-<li><a href="#org708a3ca">5.2. 查找proc数据项</a></li>
+<li><a href="#orgdf61848">5.1. 数据项的创建和注册</a></li>
+<li><a href="#org374a01f">5.2. 查找proc数据项</a></li>
 </ul>
 </li>
-<li><a href="#org06bb846">6. 读取和写入信息</a></li>
-<li><a href="#orgb491fe8">7. 进程相关信息</a></li>
-<li><a href="#org683579b">8. 系统控制机制</a>
+<li><a href="#orgc009eab">6. 读取和写入信息</a></li>
+<li><a href="#org97ab579">7. 进程相关信息</a></li>
+<li><a href="#org9d74786">8. 系统控制机制</a>
 <ul>
-<li><a href="#org5314b4e">8.1. sysctl</a></li>
-<li><a href="#org559c7ee">8.2. 数据结构</a></li>
-<li><a href="#org36e4a48">8.3. 静态sysctl表</a></li>
-<li><a href="#orgc526ad3">8.4. 注册sysctl</a></li>
-<li><a href="#org0585dec">8.5. /proc/sys文件操作</a></li>
+<li><a href="#orgda1afae">8.1. sysctl</a></li>
+<li><a href="#org7d17593">8.2. 数据结构</a></li>
+<li><a href="#org75679e5">8.3. 静态sysctl表</a></li>
+<li><a href="#orgee6c927">8.4. 注册sysctl</a></li>
+<li><a href="#org2eb8926">8.5. /proc/sys文件操作</a></li>
 </ul>
 </li>
 </ul>
@@ -310,8 +263,8 @@ for the JavaScript code in this tag.
 简介： 内核可以通过 <b>proc文件系统</b> 生成与系统的状态和配置有关的信息，用户和系统程序可以从普通文件读取这些信息，而无需专门的工具与内核通信。此外还可以通过向 proc 文件系统的文件写入字符串，来向内核发送数据。
 </p>
 
-<div id="outline-container-org580d7f7" class="outline-2">
-<h2 id="org580d7f7"><span class="section-number-2">1</span> /proc的内容</h2>
+<div id="outline-container-org0933066" class="outline-2">
+<h2 id="org0933066"><span class="section-number-2">1.</span> /proc的内容</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 目录的内容可以分为以下几类：
@@ -328,8 +281,8 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 
-<div id="outline-container-org62e2175" class="outline-3">
-<h3 id="org62e2175"><span class="section-number-3">1.1</span> 特定于进程的数据</h3>
+<div id="outline-container-org5263cd3" class="outline-3">
+<h3 id="org5263cd3"><span class="section-number-3">1.1.</span> 特定于进程的数据</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 /proc目录中有很多用进程PID命名的文件夹，文件夹中的文件包含了相应进程的数据。
@@ -348,8 +301,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org7c84369" class="outline-3">
-<h3 id="org7c84369"><span class="section-number-3">1.2</span> 一般性的系统信息</h3>
+<div id="outline-container-org3ca4592" class="outline-3">
+<h3 id="org3ca4592"><span class="section-number-3">1.2.</span> 一般性的系统信息</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 /proc目录中还有一些文件，包含了一般性的系统信息。
@@ -428,8 +381,8 @@ d9e88000-db53ffff : System RAM
 </div>
 </div>
 
-<div id="outline-container-org3dc33c6" class="outline-3">
-<h3 id="org3dc33c6"><span class="section-number-3">1.3</span> 网络信息</h3>
+<div id="outline-container-orgf430d10" class="outline-3">
+<h3 id="orgf430d10"><span class="section-number-3">1.3.</span> 网络信息</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 /proc/net子目录提供了内核的各种网络选项有关的数据。其中保存了各种协议和设备数据。
@@ -448,8 +401,8 @@ d9e88000-db53ffff : System RAM
 </div>
 </div>
 
-<div id="outline-container-org94725ef" class="outline-3">
-<h3 id="org94725ef"><span class="section-number-3">1.4</span> 系统控制参数</h3>
+<div id="outline-container-orgea5dfeb" class="outline-3">
+<h3 id="orgea5dfeb"><span class="section-number-3">1.4.</span> 系统控制参数</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 用于动态地检查和修改内核行为的系统控制参数。通过sysctl系统调用也能修改这些参数，但是需要的工作量更多，因
@@ -473,74 +426,74 @@ proc文件系统是一个虚拟文件系统，通过proc文件系统，可以获
 
 
 
-<div id="outline-container-orgbfd81bf" class="outline-2">
-<h2 id="orgbfd81bf"><span class="section-number-2">2</span> 数据结构</h2>
+<div id="outline-container-orgd08b32e" class="outline-2">
+<h2 id="orgd08b32e"><span class="section-number-2">2.</span> 数据结构</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgb50829a" class="outline-3">
-<h3 id="orgb50829a"><span class="section-number-3">2.1</span> proc数据项的表示</h3>
+<div id="outline-container-orgca3a329" class="outline-3">
+<h3 id="orgca3a329"><span class="section-number-3">2.1.</span> proc数据项的表示</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 proc中的每个数据项都由proc_dir_entry的一个实例描述，其定义如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> {
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">low_ino</span>;
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #FF8C00;">namelen</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#21517;&#38271;&#24230;</span>
-	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#20648;&#25991;&#20214;&#21517;</span>
-	<span style="color: #5FD7FF;">mode_t</span> <span style="color: #FF8C00;">mode</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35775;&#38382;&#26435;&#30456;</span>
-	<span style="color: #5FD7FF;">nlink_t</span> <span style="color: #FF8C00;">nlink</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#24405;&#20013;&#23376;&#30446;&#24405;&#21644;&#31526;&#21495;&#38142;&#25509;&#30340;&#25968;&#30446;</span>
-	<span style="color: #5FD7FF;">uid_t</span> <span style="color: #FF8C00;">uid</span>;
-	<span style="color: #5FD7FF;">gid_t</span> <span style="color: #FF8C00;">gid</span>;
-	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#25991;&#20214;&#38271;&#24230;&#65288;&#23383;&#33410;&#65289;&#65292;&#30001;&#20110; proc &#25968;&#25454;&#39033;&#26159;&#21160;&#24577;&#29983;&#25104;&#30340;&#65292;&#25152;&#20197;&#25991;&#20214;&#30340;&#38271;&#24230;&#36890;&#24120;&#26080;&#27861;&#39044;&#20808;&#30693;&#36947;&#12290;</span>
-<span style="color: #8B8878;">         &#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#35813;&#20540;&#20026;0&#12290;</span><span style="color: #8B8878;">*/</span>
-	<span style="color: #5FD7FF;">loff_t</span> <span style="color: #FF8C00;">size</span>;
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> *<span style="color: #FF8C00;">proc_iops</span>;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">inode&#25805;&#20316;&#20989;&#25968;</span>
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> *<span style="color: #FF8C00;">proc_fops</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25991;&#20214;&#25805;&#20316;&#20989;&#25968;</span>
-	<span style="color: #5FD7FF;">get_info_t</span> *<span style="color: #FF8C00;">get_info</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20989;&#25968;&#25351;&#38024;&#65292;&#25351;&#21521;&#30456;&#20851;&#23376;&#31995;&#32479;&#20013;&#36820;&#22238;&#25152;&#38656;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span> *<span style="color: #FF8C00;">owner</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">next&#29992;&#20110;&#36830;&#25509;&#30446;&#24405;&#19979;&#30340;&#25968;&#25454;&#39033;</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">parent&#25351;&#21521;&#29238;&#30446;&#24405;</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">subdir&#25351;&#21521;&#30446;&#24405;&#20013;&#30340;&#31532;&#19968;&#20010;&#23376;&#25968;&#25454;&#39033;</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">next</span>, *<span style="color: #FF8C00;">parent</span>, *<span style="color: #FF8C00;">subdir</span>;
-	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>;
-	<span style="color: #5FD7FF;">read_proc_t</span> *<span style="color: #FF8C00;">read_proc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20174;&#20869;&#26680;&#35835;&#21462;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
-	<span style="color: #5FD7FF;">write_proc_t</span> *<span style="color: #FF8C00;">write_proc</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21521;&#20869;&#26680;&#20889;&#20837;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
-	<span style="color: #5FD7FF;">atomic_t</span> <span style="color: #FF8C00;">count</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#23454;&#29992;&#35745;&#25968;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">pde_users</span>;  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">number of callers into module in progress</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">spinlock_t</span> <span style="color: #FF8C00;">pde_unload_lock</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">proc_fops checks and pde_users bumps</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">completion</span> *<span style="color: #FF8C00;">pde_unload_completion</span>;
-	<span style="color: #5FD7FF;">shadow_proc_t</span> *<span style="color: #FF8C00;">shadow_proc</span>;
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> {
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">low_ino</span>;
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">short</span> <span style="color: #FD971F;">namelen</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25991;&#20214;&#21517;&#38271;&#24230;</span>
+        <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">name</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23384;&#20648;&#25991;&#20214;&#21517;</span>
+        <span style="color: #66D9EF;">mode_t</span> <span style="color: #FD971F;">mode</span>;  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35775;&#38382;&#26435;&#30456;</span>
+        <span style="color: #66D9EF;">nlink_t</span> <span style="color: #FD971F;">nlink</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#30446;&#24405;&#20013;&#23376;&#30446;&#24405;&#21644;&#31526;&#21495;&#38142;&#25509;&#30340;&#25968;&#30446;</span>
+        <span style="color: #66D9EF;">uid_t</span> <span style="color: #FD971F;">uid</span>;
+        <span style="color: #66D9EF;">gid_t</span> <span style="color: #FD971F;">gid</span>;
+        <span style="color: #75715E;">/*</span><span style="color: #75715E;">&#25991;&#20214;&#38271;&#24230;&#65288;&#23383;&#33410;&#65289;&#65292;&#30001;&#20110; proc &#25968;&#25454;&#39033;&#26159;&#21160;&#24577;&#29983;&#25104;&#30340;&#65292;&#25152;&#20197;&#25991;&#20214;&#30340;&#38271;&#24230;&#36890;&#24120;&#26080;&#27861;&#39044;&#20808;&#30693;&#36947;&#12290;</span>
+<span style="color: #75715E;">         &#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#35813;&#20540;&#20026;0&#12290;</span><span style="color: #75715E;">*/</span>
+        <span style="color: #66D9EF;">loff_t</span> <span style="color: #FD971F;">size</span>;
+        <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode_operations</span> *<span style="color: #FD971F;">proc_iops</span>;<span style="color: #75715E;">//</span><span style="color: #75715E;">inode&#25805;&#20316;&#20989;&#25968;</span>
+        <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_operations</span> *<span style="color: #FD971F;">proc_fops</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25991;&#20214;&#25805;&#20316;&#20989;&#25968;</span>
+        <span style="color: #66D9EF;">get_info_t</span> *<span style="color: #FD971F;">get_info</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20989;&#25968;&#25351;&#38024;&#65292;&#25351;&#21521;&#30456;&#20851;&#23376;&#31995;&#32479;&#20013;&#36820;&#22238;&#25152;&#38656;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">module</span> *<span style="color: #FD971F;">owner</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">next&#29992;&#20110;&#36830;&#25509;&#30446;&#24405;&#19979;&#30340;&#25968;&#25454;&#39033;</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">parent&#25351;&#21521;&#29238;&#30446;&#24405;</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">subdir&#25351;&#21521;&#30446;&#24405;&#20013;&#30340;&#31532;&#19968;&#20010;&#23376;&#25968;&#25454;&#39033;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> *<span style="color: #FD971F;">next</span>, *<span style="color: #FD971F;">parent</span>, *<span style="color: #FD971F;">subdir</span>;
+        <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">data</span>;
+        <span style="color: #66D9EF;">read_proc_t</span> *<span style="color: #FD971F;">read_proc</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20174;&#20869;&#26680;&#35835;&#21462;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
+        <span style="color: #66D9EF;">write_proc_t</span> *<span style="color: #FD971F;">write_proc</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21521;&#20869;&#26680;&#20889;&#20837;&#25968;&#25454;&#30340;&#20989;&#25968;</span>
+        <span style="color: #66D9EF;">atomic_t</span> <span style="color: #FD971F;">count</span>;         <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#23454;&#29992;&#35745;&#25968;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">pde_users</span>;  <span style="color: #75715E;">/* </span><span style="color: #75715E;">number of callers into module in progress</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">spinlock_t</span> <span style="color: #FD971F;">pde_unload_lock</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">proc_fops checks and pde_users bumps</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">completion</span> *<span style="color: #FD971F;">pde_unload_completion</span>;
+        <span style="color: #66D9EF;">shadow_proc_t</span> *<span style="color: #FD971F;">shadow_proc</span>;
 };
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org874eb89" class="outline-3">
-<h3 id="org874eb89"><span class="section-number-3">2.2</span> proc inode</h3>
+<div id="outline-container-org8f93e0a" class="outline-3">
+<h3 id="org8f93e0a"><span class="section-number-3">2.2.</span> proc inode</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 proc_inode结构用来支持以面向inode的方式来查看proc文件系统的数据项。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">proc_op</span> {
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#29992;&#20110;&#33719;&#24471;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">proc_get_link</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dentry</span> *, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">path</span> *);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#22312;&#34394;&#25311;&#25991;&#20214;&#31995;&#32479;&#20013;&#24314;&#31435;&#38142;&#25509;&#65292;&#25351;&#21521;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#25968;&#25454;</span>
-	<span style="color: #5FD7FF;">int</span> (*<span style="color: #87D700;">proc_show</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">seq_file</span> *<span style="color: #FF8C00;">m</span>,
-			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid_namespace</span> *<span style="color: #FF8C00;">ns</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>,
-			 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">task</span>);
+<pre class="src src-c"><span style="color: #F92672;">union</span> <span style="color: #66D9EF;">proc_op</span> {
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#29992;&#20110;&#33719;&#24471;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#20449;&#24687;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">int</span> (*<span style="color: #A6E22E;">proc_get_link</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">dentry</span> *, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">path</span> *);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#29992;&#20110;&#22312;&#34394;&#25311;&#25991;&#20214;&#31995;&#32479;&#20013;&#24314;&#31435;&#38142;&#25509;&#65292;&#25351;&#21521;&#29305;&#23450;&#20110;&#36827;&#31243;&#30340;&#25968;&#25454;</span>
+        <span style="color: #66D9EF;">int</span> (*<span style="color: #A6E22E;">proc_show</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">seq_file</span> *<span style="color: #FD971F;">m</span>,
+                         <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">pid_namespace</span> *<span style="color: #FD971F;">ns</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">pid</span> *<span style="color: #FD971F;">pid</span>,
+                         <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">task_struct</span> *<span style="color: #FD971F;">task</span>);
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span> {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">pid</span> *<span style="color: #FF8C00;">pid</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#31243;&#30340;pid&#23454;&#20363;</span>
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">fd</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;&#24212;&#20110;/proc/&lt;pic&gt;/fd/&#20013;&#30340;&#26576;&#20010;&#25991;&#20214;&#25551;&#36848;&#31526;</span>
-	<span style="color: #FF1493;">union</span> <span style="color: #5FD7FF;">proc_op</span> <span style="color: #FF8C00;">op</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#20851;&#32852;&#21040;proc&#25968;&#25454;&#39033;&#30340;proc_dir_entry&#23454;&#20363;</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">pde</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> <span style="color: #FF8C00;">vfs_inode</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">inode&#23454;&#20363;</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_inode</span> {
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">pid</span> *<span style="color: #FD971F;">pid</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36827;&#31243;&#30340;pid&#23454;&#20363;</span>
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">fd</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23545;&#24212;&#20110;/proc/&lt;pic&gt;/fd/&#20013;&#30340;&#26576;&#20010;&#25991;&#20214;&#25551;&#36848;&#31526;</span>
+        <span style="color: #F92672;">union</span> <span style="color: #66D9EF;">proc_op</span> <span style="color: #FD971F;">op</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25351;&#21521;&#20851;&#32852;&#21040;proc&#25968;&#25454;&#39033;&#30340;proc_dir_entry&#23454;&#20363;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> *<span style="color: #FD971F;">pde</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode</span> <span style="color: #FD971F;">vfs_inode</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">inode&#23454;&#20363;</span>
 };
 </pre>
 </div>
@@ -553,9 +506,9 @@ proc_inode结构用于将特定于proc的数据与VFS层的inode数据进行关�
 如果inode（vfs_inode）结构实例关联到了proc文件系统，则可以通过container_of机制来获得proc_inode。定义如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span> *<span style="color: #87D700;">PROC_I</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">inline</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_inode</span> *<span style="color: #A6E22E;">PROC_I</span>(<span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode</span> *<span style="color: #FD971F;">inode</span>)
 {
-	<span style="color: #FF1493;">return</span> container_of(inode, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_inode</span>, vfs_inode);
+        <span style="color: #F92672;">return</span> container_of(inode, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_inode</span>, vfs_inode);
 }
 </pre>
 </div>
@@ -563,11 +516,11 @@ proc_inode结构用于将特定于proc的数据与VFS层的inode数据进行关�
 </div>
 </div>
 
-<div id="outline-container-orgc375cc3" class="outline-2">
-<h2 id="orgc375cc3"><span class="section-number-2">3</span> 初始化</h2>
+<div id="outline-container-org6e3e3db" class="outline-2">
+<h2 id="org6e3e3db"><span class="section-number-2">3.</span> 初始化</h2>
 <div class="outline-text-2" id="text-3">
 
-<div class="figure">
+<div id="org7fb5674" class="figure">
 <p><img src="./plantuml/filesystem/proc_init.png" alt="proc_init.png" />
 </p>
 </div>
@@ -578,14 +531,14 @@ proc_mkdir函数会注册一个新的子目录，并返回对应的proc_dir_entr
 </div>
 </div>
 
-<div id="outline-container-orgf9cc42f" class="outline-2">
-<h2 id="orgf9cc42f"><span class="section-number-2">4</span> proc文件系统的装载</h2>
+<div id="outline-container-org8688d0b" class="outline-2">
+<h2 id="org8688d0b"><span class="section-number-2">4.</span> proc文件系统的装载</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 从用户空间的角度来看，/proc的装载几乎与非虚拟文件系统类似。唯一的区别是，将一个适宜的关键字（通常是proc或none）指定为数据源，而不使用设备文件：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">mount -t proc proc /proc</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount -t proc proc /proc</span>
 </pre>
 </div>
 
@@ -593,11 +546,11 @@ proc_mkdir函数会注册一个新的子目录，并返回对应的proc_dir_entr
 内核添加文件系统时，会扫描一个链表(file_system)，以查找和该文件系统相关联的file_system_type实例。proc文件系统的结构如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_system_type</span> <span style="color: #FF8C00;">proc_fs_type</span> = {
-	.name           = <span style="color: #CDC673;">"proc"</span>,
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">proc&#25991;&#20214;&#31995;&#32479;&#30340;&#36229;&#32423;&#22359;&#30340;&#22635;&#20805;&#20989;&#25968;</span>
-	.get_sb         = proc_get_sb,
-	.kill_sb        = proc_kill_sb,
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_system_type</span> <span style="color: #FD971F;">proc_fs_type</span> = {
+        .name           = <span style="color: #E6DB74;">"proc"</span>,
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">proc&#25991;&#20214;&#31995;&#32479;&#30340;&#36229;&#32423;&#22359;&#30340;&#22635;&#20805;&#20989;&#25968;</span>
+        .get_sb         = proc_get_sb,
+        .kill_sb        = proc_kill_sb,
 };
 </pre>
 </div>
@@ -607,41 +560,41 @@ proc_get_sb 借助 proc_fill_super 来填充一个 super_block 的新实例。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">proc_fill_super</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_block</span> *<span style="color: #FF8C00;">s</span>)
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">proc_fill_super</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">super_block</span> *<span style="color: #FD971F;">s</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> * <span style="color: #FF8C00;">root_inode</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode</span> * <span style="color: #FD971F;">root_inode</span>;
 
-	s-&gt;s_flags |= MS_NODIRATIME | MS_NOSUID | MS_NOEXEC;
-	s-&gt;s_blocksize = 1024; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22359;&#38271;&#24230;&#24635;&#20026;1024</span>
-	s-&gt;s_blocksize_bits = 10; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">2^10 = 1024</span>
-	s-&gt;s_magic = PROC_SUPER_MAGIC; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">proc&#25991;&#20214;&#31995;&#32479;&#39764;&#25968;</span>
-	s-&gt;s_op = &amp;proc_sops;
-	s-&gt;s_time_gran = 1;
+        s-&gt;s_flags |= MS_NODIRATIME | MS_NOSUID | MS_NOEXEC;
+        s-&gt;s_blocksize = 1024; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22359;&#38271;&#24230;&#24635;&#20026;1024</span>
+        s-&gt;s_blocksize_bits = 10; <span style="color: #75715E;">//</span><span style="color: #75715E;">2^10 = 1024</span>
+        s-&gt;s_magic = PROC_SUPER_MAGIC; <span style="color: #75715E;">//</span><span style="color: #75715E;">proc&#25991;&#20214;&#31995;&#32479;&#39764;&#25968;</span>
+        s-&gt;s_op = &amp;proc_sops;
+        s-&gt;s_time_gran = 1;
 
-	de_get(&amp;proc_root);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20026;&#26681;&#30446;&#24405;&#21019;&#24314;inode</span>
-	root_inode = proc_get_inode(s, PROC_ROOT_INO, &amp;proc_root);
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>root_inode)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_no_root</span>;
-	root_inode-&gt;i_uid = 0;
-	root_inode-&gt;i_gid = 0;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36716;&#25442;&#20026;dentry&#65292;&#24182;&#21152;&#20837;&#21040;&#36229;&#32423;&#22359;</span>
-	s-&gt;s_root = d_alloc_root(root_inode);
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>s-&gt;s_root)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_no_root</span>;
-	<span style="color: #FF1493;">return</span> 0;
+        de_get(&amp;proc_root);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20026;&#26681;&#30446;&#24405;&#21019;&#24314;inode</span>
+        root_inode = proc_get_inode(s, PROC_ROOT_INO, &amp;proc_root);
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>root_inode)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_no_root</span>;
+        root_inode-&gt;i_uid = 0;
+        root_inode-&gt;i_gid = 0;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36716;&#25442;&#20026;dentry&#65292;&#24182;&#21152;&#20837;&#21040;&#36229;&#32423;&#22359;</span>
+        s-&gt;s_root = d_alloc_root(root_inode);
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>s-&gt;s_root)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_no_root</span>;
+        <span style="color: #F92672;">return</span> 0;
 }
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> <span style="color: #FF8C00;">proc_root</span> = {
-	.low_ino        = PROC_ROOT_INO,
-	.namelen        = 5,
-	.name           = <span style="color: #CDC673;">"/proc"</span>,
-	.mode           = S_IFDIR | S_IRUGO | S_IXUGO,
-	.nlink          = 2,
-	.count          = ATOMIC_INIT(1),
-	.proc_iops      = &amp;proc_root_inode_operations,
-	.proc_fops      = &amp;proc_root_operations,
-	.parent         = &amp;proc_root,
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> <span style="color: #FD971F;">proc_root</span> = {
+        .low_ino        = PROC_ROOT_INO,
+        .namelen        = 5,
+        .name           = <span style="color: #E6DB74;">"/proc"</span>,
+        .mode           = S_IFDIR | S_IRUGO | S_IXUGO,
+        .nlink          = 2,
+        .count          = ATOMIC_INIT(1),
+        .proc_iops      = &amp;proc_root_inode_operations,
+        .proc_fops      = &amp;proc_root_operations,
+        .parent         = &amp;proc_root,
 };
 </pre>
 </div>
@@ -651,14 +604,14 @@ proc_get_sb 借助 proc_fill_super 来填充一个 super_block 的新实例。
 proc_sops定义了超级块的各个操作函数：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">super_operations</span> <span style="color: #FF8C00;">proc_sops</span> = {
-	.alloc_inode    = proc_alloc_inode,
-	.destroy_inode  = proc_destroy_inode,
-	.read_inode     = proc_read_inode,
-	.drop_inode     = generic_delete_inode,
-	.delete_inode   = proc_delete_inode,
-	.statfs         = simple_statfs,
-	.remount_fs     = proc_remount,
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">super_operations</span> <span style="color: #FD971F;">proc_sops</span> = {
+        .alloc_inode    = proc_alloc_inode,
+        .destroy_inode  = proc_destroy_inode,
+        .read_inode     = proc_read_inode,
+        .drop_inode     = generic_delete_inode,
+        .delete_inode   = proc_delete_inode,
+        .statfs         = simple_statfs,
+        .remount_fs     = proc_remount,
 };
 </pre>
 </div>
@@ -668,26 +621,26 @@ proc_sops定义了超级块的各个操作函数：
 proc 文件系统中，根inode不同于与其他inode的，它不仅包含“普通”的文件和目录，还管理着特定于进程的PID目录，其中包含了各个系统进程的详细信息。因此，根inode有自身的inode操作和文件操作，定义如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_root_operations</span> = {
-	.read    = generic_read_dir,
-	.readdir         = proc_root_readdir,
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_operations</span> <span style="color: #FD971F;">proc_root_operations</span> = {
+        .read    = generic_read_dir,
+        .readdir         = proc_root_readdir,
 };
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_root_inode_operations</span> = {
-	.lookup = proc_root_lookup,
-	.getattr        = proc_root_getattr,
+<span style="color: #F92672;">static</span> <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode_operations</span> <span style="color: #FD971F;">proc_root_inode_operations</span> = {
+        .lookup = proc_root_lookup,
+        .getattr        = proc_root_getattr,
 };
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org8e3c4d7" class="outline-2">
-<h2 id="org8e3c4d7"><span class="section-number-2">5</span> 管理/proc数据项</h2>
+<div id="outline-container-org3d934bd" class="outline-2">
+<h2 id="org3d934bd"><span class="section-number-2">5.</span> 管理/proc数据项</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-org2d2dc98" class="outline-3">
-<h3 id="org2d2dc98"><span class="section-number-3">5.1</span> 数据项的创建和注册</h3>
+<div id="outline-container-orgdf61848" class="outline-3">
+<h3 id="orgdf61848"><span class="section-number-3">5.1.</span> 数据项的创建和注册</h3>
 <div class="outline-text-3" id="text-5-1">
 <p>
 数据项分两个步骤添加到proc文件系统，首先创建一个proc_dir_entry的一个实例，并填充所有需要的信息。然后调用proc_register将其注册到proc的数据结构，使得能够在文件系统中看到该数据项。
@@ -697,8 +650,8 @@ proc 文件系统中，根inode不同于与其他inode的，它不仅包含“�
 内核为此提供了辅助函数，最常用的是create_proc_entry：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #87D700;">create_proc_entry</span>(<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">name</span>, <span style="color: #5FD7FF;">mode_t</span> <span style="color: #FF8C00;">mode</span>,
-					 <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> *<span style="color: #FF8C00;">parent</span>);
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> *<span style="color: #A6E22E;">create_proc_entry</span>(<span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">name</span>, <span style="color: #66D9EF;">mode_t</span> <span style="color: #FD971F;">mode</span>,
+                                         <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> *<span style="color: #FD971F;">parent</span>);
 </pre>
 </div>
 
@@ -711,40 +664,40 @@ proc 文件系统中，根inode不同于与其他inode的，它不仅包含“�
 proc_register 用于将数据项注册到 proc 文件系统：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">proc_register</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> * <span style="color: #FF8C00;">dir</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> * <span style="color: #FF8C00;">dp</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">proc_register</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> * <span style="color: #FD971F;">dir</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> * <span style="color: #FD971F;">dp</span>)
 {
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29983;&#25104;&#19968;&#20010;&#21807;&#19968;&#30340; proc &#20869;&#37096;&#32534;&#21495;</span>
-	i = get_inode_number();
-	dp-&gt;low_ino = i;
-	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#65288;&#20026;&#31354;&#26102;&#65289; &#26681;&#25454;&#25991;&#20214;&#31867;&#22411;&#65292;&#21021;&#22987;&#21270;file_operations &#21644; inode_operations &#32467;&#26500;&#23454;&#20363;&#30340;&#25351;&#38024;</span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF1493;">if</span> (S_ISDIR(dp-&gt;mode)) {
-		<span style="color: #FF1493;">if</span> (dp-&gt;proc_iops == <span style="color: #AF87FF;">NULL</span>) {
-			dp-&gt;proc_fops = &amp;proc_dir_operations;
-			dp-&gt;proc_iops = &amp;proc_dir_inode_operations;
-		}
-		dir-&gt;nlink++;
-	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (S_ISLNK(dp-&gt;mode)) {
-		<span style="color: #FF1493;">if</span> (dp-&gt;proc_iops == <span style="color: #AF87FF;">NULL</span>)
-			dp-&gt;proc_iops = &amp;proc_link_inode_operations;
-	} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (S_ISREG(dp-&gt;mode)) {
-		<span style="color: #FF1493;">if</span> (dp-&gt;proc_fops == <span style="color: #AF87FF;">NULL</span>)
-			dp-&gt;proc_fops = &amp;proc_file_operations;
-		<span style="color: #FF1493;">if</span> (dp-&gt;proc_iops == <span style="color: #AF87FF;">NULL</span>)
-			dp-&gt;proc_iops = &amp;proc_file_inode_operations;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24314;&#31435;&#23618;&#27425;&#32467;&#26500;&#20851;&#31995;</span>
-	dp-&gt;next = dir-&gt;subdir;
-	dp-&gt;parent = dir;
-	dir-&gt;subdir = dp;
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">i</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#29983;&#25104;&#19968;&#20010;&#21807;&#19968;&#30340; proc &#20869;&#37096;&#32534;&#21495;</span>
+        i = get_inode_number();
+        dp-&gt;low_ino = i;
+        <span style="color: #75715E;">/*</span><span style="color: #75715E;">&#65288;&#20026;&#31354;&#26102;&#65289; &#26681;&#25454;&#25991;&#20214;&#31867;&#22411;&#65292;&#21021;&#22987;&#21270;file_operations &#21644; inode_operations &#32467;&#26500;&#23454;&#20363;&#30340;&#25351;&#38024;</span><span style="color: #75715E;">*/</span>
+        <span style="color: #F92672;">if</span> (S_ISDIR(dp-&gt;mode)) {
+                <span style="color: #F92672;">if</span> (dp-&gt;proc_iops == <span style="color: #AE81FF;">NULL</span>) {
+                        dp-&gt;proc_fops = &amp;proc_dir_operations;
+                        dp-&gt;proc_iops = &amp;proc_dir_inode_operations;
+                }
+                dir-&gt;nlink++;
+        } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (S_ISLNK(dp-&gt;mode)) {
+                <span style="color: #F92672;">if</span> (dp-&gt;proc_iops == <span style="color: #AE81FF;">NULL</span>)
+                        dp-&gt;proc_iops = &amp;proc_link_inode_operations;
+        } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (S_ISREG(dp-&gt;mode)) {
+                <span style="color: #F92672;">if</span> (dp-&gt;proc_fops == <span style="color: #AE81FF;">NULL</span>)
+                        dp-&gt;proc_fops = &amp;proc_file_operations;
+                <span style="color: #F92672;">if</span> (dp-&gt;proc_iops == <span style="color: #AE81FF;">NULL</span>)
+                        dp-&gt;proc_iops = &amp;proc_file_inode_operations;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24314;&#31435;&#23618;&#27425;&#32467;&#26500;&#20851;&#31995;</span>
+        dp-&gt;next = dir-&gt;subdir;
+        dp-&gt;parent = dir;
+        dir-&gt;subdir = dp;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org708a3ca" class="outline-3">
-<h3 id="org708a3ca"><span class="section-number-3">5.2</span> 查找proc数据项</h3>
+<div id="outline-container-org374a01f" class="outline-3">
+<h3 id="org374a01f"><span class="section-number-3">5.2.</span> 查找proc数据项</h3>
 <div class="outline-text-3" id="text-5-2">
 <p>
 用户空间应用程序访问proc文件时，就像是访问常规文件系统中的普通文件一样。搜索proc数据项时所经由的代码路径，与VFS例程是相同。VFS查找过程最终调用inode_operations的lookup函数指针，根据文件名的各个路径分量，来确定文件名所对应的inode。
@@ -756,8 +709,8 @@ proc_register 用于将数据项注册到 proc 文件系统：
 
 <div class="org-src-container">
 <pre class="src src-fundamental">proc_root_lookup
-	proc_lookup
-	proc_pid_lookup
+        proc_lookup
+        proc_pid_lookup
 </pre>
 </div>
 
@@ -768,17 +721,17 @@ proc_register 用于将数据项注册到 proc 文件系统：
 </div>
 </div>
 
-<div id="outline-container-org06bb846" class="outline-2">
-<h2 id="org06bb846"><span class="section-number-2">6</span> 读取和写入信息</h2>
+<div id="outline-container-orgc009eab" class="outline-2">
+<h2 id="orgc009eab"><span class="section-number-2">6.</span> 读取和写入信息</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 内核使用保存在proc_file_operations中的操作来读写常规proc数据项的内容。该结构中的函数指针，所指向的目标函数如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_file_operations</span> = {
-	.llseek         = proc_file_lseek,
-	.read           = proc_file_read,
-	.write          = proc_file_write,
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_operations</span> <span style="color: #FD971F;">proc_file_operations</span> = {
+        .llseek         = proc_file_lseek,
+        .read           = proc_file_read,
+        .write          = proc_file_write,
 };
 </pre>
 </div>
@@ -794,20 +747,20 @@ proc_register 用于将数据项注册到 proc 文件系统：
 <li>proc_file_write 的实现</li>
 </ol>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">ssize_t</span>
-<span style="color: #87D700;">proc_file_write</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">file</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">__user</span> *buffer,
-		<span style="color: #5FD7FF;">size_t</span> <span style="color: #FF8C00;">count</span>, <span style="color: #5FD7FF;">loff_t</span> *<span style="color: #FF8C00;">ppos</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">ssize_t</span>
+<span style="color: #A6E22E;">proc_file_write</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file</span> *<span style="color: #FD971F;">file</span>, <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">__user</span> *buffer,
+                <span style="color: #66D9EF;">size_t</span> <span style="color: #FD971F;">count</span>, <span style="color: #66D9EF;">loff_t</span> *<span style="color: #FD971F;">ppos</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode</span> *<span style="color: #FF8C00;">inode</span> = file-&gt;f_path.dentry-&gt;d_inode;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proc_dir_entry</span> * <span style="color: #FF8C00;">dp</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode</span> *<span style="color: #FD971F;">inode</span> = file-&gt;f_path.dentry-&gt;d_inode;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proc_dir_entry</span> * <span style="color: #FD971F;">dp</span>;
 
-	dp = PDE(inode);
+        dp = PDE(inode);
 
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>dp-&gt;write_proc)
-		<span style="color: #FF1493;">return</span> -EIO;
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>dp-&gt;write_proc)
+                <span style="color: #F92672;">return</span> -EIO;
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">FIXME: does this routine need ppos?  probably...</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">return</span> dp-&gt;write_proc(file, buffer, count, dp-&gt;data);
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">FIXME: does this routine need ppos?  probably...</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">return</span> dp-&gt;write_proc(file, buffer, count, dp-&gt;data);
 }
 
 </pre>
@@ -815,8 +768,8 @@ proc_register 用于将数据项注册到 proc 文件系统：
 </div>
 </div>
 
-<div id="outline-container-orgb491fe8" class="outline-2">
-<h2 id="orgb491fe8"><span class="section-number-2">7</span> 进程相关信息</h2>
+<div id="outline-container-org97ab579" class="outline-2">
+<h2 id="org97ab579"><span class="section-number-2">7.</span> 进程相关信息</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 proc文件系统最初目的是输出系统进程相关的详细信息。
@@ -826,7 +779,7 @@ proc文件系统最初目的是输出系统进程相关的详细信息。
 proc_pid_lookup 负责打开 /proc/&lt;pid&gt; 中特定于PID的文件，此函数会创建一个inode作为第一个对象，用于后续特定于PID的操作。
 </p>
 
-<div class="figure">
+<div id="orge8d7a44" class="figure">
 <p><img src="plantuml/filesystem/proc-pic-lookup.png" alt="proc-pic-lookup.png" />
 </p>
 </div>
@@ -836,22 +789,22 @@ proc_pid_lookup 负责打开 /proc/&lt;pid&gt; 中特定于PID的文件，此函
 在特定于PID的目录 /proc/pid 中处理一个文件（或目录）时，使用该目录的inode操作来完成。内核使用静态定义的 proc_tgid_base_inode_operations 结构作为PID inode的 inode_operations 实例，结构定义如下：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_tgid_base_inode_operations</span> = {
-	.lookup         = proc_tgid_base_lookup,
-	.getattr        = pid_getattr,
-	.setattr        = proc_setattr,
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode_operations</span> <span style="color: #FD971F;">proc_tgid_base_inode_operations</span> = {
+        .lookup         = proc_tgid_base_lookup,
+        .getattr        = pid_getattr,
+        .setattr        = proc_setattr,
 };
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org683579b" class="outline-2">
-<h2 id="org683579b"><span class="section-number-2">8</span> 系统控制机制</h2>
+<div id="outline-container-org9d74786" class="outline-2">
+<h2 id="org9d74786"><span class="section-number-2">8.</span> 系统控制机制</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-org5314b4e" class="outline-3">
-<h3 id="org5314b4e"><span class="section-number-3">8.1</span> sysctl</h3>
+<div id="outline-container-orgda1afae" class="outline-3">
+<h3 id="orgda1afae"><span class="section-number-3">8.1.</span> sysctl</h3>
 <div class="outline-text-3" id="text-8-1">
 <p>
 sysctl使用打包为符号常数的整数来表示路径分量。
@@ -861,49 +814,49 @@ sysctl使用打包为符号常数的整数来表示路径分量。
 内核提供的基本类别：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">enum</span> {
-	<span style="color: #FF8C00;">CTL_KERN</span>=1,             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20869;&#26680;&#33258;&#36523;&#30456;&#20851;&#20449;&#24687;</span><span style="color: #8B8878;">*/</span>
-	<span style="color: #FF8C00;">CTL_VM</span>=2,               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20869;&#23384;&#31649;&#29702;&#20449;&#24687;&#21644;&#21442;&#25968;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_NET</span>=3,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#32593;&#32476;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_PROC</span>=4,             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#36827;&#31243;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_FS</span>=5,               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25991;&#20214;&#31995;&#32479;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_DEBUG</span>=6,    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35843;&#35797;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_DEV</span>=7,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35774;&#22791;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_BUS</span>=8,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24635;&#32447;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_ABI</span>=9,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20108;&#36827;&#21046;&#20223;&#30495;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF8C00;">CTL_CPU</span>=10,             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">CPU&#30456;&#20851;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
-	<span style="color: #FF8C00;">CTL_DEV</span>=7,              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22806;&#35774;&#30456;&#20851;&#20449;&#24687;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+<pre class="src src-c"><span style="color: #F92672;">enum</span> {
+        <span style="color: #FD971F;">CTL_KERN</span>=1,             <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20869;&#26680;&#33258;&#36523;&#30456;&#20851;&#20449;&#24687;</span><span style="color: #75715E;">*/</span>
+        <span style="color: #FD971F;">CTL_VM</span>=2,               <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20869;&#23384;&#31649;&#29702;&#20449;&#24687;&#21644;&#21442;&#25968;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_NET</span>=3,              <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#32593;&#32476;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_PROC</span>=4,             <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#36827;&#31243;&#20449;&#24687;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_FS</span>=5,               <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25991;&#20214;&#31995;&#32479;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_DEBUG</span>=6,    <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#35843;&#35797;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_DEV</span>=7,              <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#35774;&#22791;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_BUS</span>=8,              <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#24635;&#32447;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_ABI</span>=9,              <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20108;&#36827;&#21046;&#20223;&#30495;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #FD971F;">CTL_CPU</span>=10,             <span style="color: #75715E;">/* </span><span style="color: #75715E;">CPU&#30456;&#20851;&#20449;&#24687;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
+        <span style="color: #FD971F;">CTL_DEV</span>=7,              <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#22806;&#35774;&#30456;&#20851;&#20449;&#24687;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
 };
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org3490c97" class="figure">
 <p><img src="dot/filesystem/sysctl-layer.png" alt="sysctl-layer.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org559c7ee" class="outline-3">
-<h3 id="org559c7ee"><span class="section-number-3">8.2</span> 数据结构</h3>
+<div id="outline-container-org7d17593" class="outline-3">
+<h3 id="org7d17593"><span class="section-number-3">8.2.</span> 数据结构</h3>
 <div class="outline-text-3" id="text-8-2">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span>
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ctl_table</span>
 {
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ctl_name</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20108;&#36827;&#21046;ID&#65292;&#35813;&#23618;&#27425;&#19978;&#21807;&#19968;</span>
-	<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">procname</span>;
-	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">data</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">maxlen</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#23450;sysctl&#33021;&#22815;&#25509;&#25910;&#25110;&#36755;&#20986;&#30340;&#25968;&#25454;&#30340;&#26368;&#22823;&#38271;&#24230;&#65288;&#25353;&#23383;&#33410;&#35745;&#31639;&#65289;</span>
-	<span style="color: #5FD7FF;">mode_t</span> <span style="color: #FF8C00;">mode</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35775;&#38382;&#26435;&#38480;</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> *<span style="color: #FF8C00;">child</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;&#19968;&#20010;&#25968;&#32452;&#65292;&#20195;&#34920;&#24403;&#21069;&#25968;&#25454;&#39033;&#30340;&#23376;&#33410;&#28857;</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> *<span style="color: #FF8C00;">parent</span>;
-	<span style="color: #5FD7FF;">proc_handler</span> *<span style="color: #FF8C00;">proc_handler</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Callback for text formatting</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">ctl_handler</span> *<span style="color: #FF8C00;">strategy</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20869;&#26680;&#29992;&#26469;&#35835;&#20889;sysctl&#30340;&#20540;</span>
-	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">extra1</span>;
-	<span style="color: #5FD7FF;">void</span> *<span style="color: #FF8C00;">extra2</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">ctl_name</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20108;&#36827;&#21046;ID&#65292;&#35813;&#23618;&#27425;&#19978;&#21807;&#19968;</span>
+        <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">procname</span>;
+        <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">data</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">maxlen</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25351;&#23450;sysctl&#33021;&#22815;&#25509;&#25910;&#25110;&#36755;&#20986;&#30340;&#25968;&#25454;&#30340;&#26368;&#22823;&#38271;&#24230;&#65288;&#25353;&#23383;&#33410;&#35745;&#31639;&#65289;</span>
+        <span style="color: #66D9EF;">mode_t</span> <span style="color: #FD971F;">mode</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35775;&#38382;&#26435;&#38480;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ctl_table</span> *<span style="color: #FD971F;">child</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25351;&#21521;&#19968;&#20010;&#25968;&#32452;&#65292;&#20195;&#34920;&#24403;&#21069;&#25968;&#25454;&#39033;&#30340;&#23376;&#33410;&#28857;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ctl_table</span> *<span style="color: #FD971F;">parent</span>;
+        <span style="color: #66D9EF;">proc_handler</span> *<span style="color: #FD971F;">proc_handler</span>;     <span style="color: #75715E;">/* </span><span style="color: #75715E;">Callback for text formatting</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">ctl_handler</span> *<span style="color: #FD971F;">strategy</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20869;&#26680;&#29992;&#26469;&#35835;&#20889;sysctl&#30340;&#20540;</span>
+        <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">extra1</span>;
+        <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">extra2</span>;
 };
 </pre>
 </div>
@@ -912,12 +865,12 @@ sysctl使用打包为符号常数的整数来表示路径分量。
 内核提供了 ctl_table_header 数据结构，使得能够将几个sysctl表维护在一个链表中。该结构的第一个成员是一个sysctl表，接下来是一个链表元素，用于链表的管理：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table_header</span>
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ctl_table_header</span>
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> *<span style="color: #FF8C00;">ctl_table</span>;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25351;&#21521;sysctl&#39033;&#30340;&#25968;&#32452;</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">ctl_entry</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#31649;&#29702;&#38142;&#34920;</span>
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">used</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">completion</span> *<span style="color: #FF8C00;">unregistering</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ctl_table</span> *<span style="color: #FD971F;">ctl_table</span>;  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25351;&#21521;sysctl&#39033;&#30340;&#25968;&#32452;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">list_head</span> <span style="color: #FD971F;">ctl_entry</span>;   <span style="color: #75715E;">//</span><span style="color: #75715E;">&#29992;&#20110;&#31649;&#29702;&#38142;&#34920;</span>
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">used</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">completion</span> *<span style="color: #FD971F;">unregistering</span>;
 };
 </pre>
 </div>
@@ -925,47 +878,47 @@ sysctl使用打包为符号常数的整数来表示路径分量。
 </div>
 
 
-<div id="outline-container-org36e4a48" class="outline-3">
-<h3 id="org36e4a48"><span class="section-number-3">8.3</span> 静态sysctl表</h3>
+<div id="outline-container-org75679e5" class="outline-3">
+<h3 id="org75679e5"><span class="section-number-3">8.3.</span> 静态sysctl表</h3>
 <div class="outline-text-3" id="text-8-3">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">ctl_table</span> <span style="color: #FF8C00;">root_table</span>[] = {
-	{
-		.ctl_name       = CTL_KERN,
-		.procname       = <span style="color: #CDC673;">"kernel"</span>,
-		.mode           = 0555,
-		.child          = kern_table,
-	},
-	{
-		.ctl_name       = CTL_VM,
-		.procname       = <span style="color: #CDC673;">"vm"</span>,
-		.mode           = 0555,
-		.child          = vm_table,
-	},
-<span style="color: #FF1493;">#ifdef</span> CONFIG_NET
-	{
-		.ctl_name       = CTL_NET,
-		.procname       = <span style="color: #CDC673;">"net"</span>,
-		.mode           = 0555,
-		.child          = net_table,
-	},
-<span style="color: #FF1493;">#endif</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
-	{
-		.ctl_name       = CTL_DEV,
-		.procname       = <span style="color: #CDC673;">"dev"</span>,
-		.mode           = 0555,
-		.child          = dev_table,
-	},
-	{ .ctl_name = 0 }
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">ctl_table</span> <span style="color: #FD971F;">root_table</span>[] = {
+        {
+                .ctl_name       = CTL_KERN,
+                .procname       = <span style="color: #E6DB74;">"kernel"</span>,
+                .mode           = 0555,
+                .child          = kern_table,
+        },
+        {
+                .ctl_name       = CTL_VM,
+                .procname       = <span style="color: #E6DB74;">"vm"</span>,
+                .mode           = 0555,
+                .child          = vm_table,
+        },
+<span style="color: #F92672;">#ifdef</span> CONFIG_NET
+        {
+                .ctl_name       = CTL_NET,
+                .procname       = <span style="color: #E6DB74;">"net"</span>,
+                .mode           = 0555,
+                .child          = net_table,
+        },
+<span style="color: #F92672;">#endif</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">...</span>
+        {
+                .ctl_name       = CTL_DEV,
+                .procname       = <span style="color: #E6DB74;">"dev"</span>,
+                .mode           = 0555,
+                .child          = dev_table,
+        },
+        { .ctl_name = 0 }
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc526ad3" class="outline-3">
-<h3 id="orgc526ad3"><span class="section-number-3">8.4</span> 注册sysctl</h3>
+<div id="outline-container-orgee6c927" class="outline-3">
+<h3 id="orgee6c927"><span class="section-number-3">8.4.</span> 注册sysctl</h3>
 <div class="outline-text-3" id="text-8-4">
 <p>
 register_sysctl_table 用于注册sysctl表， unregister_sysctl_table 用于删除sysctl表。
@@ -983,33 +936,33 @@ register_sysctl_table 函数由几个步骤组成。首先，创建一个新的 
 注册sysctl项，不会自动地创建将sysctl项关联到 proc 数据项的 inode 实例，大多数sysctl从来都不通过 proc 使用，与 proc 文件的关联是动态创建的。在 proc 文件系统初始化时，只创建了与sysctl相关的目录 /proc/sys ：
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">proc_sys_init</span>(<span style="color: #5FD7FF;">void</span>)
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">proc_sys_init</span>(<span style="color: #66D9EF;">void</span>)
 {
-	proc_sys_root = proc_mkdir(<span style="color: #CDC673;">"sys"</span>, <span style="color: #AF87FF;">NULL</span>);
-	proc_sys_root-&gt;proc_iops = &amp;proc_sys_inode_operations;
-	proc_sys_root-&gt;proc_fops = &amp;proc_sys_file_operations;
-	proc_sys_root-&gt;nlink = 0;
-	<span style="color: #FF1493;">return</span> 0;
+        proc_sys_root = proc_mkdir(<span style="color: #E6DB74;">"sys"</span>, <span style="color: #AE81FF;">NULL</span>);
+        proc_sys_root-&gt;proc_iops = &amp;proc_sys_inode_operations;
+        proc_sys_root-&gt;proc_fops = &amp;proc_sys_file_operations;
+        proc_sys_root-&gt;nlink = 0;
+        <span style="color: #F92672;">return</span> 0;
 }
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inode_operations</span> <span style="color: #FF8C00;">proc_sys_inode_operations</span> = {
-	.lookup         = proc_sys_lookup,
-	.permission         = proc_sys_permission,
-	.setattr            = proc_sys_setattr,
+<span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inode_operations</span> <span style="color: #FD971F;">proc_sys_inode_operations</span> = {
+        .lookup         = proc_sys_lookup,
+        .permission         = proc_sys_permission,
+        .setattr            = proc_sys_setattr,
 };
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file_operations</span> <span style="color: #FF8C00;">proc_sys_file_operations</span> = {
-	.read           = proc_sys_read,
-	.write          = proc_sys_write,
-	.readdir            = proc_sys_readdir,
+<span style="color: #F92672;">static</span> <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">file_operations</span> <span style="color: #FD971F;">proc_sys_file_operations</span> = {
+        .read           = proc_sys_read,
+        .write          = proc_sys_write,
+        .readdir            = proc_sys_readdir,
 };
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org0585dec" class="outline-3">
-<h3 id="org0585dec"><span class="section-number-3">8.5</span> /proc/sys文件操作</h3>
+<div id="outline-container-org2eb8926" class="outline-3">
+<h3 id="org2eb8926"><span class="section-number-3">8.5.</span> /proc/sys文件操作</h3>
 <div class="outline-text-3" id="text-8-5">
 <p>
 proc_sys_read 和 proc_sys_write 的实现非常相似。两者都需要执行下面3个简单步骤。
@@ -1037,8 +990,8 @@ proc_sys_read 和 proc_sys_write 的实现非常相似。两者都需要执行�
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-25 Sat 12:21</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

@@ -1,0 +1,3902 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:53 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ELF文件、编译、链接</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">ELF文件、编译、链接</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org99e396a">1. ELF文件类型</a></li>
+<li><a href="#org00f308d">2. 目标文件</a>
+<ul>
+<li><a href="#orgc9781d7">2.1. ELF文件结构</a>
+<ul>
+<li><a href="#org94b658b">2.1.1. 文件头</a></li>
+<li><a href="#org6a847f4">2.1.2. 段表</a></li>
+<li><a href="#orgeead76f">2.1.3. 重定位表</a></li>
+<li><a href="#orgae8c1cd">2.1.4. 字符串表</a></li>
+</ul>
+</li>
+<li><a href="#org6812bb0">2.2. 符号</a>
+<ul>
+<li><a href="#orgf536e53">2.2.1. 符号表结构</a></li>
+<li><a href="#org07f5db0">2.2.2. 弱符号和强符号</a></li>
+</ul>
+</li>
+<li><a href="#org6c92971">2.3. 调试信息</a></li>
+</ul>
+</li>
+<li><a href="#org949f781">3. 静态链接</a>
+<ul>
+<li><a href="#orgafdaeb0">3.1. 空间和地址分配</a>
+<ul>
+<li><a href="#org85f3450">3.1.1. 符号地址的确定</a></li>
+</ul>
+</li>
+<li><a href="#orgc3ce1e2">3.2. 符号解析和重定位</a>
+<ul>
+<li><a href="#orgee4e017">3.2.1. 重定位</a></li>
+<li><a href="#org0b62e78">3.2.2. 重定位表</a></li>
+<li><a href="#org934447b">3.2.3. 符号解析</a></li>
+<li><a href="#org28e588b">3.2.4. 指令修正方式</a></li>
+</ul>
+</li>
+<li><a href="#orgcc9dd92">3.3. COMMON块</a></li>
+<li><a href="#org28e1a7c">3.4. C++相关问题</a></li>
+<li><a href="#org783abd2">3.5. 静态链接</a></li>
+<li><a href="#orgef88d2d">3.6. BFD库</a></li>
+</ul>
+</li>
+<li><a href="#org5164ce3">4. <span class="todo TODO">TODO</span> 可执行文件的装载与进程（结合源码从内核分析）</a>
+<ul>
+<li><a href="#org1396235">4.1. elf一致性检查</a></li>
+<li><a href="#orgf8687e8">4.2. 加载动态链接器</a></li>
+<li><a href="#org7e351ad">4.3. 初始化进程</a></li>
+</ul>
+</li>
+<li><a href="#org3e49c61">5. 动态链接</a>
+<ul>
+<li><a href="#org31708f9">5.1. 为何要进行动态链接</a></li>
+<li><a href="#org468c122">5.2. 动态链接示例</a></li>
+<li><a href="#orgc933902">5.3. 地址无关代码</a>
+<ul>
+<li><a href="#orgb6354f5">5.3.1. 装载时重定位</a></li>
+<li><a href="#orgbc6f76b">5.3.2. 地址无关代码</a>
+<ul>
+<li><a href="#org03c821b">5.3.2.1. <span class="todo TODO">TODO</span> 模块内部函数调用</a></li>
+<li><a href="#org13a5c73">5.3.2.2. 模块内部数据访问</a></li>
+<li><a href="#org23a3aef">5.3.2.3. 模块间数据访问</a></li>
+<li><a href="#org7688987">5.3.2.4. <span class="todo TODO">TODO</span> 模块间调用、跳转</a></li>
+</ul>
+</li>
+<li><a href="#orgfcb2c47">5.3.3. 数据段的地址无关性</a></li>
+</ul>
+</li>
+<li><a href="#org4905b28">5.4. 延迟绑定</a></li>
+<li><a href="#org0ce51de">5.5. 动态链接相关结构</a>
+<ul>
+<li><a href="#org7ad286a">5.5.1. .interp 节</a></li>
+<li><a href="#org7c2c743">5.5.2. .dynamic节</a></li>
+<li><a href="#org453567f">5.5.3. 动态符号表</a></li>
+<li><a href="#org14e2934">5.5.4. 动态链接重定位表</a></li>
+<li><a href="#org4af9244">5.5.5. 动态链接时进程堆栈初始化信息</a></li>
+</ul>
+</li>
+<li><a href="#org64a76aa">5.6. 动态链接的步骤和实现</a>
+<ul>
+<li><a href="#org0ab1ccb">5.6.1. 动态链接器自举</a></li>
+<li><a href="#org3ecd177">5.6.2. 装载共享对象</a></li>
+<li><a href="#org3ebee92">5.6.3. 重定位和初始化</a></li>
+<li><a href="#org68e1c20">5.6.4. Linux动态链接器实现</a></li>
+</ul>
+</li>
+<li><a href="#org3c23dda">5.7. 显示运行时链接</a></li>
+</ul>
+</li>
+<li><a href="#orgd8847c0">6. Linux共享库的组织</a>
+<ul>
+<li><a href="#org8f3504f">6.1. 共享库版本</a>
+<ul>
+<li><a href="#org540728f">6.1.1. SO-NAME命名机制</a></li>
+<li><a href="#org4b8288f">6.1.2. 链接名</a></li>
+</ul>
+</li>
+<li><a href="#org92c9aea">6.2. 符号版本（linux）</a></li>
+<li><a href="#orgd896447">6.3. 共享库系统路径</a></li>
+<li><a href="#orgbf5f51f">6.4. 共享库查找过程</a></li>
+<li><a href="#orge056e00">6.5. 环境变量</a></li>
+<li><a href="#orgf3980de">6.6. 共享库的创建及安装</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+<b>调用惯例（Calling Convention）</b>
+</p>
+
+<div id="outline-container-org99e396a" class="outline-2">
+<h2 id="org99e396a"><span class="section-number-2">1.</span> ELF文件类型</h2>
+<div class="outline-text-2" id="text-1">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">ELF文件类型</th>
+<th scope="col" class="org-left">说明</th>
+<th scope="col" class="org-left">实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">可重定位文件(Relocatable)</td>
+<td class="org-left">包含代码和数据</td>
+<td class="org-left">Linux的 .o 文件</td>
+</tr>
+
+<tr>
+<td class="org-left">可执行文件(Executable)</td>
+<td class="org-left">可执行文件</td>
+<td class="org-left">Linux程序bash mkdir&#x2026;</td>
+</tr>
+
+<tr>
+<td class="org-left">共享目标文件(Shared Object)</td>
+<td class="org-left">包含代码和数据</td>
+<td class="org-left">Linux的 .so 文件</td>
+</tr>
+
+<tr>
+<td class="org-left">核心转储文件(Core Dump)</td>
+<td class="org-left">保存进程的地址空间内容</td>
+<td class="org-left">Linux的coredump文件</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div id="outline-container-org00f308d" class="outline-2">
+<h2 id="org00f308d"><span class="section-number-2">2.</span> 目标文件</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>.text 代码段</li>
+<li>.data 已经初始化的全局变量和局部静态变量</li>
+<li>.bss 未初始化的全局变量和局部静态变量</li>
+<li>.rodata 只读数据（常量字符串，const变量）</li>
+<li>.comment 存放编译器版本信息</li>
+<li>.debug 调试信息</li>
+<li>.dynamic 动态链接信息</li>
+<li>.hash 符号hash表</li>
+<li>.line 调试的行号</li>
+<li>.note 额外的编译信息（例如公司名、版本号）</li>
+<li>.strtab  String Table字符串表</li>
+<li>.symtab  Symbol Table符号表</li>
+<li>.shstrtab Section String Table段名称表</li>
+<li>.plt/.got 动态链接的跳转表和全局入口表</li>
+<li>.init/.fini  程序构造和析构代码段</li>
+</ul>
+
+<p>
+可以自定义段名，但是自定义的段名不建议使用 ‘.’ 开头，容易和系统保留段名冲突。
+</p>
+
+<p>
+命名方式：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">__attribute__</span>((section(<span style="color: #CDC673;">"FOO"</span>))) <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">global</span> = 42;
+<span style="color: #FF1493;">__attribute__</span>((section(<span style="color: #CDC673;">"BAR"</span>))) <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">foo</span>() {}
+</pre>
+</div>
+
+
+<p>
+指令和数据分开存放优势：
+</p>
+<ul class="org-ul">
+<li>数据和指令会被加载到不同的内存区域，可以很容易的对内存区域的读、写、执行属性进行管理。</li>
+<li>CPU有数据缓存（D-Cache）和指令缓存（I-Cache），分开有利于提高命中率</li>
+<li>当系统运行该程序的多个副本时，由于其指令部分都相同，所以内存中指令部分只需要保存一份。</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/**</span>
+<span style="color: #CDC673;"> * SimpleSection.c</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">Linux</span><span style="color: #CDC673;">:</span>
+<span style="color: #CDC673;"> *   gcc -c SimpleSection.c</span>
+<span style="color: #CDC673;"> *</span>
+<span style="color: #CDC673;"> * </span><span style="color: #AF87FF;">Windows</span><span style="color: #CDC673;">:</span>
+<span style="color: #CDC673;"> *   cl SimpleSection.c /c /Za</span>
+<span style="color: #CDC673;"> */</span>
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">printf</span>( <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span>* <span style="color: #FF8C00;">format</span>, ... );
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">global_init_var</span> = 84;
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">global_uninit_var</span>;
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">func1</span>( <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span> )
+{
+        printf( <span style="color: #CDC673;">"%d\n"</span>,  i );
+}
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">main</span>(<span style="color: #5FD7FF;">void</span>)
+{
+        <span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">static_var</span> = 85;
+        <span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">static_var2</span>;
+
+        <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">a</span> = 1;
+        <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">b</span>;
+
+        func1( static_var + static_var2 + a + b );
+
+        <span style="color: #FF1493;">return</span> a;
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ objdump -w -h SimpleSection.o
+
+SimpleSection.o:     file format elf64-x86-64
+
+Sections:
+Idx Name            Size      VMA               LMA               File off  Algn  Flags
+  0 .text           0000005a  0000000000000000  0000000000000000  00000040  2**0  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data           00000008  0000000000000000  0000000000000000  0000009c  2**2  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss            00000008  0000000000000000  0000000000000000  000000a4  2**2  ALLOC
+  3 .rodata         00000004  0000000000000000  0000000000000000  000000a4  2**0  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .comment        00000020  0000000000000000  0000000000000000  000000a8  2**0  CONTENTS, READONLY
+  5 .note.GNU-stack 00000000  0000000000000000  0000000000000000  000000c8  2**0  CONTENTS, READONLY
+  6 .eh_frame       00000058  0000000000000000  0000000000000000  000000c8  2**3  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+</pre>
+</div>
+
+<p>
+部分段的信息：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">段</th>
+<th scope="col" class="org-right">偏移</th>
+<th scope="col" class="org-right">大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">ELF header</td>
+<td class="org-right">0</td>
+<td class="org-right">0x40 (64bytes)</td>
+</tr>
+
+<tr>
+<td class="org-left">.text</td>
+<td class="org-right">0x40</td>
+<td class="org-right">0x5a</td>
+</tr>
+
+<tr>
+<td class="org-left">.data</td>
+<td class="org-right">0x9c</td>
+<td class="org-right">0x08</td>
+</tr>
+
+<tr>
+<td class="org-left">.bss</td>
+<td class="org-right">0xa4</td>
+<td class="org-right">0x08</td>
+</tr>
+
+<tr>
+<td class="org-left">.rodata</td>
+<td class="org-right">0xa4</td>
+<td class="org-right">0x04</td>
+</tr>
+
+<tr>
+<td class="org-left">.comment</td>
+<td class="org-right">0xa8</td>
+<td class="org-right">0x20</td>
+</tr>
+
+<tr>
+<td class="org-left">&#x2026;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<code>size</code> 命令可以查看elf文件的代码段、数据段、bss段。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ size SimpleSection.o
+  text     data     bss     dec     hex filename
+   182        8       8     198      c6 SimpleSection.o
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgc9781d7" class="outline-3">
+<h3 id="orgc9781d7"><span class="section-number-3">2.1.</span> ELF文件结构</h3>
+<div class="outline-text-3" id="text-2-1">
+</div>
+<div id="outline-container-org94b658b" class="outline-4">
+<h4 id="org94b658b"><span class="section-number-4">2.1.1.</span> 文件头</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elf64_hdr</span> {
+  <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">e_ident</span>[EI_NIDENT];     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ELF "magic number"</span><span style="color: #8B8878;"> */</span>
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_type</span>;
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_machine</span>;
+  <span style="color: #5FD7FF;">Elf64_Word</span> <span style="color: #FF8C00;">e_version</span>;
+  <span style="color: #5FD7FF;">Elf64_Addr</span> <span style="color: #FF8C00;">e_entry</span>;           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Entry point virtual address</span><span style="color: #8B8878;"> */</span>
+  <span style="color: #5FD7FF;">Elf64_Off</span> <span style="color: #FF8C00;">e_phoff</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Program header table file offset</span><span style="color: #8B8878;"> */</span>
+  <span style="color: #5FD7FF;">Elf64_Off</span> <span style="color: #FF8C00;">e_shoff</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Section header table file offset</span><span style="color: #8B8878;"> */</span>
+  <span style="color: #5FD7FF;">Elf64_Word</span> <span style="color: #FF8C00;">e_flags</span>;
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_ehsize</span>;
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_phentsize</span>;
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_phnum</span>;
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_shentsize</span>;
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_shnum</span>;
+  <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">e_shstrndx</span>;
+} <span style="color: #5FD7FF;">Elf64_Ehdr</span>;
+</pre>
+</div>
+
+
+<div id="orgc3faee9" class="figure">
+<p><img src="dot/elf-hdr.svg" alt="elf-hdr.svg" class="org-svg" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sh"> $ readelf -W -h SimpleSection.o
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2<span style="color: #CDC673;">'s complement, little endian</span>
+<span style="color: #CDC673;">  Version:                           1 (current)</span>
+<span style="color: #CDC673;">  OS/ABI:                            UNIX - System V</span>
+<span style="color: #CDC673;">  ABI Version:                       0</span>
+<span style="color: #CDC673;">  Type:                              REL (Relocatable file)</span>
+<span style="color: #CDC673;">  Machine:                           Advanced Micro Devices X86-64</span>
+<span style="color: #CDC673;">  Version:                           0x1</span>
+<span style="color: #CDC673;">  Entry point address:               0x0</span>
+<span style="color: #CDC673;">  Start of program headers:          0 (bytes into file)</span>
+<span style="color: #CDC673;">  Start of section headers:          968 (bytes into file)</span>
+<span style="color: #CDC673;">  Flags:                             0x0</span>
+<span style="color: #CDC673;">  Size of this header:               64 (bytes)</span>
+<span style="color: #CDC673;">  Size of program headers:           0 (bytes)</span>
+<span style="color: #CDC673;">  Number of program headers:         0</span>
+<span style="color: #CDC673;">  Size of section headers:           64 (bytes)</span>
+<span style="color: #CDC673;">  Number of section headers:         13</span>
+<span style="color: #CDC673;">  Section header string table index: 12</span>
+<span style="color: #CDC673;">~/tmp/zwxy $</span>
+</pre>
+</div>
+
+<p>
+文件类型：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">类型</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">ET_REL</td>
+<td class="org-right">1</td>
+<td class="org-left">可重定位</td>
+</tr>
+
+<tr>
+<td class="org-left">ET_EXEC</td>
+<td class="org-right">2</td>
+<td class="org-left">可执行文件</td>
+</tr>
+
+<tr>
+<td class="org-left">ET_DYN</td>
+<td class="org-right">3</td>
+<td class="org-left">共享目标文件（动态库）</td>
+</tr>
+
+<tr>
+<td class="org-left">ET_CORE</td>
+<td class="org-right">4</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ET_LOPROC</td>
+<td class="org-right">0xff00</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ET_HIPROC</td>
+<td class="org-right">0xffff</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org6a847f4" class="outline-4">
+<h4 id="org6a847f4"><span class="section-number-4">2.1.2.</span> 段表</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<div class="org-src-container">
+<pre class="src src-sh"> $ readelf -W -S SimpleSection.o
+There are 13 section headers, starting at offset 0x3c8:
+
+Section Headers:
+  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        0000000000000000 000040 00005a 00  AX  0   0  1
+  [ 2] .rela.text        RELA            0000000000000000 0002b8 000078 18   I 10   1  8
+  [ 3] .data             PROGBITS        0000000000000000 00009c 000008 00  WA  0   0  4
+  [ 4] .bss              NOBITS          0000000000000000 0000a4 000008 00  WA  0   0  4
+  [ 5] .rodata           PROGBITS        0000000000000000 0000a4 000004 00   A  0   0  1
+  [ 6] .comment          PROGBITS        0000000000000000 0000a8 000020 01  MS  0   0  1
+  [ 7] .note.GNU-stack   PROGBITS        0000000000000000 0000c8 000000 00      0   0  1
+  [ 8] .eh_frame         PROGBITS        0000000000000000 0000c8 000058 00   A  0   0  8
+  [ 9] .rela.eh_frame    RELA            0000000000000000 000330 000030 18   I 10   8  8
+  [10] .symtab           SYMTAB          0000000000000000 000120 000138 18     11   8  8
+  [11] .strtab           STRTAB          0000000000000000 000258 000060 00      0   0  1
+  [12] .shstrtab         STRTAB          0000000000000000 000360 000061 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), l (large), p (processor specific)
+</pre>
+</div>
+
+
+
+
+<div id="orga2adaa4" class="figure">
+<p><img src="./ditaa/elf-sectbl.png" alt="elf-sectbl.png" />
+</p>
+</div>
+
+<p>
+段表是一个 Elf64_Shdr 结构的数组，每个结构对应一个段。对于上述的SimpleSection.o来说，段表起始位置 0x3c8 （ <code>Start of section headers: 968 (bytes into file)</code> ）， 每个段描述符结构大小 0x40（Elf64_Shdr <code>Size of this header: 64 (bytes)</code> ）， 段的数量 13 （ <code>Number of section headers: 13</code> ）。由此可以得出段表长度 64*13 = 0x340。
+</p>
+
+<div class="org-center">
+<p>
+Start of section headers:          968 (bytes into file)
+Flags:                             0x0
+Size of this header:               64 (bytes)
+Size of program headers:           0 (bytes)
+Number of program headers:         0
+Size of section headers:           64 (bytes)
+Number of section headers:         13
+Section header string table index: 12
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elf64_shdr</span> {
+        <span style="color: #CDC673;">/** &#27573;&#21517;&#65292;&#26631;&#35782;&#22312; .shstrtab &#30340;&#23383;&#31526;&#20018;&#34920;&#30340;&#19979;&#26631; */</span>
+        <span style="color: #5FD7FF;">Elf64_Word</span> <span style="color: #FF8C00;">sh_name</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Section name, index in string tbl</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Word</span> <span style="color: #FF8C00;">sh_type</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Type of section</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Xword</span> <span style="color: #FF8C00;">sh_flags</span>;           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Miscellaneous section attributes</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #CDC673;">/** &#27573;&#30340;&#34394;&#25311;&#22320;&#22336; */</span>
+        <span style="color: #5FD7FF;">Elf64_Addr</span> <span style="color: #FF8C00;">sh_addr</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Section virtual addr at execution</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #CDC673;">/** &#27573;&#30340;&#20559;&#31227;&#65292;&#22914;&#26524;&#27573;&#22312;&#25991;&#20214;&#20013;&#65292;&#34920;&#31034;&#22312;&#25991;&#20214;&#20013;&#30340;&#20559;&#31227;&#65292;&#21542;&#21017;&#26080;&#24847;&#20041; */</span>
+        <span style="color: #5FD7FF;">Elf64_Off</span> <span style="color: #FF8C00;">sh_offset</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Section file offset</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Xword</span> <span style="color: #FF8C00;">sh_size</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Size of section in bytes</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Word</span> <span style="color: #FF8C00;">sh_link</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Index of another section</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Word</span> <span style="color: #FF8C00;">sh_info</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Additional section information</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Xword</span> <span style="color: #FF8C00;">sh_addralign</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Section alignment</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #CDC673;">/** &#26377;&#20123;&#27573;&#21253;&#21547;&#20102;&#19968;&#20123;&#22266;&#23450;&#22823;&#23567;&#30340;&#39033;&#65292;&#27604;&#22914;&#31526;&#21495;&#34920;&#65292;&#20854;&#21253;&#21547;&#30340;&#27599;&#20010;&#31526;&#21495;&#25152;&#21344;&#22823;&#23567;&#37117;&#19968;&#26679;&#12290;</span>
+<span style="color: #CDC673;">            &#23545;&#20110;&#36825;&#31181;&#27573;&#65292;sh_entsize&#34920;&#31034;&#27599;&#20010;&#39033;&#30340;&#22823;&#23567;&#12290;&#22914;&#26524;&#20026;0&#65292;&#21017;&#34920;&#31034;&#35813;&#27573;&#19981;&#21253;&#21547;&#22266;&#23450;&#22823;&#23567;&#30340;&#39033;&#12290; */</span>
+        <span style="color: #5FD7FF;">Elf64_Xword</span> <span style="color: #FF8C00;">sh_entsize</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Entry size if section holds table</span><span style="color: #8B8878;"> */</span>
+} <span style="color: #5FD7FF;">Elf64_Shdr</span>;
+</pre>
+</div>
+
+<p>
+段的类型：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">类型定义</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SHT_NULL</td>
+<td class="org-right">0</td>
+<td class="org-left">无效段</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_PROGBI</td>
+<td class="org-right">1</td>
+<td class="org-left">程序段（代码段、数据段）</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_SYMTAB</td>
+<td class="org-right">2</td>
+<td class="org-left">该段内容是符号表</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_STRTAB</td>
+<td class="org-right">3</td>
+<td class="org-left">字符串表</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_RELA</td>
+<td class="org-right">4</td>
+<td class="org-left">重定位表，该段包含了重定位信息</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_HASH</td>
+<td class="org-right">5</td>
+<td class="org-left">符号表的hash表</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_DYNAMI</td>
+<td class="org-right">6</td>
+<td class="org-left">动态链接信息</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_NOTE</td>
+<td class="org-right">7</td>
+<td class="org-left">提示性信息</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_NOBITS</td>
+<td class="org-right">8</td>
+<td class="org-left">表示该段在文件中没有内容</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_REL</td>
+<td class="org-right">9</td>
+<td class="org-left">该段包含了重定位信息</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_SHLIB</td>
+<td class="org-right">10</td>
+<td class="org-left">保留</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_DYNSYM</td>
+<td class="org-right">11</td>
+<td class="org-left">动态链接符号表</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_NUM</td>
+<td class="org-right">12</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_LOPROC</td>
+<td class="org-right">0x70000000</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_HIPROC</td>
+<td class="org-right">0x7fffffff</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_LOUSER</td>
+<td class="org-right">0x80000000</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_HIUSER</td>
+<td class="org-right">0xffffffff</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+段的标志：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">标志定义</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SHF_WRITE</td>
+<td class="org-right">0x1</td>
+<td class="org-left">该段在进程中可写</td>
+</tr>
+
+<tr>
+<td class="org-left">SHF_ALLOC</td>
+<td class="org-right">0x2</td>
+<td class="org-left">表示该段在进程空间中需要分配空间</td>
+</tr>
+
+<tr>
+<td class="org-left">SHF_EXECINSTR</td>
+<td class="org-right">0x4</td>
+<td class="org-left">表示该段在进程空间中可执行（代码段）</td>
+</tr>
+
+<tr>
+<td class="org-left">SHF_RELA_LIVEPATCH</td>
+<td class="org-right">0x00100000</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHF_RO_AFTER_INIT</td>
+<td class="org-right">0x00200000</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHF_MASKPROC</td>
+<td class="org-right">0xf0000000</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+系统保留段的属性：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">段名</th>
+<th scope="col" class="org-left">类型</th>
+<th scope="col" class="org-left">标志</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">.bss</td>
+<td class="org-left">SHT_NOBITS</td>
+<td class="org-left">SHF_ALLOC + SHF_WRITE</td>
+</tr>
+
+<tr>
+<td class="org-left">.comment</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">none</td>
+</tr>
+
+<tr>
+<td class="org-left">.data</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">SHF_ALLOC + SHF_WRITE</td>
+</tr>
+
+<tr>
+<td class="org-left">.data1</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">SHF_ALLOC + SHF_WRITE</td>
+</tr>
+
+<tr>
+<td class="org-left">.debug</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">none</td>
+</tr>
+
+<tr>
+<td class="org-left">.dynamic</td>
+<td class="org-left">SHT_DYNAMIC</td>
+<td class="org-left">SHF_ALLOC + SHF_WRITE</td>
+</tr>
+
+<tr>
+<td class="org-left">.hash</td>
+<td class="org-left">SHT_HASH</td>
+<td class="org-left">SHF_ALLOC</td>
+</tr>
+
+<tr>
+<td class="org-left">.line</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">node</td>
+</tr>
+
+<tr>
+<td class="org-left">.note</td>
+<td class="org-left">SHT_NOTE</td>
+<td class="org-left">none</td>
+</tr>
+
+<tr>
+<td class="org-left">.rodata</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">SHF_ALLOC</td>
+</tr>
+
+<tr>
+<td class="org-left">.rodata1</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">SHF_ALLOC</td>
+</tr>
+
+<tr>
+<td class="org-left">.shstrtab</td>
+<td class="org-left">SHT_STRTAB</td>
+<td class="org-left">none</td>
+</tr>
+
+<tr>
+<td class="org-left">.strtab</td>
+<td class="org-left">SHT_STRTAB</td>
+<td class="org-left">如果该ELF文件有可装载的段要用到该字符串表，则该字符串表也将被装载到进程空间，则会设置SHF_ALLOC标志</td>
+</tr>
+
+<tr>
+<td class="org-left">.symtab</td>
+<td class="org-left">SHT_SYMTAB</td>
+<td class="org-left">同上</td>
+</tr>
+
+<tr>
+<td class="org-left">.text</td>
+<td class="org-left">SHT_PROGBITS</td>
+<td class="org-left">SHF_ALLOC + SHF_EXECINTSTR</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+段的链接信息（sh_link、sh_info）：只有段的类型是和链接相关时，该成员才有意义。
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">sh_type</th>
+<th scope="col" class="org-left">sh_link</th>
+<th scope="col" class="org-left">sh_info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SHT_DYNAMIC</td>
+<td class="org-left">该段所使用的字符串表在段表中的下标</td>
+<td class="org-left">0</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_HASH</td>
+<td class="org-left">该段所使用的符号表在段表中的下标</td>
+<td class="org-left">0</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_REL</td>
+<td class="org-left">该段所使用的相应符号表在段表中的下标</td>
+<td class="org-left">该重定位表所作用的段在段表的下标</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_RELA</td>
+<td class="org-left">该段所使用的相应符号表在段表中的下标</td>
+<td class="org-left">该重定位表所作用的段在段表的下标</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_SYMTAB</td>
+<td class="org-left">操作系统相关</td>
+<td class="org-left">操作系统相关</td>
+</tr>
+
+<tr>
+<td class="org-left">SHT_DYNSYM</td>
+<td class="org-left">操作系统相关</td>
+<td class="org-left">操作系统相关</td>
+</tr>
+
+<tr>
+<td class="org-left">other</td>
+<td class="org-left">SHN_UNDEF</td>
+<td class="org-left">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgeead76f" class="outline-4">
+<h4 id="orgeead76f"><span class="section-number-4">2.1.3.</span> 重定位表</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+例如 .rel.text 就是重定位表，是针对 .text 段的重定位表。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgae8c1cd" class="outline-4">
+<h4 id="orgae8c1cd"><span class="section-number-4">2.1.4.</span> 字符串表</h4>
+<div class="outline-text-4" id="text-2-1-4">
+<p>
+.strtab 是字符串表
+</p>
+
+<p>
+.shstrtab 是段表字符串表
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6812bb0" class="outline-3">
+<h3 id="org6812bb0"><span class="section-number-3">2.2.</span> 符号</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+函数和变量统称为符号，函数名和变量名统称为符号名。
+</p>
+</div>
+
+<div id="outline-container-orgf536e53" class="outline-4">
+<h4 id="orgf536e53"><span class="section-number-4">2.2.1.</span> 符号表结构</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+.symtab 就是一个符号表，其中包含的是 Elf64_Sym 结构的数组。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elf64_sym</span> {
+        <span style="color: #CDC673;">/** &#31526;&#21495;&#21517;&#65292;&#26631;&#35782;&#35813;&#31526;&#21495;&#21517;&#22312;&#23383;&#31526;&#20018;&#34920;&#20013;&#30340;&#19979;&#26631; */</span>
+        <span style="color: #5FD7FF;">Elf64_Word</span> <span style="color: #FF8C00;">st_name</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Symbol name, index in string tbl</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #CDC673;">/** &#31526;&#21495;&#31867;&#22411;&#21644;&#32465;&#23450;&#20449;&#24687; */</span>
+        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">st_info</span>;        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Type and binding attributes</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">st_other</span>;       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">No defined meaning, 0</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Half</span> <span style="color: #FF8C00;">st_shndx</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Associated section index</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #CDC673;">/** &#31526;&#21495;&#20540;&#65292;&#20540;&#19982;&#31526;&#21495;&#26377;&#20851;&#65292;&#21487;&#33021;&#26159;&#32477;&#23545;&#20540;&#65292;&#20063;&#21487;&#33021;&#26159;&#30456;&#23545;&#20540;*/</span>
+        <span style="color: #5FD7FF;">Elf64_Addr</span> <span style="color: #FF8C00;">st_value</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Value of the symbol</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #CDC673;">/** &#31526;&#21495;&#22823;&#23567;&#65292;&#23545;&#20110;&#21253;&#21547;&#25968;&#25454;&#30340;&#31526;&#21495;&#65292;&#20195;&#34920;&#25968;&#25454;&#31867;&#22411;&#30340;&#22823;&#23567;&#12290; &#20026;0&#34920;&#31034;&#22823;&#23567;&#26159;0&#25110;&#32773;&#26410;&#30693;*/</span>
+        <span style="color: #5FD7FF;">Elf64_Xword</span> <span style="color: #FF8C00;">st_size</span>;            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Associated symbol size</span><span style="color: #8B8878;"> */</span>
+} <span style="color: #5FD7FF;">Elf64_Sym</span>;
+</pre>
+</div>
+
+<p>
+符号绑定信息：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">定义</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">STB_LOCAL</td>
+<td class="org-right">0</td>
+<td class="org-left">局部符号，目标文件外部不可见</td>
+</tr>
+
+<tr>
+<td class="org-left">STB_GLOBAL</td>
+<td class="org-right">1</td>
+<td class="org-left">全局符号</td>
+</tr>
+
+<tr>
+<td class="org-left">STB_WEAK</td>
+<td class="org-right">2</td>
+<td class="org-left">弱引用</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+符号类型：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">定义</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">STT_NOTYPE</td>
+<td class="org-right">0</td>
+<td class="org-left">未知类型符号</td>
+</tr>
+
+<tr>
+<td class="org-left">STT_OBJECT</td>
+<td class="org-right">1</td>
+<td class="org-left">符号是数据对象，如变量、数组</td>
+</tr>
+
+<tr>
+<td class="org-left">STT_FUNC</td>
+<td class="org-right">2</td>
+<td class="org-left">符号是个函数或者其他可执行代码</td>
+</tr>
+
+<tr>
+<td class="org-left">STT_SECTION</td>
+<td class="org-right">3</td>
+<td class="org-left">该符号表示一个段，这种符号必须是STB_LOCAL的</td>
+</tr>
+
+<tr>
+<td class="org-left">STT_FILE</td>
+<td class="org-right">4</td>
+<td class="org-left">该符号表示文件名（一般是目标文件对应的源文件名）</td>
+</tr>
+
+<tr>
+<td class="org-left">STT_COMMON</td>
+<td class="org-right">5</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">STT_TLS</td>
+<td class="org-right">6</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+符号所在段：st_shndx 。 如果符号定义在本目标文件中，则此成员表示该符号所在段在段表中的下标；如果不是在本目标文件，或者对于特殊符号，sh_shndx值如下：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">定义</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SHN_UNDEF</td>
+<td class="org-right">0</td>
+<td class="org-left">该符号未定义（符号在本目标文件被引用，定义在其他目标文件）</td>
+</tr>
+
+<tr>
+<td class="org-left">SHN_LORESERVE</td>
+<td class="org-right">0xff00</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHN_LOPROC</td>
+<td class="org-right">0xff00</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHN_HIPROC</td>
+<td class="org-right">0xff1f</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHN_LIVEPATCH</td>
+<td class="org-right">0xff20</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">SHN_ABS</td>
+<td class="org-right">0xfff1</td>
+<td class="org-left">该符号包含绝对的值，例如文件名的符号</td>
+</tr>
+
+<tr>
+<td class="org-left">SHN_COMMON</td>
+<td class="org-right">0xfff2</td>
+<td class="org-left">该符号是COMMON块类型的符号</td>
+</tr>
+
+<tr>
+<td class="org-left">SHN_HIRESERVE</td>
+<td class="org-right">0xffff</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<ul class="org-ul">
+<li>符号值：st_value
+<ul class="org-ul">
+<li>是符号定义，且不是COMMON块类型，则表示符号在段内的偏移（sh_shndx指定的段），目标文件中定义的全局符号都是这种类型。</li>
+<li>符号是COMMON块类型，则表示符号的对齐属性。</li>
+<li>可执行文件中，表示符号的虚拟地址。</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org07f5db0" class="outline-4">
+<h4 id="org07f5db0"><span class="section-number-4">2.2.2.</span> 弱符号和强符号</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+链接器处理规则：
+</p>
+<ul class="org-ul">
+<li>不允许强符号被多次定义，否则报错（重复定义）</li>
+<li>符号在某个目标文件为强符号，其他目标文件都是弱符号，则选择强符号</li>
+<li>如果有多个弱符号同名，优先选择初始化的弱符号，否则选择占用空间最大的符号。此时编译需要加 <code>-fcommon</code> 选项。</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6c92971" class="outline-3">
+<h3 id="org6c92971"><span class="section-number-3">2.3.</span> 调试信息</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+目标文件的一些段用来保存调试信息，可以通过strip去掉调试信息。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org949f781" class="outline-2">
+<h2 id="org949f781"><span class="section-number-2">3.</span> 静态链接</h2>
+<div class="outline-text-2" id="text-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">a.c</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">extern</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">shared</span>;
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">main</span>()
+{
+        <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">a</span> = 100;
+        swap(&amp;a, &amp;shared);
+}
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">b.c</span><span style="color: #8B8878;"> */</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">shared</span> = 1;
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">swap</span>(<span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">a</span>, <span style="color: #5FD7FF;">int</span> *<span style="color: #FF8C00;">b</span>)
+{
+        *a ^= *b ^= *a ^= *b;
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgafdaeb0" class="outline-3">
+<h3 id="orgafdaeb0"><span class="section-number-3">3.1.</span> 空间和地址分配</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+多个目标文件合并时，有两种方式：按序叠加和相似段合并，现在的链接器一般采用相似段合并的方式。
+</p>
+
+
+<p>
+链接器为目标文件分配地址和空间时，地址空间有两种含义： 一种是可执行文件中的地址空间，另一种是可执行文件被装载后的虚拟地址空间。在此只关注虚拟地址空间的分配。
+</p>
+
+
+<p>
+链接分为两步：
+</p>
+<ul class="org-ul">
+<li>第一步：空间与地址分配。 扫描所有的输入目标文件，获取其各个段的长度、属性、位置，并且将输入目标文件中的符号表中所有的符号定义和符号引用收集起来，统一放到一个全局符号表。这一步中，链接器将能够获得所有输入目标文件的段长度，并且将它们合并，计算出输出文件中各个段合并后的长度与位置，并建立映射关系。</li>
+<li>第二步：符号解析与重定位。 使用上面第一步中收集到的所有信息，读取输入文件中段的数据、重定位信息，并且进行符号解析与重定位、调整代码中的地址等。事实上第二步是链接过程的核心，特别是重定位过程。</li>
+</ul>
+
+
+<p>
+编译示例文件：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ gcc -c a.c b.c
+</pre>
+</div>
+
+<p>
+使用ld链接器进行链接（-e表示指定函数入口，-o表示链接输出文件）：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ ld a.o b.o -e main -o ab
+</pre>
+</div>
+
+
+<p>
+使用objdump查看：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -w -h a.o
+
+a.o:     file format elf64-x86-64
+
+Sections:
+Idx Name            Size      VMA               LMA               File off  Algn  Flags
+  0 .text           00000031  0000000000000000  0000000000000000  00000040  2**0  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data           00000000  0000000000000000  0000000000000000  00000071  2**0  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss            00000000  0000000000000000  0000000000000000  00000071  2**0  ALLOC
+  3 .comment        00000020  0000000000000000  0000000000000000  00000071  2**0  CONTENTS, READONLY
+  4 .note.GNU-stack 00000000  0000000000000000  0000000000000000  00000091  2**0  CONTENTS, READONLY
+  5 .eh_frame       00000038  0000000000000000  0000000000000000  00000098  2**3  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -w -h b.o
+
+b.o:     file format elf64-x86-64
+
+Sections:
+Idx Name            Size      VMA               LMA               File off  Algn  Flags
+  0 .text           0000004b  0000000000000000  0000000000000000  00000040  2**0  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data           00000004  0000000000000000  0000000000000000  0000008c  2**2  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss            00000000  0000000000000000  0000000000000000  00000090  2**0  ALLOC
+  3 .comment        00000020  0000000000000000  0000000000000000  00000090  2**0  CONTENTS, READONLY
+  4 .note.GNU-stack 00000000  0000000000000000  0000000000000000  000000b0  2**0  CONTENTS, READONLY
+  5 .eh_frame       00000038  0000000000000000  0000000000000000  000000b0  2**3  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -w -h ab
+
+ab:     file format elf64-x86-64
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn  Flags
+  0 .text         0000007c  0000000000401000  0000000000401000  00001000  2**0  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .eh_frame     00000058  0000000000402000  0000000000402000  00002000  2**3  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  2 .data         00000004  0000000000403000  0000000000403000  00003000  2**2  CONTENTS, ALLOC, LOAD, DATA
+  3 .comment      0000001f  0000000000000000  0000000000000000  00003004  2**0  CONTENTS, READONLY
+~/tmp/zwxy $
+</pre>
+</div>
+
+<p>
+VMA（Virtual Memory Address）表示虚拟地址，LMA（Virtual Memory Address）表示加载地址，两个值一般相同。
+</p>
+
+<p>
+在此我们只关注VMA。 链接之前VMA都是0，因为此时还未分配虚拟地址。链接后，ab中的各个段都分配了VMA。
+</p>
+</div>
+
+<div id="outline-container-org85f3450" class="outline-4">
+<h4 id="org85f3450"><span class="section-number-4">3.1.1.</span> 符号地址的确定</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+在链接第一步，扫描和空间分配阶段，链接器按照前面介绍的空间分配方法进行分配，这时候输入文件中的各个段在链接后的虚拟地址就已经确定了，比如 <code>.text</code> 段起始地址为 0x401000， <code>.data</code> 段的起始地址为 0x403000。
+</p>
+
+<p>
+第一步完成后，链接器开始计算各个符号的虚拟地址，此时，所有符号在段内的偏移是固定的，所以此时 main、shared、swap的地址已经确定，但是还需要加上段（例如 .text）的起始偏移。
+</p>
+
+<p>
+例如： main的段内偏移为0， 则 VMA = 0x401000(.text) + 0 = 0x401000。 swap的偏移为 0x31， 则VMA = 0x401000 + 0x31 = 0x401031。
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -w -t ab
+
+ab:     file format elf64-x86-64
+
+SYMBOL TABLE:
+0000000000000000 l    df *ABS*  0000000000000000 a.c
+0000000000000000 l    df *ABS*  0000000000000000 b.c
+0000000000401031 g     F .text  000000000000004b swap
+0000000000403000 g     O .data  0000000000000004 shared
+0000000000403004 g       .data  0000000000000000 __bss_start
+0000000000401000 g     F .text  0000000000000031 main
+0000000000403004 g       .data  0000000000000000 _edata
+0000000000403008 g       .data  0000000000000000 _end
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">符号</th>
+<th scope="col" class="org-left">类型</th>
+<th scope="col" class="org-right">VMA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">main</td>
+<td class="org-left">函数</td>
+<td class="org-right">0x401000</td>
+</tr>
+
+<tr>
+<td class="org-left">swap</td>
+<td class="org-left">函数</td>
+<td class="org-right">0x401031</td>
+</tr>
+
+<tr>
+<td class="org-left">shared</td>
+<td class="org-left">变量</td>
+<td class="org-right">0x403000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc3ce1e2" class="outline-3">
+<h3 id="orgc3ce1e2"><span class="section-number-3">3.2.</span> 符号解析和重定位</h3>
+<div class="outline-text-3" id="text-3-2">
+</div>
+<div id="outline-container-orgee4e017" class="outline-4">
+<h4 id="orgee4e017"><span class="section-number-4">3.2.1.</span> 重定位</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -w -d a.o
+
+a.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 &lt;main&gt;:
+   0:   55                      push   %rbp
+   1:   48 89 e5                mov    %rsp,%rbp
+   4:   48 83 ec 10             sub    $<span style="color: #FF8C00;">0</span>x10,%rsp
+   8:   c7 45 fc 64 00 00 00    movl   $<span style="color: #FF8C00;">0</span>x64,-0x4(%rbp)
+   f:   48 8d 45 fc             lea    -0x4(%rbp),%rax
+  13:   48 8d 15 00 00 00 00    lea    0x0(%rip),%rdx        <span style="color: #8B8878;"># </span><span style="color: #8B8878;">1a &lt;main+0x1a&gt;</span>
+  1a:   48 89 d6                mov    %rdx,%rsi
+  1d:   48 89 c7                mov    %rax,%rdi
+  20:   b8 00 00 00 00          mov    $<span style="color: #FF8C00;">0</span>x0,%eax
+  25:   e8 00 00 00 00          call   2a &lt;main+0x2a&gt;
+  2a:   b8 00 00 00 00          mov    $<span style="color: #FF8C00;">0</span>x0,%eax
+  2f:   c9                      leave
+  30:   c3                      ret
+</pre>
+</div>
+
+<p>
+<code>objdump -r</code> 可以用来查看重定位信息。
+</p>
+
+<p>
+偏移 0x16 位置：是shared需要修正的位置
+</p>
+
+<p>
+偏移 0x26 位置：是swap需要修正的位置
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org0b62e78" class="outline-4">
+<h4 id="org0b62e78"><span class="section-number-4">3.2.2.</span> 重定位表</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<p>
+数据结构：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elf64_rel</span> {
+        <span style="color: #5FD7FF;">Elf64_Addr</span> <span style="color: #FF8C00;">r_offset</span>;    <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Location at which to apply the action</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #5FD7FF;">Elf64_Xword</span> <span style="color: #FF8C00;">r_info</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">index and type of relocation</span><span style="color: #8B8878;"> */</span>
+} <span style="color: #5FD7FF;">Elf64_Rel</span>;
+
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Elf64_Rel
+<dl class="org-dl">
+<dt>r_offset</dt><dd>重定位入口偏移。对于可重定位文件，该值是所要修正位置的首字节相对于段起始位置的偏移；对于可执行文件或者共享对象文件，该值是所修正位置的首字节的虚拟地址</dd>
+<dt>r_info</dt><dd>重定位入口的类型和符号。低32位表示重定位入口类型，高32位表示重定位入口的符号在符号表中的下标。</dd>
+</dl></li>
+</ul>
+
+
+<p>
+查看重定位信息：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -w -r a.o
+
+a.o:     file format elf64-x86-64
+
+RELOCATION RECORDS FOR [.text]:
+OFFSET           TYPE              VALUE
+0000000000000016 R_X86_64_PC32     shared-0x0000000000000004
+0000000000000026 R_X86_64_PLT32    swap-0x0000000000000004
+
+
+RELOCATION RECORDS FOR [.eh_frame]:
+OFFSET           TYPE              VALUE
+0000000000000020 R_X86_64_PC32     .text
+
+
+~/tmp/zwxy $ objdump -w -r b.o
+
+b.o:     file format elf64-x86-64
+
+RELOCATION RECORDS FOR [.eh_frame]:
+OFFSET           TYPE              VALUE
+0000000000000020 R_X86_64_PC32     .text
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org934447b" class="outline-4">
+<h4 id="org934447b"><span class="section-number-4">3.2.3.</span> 符号解析</h4>
+<div class="outline-text-4" id="text-3-2-3">
+<p>
+每个目标文件都可能定义一些符号，也可能引用到定义在其他目标文件的符号。重定位的过程中，每个重定位的入口都是对一个符号的引用，当链接器须要对某个符号的引用进行重定位时，就要确定这个符号的目标地址。链接器会去查找由所有输入目标文件的符号表组成的全局符号表，找到相应的符号后进行重定位。找不到时，链接器会输出符号未定义错误。
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org28e588b" class="outline-4">
+<h4 id="org28e588b"><span class="section-number-4">3.2.4.</span> 指令修正方式</h4>
+<div class="outline-text-4" id="text-3-2-4">
+<p>
+x86_64基本的重定位类型： R_X86_64_32 和 R_X86_64_PC32，这两种类型支持x86_64小型代码模型，该模型假设代码节和数据节的总大小不超过2GB，所以可以用32位PC相对地址来访问。
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">宏定义</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">重定位修正方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">R_X86_64_32</td>
+<td class="org-right">10</td>
+<td class="org-left">绝对地址修正： S+A</td>
+</tr>
+
+<tr>
+<td class="org-left">R_X86_64_PC32</td>
+<td class="org-right">2</td>
+<td class="org-left">相对地址修正： S+A-P</td>
+</tr>
+</tbody>
+</table>
+
+<ul class="org-ul">
+<li>S: 符号的实际地址，即由r_info的高32位指定的符号的实际地址</li>
+<li>A: 保存在被修正位置的值</li>
+<li>P: 被修正的位置（相对于段开始的偏移量或者虚拟地址），注意，该值可通过r_offset计算得到</li>
+</ul>
+
+<p>
+可参考： <a href="../csapp/link.html">CSAPP:链接</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcc9dd92" class="outline-3">
+<h3 id="orgcc9dd92"><span class="section-number-3">3.3.</span> COMMON块</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="tip" id="orgd961656">
+<p>
+<i>思考关于未初始化的全局变量的问题：在目标文件中，编译器为什么不直接把未初始化的全局变量也当作未初始化的局部静态变量一样处理，为它在BSS段分配空间，而是将其标记为一个COMMON类型的变量？</i>
+</p>
+
+<p>
+<i>当编译器将一个编译单元编译成目标文件的时候，如果该编译单元包含了弱符号（未初始化的全局变量就是典型的弱符号），那么该弱符号最终所占空间的大小在此时是未知的，因为有可能其他编译单元中该符号所占的空间比本编译单元该符号所占的空间要大。所以编译器此时无法为该弱符号在BSS段分配空间，因为所需要空间的大小未知。但是链接器在链接过程中可以确定弱符号的大小，因为当链接器读取所有输入目标文件以后，任何一个弱符号的最终大小都可以确定了，所以它可以在最终输出文件的BSS段为其分配空间。所以总体来看，未初始化全局变量最终还是被放在BSS段的。</i>
+</p>
+
+</div>
+<p>
+GCC的 “-fno-common”也允许我们把所有未初始化的全局变量不以COMMON块的形式处理，或者使用“__attribute__”扩展： <code>int global __attribute__((nocommon));</code>
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org28e1a7c" class="outline-3">
+<h3 id="org28e1a7c"><span class="section-number-3">3.4.</span> C++相关问题</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+重复代码消除：
+</p>
+
+<p>
+全局构造和析构：
+</p>
+
+<p>
+C++和ABI：
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org783abd2" class="outline-3">
+<h3 id="org783abd2"><span class="section-number-3">3.5.</span> 静态链接</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+使用gcc的 <code>-verbose</code> 参数可以打印出详细的编译链接过程。
+</p>
+
+<p>
+链接过程主要分为三步：
+</p>
+<ol class="org-ol">
+<li>通过cc1将源文件编译为临时的汇编文件</li>
+<li>通过as程序将汇编文件汇编为目标文件</li>
+<li>collect2程序完成最后的链接过程（collect2可以看作ld链接器的包装）</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgef88d2d" class="outline-3">
+<h3 id="orgef88d2d"><span class="section-number-3">3.6.</span> BFD库</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+BFD库（Binary File Descriptor Library）的目标是希望通过一种统一的接口来处理不同的目标文件格式。BFD这个项目本身是binutils项目的一个子项目。BFD把目标文件抽象成一个统一的模型，比如在这个抽象的目标文件模型中，最开始有一个描述整个目标文件总体信息的“文件头”，就跟我们实际的ELF文件一样，文件头后面是一系列的段，每个段都有名字、属性和段的内容，同时还抽象了符号表、重定位表、字符串表等类似的概念，使得BFD库的程序只要通过操作这个抽象的目标文件模型就可以实现操作所有BFD支持的目标文件格式。
+</p>
+
+
+<p>
+现在GCC（更具体地讲是GNU 汇编器GAS， GNU Assembler）、链接器ld、调试器GDB及binutils的其他工具都通过BFD库来处理目标文件，而不是直接操作目标文件。这样做最大的好处是将编译器和链接器本身同具体的目标文件格式隔离开来，一旦我们须要支持一种新的目标文件格式，只须要在BFD库里面添加一种格式就可以了，而不须要修改编译器和链接器。到目前为止，BFD库支持大约25种处理器平台，将近50种目标文件格式。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5164ce3" class="outline-2">
+<h2 id="org5164ce3"><span class="section-number-2">4.</span> <span class="todo TODO">TODO</span> 可执行文件的装载与进程（结合源码从内核分析）</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+elf文件格式的注册：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binfmt</span> <span style="color: #FF8C00;">elf_format</span> = {
+        .module = THIS_MODULE,
+        .load_binary    = load_elf_binary,
+        .load_shlib     = load_elf_library,
+        .core_dump      = elf_core_dump,
+        .min_coredump   = ELF_EXEC_PAGESIZE,
+};
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__init</span> init_elf_binfmt(<span style="color: #5FD7FF;">void</span>)
+{
+        register_binfmt(&amp;elf_format);
+        <span style="color: #FF1493;">return</span> 0;
+}
+
+<span style="color: #87D700;">core_initcall</span>(init_elf_binfmt);
+</pre>
+</div>
+
+<p>
+程序加载过程：
+</p>
+
+
+<div id="org47c8881" class="figure">
+<p><img src="dot/elf-load.svg" alt="elf-load.svg" class="org-svg" />
+</p>
+</div>
+
+
+<p>
+CONFIG_ARCH_MMAP_RND_BITS=28   256MB的随机范围
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">ELF_ET_DYN_BASE</span>         (mmap_is_ia32() ? 0x000400000UL : \
+                                                  (DEFAULT_MAP_WINDOW / 3 * 2))
+
+                                                  (1UL&lt;&lt;47 - PAGE_SIZE)/3*2 = 0x555555554aaa
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org1396235" class="outline-3">
+<h3 id="org1396235"><span class="section-number-3">4.1.</span> elf一致性检查</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+<pre class="src src-sh">root@kvm-lfsnand:~/tmp# readelf -We /usr/bin/readelf
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2<span style="color: #CDC673;">'s complement, little endian</span>
+<span style="color: #CDC673;">  Version:                           1 (current)</span>
+<span style="color: #CDC673;">  OS/ABI:                            UNIX - System V</span>
+<span style="color: #CDC673;">  ABI Version:                       0</span>
+<span style="color: #CDC673;">  Type:                              DYN (Position-Independent Executable file)</span>
+<span style="color: #CDC673;">  Machine:                           Advanced Micro Devices X86-64</span>
+<span style="color: #CDC673;">  Version:                           0x1</span>
+<span style="color: #CDC673;">  Entry point address:               0xc2f0</span>
+<span style="color: #CDC673;">  Start of program headers:          64 (bytes into file)</span>
+<span style="color: #CDC673;">  Start of section headers:          2420328 (bytes into file)</span>
+<span style="color: #CDC673;">  Flags:                             0x0</span>
+<span style="color: #CDC673;">  Size of this header:               64 (bytes)</span>
+<span style="color: #CDC673;">  Size of program headers:           56 (bytes)</span>
+<span style="color: #CDC673;">  Number of program headers:         13</span>
+<span style="color: #CDC673;">  Size of section headers:           64 (bytes)</span>
+<span style="color: #CDC673;">  Number of section headers:         40</span>
+<span style="color: #CDC673;">  Section header string table index: 39</span>
+<span style="color: #CDC673;">...</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">load_elf_binary</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binprm</span> *<span style="color: #FF8C00;">bprm</span>)
+{
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+        retval = -ENOEXEC;
+        <span style="color: #CDC673;">/** ELFMAG&#20026;elf&#39764;&#25968; "\177ELF" */</span>
+        <span style="color: #FF1493;">if</span> (memcmp(elf_ex-&gt;e_ident, ELFMAG, SELFMAG) != 0)
+                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        <span style="color: #CDC673;">/** elf &#31867;&#22411; */</span>
+        <span style="color: #FF1493;">if</span> (elf_ex-&gt;e_type != ET_EXEC &amp;&amp; elf_ex-&gt;e_type != ET_DYN)
+                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>elf_check_arch(elf_ex))
+                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        <span style="color: #FF1493;">if</span> (elf_check_fdpic(elf_ex))
+                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>bprm-&gt;file-&gt;f_op-&gt;mmap)
+                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf8687e8" class="outline-3">
+<h3 id="orgf8687e8"><span class="section-number-3">4.2.</span> 加载动态链接器</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
+<pre class="src src-sh">root@kvm-lfsnand:~/tmp# readelf  -Wl /usr/bin/readelf
+
+Elf file type is DYN (Position-Independent Executable file)
+Entry point 0xc2f0
+There are 13 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  PHDR           0x000040 0x0000000000000040 0x0000000000000040 0x0002d8 0x0002d8 R   0x8
+  INTERP         0x000318 0x0000000000000318 0x0000000000000318 0x00001c 0x00001c R   0x1
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x00a5d0 0x00a5d0 R   0x1000
+  LOAD           0x00b000 0x000000000000b000 0x000000000000b000 0x0712bd 0x0712bd R E 0x1000
+  LOAD           0x07d000 0x000000000007d000 0x000000000007d000 0x043764 0x043764 R   0x1000
+  LOAD           0x0c0970 0x00000000000c1970 0x00000000000c1970 0x005af0 0x0091e8 RW  0x1000
+  DYNAMIC        0x0c3d78 0x00000000000c4d78 0x00000000000c4d78 0x000220 0x000220 RW  0x8
+  NOTE           0x000338 0x0000000000000338 0x0000000000000338 0x000040 0x000040 R   0x8
+  NOTE           0x000378 0x0000000000000378 0x0000000000000378 0x000020 0x000020 R   0x4
+  GNU_PROPERTY   0x000338 0x0000000000000338 0x0000000000000338 0x000040 0x000040 R   0x8
+  GNU_EH_FRAME   0x0b8d04 0x00000000000b8d04 0x00000000000b8d04 0x000cf4 0x000cf4 R   0x4
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x10
+  GNU_RELRO      0x0c0970 0x00000000000c1970 0x00000000000c1970 0x003690 0x003690 R   0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00
+   01     .interp
+   02     .interp .note.gnu.property .note.ABI-tag .hash .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt
+   03     .init .plt .plt.got .text .fini
+   04     .rodata .eh_frame_hdr .eh_frame
+   05     .init_array .fini_array .data.rel.ro .dynamic .got .got.plt .data .bss
+   06     .dynamic
+   07     .note.gnu.property
+   08     .note.ABI-tag
+   09     .note.gnu.property
+   10     .eh_frame_hdr
+   11
+   12     .init_array .fini_array .data.rel.ro .dynamic .got
+</pre>
+</div>
+
+<p>
+从程序的 program header 读取动态链接器路径，并执行加载。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elf_phdr</span> *<span style="color: #87D700;">load_elf_phdrs</span>(<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elfhdr</span> *<span style="color: #FF8C00;">elf_ex</span>,
+                                       <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">file</span> *<span style="color: #FF8C00;">elf_file</span>)
+{
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">elf_phdr</span> *<span style="color: #FF8C00;">elf_phdata</span> = <span style="color: #AF87FF;">NULL</span>;
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+        elf_phdata = kmalloc(size, GFP_KERNEL);
+        <span style="color: #CDC673;">/** &#35835;&#21462;program header  */</span>
+        retval = elf_read(elf_file, elf_phdata, size, elf_ex-&gt;e_phoff);
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+        <span style="color: #FF1493;">return</span> elf_phdata;
+}
+
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">load_elf_binary</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binprm</span> *<span style="color: #FF8C00;">bprm</span>)
+{
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+        <span style="color: #CDC673;">/** &#21152;&#36733;elf&#30340;program header*/</span>
+        elf_phdata = load_elf_phdrs(elf_ex, bprm-&gt;file);
+
+        elf_ppnt = elf_phdata;
+        <span style="color: #FF1493;">for</span> (i = 0; i &lt; elf_ex-&gt;e_phnum; i++, elf_ppnt++) {
+                <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">elf_interpreter</span>;
+                <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+                <span style="color: #FF1493;">if</span> (elf_ppnt-&gt;p_type != PT_INTERP)
+                        <span style="color: #FF1493;">continue</span>;
+                <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+                <span style="color: #CDC673;">/** &#20998;&#37197;&#31354;&#38388;&#65292;&#29992;&#20110;&#23384;&#20648;&#21160;&#24577;&#38142;&#25509;&#22120;&#36335;&#24452; */</span>
+                elf_interpreter = kmalloc(elf_ppnt-&gt;p_filesz, GFP_KERNEL);
+                <span style="color: #CDC673;">/** &#20174;&#21487;&#25191;&#34892;&#25991;&#20214;&#30340;program header&#35835;&#21462;&#21160;&#24577;&#21152;&#36733;&#22120;&#30340;&#36335;&#24452; &#8221;/lib64/ld-linux-x86-64.so.2&#8220; */</span>
+                retval = elf_read(bprm-&gt;file, elf_interpreter, elf_ppnt-&gt;p_filesz,
+                                  elf_ppnt-&gt;p_offset);
+                <span style="color: #CDC673;">/** &#25171;&#24320;&#21160;&#24577;&#21152;&#36733;&#22120; */</span>
+                interpreter = open_exec(elf_interpreter);
+                interp_elf_ex = kmalloc(<span style="color: #FF1493;">sizeof</span>(*interp_elf_ex), GFP_KERNEL);
+                <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#35835;&#21462;&#21160;&#24577;&#38142;&#25509;&#22120;&#30340;elf&#25991;&#20214;&#22836;</span><span style="color: #8B8878;"> */</span>
+                retval = elf_read(interpreter, interp_elf_ex,
+                                  <span style="color: #FF1493;">sizeof</span>(*interp_elf_ex), 0);
+                <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+        }
+        <span style="color: #CDC673;">/** &#21160;&#24577;&#38142;&#25509;&#22120;&#30340;&#19968;&#33324;&#24615;&#26816;&#26597; */</span>
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7e351ad" class="outline-3">
+<h3 id="org7e351ad"><span class="section-number-3">4.3.</span> 初始化进程</h3>
+<div class="outline-text-3" id="text-4-3">
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">load_elf_binary</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binprm</span> *<span style="color: #FF8C00;">bprm</span>)
+{
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+        <span style="color: #CDC673;">/** &#28165;&#29702;&#24403;&#21069;&#21487;&#25191;&#34892;&#31243;&#24207;&#30340;&#25152;&#26377;&#20449;&#24687;&#65292;&#20934;&#22791;&#21021;&#22987;&#21270;&#26032;&#36827;&#31243; */</span>
+        retval = begin_new_exec(bprm);
+        <span style="color: #CDC673;">/** &#26159;&#21542;&#24320;&#21551;&#22320;&#22336;&#31354;&#38388;&#38543;&#26426;&#21270; */</span>
+        <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(current-&gt;personality &amp; ADDR_NO_RANDOMIZE) &amp;&amp; randomize_va_space)
+                current-&gt;flags |= PF_RANDOMIZE;
+        <span style="color: #CDC673;">/** &#20027;&#35201;&#21021;&#22987;&#21270;&#36827;&#31243;&#22320;&#22336;&#31354;&#38388;&#24067;&#23616; */</span>
+        setup_new_exec(bprm);
+
+        retval = setup_arg_pages(bprm, randomize_stack_top(STACK_TOP),
+                                 executable_stack);
+
+        elf_bss = 0;
+        elf_brk = 0;
+
+        start_code = ~0UL;
+        end_code = 0;
+        start_data = 0;
+        end_data = 0;
+}
+
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">setup_new_exec</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binprm</span> * <span style="color: #FF8C00;">bprm</span>)
+{
+        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">task_struct</span> *<span style="color: #FF8C00;">me</span> = current;
+        <span style="color: #CDC673;">/** &#21021;&#22987;&#21270;&#22320;&#22336;&#31354;&#38388;&#24067;&#23616; */</span>
+        arch_pick_mmap_layout(me-&gt;mm, &amp;bprm-&gt;rlim_stack);
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+}
+
+</pre>
+</div>
+
+<p>
+地址空间布局初始化：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">arch_pick_mmap_base</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> *<span style="color: #FF8C00;">base</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> *<span style="color: #FF8C00;">legacy_base</span>,
+                                <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">random_factor</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">task_size</span>,
+                                <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rlimit</span> *<span style="color: #FF8C00;">rlim_stack</span>)
+{
+        *legacy_base = mmap_legacy_base(random_factor, task_size);
+        <span style="color: #FF1493;">if</span> (mmap_is_legacy())
+                *base = *legacy_base;
+        <span style="color: #FF1493;">else</span>
+                *base = mmap_base(random_factor, task_size, rlim_stack);
+}
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">arch_pick_mmap_layout</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">mm_struct</span> *<span style="color: #FF8C00;">mm</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">rlimit</span> *<span style="color: #FF8C00;">rlim_stack</span>)
+{
+        <span style="color: #FF1493;">if</span> (mmap_is_legacy())
+                mm-&gt;get_unmapped_area = arch_get_unmapped_area;
+        <span style="color: #FF1493;">else</span>    <span style="color: #CDC673;">/** &#35813;&#20869;&#23384;&#24067;&#23616;&#19979;&#65292;&#20869;&#23384;&#26144;&#23556;&#33258;&#39030;&#21521;&#19979;&#22686;&#38271; */</span>
+                mm-&gt;get_unmapped_area = arch_get_unmapped_area_topdown;
+        <span style="color: #CDC673;">/** &#36873;&#25321;&#20869;&#23384;&#26144;&#23556;&#30340;&#22522;&#22320;&#22336; */</span>
+        arch_pick_mmap_base(&amp;mm-&gt;mmap_base, &amp;mm-&gt;mmap_legacy_base,
+                            arch_rnd(mmap64_rnd_bits), task_size_64bit(0),
+                            rlim_stack);
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">...</span>
+}
+
+</pre>
+</div>
+
+<p>
+初始化栈空间：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">load_elf_binary</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">linux_binprm</span> *<span style="color: #FF8C00;">bprm</span>)
+{
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+        <span style="color: #CDC673;">/** &#21021;&#22987;&#21270;stack&#23545;&#24212;&#30340; vm_area_struct &#32467;&#26500; */</span>
+        retval = setup_arg_pages(bprm, randomize_stack_top(STACK_TOP),
+                                 executable_stack);
+
+        elf_bss = 0;
+        elf_brk = 0;
+
+        start_code = ~0UL;
+        end_code = 0;
+        start_data = 0;
+        end_data = 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org3e49c61" class="outline-2">
+<h2 id="org3e49c61"><span class="section-number-2">5.</span> 动态链接</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org31708f9" class="outline-3">
+<h3 id="org31708f9"><span class="section-number-3">5.1.</span> 为何要进行动态链接</h3>
+<div class="outline-text-3" id="text-5-1">
+<ol class="org-ol">
+<li>内存和磁盘空间： 静态链接会极大的浪费内存空间和磁盘空间，进程之间会有很多重复的函数无法共享，多个程序文件也会包含重复的函数。</li>
+<li>程序开发和发布：静态链接库更新后，程序需要重新链接。</li>
+</ol>
+
+
+<p>
+动态链接的思想：将程序的模块互相分隔开来，形成独立的文件，不再将其静态链接，而是运行时再链接。
+</p>
+
+<p>
+动态链接优势：
+</p>
+<ul class="org-ul">
+<li>节省内存和磁盘，可以减少物理页面的换入换出，增加CPU缓存命中率</li>
+<li>方便升级，无需重新链接，只需要覆盖旧的目标文件，重新启动程序就可以</li>
+<li>有利于程序的可扩展性和兼容性</li>
+</ul>
+
+<p>
+在Linux中，常用的C语言库的运行库glibc，它的动态链接形式为“libc.so”。当程序被装载的时候，系统的动态链接器会将程序所需要的所有动态链接库（最基本的就是libc.so）装载到进程的地址空间，并且将程序中所有未决议的符号绑定到相应的动态链接库中，并进行重定位工作。
+</p>
+
+<p>
+程序与libc.so之间真正的链接工作是由动态链接器完成的，而非ld完成。动态链接会导致程序在性能的一些损失，但是对动态链接的链接过程可以进行优化，例如：延迟绑定（Lazy Binding）等方法，可以使得动态链接的性能损失尽可能地减小。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org468c122" class="outline-3">
+<h3 id="org468c122"><span class="section-number-3">5.2.</span> 动态链接示例</h3>
+<div class="outline-text-3" id="text-5-2">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/** program1.c */</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">"lib.h"</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">main</span>()
+{
+        foobar(1);
+        <span style="color: #FF1493;">return</span> 0;
+}
+
+<span style="color: #CDC673;">/** program2.c */</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">"lib.h"</span>
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">main</span>()
+{
+        foobar(2);
+        <span style="color: #FF1493;">return</span> 0;
+}
+
+<span style="color: #CDC673;">/** lib.c */</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdio.h&gt;</span>
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">foobar</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>)
+{
+        printf(<span style="color: #CDC673;">"Printing From Lib.so %d\n"</span>, i);
+        sleep(-1);
+}
+
+<span style="color: #CDC673;">/** lib.h */</span>
+<span style="color: #FF1493;">#if</span><span style="color: #FF1493; font-weight: bold;">n</span><span style="color: #FF1493;">def</span> LIB_H
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">LIB_H</span>
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">foobar</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>);
+<span style="color: #FF1493;">#endif</span>
+</pre>
+</div>
+
+<p>
+编译：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ gcc -fPIC -shared -o lib.so lib.c
+$ gcc -o program1 program1.c ./lib.so
+$ gcc -o program2 program2.c ./lib.so
+</pre>
+</div>
+
+<p>
+查看地址空间映射：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ cat /proc/3233757/maps
+562cd9c23000-562cd9c24000 r--p 00000000 103:06 3945858                   /home/nandfan/tmp/zwxy/program1
+562cd9c24000-562cd9c25000 r-xp 00001000 103:06 3945858                   /home/nandfan/tmp/zwxy/program1
+562cd9c25000-562cd9c26000 r--p 00002000 103:06 3945858                   /home/nandfan/tmp/zwxy/program1
+562cd9c26000-562cd9c27000 r--p 00002000 103:06 3945858                   /home/nandfan/tmp/zwxy/program1
+562cd9c27000-562cd9c28000 rw-p 00003000 103:06 3945858                   /home/nandfan/tmp/zwxy/program1
+562cda03f000-562cda060000 rw-p 00000000 00:00 0                          [heap]
+7f0b1f17a000-7f0b1f17d000 rw-p 00000000 00:00 0
+7f0b1f17d000-7f0b1f1a3000 r--p 00000000 103:02 915190                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7f0b1f1a3000-7f0b1f2f8000 r-xp 00026000 103:02 915190                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7f0b1f2f8000-7f0b1f34b000 r--p 0017b000 103:02 915190                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7f0b1f34b000-7f0b1f34f000 r--p 001ce000 103:02 915190                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7f0b1f34f000-7f0b1f351000 rw-p 001d2000 103:02 915190                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7f0b1f351000-7f0b1f35e000 rw-p 00000000 00:00 0
+7f0b1f37b000-7f0b1f37c000 r--p 00000000 103:06 3945853                   /home/nandfan/tmp/zwxy/lib.so
+7f0b1f37c000-7f0b1f37d000 r-xp 00001000 103:06 3945853                   /home/nandfan/tmp/zwxy/lib.so
+7f0b1f37d000-7f0b1f37e000 r--p 00002000 103:06 3945853                   /home/nandfan/tmp/zwxy/lib.so
+7f0b1f37e000-7f0b1f37f000 r--p 00002000 103:06 3945853                   /home/nandfan/tmp/zwxy/lib.so
+7f0b1f37f000-7f0b1f380000 rw-p 00003000 103:06 3945853                   /home/nandfan/tmp/zwxy/lib.so
+7f0b1f380000-7f0b1f382000 rw-p 00000000 00:00 0
+7f0b1f382000-7f0b1f383000 r--p 00000000 103:02 915185                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f0b1f383000-7f0b1f3a8000 r-xp 00001000 103:02 915185                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f0b1f3a8000-7f0b1f3b2000 r--p 00026000 103:02 915185                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f0b1f3b2000-7f0b1f3b4000 r--p 00030000 103:02 915185                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f0b1f3b4000-7f0b1f3b6000 rw-p 00032000 103:02 915185                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fffc41c5000-7fffc41e6000 rw-p 00000000 00:00 0                          [stack]
+7fffc41ed000-7fffc41f1000 r--p 00000000 00:00 0                          [vvar]
+7fffc41f1000-7fffc41f3000 r-xp 00000000 00:00 0                          [vdso]
+</pre>
+</div>
+
+
+<p>
+<code>/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2</code> 是动态链接器。在开始运行program1之前，系统先把控制权交给动态链接器，有动态链接器完成所有动态链接工作后，再将控制权交回program1，然后开始执行。
+</p>
+
+
+<p>
+使用 <code>readelf</code> 查看lib.so的装载属性：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ readelf -W -l lib.so
+
+Elf file type is DYN (Shared object file)
+Entry point 0x0
+There are 9 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x0004d0 0x0004d0 R   0x1000
+  LOAD           0x001000 0x0000000000001000 0x0000000000001000 0x000159 0x000159 R E 0x1000
+  LOAD           0x002000 0x0000000000002000 0x0000000000002000 0x0000bc 0x0000bc R   0x1000
+  LOAD           0x002df8 0x0000000000003df8 0x0000000000003df8 0x000220 0x000228 RW  0x1000
+  DYNAMIC        0x002e08 0x0000000000003e08 0x0000000000003e08 0x0001c0 0x0001c0 RW  0x8
+  NOTE           0x000238 0x0000000000000238 0x0000000000000238 0x000024 0x000024 R   0x4
+  GNU_EH_FRAME   0x00201c 0x000000000000201c 0x000000000000201c 0x000024 0x000024 R   0x4
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x10
+  GNU_RELRO      0x002df8 0x0000000000003df8 0x0000000000003df8 0x000208 0x000208 R   0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .note.gnu.build-id .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt
+   01     .init .plt .plt.got .text .fini
+   02     .rodata .eh_frame_hdr .eh_frame
+   03     .init_array .fini_array .dynamic .got .got.plt .data .bss
+   04     .dynamic
+   05     .note.gnu.build-id
+   06     .eh_frame_hdr
+   07
+   08     .init_array .fini_array .dynamic .got
+</pre>
+</div>
+
+<p>
+<i>共享对象的最终装载地址在编译时是不确定的，而是在装载时，装载器根据当前地址空间的空闲情况，动态分配一块足够大小的虚拟地址空间给相应的共享对象。</i>
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgc933902" class="outline-3">
+<h3 id="orgc933902"><span class="section-number-3">5.3.</span> 地址无关代码</h3>
+<div class="outline-text-3" id="text-5-3">
+</div>
+<div id="outline-container-orgb6354f5" class="outline-4">
+<h4 id="orgb6354f5"><span class="section-number-4">5.3.1.</span> 装载时重定位</h4>
+<div class="outline-text-4" id="text-5-3-1">
+<p>
+类似静态链接中的重定位，在链接时，对所有绝对地址的引用不做重定位，而是吧这一步推迟到装载时在完成，一旦模块装载地址确定，即目标地址确定，那么系统就对程序中所有的绝对地址引用进行重定位。
+</p>
+
+<p>
+装载时重定位无法解决共享的问题。 动态链接模块被装载映射至虚拟空间后，指令部分是在多个进程之间共享的，由于装载时重定位的方法需要修改指令，所以没有办法做到同一份指令被多个进程共享，因为指令被重定位后对于每个进程来讲是不同的。当然，动态连接库中的可修改数据部分对于不同的进程来说有多个副本，所以它们可以采用装载时重定位的方法来解决。
+</p>
+
+<div class="tip" id="org1bfdf54">
+<p>
+Linux和GCC支持装载时重定位的方法，我们在编译共享库时，使用了两个参数： <code>-shared</code> 和 <code>-fPIC</code> ，如果只使用 <code>--shared</code> 那么输出的共享对象就是使用装载时重定位的方式。
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbc6f76b" class="outline-4">
+<h4 id="orgbc6f76b"><span class="section-number-4">5.3.2.</span> 地址无关代码</h4>
+<div class="outline-text-4" id="text-5-3-2">
+<p>
+PIC（Position-independent Code）地址无关代码： 将模块中需要被修改的部分分离出来，跟数据部分放在一起，这样可以保证指令部分无需改变，数据部分在每个进程中拥有自己的副本。
+</p>
+
+<p>
+共享对象模块中按照是否跨模块分为两类：模块内部引用和模块外部引用。
+</p>
+
+<p>
+按照不同引用方式又可以分为：指令引用和数据访问。
+</p>
+
+<p>
+由此可以得到4中情况：
+</p>
+<ol class="org-ol">
+<li>模块内部函数调用、跳转</li>
+<li>模块内部的数据访问，例如模块内定义的全局变量、静态变量</li>
+<li>模块外部函数调用、跳转</li>
+<li>模块外部的数据访问，例如其他模块定义的全局变量</li>
+</ol>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #CDC673;">/** pic.c */</span>
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">a</span>;
+<span style="color: #FF1493;">extern</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">b</span>;
+<span style="color: #FF1493;">extern</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">ext</span>();
+<span style="color: #8B8878;">//</span><span style="color: #8B8878;">static int *p = &amp;a;</span>
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">bar</span>()
+{
+        a = 1;
+        b = 2;
+        (<span style="color: #5FD7FF;">void</span>)p;
+}
+
+<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">foo</span>()
+{
+        bar();
+        ext();
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org03c821b" class="outline-5">
+<h5 id="org03c821b"><span class="section-number-5">5.3.2.1.</span> <span class="todo TODO">TODO</span> 模块内部函数调用</h5>
+<div class="outline-text-5" id="text-5-3-2-1">
+<p>
+PLT(（Procedure Linkage Table，PLT）)过程链接表。
+</p>
+
+<p>
+PLT是一个数组，其中每个条目是16字节代码。PLT[0]是个特殊条目。每个函数都有它自己的PLT条目。每个条目负责调用一个具体的函数。从PLT[1]开始的条目调用用户代码调用的函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-asm">
+<span style="color: #87D700;">Disassembly</span> <span style="color: #FF1493;">of</span> section .plt:
+
+<span style="color: #87D700;">0000000000001020</span> <a href="mailto:ext%40plt-0x10">&lt;ext@plt-0x10&gt;</a>:
+    <span style="color: #FF1493;">1020</span>:       ff 35 ca 2f 00 00       push   0x2fca(<span style="color: #FF8C00;">%rip</span>)        # 3ff0 &lt;_GLOBAL_OFFSET_TABLE_+0x8&gt;
+    <span style="color: #FF1493;">1026</span>:       ff 25 cc 2f 00 00       jmp    *0x2fcc(<span style="color: #FF8C00;">%rip</span>)        # 3ff8 &lt;_GLOBAL_OFFSET_TABLE_+0x10&gt;
+    <span style="color: #FF1493;">102c</span>:       0f 1f 40 00             nopl   0x0(<span style="color: #FF8C00;">%rax</span>)
+
+<span style="color: #87D700;">0000000000001030</span> <a href="mailto:ext%40plt">&lt;ext@plt&gt;</a>:
+    <span style="color: #FF1493;">1030</span>:       ff 25 ca 2f 00 00       jmp    *0x2fca(<span style="color: #FF8C00;">%rip</span>)        # 4000 &lt;ext&gt;
+    <span style="color: #FF1493;">1036</span>:       68 00 00 00 00          push   $0x0
+    <span style="color: #FF1493;">103b</span>:       e9 e0 ff ff ff          jmp    1020 &lt;_init+0x20&gt;
+
+<span style="color: #87D700;">0000000000001040</span> <a href="mailto:bar%40plt">&lt;bar@plt&gt;</a>:
+    <span style="color: #FF1493;">1040</span>:       ff 25 c2 2f 00 00       jmp    *0x2fc2(<span style="color: #FF8C00;">%rip</span>)        # 4008 &lt;bar+0x2eef&gt;
+    <span style="color: #FF1493;">1046</span>:       68 01 00 00 00          push   $0x1
+    <span style="color: #FF1493;">104b</span>:       e9 d0 ff ff ff          jmp    1020 &lt;_init+0x20&gt;
+......
+<span style="color: #87D700;">0000000000001119</span> &lt;bar&gt;:
+    <span style="color: #FF1493;">1119</span>:       55                      push   <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">111a</span>:       48 89 e5                mov    <span style="color: #FF8C00;">%rsp</span>,<span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">111d</span>:       c7 05 f5 2e 00 00 01    movl   $0x1,0x2ef5(<span style="color: #FF8C00;">%rip</span>)        # 401c &lt;a&gt;
+    <span style="color: #FF1493;">1124</span>:       00 00 00
+    <span style="color: #FF1493;">1127</span>:       48 8b 05 92 2e 00 00    mov    0x2e92(<span style="color: #FF8C00;">%rip</span>),<span style="color: #FF8C00;">%rax</span>        # 3fc0 &lt;b&gt;
+    <span style="color: #FF1493;">112e</span>:       c7 00 02 00 00 00       movl   $0x2,(<span style="color: #FF8C00;">%rax</span>)
+    <span style="color: #FF1493;">1134</span>:       90                      nop
+    <span style="color: #FF1493;">1135</span>:       5d                      pop    <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">1136</span>:       c3                      ret
+
+<span style="color: #87D700;">0000000000001137</span> &lt;foo&gt;:
+    <span style="color: #FF1493;">1137</span>:       55                      push   <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">1138</span>:       48 89 e5                mov    <span style="color: #FF8C00;">%rsp</span>,<span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">113b</span>:       b8 00 00 00 00          mov    $0x0,<span style="color: #FF8C00;">%eax</span>
+    <span style="color: #FF1493;">1140</span>:       e8 fb fe ff ff          call   1040 <a href="mailto:bar%40plt">&lt;bar@plt&gt;</a>
+    <span style="color: #FF1493;">1145</span>:       b8 00 00 00 00          mov    $0x0,<span style="color: #FF8C00;">%eax</span>
+    <span style="color: #FF1493;">114a</span>:       e8 e1 fe ff ff          call   1030 <a href="mailto:ext%40plt">&lt;ext@plt&gt;</a>
+    <span style="color: #FF1493;">114f</span>:       90                      nop
+    <span style="color: #FF1493;">1150</span>:       5d                      pop    <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">1151</span>:       c3                      ret
+
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org13a5c73" class="outline-5">
+<h5 id="org13a5c73"><span class="section-number-5">5.3.2.2.</span> 模块内部数据访问</h5>
+<div class="outline-text-5" id="text-5-3-2-2">
+<div class="tip" id="org3dc8ad2">
+<p>
+《Intel® 64 and IA-32 Architectures Software Developer’s Manual Combined Volumes: 1, 2A, 2B, 2C, 2D, 3A, 3B, 3C, 3D, and 4》：volume 2 section 2.2.1.6 RIP-Relative Addressing 描述了RIP相对寻址。
+</p>
+
+<p>
+<b>RIP</b> 寄存器的相对寻址：下一条指令的64位RIP地址 + 偏移 = 目标地址
+</p>
+
+<p>
+RIP 相对寻址允许特定的 ModR/M 模式使用带符号的 32 位偏移。相当于提供了相对于 RIP ±2GB 的偏移范围。
+</p>
+
+<p>
+<i>64位程序，全局变量的寻址一般使用RIP相对寻址方式。</i>
+</p>
+
+</div>
+
+<p>
+首先，指令中不可以包含数据的绝对地址，唯一的方法就是相对寻址。我们分析下变量a的地址寻址过程。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #87D700;">0000000000001119</span> &lt;bar&gt;:
+    <span style="color: #FF1493;">1119</span>:       55                      push   <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">111a</span>:       48 89 e5                mov    <span style="color: #FF8C00;">%rsp</span>,<span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">111d</span>:       c7 05 f5 2e 00 00 01 00 00 00   movl   $0x1,0x2ef5(<span style="color: #FF8C00;">%rip</span>)        # 401c &lt;a&gt;
+    <span style="color: #FF1493;">1127</span>:       48 8b 05 92 2e 00 00    mov    0x2e92(<span style="color: #FF8C00;">%rip</span>),<span style="color: #FF8C00;">%rax</span>        # 3fc0 &lt;b&gt;
+    <span style="color: #FF1493;">112e</span>:       c7 00 02 00 00 00       movl   $0x2p,(<span style="color: #FF8C00;">%rax</span>)
+    <span style="color: #FF1493;">1134</span>:       90                      nop
+    <span style="color: #FF1493;">1135</span>:       5d                      pop    <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">1136</span>:       c3                      ret
+</pre>
+</div>
+<p>
+此处使用RIP相对寻址：
+</p>
+<ul class="org-ul">
+<li>下一条指令地址：0x1127</li>
+<li>偏移：0x2ef5</li>
+<li>目标地址： 0x1127+0x2ef5 = 0x401c</li>
+</ul>
+
+<p>
+0x401c位置位于 <code>.bss</code> 节中：
+</p>
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #87D700;">Disassembly</span> <span style="color: #FF1493;">of</span> section .bss:
+
+<span style="color: #87D700;">0000000000004018</span> &lt;completed.0&gt;:
+    <span style="color: #FF1493;">4018</span>:       00 00                   add    <span style="color: #FF8C00;">%al</span>,(<span style="color: #FF8C00;">%rax</span>)
+        ...
+
+<span style="color: #87D700;">000000000000401c</span> &lt;a&gt;:
+    <span style="color: #FF1493;">401c</span>:       00 00                   add    <span style="color: #FF8C00;">%al</span>,(<span style="color: #FF8C00;">%rax</span>)
+        ...
+</pre>
+</div>
+
+<p>
+我们在看一下 .bss 节的信息：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -wh pic.so
+pic.so:     file format elf64-x86-64
+Sections:
+Idx Name               Size      VMA               LMA               File off  Algn  Flags
+  0 .note.gnu.build-id 00000024  0000000000000238  0000000000000238  00000238  2**2  CONTENTS, ALLOC, LOAD, READONLY, DATA
+......
+ 16 .got               00000028  0000000000003fc0  0000000000003fc0  00002fc0  2**3  CONTENTS, ALLOC, LOAD, DATA
+ 17 .got.plt           00000028  0000000000003fe8  0000000000003fe8  00002fe8  2**3  CONTENTS, ALLOC, LOAD, DATA
+ 18 .data              00000008  0000000000004010  0000000000004010  00003010  2**3  CONTENTS, ALLOC, LOAD, DATA
+ 19 .bss               00000008  0000000000004018  0000000000004018  00003018  2**2  ALLOC
+ 20 .comment           0000001f  0000000000000000  0000000000000000  00003018  2**0  CONTENTS, READONLY
+</pre>
+</div>
+
+<p>
+<b>.bss 节起始位置：0x4018，大小8字节，变量b位于0x401c，到结束位置0x4020正好4字节（变量b类型为int）。</b>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org23a3aef" class="outline-5">
+<h5 id="org23a3aef"><span class="section-number-5">5.3.2.3.</span> 模块间数据访问</h5>
+<div class="outline-text-5" id="text-5-3-2-3">
+<p>
+模块间的数据访问比模块内部稍微麻烦点，因为模块间的数据访问，其目标地址要等到装载时才决定，比如上面例子中的变量b，它被定义在其他模块中，并且该地址在装载时才能确定。
+</p>
+
+<p>
+要使得代码地址无关，基本的思想就是把跟地址相关的部分放到数据段里面，很明显，这些其他模块的全局变量的地址是跟模块装载地址有关的。ELF的做法是在数据段里面建立一个指向这些变量的指针数组，也被称为全局偏移表（Global Offset Table，GOT），当代码需要引用该全局变量时，可以通过GOT中相对应项的间接引用。
+</p>
+
+<p>
+.got中，每个变量都对应一个8个字节的地址，链接器在装载模块的时候会查找每个变量所在的地址，然后填充GOT中的对应项，以确保每个指针所指向的地址正确。由于GOT本身是放在数据段，所以它可以在模块装载时被修改，并且每个进程都可以有独立的副本，相互不受影响。
+</p>
+
+<p>
+模块在编译时可以确定模块内部变量相对与当前指令的偏移，那么编译时就可以确定GOT相对于当前指令的偏移，由此可以知道.got中的项相对于当前指令的偏移，通过 <code>RIP相对寻址</code> ，可以直接获取变量地址，示例中函数bar()的反汇编代码：
+</p>
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #87D700;">0000000000001119</span> &lt;bar&gt;:
+    <span style="color: #FF1493;">1119</span>:       55                      push   <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">111a</span>:       48 89 e5                mov    <span style="color: #FF8C00;">%rsp</span>,<span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">111d</span>:       c7 05 f5 2e 00 00 01 00 00 00   movl   $0x1,0x2ef5(<span style="color: #FF8C00;">%rip</span>)        # 401c &lt;a&gt;
+    <span style="color: #FF1493;">1127</span>:       48 8b 05 92 2e 00 00    mov    0x2e92(<span style="color: #FF8C00;">%rip</span>),<span style="color: #FF8C00;">%rax</span>        # 3fc0 &lt;b&gt;
+    <span style="color: #FF1493;">112e</span>:       c7 00 02 00 00 00       movl   $0x2p,(<span style="color: #FF8C00;">%rax</span>)
+    <span style="color: #FF1493;">1134</span>:       90                      nop
+    <span style="color: #FF1493;">1135</span>:       5d                      pop    <span style="color: #FF8C00;">%rbp</span>
+    <span style="color: #FF1493;">1136</span>:       c3                      ret
+</pre>
+</div>
+<p>
+计算变量b的地址：
+</p>
+<ul class="org-ul">
+<li>下一条指令的地址为：0x112e</li>
+<li>变量b相对偏移： 0x2e92</li>
+<li>变量b的地址： 0x112e+0x2e92 = <b>0x3fc0</b></li>
+</ul>
+
+<p>
+通过读取库的重定位项，可以看到变量b相对于起始位置的偏移： 0x3fc0
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -R pic.so
+
+pic.so:     file format elf64-x86-64
+
+DYNAMIC RELOCATION RECORDS
+OFFSET           TYPE              VALUE
+......
+0000000000003fc0 R_X86_64_GLOB_DAT  b
+......
+0000000000004000 R_X86_64_JUMP_SLOT  ext
+0000000000004008 R_X86_64_JUMP_SLOT  bar
+</pre>
+</div>
+
+<p>
+.got 节的偏移：0x3fc0，说明变量b在.got的起始位置。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -h pic.so
+......
+  16 .got          00000028  0000000000003fc0  0000000000003fc0  00002fc0  2**3
+                   CONTENTS, ALLOC, LOAD, DATA
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7688987" class="outline-5">
+<h5 id="org7688987"><span class="section-number-5">5.3.2.4.</span> <span class="todo TODO">TODO</span> 模块间调用、跳转</h5>
+<div class="outline-text-5" id="text-5-3-2-4">
+<p>
+？？？？？？？？对于模块间调用和跳转，我们也可以采用上面类型四的方法来解决。与上面的类型有所不同的是，GOT中相应的项保存的是目标函数的地址，当模块需要调用目标函数时，可以通过GOT中的项进行间接跳转。？？？？？？
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgfcb2c47" class="outline-4">
+<h4 id="orgfcb2c47"><span class="section-number-4">5.3.3.</span> 数据段的地址无关性</h4>
+<div class="outline-text-4" id="text-5-3-3">
+<p>
+通过上面的方法，我们能够保证共享对象中的代码部分地址无关，但是数据部分也有绝对地址引用的问题。例如：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">a</span>;
+<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span>* <span style="color: #FF8C00;">p</span> = &amp;a;
+</pre>
+</div>
+<p>
+指针p就是一个绝对地址，它指向变量a，而变量a的地址会随着共享对象的装载地址改变而改变。
+</p>
+
+<p>
+对于数据段来说，它在每个进程都有一份独立的副本，所以并不担心被进程改变。从这点来看，我们可以选择装载时重定位的方法来解决数据段中绝对地址引用问题。
+</p>
+
+<p>
+对于共享对象来说，如果数据段中有绝对地址引用，那么编译器和链接器就会产生一个重定位表，这个重定位表里面包含了 "R_X86_64_RELATIVE" 类型的重定位入口，用于解决上述问题。当动态链接器装载共享对象时，如果发现该共享对象有这样的重定位入口，那么动态链接器就会对该共享对象进行重定位。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ objdump -R ./pic.so
+DYNAMIC RELOCATION RECORDS
+OFFSET           TYPE              VALUE
+......
+0000000000004020 R_X86_64_RELATIVE  *ABS*+0x000000000000402c
+0000000000003fc0 R_X86_64_GLOB_DAT  _ITM_deregisterTMCloneTable@Base
+0000000000003fc8 R_X86_64_GLOB_DAT  b@Base
+</pre>
+</div>
+
+
+<div class="tip" id="org3a1e350">
+<p>
+实际上，我们可以让代码段也使用这种装载时重定位的方法，而不使用地址无关代码。前面的例子中，在编译共享对象时使用了 "-fPIC" 参数，这个参数表示产生地址无关的代码段。如果不使用这个参数，产生的共享对象就不是 <code>地址无关代码</code> ，也就是在装载时进行重定位。
+</p>
+
+<p>
+这种方式编译的代码不是地址无关的，不能被多个进程共享。但是这种方式比 <code>地址无关代码</code> 运行速度快，因为省去了每次访问全局数据和函数时的地址计算以及间接寻址的过程。
+</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4905b28" class="outline-3">
+<h3 id="org4905b28"><span class="section-number-3">5.4.</span> 延迟绑定</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+在动态链接下，程序模块之间包含了大量的函数引用（全局变量往往比较少，因为大量的全局变量会导致模块之间耦合度变大），所以在程序开始执行前，动态链接会耗费不少时间用于解决模块之间的函数引用的符号查找以及重定位。
+</p>
+
+<p>
+一般情况下，在一个程序运行过程中，可能很多函数在程序执行完时都不会被用到，比如一些错误处理函数或者是一些用户很少用到的功能模块等，如果一开始就把所有函数都链接好实际上是一种浪费。所以ELF采用了一种叫做延迟绑定（Lazy Binding）的做法，基本的思想就是当函数第一次被用到时才进行绑定（符号查找、重定位等），如果没有用到则不进行绑定。所以程序开始执行时，模块间的函数调用都没有进行绑定，而是需要用到时才由动态链接器来负责绑定。这样的做法可以加快程序的启动速度。
+</p>
+
+<p>
+ELF使用PLT（Procedure Linkage Table）的方法来实现延迟绑定。（Glibc中通过 <code>_dl_runtime_resolve</code> 函数查找函数地址）。PLT为了实现延迟绑定，首先通过一个叫做PLT项的结构进行跳转。每个外部函数在PLT中都有一个相应的项，例如 bar() 函数称为 bar@plt。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #87D700;">Disassembly</span> <span style="color: #FF1493;">of</span> section .plt:
+
+<span style="color: #87D700;">0000000000001020</span> <a href="mailto:ext%40plt-0x10">&lt;ext@plt-0x10&gt;</a>:
+    <span style="color: #FF1493;">1020</span>:       ff 35 ca 2f 00 00       push   0x2fca(<span style="color: #FF8C00;">%rip</span>)        # 3ff0 &lt;_GLOBAL_OFFSET_TABLE_+0x8&gt;
+    <span style="color: #FF1493;">1026</span>:       ff 25 cc 2f 00 00       jmp    *0x2fcc(<span style="color: #FF8C00;">%rip</span>)        # 3ff8 &lt;_GLOBAL_OFFSET_TABLE_+0x10&gt;
+    <span style="color: #FF1493;">102c</span>:       0f 1f 40 00             nopl   0x0(<span style="color: #FF8C00;">%rax</span>)
+
+<span style="color: #87D700;">0000000000001030</span> <a href="mailto:ext%40plt">&lt;ext@plt&gt;</a>:
+    <span style="color: #FF1493;">1030</span>:       ff 25 ca 2f 00 00       jmp    *0x2fca(<span style="color: #FF8C00;">%rip</span>)        # 4000 &lt;ext&gt;
+    <span style="color: #FF1493;">1036</span>:       68 00 00 00 00          push   $0x0
+    <span style="color: #FF1493;">103b</span>:       e9 e0 ff ff ff          jmp    1020 &lt;_init+0x20&gt;
+
+<span style="color: #87D700;">0000000000001040</span> <a href="mailto:bar%40plt">&lt;bar@plt&gt;</a>:
+    <span style="color: #FF1493;">1040</span>:       ff 25 c2 2f 00 00       jmp    *0x2fc2(<span style="color: #FF8C00;">%rip</span>)        # 4008 &lt;bar+0x2eef&gt;
+    <span style="color: #FF1493;">1046</span>:       68 01 00 00 00          push   $0x1
+    <span style="color: #FF1493;">104b</span>:       e9 d0 ff ff ff          jmp    1020 &lt;_init+0x20&gt;
+</pre>
+</div>
+
+<p>
+bar@plt 的三条指令的含义：
+</p>
+<ol class="org-ol">
+<li>第一条指令是通过 <code>.got.plt</code> 间接跳转的指令， <code>jmp    *0x2fc2(%rip)        # 4008 &lt;bar+0x2eef&gt;</code> 也就是说bar地址保存在.got.plt项中（0x4008）。</li>
+<li>初始时， <code>.got.plt</code> 中bar对应项的地址初始化为 bar@plt 中的第二条指令地址（0x1046），所以会直接执行第二条指令；第二条指令将参数压栈 （？？参数的含义，在.plt数组的下标？？？）。</li>
+<li>第三条指令跳转到 <code>.plt</code> 的第一项（0x1020）。</li>
+</ol>
+
+<p>
+0x1020三条指令含义：
+</p>
+<ol class="org-ol">
+<li>将 <code>.got.plt</code> 的第二项（_GLOBAL_OFFSET_TABLE_+0x8）压栈，其中保存的本模块的ID。</li>
+<li>跳转到 <code>.got.plt</code> 第三项保存的地址，其中保存的是 <code>_dl_runtime_resolve</code> 的地址，用于完成地址的链接工作。</li>
+</ol>
+
+<div class="tip" id="org2f1ed9b">
+<p>
+<b>.got.plt</b> 前三项含义：
+</p>
+<ol class="org-ol">
+<li>第一项保存的是 ".dynamic" 段的地址，这个段描述了本模块动态链接相关的信息。</li>
+<li>第二项保存的是本模块的ID。</li>
+<li>第三项保存的是_dl_runtime_resolve()的地址。</li>
+</ol>
+
+
+<p>
+<b>.got.plt</b> 其中第二项和第三项由动态链接器在装载共享模块的时候负责将它们初始化。 ".got.plt" 的其余项分别对应每个外部函数的引用。
+</p>
+
+<p>
+PLT在ELF文件中以独立的段存放，节名通常叫做 <code>.plt</code> ，因为它本身是一些地址无关的代码，所以可以跟代码段等一起合并成同一个可读可执行的 Segment 被装载入内存。
+</p>
+
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0ce51de" class="outline-3">
+<h3 id="org0ce51de"><span class="section-number-3">5.5.</span> 动态链接相关结构</h3>
+<div class="outline-text-3" id="text-5-5">
+<p>
+动态链接时，操作系统会读取可执行文件的头部，从头部中的 "Program Header" 中读取每个
+Segment" 的虚拟地址、文件地址和属性，并将它们映射到进程虚拟空间的相应位置。
+</p>
+
+<div class="tip" id="orge85dc10">
+<p>
+在静态链接情况下，操作系统接着就可以把控制权转交给可执行文件的入口地址，然后程序开始执行，但是动态链接并非如此。
+</p>
+
+<p>
+动态链接情况下，在装载完可执行文件之后，操作系统不能把控制权交给可执行文件。可执行文件依赖于很多共享对象，此时，可执行文件里对于很多外部符号的引用还处于无效地址的状态，即还没有跟相应的共享对象中的实际位置链接起来。所以在映射完可执行文件之后，操作系统会先启动一个动态链接器（Dynamic Linker）。
+</p>
+
+</div>
+
+<p>
+在Linux下，动态链接器为ld.so（既是共享对象，也是可执行程序）。操作系统同样通过映射的方式将它加载到进程的地址空间中。操作系统在加载完动态链接器之后，就将控制权交给动态链接器的入口地址（与可执行文件一样，共享对象也有入口地址）。当动态链接器得到控制权之后，它开始执行一系列自身的初始化操作，然后根据当前的环境参数，开始对可执行文件进行动态链接工作。当所有动态链接工作完成以后，动态链接器会将控制权转交到可执行文件的入口地址，程序开始正式执行。
+</p>
+</div>
+
+
+<div id="outline-container-org7ad286a" class="outline-4">
+<h4 id="org7ad286a"><span class="section-number-4">5.5.1.</span> .interp 节</h4>
+<div class="outline-text-4" id="text-5-5-1">
+<p>
+.interp 的内容包含的就是字符串形式的动态链接器路径。
+</p>
+
+<p>
+可以通过readelf查看依赖的动态链接器： <code>readelf -l 程序名| grep interpreter</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ readelf -W -l program1
+
+Elf file type is DYN (Position-Independent Executable file)
+Entry point 0x1050
+There are 13 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  PHDR           0x000040 0x0000000000000040 0x0000000000000040 0x0002d8 0x0002d8 R   0x8
+  INTERP         0x000318 0x0000000000000318 0x0000000000000318 0x00001c 0x00001c R   0x1
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x000620 0x000620 R   0x1000
+  LOAD           0x001000 0x0000000000001000 0x0000000000001000 0x000159 0x000159 R E 0x1000
+  LOAD           0x002000 0x0000000000002000 0x0000000000002000 0x0000dc 0x0000dc R   0x1000
+  LOAD           0x002dc0 0x0000000000003dc0 0x0000000000003dc0 0x000258 0x000260 RW  0x1000
+  DYNAMIC        0x002dd0 0x0000000000003dd0 0x0000000000003dd0 0x0001f0 0x0001f0 RW  0x8
+  NOTE           0x000338 0x0000000000000338 0x0000000000000338 0x000020 0x000020 R   0x8
+  NOTE           0x000358 0x0000000000000358 0x0000000000000358 0x000044 0x000044 R   0x4
+  GNU_PROPERTY   0x000338 0x0000000000000338 0x0000000000000338 0x000020 0x000020 R   0x8
+  GNU_EH_FRAME   0x002004 0x0000000000002004 0x0000000000002004 0x00002c 0x00002c R   0x4
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x10
+  GNU_RELRO      0x002dc0 0x0000000000003dc0 0x0000000000003dc0 0x000240 0x000240 R   0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00
+   01     .interp
+   02     .interp .note.gnu.property .note.gnu.build-id .note.ABI-tag .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt
+   03     .init .plt .plt.got .text .fini
+   04     .rodata .eh_frame_hdr .eh_frame
+   05     .init_array .fini_array .dynamic .got .got.plt .data .bss
+   06     .dynamic
+   07     .note.gnu.property
+   08     .note.gnu.build-id .note.ABI-tag
+   09     .note.gnu.property
+   10     .eh_frame_hdr
+   11
+   12     .init_array .fini_array .dynamic .got
+</pre>
+</div>
+
+<p>
+在 "Program Header" 节中， INTERP段中保存的 “/lib64/ld-linux-x86-64.so.2”。
+</p>
+
+<p>
+Linux下，操作系统在加载可执行文件时，会通过 “.interp”节指定的路径来获取动态链接器的路径。动态链接器属于Glibc的一部分，属于系统库级别的。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org7c2c743" class="outline-4">
+<h4 id="org7c2c743"><span class="section-number-4">5.5.2.</span> .dynamic节</h4>
+<div class="outline-text-4" id="text-5-5-2">
+<p>
+.dynamic 节中保存了动态链接器所需要的基本信息，例如依赖哪些共享对象、动态链接符号表的位置、动态链接重定位表的位置、共享对象初始化代码的地址等。
+</p>
+
+<p>
+.dynamic 节中保存的是 <code>Elf64_Dyn</code> 类型的数组：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span> {
+        <span style="color: #5FD7FF;">Elf64_Sxword</span> <span style="color: #FF8C00;">d_tag</span>;             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">entry tag value</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #FF1493;">union</span> {
+                <span style="color: #5FD7FF;">Elf64_Xword</span> <span style="color: #FF8C00;">d_val</span>;
+                <span style="color: #5FD7FF;">Elf64_Addr</span> <span style="color: #FF8C00;">d_ptr</span>;
+        } <span style="color: #FF8C00;">d_un</span>;
+} <span style="color: #5FD7FF;">Elf64_Dyn</span>;
+</pre>
+</div>
+<p>
+<i>* This is the info that is needed to parse the dynamic section of the file *</i>
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">d_tag的类型</th>
+<th scope="col" class="org-right">类型值</th>
+<th scope="col" class="org-left">对应d_un含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">DT_NULL</td>
+<td class="org-right">0</td>
+<td class="org-left">标识 .dynamic 节的结束位置</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_NEEDED</td>
+<td class="org-right">1</td>
+<td class="org-left">依赖的共享对象文件，d_ptr：所依赖的共享对象文件名</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_PLTRELSZ</td>
+<td class="org-right">2</td>
+<td class="org-left">PLT重定位表的大小</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_PLTGOT</td>
+<td class="org-right">3</td>
+<td class="org-left">Processor defined value???</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_HASH</td>
+<td class="org-right">4</td>
+<td class="org-left">动态链接hash表地址，d_ptr：.hash的地址</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_STRTAB</td>
+<td class="org-right">5</td>
+<td class="org-left">动态链接字符串表的地址，d_ptr：.dynstr的地址</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_SYMTAB</td>
+<td class="org-right">6</td>
+<td class="org-left">动态链接符号表的地址，d_ptr：.dynsym"的地址</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_RELA</td>
+<td class="org-right">7</td>
+<td class="org-left">动态链接重定位表地址</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_RELASZ</td>
+<td class="org-right">8</td>
+<td class="org-left">动态链接重定位表大小</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_RELAENT</td>
+<td class="org-right">9</td>
+<td class="org-left">动态链接重定位表中表项大小</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_STRSZ</td>
+<td class="org-right">10</td>
+<td class="org-left">动态链接字符串表大小，d_val表示大小</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_SYMENT</td>
+<td class="org-right">11</td>
+<td class="org-left">动态链接符号表中表项的大小</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_INIT</td>
+<td class="org-right">12</td>
+<td class="org-left">初始化代码地址</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_FINI</td>
+<td class="org-right">13</td>
+<td class="org-left">析构代码地址</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_SONAME</td>
+<td class="org-right">14</td>
+<td class="org-left">本共享对象的"SO-NAME"</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_RPATH</td>
+<td class="org-right">15</td>
+<td class="org-left">动态链接共享对象的搜索路径</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_SYMBOLIC</td>
+<td class="org-right">16</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_REL</td>
+<td class="org-right">17</td>
+<td class="org-left">动态链接重定位表地址</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_RELSZ</td>
+<td class="org-right">18</td>
+<td class="org-left">动态链接重定位表大小</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_RELENT</td>
+<td class="org-right">19</td>
+<td class="org-left">动态链接重定位表中表项的大小</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_PLTREL</td>
+<td class="org-right">20</td>
+<td class="org-left">PLT中的重定位类型</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_DEBUG</td>
+<td class="org-right">21</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_TEXTREL</td>
+<td class="org-right">22</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_JMPREL</td>
+<td class="org-right">23</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">DT_ENCODING</td>
+<td class="org-right">32</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+可以通过 <code>readelf -d 库名</code> 查看 .dynamic 节的内容：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ readelf -d ./lib.so
+
+Dynamic section at offset 0x2e08 contains 24 entries:
+  Tag        Type                         Name/Value
+ 0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+ 0x000000000000000c (INIT)               0x1000
+ 0x000000000000000d (FINI)               0x1150
+ 0x0000000000000019 (INIT_ARRAY)         0x3df8
+ 0x000000000000001b (INIT_ARRAYSZ)       8 (bytes)
+ 0x000000000000001a (FINI_ARRAY)         0x3e00
+ 0x000000000000001c (FINI_ARRAYSZ)       8 (bytes)
+ 0x000000006ffffef5 (GNU_HASH)           0x260
+ 0x0000000000000005 (STRTAB)             0x348
+ 0x0000000000000006 (SYMTAB)             0x288
+ 0x000000000000000a (STRSZ)              127 (bytes)
+ 0x000000000000000b (SYMENT)             24 (bytes)
+ 0x0000000000000003 (PLTGOT)             0x3fe8
+ 0x0000000000000002 (PLTRELSZ)           48 (bytes)
+ 0x0000000000000014 (PLTREL)             RELA
+ 0x0000000000000017 (JMPREL)             0x4a0
+ 0x0000000000000007 (RELA)               0x3f8
+ 0x0000000000000008 (RELASZ)             168 (bytes)
+ 0x0000000000000009 (RELAENT)            24 (bytes)
+ 0x000000006ffffffe (VERNEED)            0x3d8
+ 0x000000006fffffff (VERNEEDNUM)         1
+ 0x000000006ffffff0 (VERSYM)             0x3c8
+ 0x000000006ffffff9 (RELACOUNT)          3
+ 0x0000000000000000 (NULL)               0x0
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org453567f" class="outline-4">
+<h4 id="org453567f"><span class="section-number-4">5.5.3.</span> 动态符号表</h4>
+<div class="outline-text-4" id="text-5-5-3">
+<p>
+动态符号表的节名 <code>.dynsym</code> （类似于静态链接中的 <code>.symtab</code> ），.dynsym中只保存了与动态链接相关的符号。
+</p>
+
+<p>
+动态符号字符串表 <code>.dynstr</code> （类似于静态链接中的 <code>.strtab</code> ）。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org14e2934" class="outline-4">
+<h4 id="org14e2934"><span class="section-number-4">5.5.4.</span> 动态链接重定位表</h4>
+<div class="outline-text-4" id="text-5-5-4">
+<p>
+共享对象需要重定位的主要原因是导入符号的存在。动态链接下，无论是可执行文件或共享对象，一旦它依赖于其他共享对象，也就是说有导入的符号时，那么它的代码或数据中就会有对于导入符号的引用。在编译时这些导入符号的地址未知，在静态链接中，这些未知的地址引用在最终链接时被修正。但是在动态链接中，导入符号的地址在运行时才确定，所以需要在运行时将这些导入符号的引用修正，即需要重定位。
+</p>
+
+<div class="tip" id="org4dd28b9">
+<p>
+对于动态链接来说，如果共享对象不是以PIC模式编译的，则需要装载时重定位。 但即使是使用PIC模式编译，在装载时也需要重定位，这是由于数据段中包含了绝对地址引用&#x2013; <code>代码段中绝对地址相关的部分被分离了出来，变成了GOT，而GOT实际上是数据段的一部分。除了GOT以外，数据段还可能包含绝对地址引用</code> 。
+</p>
+
+</div>
+
+<p>
+动态链接的文件中， <code>.rel.dyn</code> 和 <code>.rel.plt</code> (类似与静态链接的 <code>.rel.text</code> 和 <code>.rel.data</code> 。 <code>.rel.dyn</code> 是对数据引用的修正，所修正的位置位于 <code>.got</code> 以及数据段； <code>.rel.plt</code> 是对函数引用的修正，它所修正的位置位于 <code>.got.plt</code> 。
+</p>
+
+<p>
+可以通过 <code>readelf -r</code> 来查看一个动态链接的文件的重定位表：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">~/tmp/zwxy $ readelf -r ./lib.so
+
+Relocation section <span style="color: #CDC673;">'.rela.dyn'</span> at offset 0x3f8 contains 7 entries:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+000000003df8  000000000008 R_X86_64_RELATIVE                    1110
+000000003e00  000000000008 R_X86_64_RELATIVE                    10d0
+000000004010  000000000008 R_X86_64_RELATIVE                    4010
+000000003fc8  000100000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_deregisterTM[...] + 0
+000000003fd0  000300000006 R_X86_64_GLOB_DAT 0000000000000000 __gmon_start__ + 0
+000000003fd8  000400000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_registerTMCl[...] + 0
+000000003fe0  000600000006 R_X86_64_GLOB_DAT 0000000000000000 __cxa_finalize@GLIBC_2.2.5 + 0
+
+Relocation section <span style="color: #CDC673;">'.rela.plt'</span> at offset 0x4a0 contains 2 entries:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+000000004000  000200000007 R_X86_64_JUMP_SLO 0000000000000000 printf@GLIBC_2.2.5 + 0
+000000004008  000500000007 R_X86_64_JUMP_SLO 0000000000000000 sleep@GLIBC_2.2.5 + 0
+</pre>
+</div>
+
+<p>
+通过 <code>readelf -S</code> 查看.got.plt的偏移位置： <code>0x3fe8</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">  ~/tmp/zwxy $ readelf -WS ./lib.so
+There are 28 section headers, starting at offset 0x3540:
+
+Section Headers:
+  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+...
+  [19] .dynamic          DYNAMIC         0000000000003e08 002e08 0001c0 10  WA  4   0  8
+  [20] .got              PROGBITS        0000000000003fc8 002fc8 000020 08  WA  0   0  8
+  [21] .got.plt          PROGBITS        0000000000003fe8 002fe8 000028 08  WA  0   0  8
+  [22] .data             PROGBITS        0000000000004010 003010 000008 00  WA  0   0  8
+...
+</pre>
+</div>
+
+
+<p>
+R_X86_64_GLOB_DAT 和 R_X86_64_JUMP_SLO 类型的重定位入口的地址计算方法： 只需要将被修正的位置填入符号的地址即可。
+</p>
+<ul class="org-ul">
+<li>R_X86_64_GLOB_DAT 对 .got 的重定位</li>
+<li>R_X86_64_JUMP_SLO 对 .got.plt 的重定位</li>
+</ul>
+
+<p>
+例如：上面的 printf 重定位入口，重定位类型R_X86_64_JUMP_SLO， <code>.got.plt</code> 的偏移为 0x3fe8 ， <code>.got.plt</code> 的前三项被系统占据，所以第四项的地址 = 0x3fe8 + 8 * 3 = 0x4000。
+</p>
+
+
+<div id="org6a3bda9" class="figure">
+<p><img src="dot/elf-shr-gotplt.svg" alt="elf-shr-gotplt.svg" class="org-svg" />
+</p>
+</div>
+
+
+<p>
+R_X86_64_RELATIVE 类型的重定位入口采用基址重置的方法，需要在装载时重定位。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org4af9244" class="outline-4">
+<h4 id="org4af9244"><span class="section-number-4">5.5.5.</span> 动态链接时进程堆栈初始化信息</h4>
+<div class="outline-text-4" id="text-5-5-5">
+<p>
+操作系统把控制权交给动态链接器时，由动态链接器处理链接工作。动态链接器必须知道关于可执行文件和本进程的一些信息，比如可执行文件有几个段（“Segment”）、每个段的属性、程序的入口地址（因为动态链接器到时候需要把控制权交给可执行文件）等。这些信息往往由操作系统传递给动态链接器，保存在进程的堆栈里面。
+</p>
+
+<p>
+进程初始化的时候，堆栈里面保存了关于进程执行环境和命令行参数等信息。事实上，堆栈里面还保存了动态链接器所需要的一些辅助信息数组（Auxiliary Vector）。辅助信息的格式也是一个结构数组，它的结构被定义在“elf.h”：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">typedef</span> <span style="color: #FF1493;">struct</span>
+{
+  <span style="color: #5FD7FF;">uint64_t</span> <span style="color: #FF8C00;">a_type</span>;              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Entry type</span><span style="color: #8B8878;"> */</span>
+  <span style="color: #FF1493;">union</span>
+    {
+      <span style="color: #5FD7FF;">uint64_t</span> <span style="color: #FF8C00;">a_val</span>;           <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Integer value</span><span style="color: #8B8878;"> */</span>
+      <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">We use to have pointer elements added here.  We cannot do that,</span>
+<span style="color: #8B8878;">         though, since it does not work when using 32-bit definitions</span>
+<span style="color: #8B8878;">         on 64-bit platforms and vice versa.</span><span style="color: #8B8878;">  */</span>
+    } <span style="color: #FF8C00;">a_un</span>;
+} <span style="color: #5FD7FF;">Elf64_auxv_t</span>;
+
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Legal values for a_type (entry type).</span><span style="color: #8B8878;">  */</span>
+
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_NULL</span>         0               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">End of vector</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_IGNORE</span>         1             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Entry should be ignored</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_EXECFD</span>         2             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">File descriptor of program</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_PHDR</span>         3               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Program headers for program</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_PHENT</span>          4             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Size of program header entry</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_PHNUM</span>          5             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Number of program headers</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_PAGESZ</span>         6             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">System page size</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_BASE</span>         7               <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Base address of interpreter</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_FLAGS</span>          8             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Flags</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_ENTRY</span>          9             <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Entry point of program</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_NOTELF</span>         10            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Program is not ELF</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_UID</span>          11              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Real uid</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_EUID</span>         12              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Effective uid</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_GID</span>          13              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Real gid</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_EGID</span>         14              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Effective gid</span><span style="color: #8B8878;"> */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">AT_CLKTCK</span>         17            <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Frequency of times()</span><span style="color: #8B8878;"> */</span>
+</pre>
+</div>
+
+<p>
+常见的类型含义：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">定义</th>
+<th scope="col" class="org-right">值</th>
+<th scope="col" class="org-left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">AT_NULL</td>
+<td class="org-right">0</td>
+<td class="org-left">标识辅助信息数组的结束</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_IGNORE</td>
+<td class="org-right">1</td>
+<td class="org-left">标识忽略该Entry项</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_EXECFD</td>
+<td class="org-right">2</td>
+<td class="org-left">可执行程序的文件描述符</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_PHDR</td>
+<td class="org-right">3</td>
+<td class="org-left">可执行程序的Program headers</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_PHENT</td>
+<td class="org-right">4</td>
+<td class="org-left">program header中每个entry大小</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_PHNUM</td>
+<td class="org-right">5</td>
+<td class="org-left">program headers中entry的数量</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_PAGESZ</td>
+<td class="org-right">6</td>
+<td class="org-left">系统页面大小</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_BASE</td>
+<td class="org-right">7</td>
+<td class="org-left">动态链接器（interpreter）的装载地址</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_FLAGS</td>
+<td class="org-right">8</td>
+<td class="org-left">Flags</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_ENTRY</td>
+<td class="org-right">9</td>
+<td class="org-left">可执行程序的入口地址</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_NOTELF</td>
+<td class="org-right">10</td>
+<td class="org-left">Program is not ELF</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_UID</td>
+<td class="org-right">11</td>
+<td class="org-left">Real uid</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_EUID</td>
+<td class="org-right">12</td>
+<td class="org-left">Effective uid</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_GID</td>
+<td class="org-right">13</td>
+<td class="org-left">Real gid</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_EGID</td>
+<td class="org-right">14</td>
+<td class="org-left">Effective gid</td>
+</tr>
+
+<tr>
+<td class="org-left">AT_CLKTCK</td>
+<td class="org-right">17</td>
+<td class="org-left">Frequency of times()</td>
+</tr>
+</tbody>
+</table>
+
+<div class="tip" id="org9d4d0f9">
+<p>
+动态链接器获取可执行文件相关信息有两种方式：
+</p>
+<ul class="org-ul">
+<li>如果是读文件，则操作系统会初始化AT_EXECFD项。</li>
+<li>如果文件映射的方式，则操作系统提供AT_PHENT、AT_PHNUM、AT_ENTRY这几项。</li>
+</ul>
+
+</div>
+
+<p>
+打印堆栈信息的小程序：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;stdio.h&gt;</span>
+<span style="color: #FF1493;">#include</span> <span style="color: #CDC673;">&lt;elf.h&gt;</span>
+
+<span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">main</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">argc</span>, <span style="color: #5FD7FF;">char</span>* <span style="color: #FF8C00;">argv</span>[])
+{
+        <span style="color: #5FD7FF;">uint64_t</span> * <span style="color: #FF8C00;">p</span> = (<span style="color: #5FD7FF;">int</span>*)argv;
+        <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>;
+        <span style="color: #5FD7FF;">Elf64_auxv_t</span>* <span style="color: #FF8C00;">aux</span>;
+
+        printf(<span style="color: #CDC673;">"Argument count: %d\n"</span>, *(p-1));
+
+        <span style="color: #FF1493;">for</span>(i = 0; i &lt; *(p-1); ++i) {
+                printf(<span style="color: #CDC673;">"Argument %d : %s\n"</span>, i, *(p + i) );
+        }
+
+        p += i;
+        p++; <span style="color: #8B8878;">// </span><span style="color: #8B8878;">skip 0</span>
+
+        printf(<span style="color: #CDC673;">"Environment:\n"</span>);
+        <span style="color: #FF1493;">while</span>(*p) {
+                printf(<span style="color: #CDC673;">"%s\n"</span>,*p);
+                p++;
+        }
+
+        p++; <span style="color: #8B8878;">// </span><span style="color: #8B8878;">skip 0</span>
+
+        printf(<span style="color: #CDC673;">"Auxiliary Vectors:\n"</span>);
+        aux = (<span style="color: #5FD7FF;">Elf64_auxv_t</span>*)p;
+        <span style="color: #FF1493;">while</span>(aux-&gt;a_type != AT_NULL) {
+                printf(<span style="color: #CDC673;">"Type: %02d Value: %x\n"</span>, aux-&gt;a_type, aux-&gt;a_un.a_val);
+                aux++;
+        }
+
+        <span style="color: #FF1493;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org64a76aa" class="outline-3">
+<h3 id="org64a76aa"><span class="section-number-3">5.6.</span> 动态链接的步骤和实现</h3>
+<div class="outline-text-3" id="text-5-6">
+<p>
+动态链接的步骤大致分为3步：
+</p>
+<ol class="org-ol">
+<li>启动动态链接器本身。</li>
+<li>装载所有需要的共享对象。</li>
+<li>重定位和初始化。</li>
+</ol>
+</div>
+
+
+<div id="outline-container-org0ab1ccb" class="outline-4">
+<h4 id="org0ab1ccb"><span class="section-number-4">5.6.1.</span> 动态链接器自举</h4>
+<div class="outline-text-4" id="text-5-6-1">
+<p>
+对于普通共享对象文件来说，重定位工作由动态链接器来完成；它也可以依赖于其他共享对象，其中的被依赖的共享对象由动态链接器负责链接和装载。
+</p>
+
+<p>
+对于动态链接器本身来说，不可以依赖于其他任何共享对象；其次是动态链接器本身所需要的全局和静态变量的重定位工作由它本身完成。对于第一个条件我们可以人为地控制，在编写动态链接器时保证不使用任何系统库、运行库；对于第二个条件，动态链接器必须在启动时有一段非常精巧的代码可以完成这项艰巨的工作而同时又不能用到全局和静态变量。这种具有一定限制条件的启动代码往往被称为自举（Bootstrap）。
+</p>
+
+<p>
+动态链接器的入口地址就是自举代码的入口，当操作系统将进程控制权交给动态链接器时，动态链接器的自举代码即开始执行。自举代码首先会找到它自己的GOT。而GOT的第一个入口保存的即是“.dynamic”段的偏移地址，由此找到了动态连接器本身的“.dynamic”段。通过“.dynamic”中的信息，自举代码便可以获得动态链接器本身的重定位表和符号表等，从而得到动态链接器本身的重定位入口，先将它们全部重定位。从这一步开始，动态链接器代码中才可以开始使用自己的全局变量和静态变量。
+</p>
+
+<p>
+实际上在动态链接器的自举代码中，除了不可以使用全局变量和静态变量之外，甚至不能调用函数，即动态链接器本身的函数也不能调用。这是为什么呢？其实我们在前面分析地址无关代码时已经提到过，实际上使用PIC模式编译的共享对象，对于模块内部的函数调用也是采用跟模块外部函数调用一样的方式，即使用GOT/PLT的方式，所以在GOT/PLT没有被重定位之前，自举代码不可以使用任何全局变量，也不可以调用函数。下面这段注释来自于Glibc 2.37源代码中的elf/rtld.c (_dl_start函数尾部)：
+</p>
+<div class="org-center">
+<p>
+/* Now life is sane; we can call functions and access global data.
+   Set up to use the operating system facilities, and find out from
+   the operating system's program loader where to find the program
+   header table in core.  Put the rest of _dl_start into a separate
+   function, that way the compiler cannot put accesses to the GOT
+   before ELF_DYNAMIC_RELOCATE.  */
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3ecd177" class="outline-4">
+<h4 id="org3ecd177"><span class="section-number-4">5.6.2.</span> 装载共享对象</h4>
+<div class="outline-text-4" id="text-5-6-2">
+<p>
+完成基本自举以后，动态链接器将可执行文件和链接器本身的符号表都合并到一个符号表当中，我们可以称它为全局符号表（Global Symbol Table）。然后链接器开始寻找可执行文件所依赖的共享对象，“.dynamic” 节中，有一种DT_NEEDED类型的入口，所指向的是该可执行文件（或共享对象）所依赖的共享对象。由此，链接器可以获取可执行文件所需要的所有共享对象，并将这些共享对象的名字放入到一个装载集合中。然后链接器开始从集合里取一个所需要的共享对象的名字，找到相应的文件后打开该文件，读取相应的ELF文件头和“.dynamic”节，然后将它相应的代码节和数据节映射到进程空间中。如果这个ELF共享对象还依赖于其他共享对象，那么将所依赖的共享对象的名字放到装载集合中。如此循环直到所有依赖的共享对象都被装载进来为止，当然链接器可以有不同的装载顺序，如果我们把依赖关系看作一个图的话，那么这个装载过程就是一个图的遍历过程，链接器可能会使用深度优先或者广度优先或者其他的顺序来遍历整个图，这取决于链接器，比较常见的算法一般都是广度优先的。
+</p>
+
+<p>
+当一个新的共享对象被装载进来的时候，它的符号表会被合并到全局符号表中，所以当所有的共享对象都被装载进来的时候，全局符号表里面将包含进程中所有的动态链接所需要的符号。
+</p>
+
+<div class="tip" id="orga985904">
+<dl class="org-dl">
+<dt>符号的优先级</dt><dd>在动态链接器按照各个模块之间的依赖关系，对它们进行装载并且将它们的符号并入到全局符号表时，有可能两个不同的模块定义了同一个符号，Linux的处理规则：当一个符号需要被加入全局符号表时，如果已经存在相同的符号名，则忽略后加入的符号。
+<ul class="org-ul">
+<li>由于存在重名符号被忽略的问题，当程序使用大量共享对象时应该非常小心符号的重名问题，如果两个符号重名又执行不同的功能，那么程序运行时可能会将所有该符号名的引用解析到第一个被加入全局符号表的使用该符号名的符号，从而导致程序莫名其妙的错误。</li>
+</ul></dd>
+<dt>全局符号介入与地址无关代码</dt><dd>前面介绍地址无关代码时，对于第一类模块内部调用或跳转的处理时，为何不能进行相对地址调用/跳转？ 拿前面“pic.c”的例子来看，由于可能存在全局符号介入的问题，foo函数对于bar的调用不能够采用第一类模块内部调用的方法，因为一旦bar函数由于全局符号介入被其他模块中的同名函数覆盖，那么foo如果采用相对地址调用的话，那个相对地址部分就需要重定位，这与共享对象的地址无关性矛盾。所以对于bar()函数的调用，编译器只能采用第三种，即当作模块外部符号处理，bar()函数被覆盖，动态链接器只需要重定位“.got.plt”，不影响共享对象的代码段。
+<ul class="org-ul">
+<li>为了提高模块内部函数调用的效率，有一个办法是把bar()函数变成编译单元私有函数，即使用“static”关键字定义bar()函数，这种情况下，编译器要确定bar()函数不被其他模块覆盖，就可以使用第一类的方法，即模块内部调用指令，可以加快函数的调用速度。</li>
+</ul></dd>
+</dl>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3ebee92" class="outline-4">
+<h4 id="org3ebee92"><span class="section-number-4">5.6.3.</span> 重定位和初始化</h4>
+<div class="outline-text-4" id="text-5-6-3">
+<p>
+当上面的步骤完成之后，链接器开始重新遍历可执行文件和每个共享对象的重定位表，将它们的GOT/PLT中的每个需要重定位的位置进行修正。因为此时动态链接器已经拥有了进程的全局符号表，所以这个修正过程也显得比较容易，跟我们前面提到的地址重定位的原理基本相同。
+</p>
+
+<p>
+重定位完成之后，如果某个共享对象有“.init”段，那么动态链接器会执行“.init”段中的代码，用以实现共享对象特有的初始化过程，比如最常见的，共享对象中的C++的全局/静态对象的构造就需要通过“.init”来初始化。相应地，共享对象中还可能有“.finit”段，当进程退出时会执行“.finit”段中的代码，可以用来实现类似C++全局对象析构之类的操作。
+</p>
+
+<div class="tip" id="org34528ad">
+<p>
+如果进程的可执行文件也有“.init”段，那么动态链接器不会执行它，因为可执行文件中的“.init”段和“.finit”段由程序初始化部分代码负责执行。
+</p>
+
+</div>
+
+<p>
+当完成了重定位和初始化之后，所有的准备工作就宣告完成了，所需要的共享对象也都已经装载并且链接完成了，这时候动态链接器将进程的控制权转交给程序的入口并且开始执行。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org68e1c20" class="outline-4">
+<h4 id="org68e1c20"><span class="section-number-4">5.6.4.</span> Linux动态链接器实现</h4>
+<div class="outline-text-4" id="text-5-6-4">
+<p>
+Linux下程序的装载时，通过execve()系统调用被装载到进程的地址空间，内核在装载完ELF可执行文件以后就返回到用户空间，将控制权交给程序的入口。
+</p>
+
+<p>
+对于不同链接形式的ELF可执行文件，这个程序的入口是有区别的。
+</p>
+<ul class="org-ul">
+<li>对于静态链接的可执行文件来说，程序的入口就是ELF文件头里面的e_entry指定的入口；</li>
+<li>对于动态链接的可执行文件来说，内核会分析它的动态链接器地址（在“.interp”段），将动态链接器映射至进程地址空间，然后把控制权交给动态链接器。</li>
+</ul>
+
+<p>
+Linux动态链接器本身是一个共享对象，它的路径是/lib64/ld-linux-x86-64.so.2，这实际上是个软链接，它指向/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2，这个才是真正的动态连接器文件。共享对象其实也是ELF文件，它也有跟可执行文件一样的ELF文件头（包括e_entry、段表等）。动态链接器是个非常特殊的共享对象，它不仅是个共享对象，还是个可执行的程序，可以直接在命令行下面运行：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ /lib64/ld-linux-x86-64.so.2 --help
+Usage: /lib64/ld-linux-x86-64.so.2 [OPTION]... EXECUTABLE-FILE [ARGS-FOR-PROGRAM...]
+You have invoked <span style="color: #CDC673;">'ld.so'</span>, the program interpreter for dynamically-linked
+ELF programs.  Usually, the program interpreter is invoked automatically
+when a dynamically-linked executable is started.
+
+You may invoke the program interpreter program directly from the command
+line to load and run an ELF executable file; this is like executing that
+file itself, but always uses the program interpreter you invoked,
+instead of the program interpreter specified<span style="color: #FF1493;"> in</span> the executable file you
+run.  Invoking the program interpreter directly provides access to
+additional diagnostics, and changing the dynamic linker behavior without
+setting environment variables (which would be inherited by subprocesses)<span style="color: #FF1493;">.</span>
+
+  --list                list all dependencies and how they are resolved
+  --verify              verify that given object really is a dynamically linked
+                        object we can handle
+  --inhibit-cache       Do not use /etc/ld.so.cache
+  --library-path PATH   use given PATH instead of content of the environment
+                        variable LD_LIBRARY_PATH
+  --glibc-hwcaps-prepend LIST
+                        search glibc-hwcaps subdirectories<span style="color: #FF1493;"> in</span> LIST
+  --glibc-hwcaps-mask LIST
+                        only search built-in subdirectories if<span style="color: #FF1493;"> in</span> LIST
+  --inhibit-rpath LIST  ignore RUNPATH and RPATH information<span style="color: #FF1493;"> in</span> object names
+                        <span style="color: #FF1493;">in</span> LIST
+  --audit LIST          use objects named<span style="color: #FF1493;"> in</span> LIST as auditors
+  --preload LIST        preload objects named<span style="color: #FF1493;"> in</span> LIST
+  --argv0 STRING        set argv[0] to STRING before running
+  --list-tunables       list all tunables with minimum and maximum values
+  --list-diagnostics    list diagnostics information
+  --help                display this help and exit
+  --version             output version information and exit
+
+This program interpreter self-identifies as: /lib64/ld-linux-x86-64.so.2
+
+Shared library search path:
+  (libraries located via /etc/ld.so.cache)
+  /lib/x86_64-linux-gnu (system search path)
+  /usr/lib/x86_64-linux-gnu (system search path)
+  /lib (system search path)
+  /usr/lib (system search path)
+
+Subdirectories of glibc-hwcaps directories,<span style="color: #FF1493;"> in</span> priority order:
+  x86-64-v4
+  x86-64-v3 (supported, searched)
+  x86-64-v2 (supported, searched)
+
+Legacy HWCAP subdirectories under library search path directories:
+  x86_64 (AT_PLATFORM; supported, searched)
+  tls (supported, searched)
+  avx512_1
+  x86_64 (supported, searched)
+</pre>
+</div>
+
+<div class="tip" id="org04a66f1">
+<p>
+Linux的内核在执行execve()时不关心目标ELF文件是否可执行（文件头e_type是ET_EXEC还是ET_DYN），它只是简单按照程序头表里面的描述对文件进行装载然后把控制权转交给ELF入口地址（没有“.interp”就是ELF文件的e_entry；如果有“.interp”的话就是动态链接器的e_entry）。这样我们就很好理解为什么动态链接器本身可以作为可执行程序运行，这也从一个侧面证明了共享库和可执行文件实际上没什么区别，除了文件头的标志位和扩展名有所不同之外，其他都是一样的。
+</p>
+
+</div>
+
+<p>
+Linux的ELF动态链接器是Glibc的一部分，它的源代码位于Glibc的源代码的elf目录下面，它的实际入口地址位于sysdeps/x86_64/dl-manchine.h中的RTLD_START宏定义，然后调用_dl_start(elf/rtld.c)。 （普通程序的入口地址_start()在sysdeps/x86_64/start.S）
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">
+<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Initial entry point code for the dynamic linker.</span>
+<span style="color: #8B8878;">   The C function `_dl_start' is the real entry point;</span>
+<span style="color: #8B8878;">   its return value is the user program's entry point.</span><span style="color: #8B8878;">  */</span>
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">RTLD_START</span> <span style="color: #FF1493;">asm</span> (<span style="color: #CDC673;">"\n\</span>
+<span style="color: #CDC673;">.text\n\</span>
+<span style="color: #CDC673;">        .align 16\n\</span>
+<span style="color: #CDC673;">.globl _start\n\</span>
+<span style="color: #CDC673;">.globl _dl_start_user\n\</span>
+<span style="color: #CDC673;">_start:\n\</span>
+<span style="color: #CDC673;">        movq %rsp, %rdi\n\</span>
+<span style="color: #CDC673;">        call _dl_start\n\</span>
+<span style="color: #CDC673;">_dl_start_user:\n\</span>
+<span style="color: #CDC673;">        # Save the user entry point address in %r12.\n\</span>
+<span style="color: #CDC673;">        movq %rax, %r12\n\</span>
+<span style="color: #CDC673;">        # Read the original argument count.\n\</span>
+<span style="color: #CDC673;">        movq (%rsp), %rdx\n\</span>
+<span style="color: #CDC673;">        # Call _dl_init (struct link_map *main_map, int argc, char **argv, char **env)\n\</span>
+<span style="color: #CDC673;">        ....... \</span>
+<span style="color: #CDC673;">.previous\n\</span>
+<span style="color: #CDC673;">"</span>);
+</pre>
+</div>
+
+<p>
+<code>_dl_start()</code> 完成自举过程后，调用 <code>_dl_start_final</code> ，其中再调用 <code>_dl_sysdep_start</code> ，然后进入真正的动态链接器的链接处理函数 <code>dl_main()</code> 。
+</p>
+
+<p>
+dl_main() 装载所依赖的共享对象、解析符号、重定位，函数起始位置有这么一个判断（以可执行文件启动）：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span>
+<span style="color: #87D700;">dl_main</span> (<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">ElfW</span>(<span style="color: #FF8C00;">Phdr</span>) *phdr, <span style="color: #5FD7FF;">ElfW</span>(<span style="color: #FF8C00;">Word</span>) phnum, <span style="color: #5FD7FF;">ElfW</span>(<span style="color: #FF8C00;">Addr</span>) *user_entry, <span style="color: #5FD7FF;">ElfW</span>(<span style="color: #FF8C00;">auxv_t</span>) *auxv)
+{
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">.......</span>
+        <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">ld_so_name</span> = _dl_argv[0];
+        <span style="color: #CDC673;">/** &#22914;&#26524;&#21160;&#24577;&#38142;&#25509;&#22120;&#34987;&#24403;&#20316;&#21487;&#25191;&#34892;&#25991;&#20214;&#25191;&#34892;&#65292;&#21017;&#24320;&#22987;&#35299;&#26512;&#21442;&#25968;&#65292;&#24182;&#20570;&#30456;&#24212;&#22788;&#29702; */</span>
+        <span style="color: #FF1493;">if</span> (*user_entry == (<span style="color: #5FD7FF;">ElfW</span>(Addr)) ENTRY_POINT)
+        {
+                <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Ho ho.  We are not the program interpreter!  We are the program</span>
+<span style="color: #8B8878;">                   itself!  This means someone ran ld.so as a command.  Well, that</span>
+<span style="color: #8B8878;">                   might be convenient to do sometimes.  We support it by</span>
+<span style="color: #8B8878;">                   interpreting the args like this:</span>
+
+<span style="color: #8B8878;">                   ld.so PROGRAM ARGS...</span>
+
+<span style="color: #8B8878;">                   The first argument is the name of a file containing an ELF</span>
+<span style="color: #8B8878;">                   executable we will load and run with the following arguments.</span>
+<span style="color: #8B8878;">                   To simplify life here, PROGRAM is searched for using the</span>
+<span style="color: #8B8878;">                   normal rules for shared objects, rather than $PATH or anything</span>
+<span style="color: #8B8878;">                   like that.  We just load it and use its entry point; we don't</span>
+<span style="color: #8B8878;">                   pay attention to its PT_INTERP command (we are the interpreter</span>
+<span style="color: #8B8878;">                   ourselves).  This is an easy way to test a new ld.so before</span>
+<span style="color: #8B8878;">                   installing it.</span><span style="color: #8B8878;">  */</span>
+                <span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+        }
+        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+}
+</pre>
+</div>
+
+<div class="tip" id="org8fd5c94">
+<dl class="org-dl">
+<dt>动态链接器本身是动态链接的还是静态链接的？</dt><dd>动态链接器本身是静态链接的，它不能依赖于其他共享对象，动态链接器本身是用来帮助其他ELF文件解决共享对象依赖问题的，自身的依赖问题无法解决，所以它本身必须不依赖于其他共享对象。可以通过ldd来验证。</dd>
+
+<dt>动态链接器本身必须是PIC的吗？</dt><dd>动态链接器可以是PIC的也可以不是，但往往使用PIC会更加简单一些。一方面，如果不是PIC的话，会使得代码段无法共享，浪费内存；另一方面也会使ld.so本身初始化更加复杂，因为自举时还需要对代码段进行重定位。</dd>
+<dt>动态链接器可以被当作可执行文件运行，那么的装载地址应该是多少？</dt><dd>ld.so的装载地址跟一般的共享对象没区别，即为0x00000000。这个装载地址是一个无效的装载地址，作为一个共享库，内核在装载它时会为其选择一个合适的装载地址。</dd>
+</dl>
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3c23dda" class="outline-3">
+<h3 id="org3c23dda"><span class="section-number-3">5.7.</span> 显示运行时链接</h3>
+<div class="outline-text-3" id="text-5-7">
+<p>
+通过使用 DL库（Dyamical Loading），可以在程序运行时动态的加载库。
+</p>
+
+<ul class="org-ul">
+<li>dlopen</li>
+<li>dlclose</li>
+<li>dlsym</li>
+<li>dlerror</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgd8847c0" class="outline-2">
+<h2 id="orgd8847c0"><span class="section-number-2">6.</span> Linux共享库的组织</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org8f3504f" class="outline-3">
+<h3 id="org8f3504f"><span class="section-number-3">6.1.</span> 共享库版本</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+共享库版本命名规则： libname.so.x.y.z，前缀使用lib，name为库名，后缀 .so， x为主版本号，y为此版本号，z表示发布版本号。
+</p>
+
+<p>
+版本号意义：
+</p>
+<ul class="org-ul">
+<li>主版本号：库的重大升级，不同主版本号的库之间是不兼容的，依赖于旧的主版本号的程序需要改动相应的部分，并且重新编译，才可以在新版的共享库中运行；或者，系统必须保留旧版的共享库，使得那些依赖于旧版共享库的程序能够正常运行。</li>
+<li>次版本号：库的增量升级，即增加一些新的接口符号，且保持原来的符号不变。在主版本号相同的情况下，高的次版本号的库向后兼容低的次版本号的库。</li>
+<li>发布版本号：库的一些错误的修正、性能的改进等，并不添加任何新的接口，也不对接口进行更改。相同主版本号、次版本号的共享库，不同的发布版本号之间完全兼容，依赖于某个发布版本号的程序可以在任何一个其他发布版本号中正常运行，而无须做任何修改。</li>
+</ul>
+
+<div class="tip" id="org79310be">
+<p>
+注意：Glibc以及动态链接器不采用上述规则。
+</p>
+
+</div>
+</div>
+
+
+<div id="outline-container-org540728f" class="outline-4">
+<h4 id="org540728f"><span class="section-number-4">6.1.1.</span> SO-NAME命名机制</h4>
+<div class="outline-text-4" id="text-6-1-1">
+<p>
+linux中采用一种叫做 “SO-NAME” 的命名机制记录共享库的依赖关系。每个共享库都有一个对应的“SO-NAME”，这个SO-NAME即共享库的文件名去掉次版本号和发布版本号，保留主版本号。比如一个共享库叫做libfoo.so.2.6.1，那么它的SO-NAME即libfoo.so.2。很明显，“SO-NAME”规定了共享库的接口，“SO-NAME”的两个相同共享库，次版本号大的兼容次版本号小的。在Linux系统中，系统会为每个共享库在它所在的目录创建一个跟“SO-NAME”相同的并且指向它的软链接（Symbol Link）。比如系统中有存在一个共享库“/lib/libfoo.so.2.6.1”，那么Linux中的共享库管理程序就会为它产生一个软链接“/lib/libfoo.so.2”指向它。
+</p>
+
+<p>
+建立以SO-NAME为名字的软链接目的是，使得所有依赖某个共享库的模块，在编译、链接和运行时，都使用共享库的SO-NAME，而不使用详细的版本号。之前提到的 “.dynamic” 节中，如果某文件A依赖于某文件B，那么A的“.dynamic”节中会有DT_NEED类型的字段，字段的值就是B。这样当动态链接器进行共享库依赖文件查找时，就会根据系统中各种共享库目录中的SO-NAME软链接自动定向到最新版本的共享库。
+</p>
+
+<p>
+当共享库进行升级的时候，如果只是进行增量升级，即保持主版本号不变，只改变次版本号或发布版本号，那么我们可以直接将新版的共享库替换掉旧版，并且修改SO-NAME的软链接指向新版本共享库，即可实现升级；当共享库的主版本号升级时，系统中就会存在多个SO-NAME，由于这些SO-NAME并不相同，所以已有的程序并不会受影响。
+</p>
+
+<p>
+<b>SO-NAME表示一个库的接口，接口不向后兼容，SO-NAME就发生变化。</b>
+</p>
+
+<p>
+Linux中提供了一个工具叫做“ldconfig”，当系统中安装或更新一个共享库时，就需要运行这个工具，它会遍历所有的默认共享库目录，更新所有的软链接，使它们指向最新版的共享库；如果安装了新的共享库，那么ldconfig会为其创建相应的软链接。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4b8288f" class="outline-4">
+<h4 id="org4b8288f"><span class="section-number-4">6.1.2.</span> 链接名</h4>
+<div class="outline-text-4" id="text-6-1-2">
+<p>
+编译过程使用共享库时（比如使用GCC的“-l”参数链接某个共享库），需要在编译器命令行里面指定-lXXX即可，编译器会根据当前环境，在系统中的相关路径（往往由-L参数指定）查找最新版本的“XXX”库。
+</p>
+
+<p>
+这个“XXX”又被称为共享库的链接名（Link Name）。不同类型的库可能会有同样的链接名，比如C语言运行库有静态版本（libc.a）和动态版本（libc.so.x.y.z）的区别，如果在链接时使用参数“-lc”，那么链接器会根据输出文件的情况（动态/静态）来选择适合版本的库。比如ld使用“-static”参数时，“-lc”会查找libc.a；如果使用“-Bdynamic”（这也是默认情况），它会查找最新版本的libc.so.x.y.z。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org92c9aea" class="outline-3">
+<h3 id="org92c9aea"><span class="section-number-3">6.2.</span> 符号版本（linux）</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+<a href="http://www.usenix.org/publications/library/proceedings/als00/2000papers/papers/full_papers/browndavid/browndavid_html/">Reference: Library Interface Versioning in Solaris and Linux</a> 这篇论文对Salaris和Linux的共享库版本机制和符号版本机制做了非常详细的介绍。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd896447" class="outline-3">
+<h3 id="orgd896447"><span class="section-number-3">6.3.</span> 共享库系统路径</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+大部分开源操作系统（包括linux）都遵守FHS（File Hierarchy Standard）标准，这个标准规定了一个系统中的系统文件应该如何存放，包括各个目录的结构、组织和作用，这有利于促进各个开源操作系统之间的兼容性。
+</p>
+
+<p>
+<a href="https://refspecs.linuxfoundation.org/fhs.shtml">Filesystem Hierarchy Standard</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbf5f51f" class="outline-3">
+<h3 id="orgbf5f51f"><span class="section-number-3">6.4.</span> 共享库查找过程</h3>
+<div class="outline-text-3" id="text-6-4">
+<p>
+Linux系统中，动态链接器是/lib/ld-linux.so.X（X是版本号），程序所依赖的共享对象全部由动态链接器负责装载和初始化。动态链接的模块所依赖的模块路径保存在“.dynamic”节里面，由DT_NEED类型的项表示。
+</p>
+
+<p>
+动态链接器对于模块的查找规则：
+</p>
+<ul class="org-ul">
+<li>如果DT_NEED里面保存的是绝对路径，那么动态链接器就按照这个路径去查找；</li>
+<li>如果DT_NEED里面保存的是相对路径，那么动态链接器会在/lib、/usr/lib和由/etc/ld.so.conf配置文件指定的目录中查找共享库。</li>
+</ul>
+
+<p>
+ld.so.conf是一个文本配置文件，它可能包含其他的配置文件，这些配置文件中存放着目录信息。例如：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ cat /etc/ld.so.conf
+include /etc/ld.so.conf.d/*.conf
+$ ls -l /etc/ld.so.conf.d/
+total 28
+-rw-r--r-- 1 root root  37 Aug 29  2020 fakechroot-x86_64-linux-gnu.conf
+-rw-r--r-- 1 root root  38 Jun 26  2018 fakeroot-x86_64-linux-gnu.conf
+-rw-r--r-- 1 root root 168 May  2  2019 i386-linux-gnu.conf
+-rw-r--r-- 1 root root  44 Mar 21  2016 libc.conf
+-rw-r--r-- 1 root root 100 May  2  2019 x86_64-linux-gnu.conf
+-rw-r--r-- 1 root root  56 May  2  2019 zz_i386-biarch-compat.conf
+-rw-r--r-- 1 root root  58 May  2  2019 zz_x32-biarch-compat.conf
+</pre>
+</div>
+
+<p>
+如果动态链接器在每次查找共享库时都去遍历这些目录，那将会非常耗费时间。所以Linux系统中都有一个叫做ldconfig的程序，这个程序的作用是为共享库目录下的各个共享库创建、删除或更新相应的SO-NAME（即相应的符号链接），这样每个共享库的SO-NAME就能够指向正确的共享库文件；并且这个程序还会将这些SO-NAME收集起来，集中存放到/etc/ld.so.cache文件里面，并建立一个SO-NAME的缓存。当动态链接器要查找共享库时，它可以直接从/etc/ld.so.cache里面查找。而/etc/ld.so.cache的结构是经过特殊设计的，非常适合查找，所以这个设计大大加快了共享库的查找过程。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo ldconfig -p | more
+1876 libs found<span style="color: #FF1493;"> in</span> cache <span style="color: #AF87FF; font-weight: bold;">`/etc/ld.so.cache'</span>
+<span style="color: #AF87FF; font-weight: bold;">        lib2geom.so.1.2.0 (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/lib2geom.so.1.2.0</span>
+<span style="color: #AF87FF; font-weight: bold;">        libz3.so.4 (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/libz3.so.4</span>
+<span style="color: #AF87FF; font-weight: bold;">        libz3.so (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/libz3.so</span>
+<span style="color: #AF87FF; font-weight: bold;">        libzzipwrap-0.so.13 (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/libzzipwrap-0.so.13</span>
+<span style="color: #AF87FF; font-weight: bold;">        libzzipmmapped-0.so.13 (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/libzzipmmapped-0.so.13</span>
+<span style="color: #AF87FF; font-weight: bold;">        libzzipfseeko-0.so.13 (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/libzzipfseeko-0.so.13</span>
+<span style="color: #AF87FF; font-weight: bold;">        libzzip-0.so.13 (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/libzzip-0.so.13</span>
+<span style="color: #AF87FF; font-weight: bold;">        libzvbi.so.0 (libc6,x86-64) =&gt; /lib/x86_64-linux-gnu/libzvbi.so.0</span>
+<span style="color: #AF87FF; font-weight: bold;">    ......</span>
+</pre>
+</div>
+
+<p>
+如果动态链接器在/etc/ld.so.cache里面没有找到所需要的共享库，那么它还会遍历/lib和/usr/lib这两个目录，如果还是没找到，就宣告失败。
+</p>
+
+<p>
+如果在系统指定的共享库目录下添加、删除或更新任何一个共享库，或者更改/etc/ld.so.conf的配置，都应该运行ldconfig这个程序，以便调整SO-NAME和/etc/ld.so.cache。很多软件包的安装程序在往系统里面安装共享库以后都会调用ldconfig。
+</p>
+
+<p>
+不同的系统中，ldconfig相关配置可能有所不同，比如FreeBSD的SO-NAME缓存文件是/var/run/ld-elf.so.hints，我们可以通过查看ldconfig的man手册来得知这些信息。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge056e00" class="outline-3">
+<h3 id="orge056e00"><span class="section-number-3">6.5.</span> 环境变量</h3>
+<div class="outline-text-3" id="text-6-5">
+<dl class="org-dl">
+<dt>LD_LIBRARY_PATH</dt><dd>如果为某个进程设置了LD_LIBRARY_PATH，那么进程在启动时，动态链接器在查找共享库时，会首先查找由LD_LIBRARY_PATH指定的目录。默认为空。
+<ul class="org-ul">
+<li>ld-linux-x86-64.so.2 &#x2013;library-path 同样可以实现指定库查找路径的功能。</li>
+</ul></dd>
+<dt>LD_PRELOAD</dt><dd>指定预先装载的一些共享库甚或是目标文件。在LD_PRELOAD里面指定的文件会在动态链接器按照固定规则搜索共享库之前装载，它比LD_LIBRARY_PATH里面所指定的目录中的共享库还要优先。无论程序是否依赖于它们，LD_PRELOAD里面指定的共享库或目标文件都会被装载。</dd>
+<dt>LD_DEBUG</dt><dd>打开动态链接器的调试功能，设置这个变量时，动态链接器会在运行时打印出各种有用的信息，对于我们开发和调试共享库有很大的帮助。可以设置为以下值：
+<ul class="org-ul">
+<li>libs 显示共享库的查找过程</li>
+<li>reloc 显示重定位过程</li>
+<li>files 单音整个装载过程，显示程序依赖于哪个共享库并且按照什么步骤装载和初始化，共享库装载时的地址等</li>
+<li>symbols 显示符号表查找过程</li>
+<li>bindings 显示动态链接的符号绑定过程</li>
+<li>versions 显示符号的版本依赖关系</li>
+<li>scope</li>
+<li>all  以上所有选项的的联合</li>
+<li>statistics 显示动态链接过程的各种统计信息</li>
+<li>unused 检测未使用的动态库</li>
+<li><p>
+help 显示帮助信息，并退出
+</p>
+<div class="org-src-container">
+<pre class="src src-c">      <span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span>
+<span style="color: #87D700;">process_dl_debug</span> (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dl_main_state</span> *<span style="color: #FF8C00;">state</span>, <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">dl_debug</span>)
+{
+  <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">When adding new entries make sure that the maximal length of a name</span>
+<span style="color: #8B8878;">     is correctly handled in the LD_DEBUG_HELP code below.</span><span style="color: #8B8878;">  */</span>
+  <span style="color: #FF1493;">static</span> <span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span>
+  {
+    <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">len</span>;
+    <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">name</span>[10];
+    <span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">char</span> <span style="color: #FF8C00;">helptext</span>[41];
+    <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">mask</span>;
+  } <span style="color: #FF8C00;">debopts</span>[] =
+    {
+<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">LEN_AND_STR</span>(<span style="color: #FF8C00;">str</span>) <span style="color: #FF1493;">sizeof</span> (str) - 1, str
+      { LEN_AND_STR (<span style="color: #CDC673;">"libs"</span>), <span style="color: #CDC673;">"display library search paths"</span>,
+        DL_DEBUG_LIBS | DL_DEBUG_IMPCALLS },
+      { LEN_AND_STR (<span style="color: #CDC673;">"reloc"</span>), <span style="color: #CDC673;">"display relocation processing"</span>,
+        DL_DEBUG_RELOC | DL_DEBUG_IMPCALLS },
+      { LEN_AND_STR (<span style="color: #CDC673;">"files"</span>), <span style="color: #CDC673;">"display progress for input file"</span>,
+        DL_DEBUG_FILES | DL_DEBUG_IMPCALLS },
+      { LEN_AND_STR (<span style="color: #CDC673;">"symbols"</span>), <span style="color: #CDC673;">"display symbol table processing"</span>,
+        DL_DEBUG_SYMBOLS | DL_DEBUG_IMPCALLS },
+      { LEN_AND_STR (<span style="color: #CDC673;">"bindings"</span>), <span style="color: #CDC673;">"display information about symbol binding"</span>,
+        DL_DEBUG_BINDINGS | DL_DEBUG_IMPCALLS },
+      { LEN_AND_STR (<span style="color: #CDC673;">"versions"</span>), <span style="color: #CDC673;">"display version dependencies"</span>,
+        DL_DEBUG_VERSIONS | DL_DEBUG_IMPCALLS },
+      { LEN_AND_STR (<span style="color: #CDC673;">"scopes"</span>), <span style="color: #CDC673;">"display scope information"</span>,
+        DL_DEBUG_SCOPES },
+      { LEN_AND_STR (<span style="color: #CDC673;">"all"</span>), <span style="color: #CDC673;">"all previous options combined"</span>,
+        DL_DEBUG_LIBS | DL_DEBUG_RELOC | DL_DEBUG_FILES | DL_DEBUG_SYMBOLS
+        | DL_DEBUG_BINDINGS | DL_DEBUG_VERSIONS | DL_DEBUG_IMPCALLS
+        | DL_DEBUG_SCOPES },
+      { LEN_AND_STR (<span style="color: #CDC673;">"statistics"</span>), <span style="color: #CDC673;">"display relocation statistics"</span>,
+        DL_DEBUG_STATISTICS },
+      { LEN_AND_STR (<span style="color: #CDC673;">"unused"</span>), <span style="color: #CDC673;">"determined unused DSOs"</span>,
+        DL_DEBUG_UNUSED },
+      { LEN_AND_STR (<span style="color: #CDC673;">"help"</span>), <span style="color: #CDC673;">"display this help message and exit"</span>,
+        DL_DEBUG_HELP },
+    };
+<span style="color: #FF1493;">#define</span> <span style="color: #FF8C00;">ndebopts</span> (<span style="color: #FF1493;">sizeof</span> (debopts) / <span style="color: #FF1493;">sizeof</span> (debopts[0]))
+
+    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+    }
+}
+
+</pre>
+</div></li>
+</ul></dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-orgf3980de" class="outline-3">
+<h3 id="orgf3980de"><span class="section-number-3">6.6.</span> 共享库的创建及安装</h3>
+<div class="outline-text-3" id="text-6-6">
+<p>
+创建： gcc -shared  -fPIC
+</p>
+
+<p>
+通过LD_LIBRARY_PATH、ld 的 ”-rpath“ 、gcc的 ”-Wl,-rpath“ 可以指定目标程序的共享库查找路径。
+</p>
+
+
+<p>
+ld 的 ”-export-dynamic“ 参数（也可以通过GCC的”-Wl,-export-dynamic“）可以在链接可执行文件时，将所有全局符号都导出到动态符号表。
+</p>
+<ul class="org-ul">
+<li>默认情况下，链接器在产生可执行文件时，只会将那些被其他共享模块引用到的符号放到动态符号表，这样可以减少动态符号表的大小。也就是说，在共享模块中反向引用主模块中的符号时，只有那些在链接时被共享模块引用到的符号才会被导出。</li>
+<li>当程序使用dlopen()动态加载某个共享模块，而该共享模块须反向引用主模块的符号时，有可能主模块的某些符号因为在链接时没有被其他共享模块引用而没有被放到动态符号表里面，导致了反向引用失败。 ”-export-dynamic“可以防止出现这种问题。</li>
+</ul>
+
+<p>
+<code>strip</code> 工具可以清除掉共享库或可执行文件的所有符号和调试信息（“strip”是binutils的一部分）。 ld 的 ”-s“（消除调试符号信息） 和 ”-S“（消除所有符号信息）参数也可以使输出文件不产生符号信息。
+</p>
+
+<p>
+安装：将库添加到/lib /usr/lib等路径后，执行ldconfig。也可以通过 ”ldconfig -n“ 来指定共享库目录，这种方式需要在编译时，也指定共享库的位置。
+</p>
+
+<p>
+构造： __attribute__((constructor))
+</p>
+
+<p>
+析构： __attribute__((destructor)))
+</p>
+
+<p>
+指定优先级：
+</p>
+<ul class="org-ul">
+<li>void __attribute__((constructor(5))) init_function1(void);</li>
+<li>void __attribute__((constructor(10))) init_function2(void);</li>
+</ul>
+
+<p>
+使用构造和析构时，不能使用gcc的 ”-nostartfiles“ 和 ”-nostdlib“ 参数。
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:53</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

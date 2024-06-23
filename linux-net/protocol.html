@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-31 Fri 22:55 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>协议</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,87 +191,40 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">协议</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org6c0c4f5">1. 网络分层模型</a></li>
-<li><a href="#orgb222f00">2. TCP</a>
+<li><a href="#orgadfb78c">1. 网络分层模型</a></li>
+<li><a href="#org66f6bd8">2. TCP</a>
 <ul>
-<li><a href="#orga840645">2.1. 三次握手和四次挥手</a></li>
-<li><a href="#org0fac9aa">2.2. MSS最大消息长度</a></li>
-<li><a href="#orge32956c">2.3. 滑动窗口</a></li>
-<li><a href="#org8e5d0dd">2.4. TCP状态</a></li>
-<li><a href="#orgadc4e29">2.5. TCP拥塞控制、满启动、快速恢复</a></li>
-<li><a href="#orge764f11">2.6. TCP参数控制选项</a></li>
-<li><a href="#orga5fe16a">2.7. TSO/GSO</a></li>
+<li><a href="#org481de68">2.1. 三次握手和四次挥手</a></li>
+<li><a href="#org2982152">2.2. MSS最大消息长度</a></li>
+<li><a href="#org6dacd9e">2.3. 滑动窗口</a></li>
+<li><a href="#org1c0ee8a">2.4. TCP状态</a></li>
+<li><a href="#orgd62421f">2.5. TCP拥塞控制、满启动、快速恢复</a></li>
+<li><a href="#orgbae40b1">2.6. TCP参数控制选项</a></li>
+<li><a href="#orgb3319a5">2.7. TSO/GSO</a></li>
 </ul>
 </li>
-<li><a href="#org9b17bd5">3. SCTP</a></li>
-<li><a href="#orge2411f6">4. 应用层协议</a>
+<li><a href="#orgd159e49">3. SCTP</a></li>
+<li><a href="#org2fb98d6">4. 应用层协议</a>
 <ul>
-<li><a href="#orgb336dec">4.1. quic</a>
+<li><a href="#orge7bb496">4.1. quic</a>
 <ul>
-<li><a href="#orgb8f825d">4.1.1. 定义</a></li>
-<li><a href="#org0fda0e1">4.1.2. stream</a>
+<li><a href="#org4b5cace">4.1.1. 定义</a></li>
+<li><a href="#orge8636ab">4.1.2. stream</a>
 <ul>
-<li><a href="#org5183da7">4.1.2.1. stream类型和标识</a></li>
-<li><a href="#org115cc28">4.1.2.2. stream操作</a></li>
-<li><a href="#orgab1ac9a">4.1.2.3. stream状态</a></li>
+<li><a href="#org4a86475">4.1.2.1. stream类型和标识</a></li>
+<li><a href="#org1d55404">4.1.2.2. stream操作</a></li>
+<li><a href="#org3b69be1">4.1.2.3. stream状态</a></li>
 </ul>
 </li>
 </ul>
@@ -281,11 +235,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org6c0c4f5" class="outline-2">
-<h2 id="org6c0c4f5"><span class="section-number-2">1</span> 网络分层模型</h2>
+<div id="outline-container-orgadfb78c" class="outline-2">
+<h2 id="orgadfb78c"><span class="section-number-2">1.</span> 网络分层模型</h2>
 <div class="outline-text-2" id="text-1">
 
-<div class="figure">
+<div id="orgf6a4706" class="figure">
 <p><img src="dot/protocol/osi-mode.png" alt="osi-mode.png" />
 </p>
 </div>
@@ -293,23 +247,23 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-orgb222f00" class="outline-2">
-<h2 id="orgb222f00"><span class="section-number-2">2</span> TCP</h2>
+<div id="outline-container-org66f6bd8" class="outline-2">
+<h2 id="org66f6bd8"><span class="section-number-2">2.</span> TCP</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orga840645" class="outline-3">
-<h3 id="orga840645"><span class="section-number-3">2.1</span> 三次握手和四次挥手</h3>
+<div id="outline-container-org481de68" class="outline-3">
+<h3 id="org481de68"><span class="section-number-3">2.1.</span> 三次握手和四次挥手</h3>
 <div class="outline-text-3" id="text-2-1">
 
-<div class="figure">
+<div id="org4ad9f98" class="figure">
 <p><img src="plantuml/protocol/tcp-handshark.png" alt="tcp-handshark.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org0fac9aa" class="outline-3">
-<h3 id="org0fac9aa"><span class="section-number-3">2.2</span> MSS最大消息长度</h3>
+<div id="outline-container-org2982152" class="outline-3">
+<h3 id="org2982152"><span class="section-number-3">2.2.</span> MSS最大消息长度</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 tcp建立连接时，可以确定发送数据包的单位，可以称之为MSS（Maximum Segment Size）。理想的情况是，MSS长度正好是IP中不会被分片处理的最大数据长度。
@@ -321,32 +275,32 @@ tcp建立连接时，可以确定发送数据包的单位，可以称之为MSS�
 </div>
 </div>
 
-<div id="outline-container-orge32956c" class="outline-3">
-<h3 id="orge32956c"><span class="section-number-3">2.3</span> 滑动窗口</h3>
+<div id="outline-container-org6dacd9e" class="outline-3">
+<h3 id="org6dacd9e"><span class="section-number-3">2.3.</span> 滑动窗口</h3>
 </div>
 
-<div id="outline-container-org8e5d0dd" class="outline-3">
-<h3 id="org8e5d0dd"><span class="section-number-3">2.4</span> TCP状态</h3>
+<div id="outline-container-org1c0ee8a" class="outline-3">
+<h3 id="org1c0ee8a"><span class="section-number-3">2.4.</span> TCP状态</h3>
 </div>
 
-<div id="outline-container-orgadc4e29" class="outline-3">
-<h3 id="orgadc4e29"><span class="section-number-3">2.5</span> TCP拥塞控制、满启动、快速恢复</h3>
+<div id="outline-container-orgd62421f" class="outline-3">
+<h3 id="orgd62421f"><span class="section-number-3">2.5.</span> TCP拥塞控制、满启动、快速恢复</h3>
 </div>
 
-<div id="outline-container-orge764f11" class="outline-3">
-<h3 id="orge764f11"><span class="section-number-3">2.6</span> TCP参数控制选项</h3>
+<div id="outline-container-orgbae40b1" class="outline-3">
+<h3 id="orgbae40b1"><span class="section-number-3">2.6.</span> TCP参数控制选项</h3>
 </div>
 
 
-<div id="outline-container-orga5fe16a" class="outline-3">
-<h3 id="orga5fe16a"><span class="section-number-3">2.7</span> TSO/GSO</h3>
+<div id="outline-container-orgb3319a5" class="outline-3">
+<h3 id="orgb3319a5"><span class="section-number-3">2.7.</span> TSO/GSO</h3>
 </div>
 </div>
-<div id="outline-container-org9b17bd5" class="outline-2">
-<h2 id="org9b17bd5"><span class="section-number-2">3</span> SCTP</h2>
+<div id="outline-container-orgd159e49" class="outline-2">
+<h2 id="orgd159e49"><span class="section-number-2">3.</span> SCTP</h2>
 <div class="outline-text-2" id="text-3">
 
-<div class="figure">
+<div id="org3c5c0f2" class="figure">
 <p><img src="plantuml/protocol/sctp-handshark.png" alt="sctp-handshark.png" />
 </p>
 </div>
@@ -354,16 +308,16 @@ tcp建立连接时，可以确定发送数据包的单位，可以称之为MSS�
 </div>
 
 
-<div id="outline-container-orge2411f6" class="outline-2">
-<h2 id="orge2411f6"><span class="section-number-2">4</span> 应用层协议</h2>
+<div id="outline-container-org2fb98d6" class="outline-2">
+<h2 id="org2fb98d6"><span class="section-number-2">4.</span> 应用层协议</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-orgb336dec" class="outline-3">
-<h3 id="orgb336dec"><span class="section-number-3">4.1</span> quic</h3>
+<div id="outline-container-orge7bb496" class="outline-3">
+<h3 id="orge7bb496"><span class="section-number-3">4.1.</span> quic</h3>
 <div class="outline-text-3" id="text-4-1">
 </div>
-<div id="outline-container-orgb8f825d" class="outline-4">
-<h4 id="orgb8f825d"><span class="section-number-4">4.1.1</span> 定义</h4>
+<div id="outline-container-org4b5cace" class="outline-4">
+<h4 id="org4b5cace"><span class="section-number-4">4.1.1.</span> 定义</h4>
 <div class="outline-text-4" id="text-4-1-1">
 <dl class="org-dl">
 <dt>quic packet</dt><dd>quic packet是指可以被压缩到UDP数据报中的单元. 一个UDP 数据报中可以包含一个或多个quic packet.</dd>
@@ -390,8 +344,8 @@ tcp建立连接时，可以确定发送数据包的单位，可以称之为MSS�
 
 
 
-<div id="outline-container-org0fda0e1" class="outline-4">
-<h4 id="org0fda0e1"><span class="section-number-4">4.1.2</span> stream</h4>
+<div id="outline-container-orge8636ab" class="outline-4">
+<h4 id="orge8636ab"><span class="section-number-4">4.1.2.</span> stream</h4>
 <div class="outline-text-4" id="text-4-1-2">
 <p>
 stream是QUIC连接中的有序的单向或者双向通道, 一个quic连接可以同时传输多个stream.
@@ -408,8 +362,8 @@ QUIC 允许任意数量的流并发操作，并允许在任何流上发送任意
 
 
 
-<div id="outline-container-org5183da7" class="outline-5">
-<h5 id="org5183da7"><span class="section-number-5">4.1.2.1</span> stream类型和标识</h5>
+<div id="outline-container-org4a86475" class="outline-5">
+<h5 id="org4a86475"><span class="section-number-5">4.1.2.1.</span> stream类型和标识</h5>
 <div class="outline-text-5" id="text-4-1-2-1">
 <p>
 stream在连接中由一个数值标识，称为stream ID。Stream ID 是一个 62 位整数（0 到 2<sup>62-1</sup>），对于quic connecton上的所有stream都是唯一的。Stream ID 被编码为可变长度的整数. QUIC 端点不得在连接中重用Stream ID。
@@ -429,7 +383,7 @@ stream在连接中由一个数值标识，称为stream ID。Stream ID 是一个 
 | 0x03 | Server-Initiated, Unidirectional |
 +------+----------------------------------+
 
-	  Table 1: Stream ID Types
+          Table 1: Stream ID Types
 </pre>
 </div>
 
@@ -442,8 +396,8 @@ stream在连接中由一个数值标识，称为stream ID。Stream ID 是一个 
 </div>
 </div>
 
-<div id="outline-container-org115cc28" class="outline-5">
-<h5 id="org115cc28"><span class="section-number-5">4.1.2.2</span> stream操作</h5>
+<div id="outline-container-org1d55404" class="outline-5">
+<h5 id="org1d55404"><span class="section-number-5">4.1.2.2.</span> stream操作</h5>
 <div class="outline-text-5" id="text-4-1-2-2">
 <p>
 写数据
@@ -459,12 +413,12 @@ reset stream
 </div>
 
 
-<div id="outline-container-orgab1ac9a" class="outline-5">
-<h5 id="orgab1ac9a"><span class="section-number-5">4.1.2.3</span> stream状态</h5>
+<div id="outline-container-org3b69be1" class="outline-5">
+<h5 id="org3b69be1"><span class="section-number-5">4.1.2.3.</span> stream状态</h5>
 <div class="outline-text-5" id="text-4-1-2-3">
 </div>
 <ol class="org-ol">
-<li><a id="orga2b12d2"></a>发送Stream States<br />
+<li><a id="org8a8bde6"></a>发送Stream States<br />
 <div class="outline-text-6" id="text-4-1-2-3-1">
 <p>
 以下展示了stream发送数据到对端的的状态变化:
@@ -503,7 +457,7 @@ reset stream
 | Recvd |                   | Recvd |
 +-------+                   +-------+
 
-	 Figure 2: States for Sending Parts of Streams
+         Figure 2: States for Sending Parts of Streams
 </pre>
 </div>
 
@@ -546,7 +500,7 @@ Ready代表新创建的Stream, 可以从应用程序接受数据. Stream数据�
 </li>
 
 
-<li><a id="orgba40581"></a>接受 Stream States<br />
+<li><a id="orgd052a3a"></a>接受 Stream States<br />
 <div class="outline-text-6" id="text-4-1-2-3-2">
 <p>
 以下显示了从对端接收数据的stream状态。
@@ -586,7 +540,7 @@ Ready代表新创建的Stream, 可以从应用程序接受数据. Stream数据�
 | Read  |                   | Read  |
 +-------+                   +-------+
 
-	Figure 3: States for Receiving Parts of Streams
+        Figure 3: States for Receiving Parts of Streams
 
 </pre>
 </div>
@@ -642,7 +596,7 @@ Ready代表新创建的Stream, 可以从应用程序接受数据. Stream数据�
 </div>
 </li>
 
-<li><a id="orga985d90"></a>允许的帧类型<br />
+<li><a id="orgfad3502"></a>允许的帧类型<br />
 <div class="outline-text-6" id="text-4-1-2-3-3">
 <p>
 发送者仅仅发送三种作用与发送者或者接收者状态的帧类型： STREAM， STREAM_DATA_BLOCKED、RESET_STREAM。
@@ -662,7 +616,7 @@ Ready代表新创建的Stream, 可以从应用程序接受数据. Stream数据�
 </div>
 </li>
 
-<li><a id="orge17c6e2"></a>双向的Stream状态<br />
+<li><a id="orga2a9339"></a>双向的Stream状态<br />
 <div class="outline-text-6" id="text-4-1-2-3-4">
 <p>
 双向stream由发送部分和接收部分组成。
@@ -726,8 +680,8 @@ Ready代表新创建的Stream, 可以从应用程序接受数据. Stream数据�
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-31 Fri 22:55</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

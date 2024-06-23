@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2022-04-25 Mon 22:45 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>TCP定时器</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,124 +191,77 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">TCP定时器</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgf020d21">1. 初始化</a></li>
-<li><a href="#orgca24dda">2. 连接建立定时器</a>
+<li><a href="#org188c831">1. 初始化</a></li>
+<li><a href="#orgd06eaeb">2. 连接建立定时器</a>
 <ul>
-<li><a href="#org59c2060">2.1. 连接建立定时器处理函数</a>
+<li><a href="#org1c8889f">2.1. 连接建立定时器处理函数</a>
 <ul>
-<li><a href="#orgaaeead5">2.1.1. tcp_keepalive_timer()</a></li>
-<li><a href="#org0169ce7">2.1.2. tcp_synack_timer()</a></li>
-<li><a href="#org512330c">2.1.3. inet_csk_reqsk_queue_prune()</a></li>
+<li><a href="#org9b3c6af">2.1.1. tcp_keepalive_timer()</a></li>
+<li><a href="#org7771513">2.1.2. tcp_synack_timer()</a></li>
+<li><a href="#org354c028">2.1.3. inet_csk_reqsk_queue_prune()</a></li>
 </ul>
 </li>
-<li><a href="#org5354030">2.2. 连接建立定时器的激活</a></li>
+<li><a href="#orgc6b4abd">2.2. 连接建立定时器的激活</a></li>
 </ul>
 </li>
-<li><a href="#orgcf8ed18">3. 重传定时器</a>
+<li><a href="#org537e9da">3. 重传定时器</a>
 <ul>
-<li><a href="#org60c503f">3.1. 重传定时器处理函数</a>
+<li><a href="#org2400540">3.1. 重传定时器处理函数</a>
 <ul>
-<li><a href="#org749223d">3.1.1. tcp_write_timer()</a></li>
-<li><a href="#orge9ca739">3.1.2. tcp_retransmit_timer</a></li>
-<li><a href="#org8398e42">3.1.3. tcp_write_timeout()</a></li>
+<li><a href="#org40012f3">3.1.1. tcp_write_timer()</a></li>
+<li><a href="#org162ffd5">3.1.2. tcp_retransmit_timer</a></li>
+<li><a href="#org182bf43">3.1.3. tcp_write_timeout()</a></li>
 </ul>
 </li>
-<li><a href="#orgd21bb84">3.2. 重传定时器的激活</a></li>
+<li><a href="#org6dc9333">3.2. 重传定时器的激活</a></li>
 </ul>
 </li>
-<li><a href="#orgd5769d5">4. 延时确认定时器</a>
+<li><a href="#org8c96e82">4. 延时确认定时器</a>
 <ul>
-<li><a href="#orgc62901f">4.1. 延时确认定时器的处理函数</a></li>
-<li><a href="#org832d95d">4.2. 延时确认定时器的激活</a></li>
+<li><a href="#org9ddd05a">4.1. 延时确认定时器的处理函数</a></li>
+<li><a href="#org70042a4">4.2. 延时确认定时器的激活</a></li>
 </ul>
 </li>
-<li><a href="#org40466a0">5. 持续定时器</a>
+<li><a href="#orgf809727">5. 持续定时器</a>
 <ul>
-<li><a href="#org15966cf">5.1. 持续定时器处理函数</a>
+<li><a href="#org8443dbf">5.1. 持续定时器处理函数</a>
 <ul>
-<li><a href="#org6354775">5.1.1. 输出持续探测段并重新设置定时器</a></li>
-<li><a href="#orgc71d3ec">5.1.2. 输出持续探测段</a></li>
+<li><a href="#org1e8500d">5.1.1. 输出持续探测段并重新设置定时器</a></li>
+<li><a href="#orgb6af3d9">5.1.2. 输出持续探测段</a></li>
 </ul>
 </li>
-<li><a href="#orgb1e7bb0">5.2. 激活持续定时器</a>
+<li><a href="#orge963bdf">5.2. 激活持续定时器</a>
 <ul>
-<li><a href="#orgc6beb2a">5.2.1. 接收到ACK时</a></li>
-<li><a href="#org28afe7a">5.2.2. 发送TCP段失败</a></li>
+<li><a href="#org30db3cd">5.2.1. 接收到ACK时</a></li>
+<li><a href="#org725c95a">5.2.2. 发送TCP段失败</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org7c10cea">6. 保活定时器</a>
+<li><a href="#orgd79f159">6. 保活定时器</a>
 <ul>
-<li><a href="#org1f1daa7">6.1. 保活定时器处理函数</a></li>
-<li><a href="#orgb0973d8">6.2. 激活保活定时器</a></li>
+<li><a href="#orgc03573c">6.1. 保活定时器处理函数</a></li>
+<li><a href="#org2b05c41">6.2. 激活保活定时器</a></li>
 </ul>
 </li>
-<li><a href="#org0318e56">7. FIN_WAIT_2定时器</a>
+<li><a href="#org46aef13">7. FIN_WAIT_2定时器</a>
 <ul>
-<li><a href="#org604204f">7.1. FIN_WAIT_2定时器处理函数</a></li>
-<li><a href="#org2c741ae">7.2. 激活FIN_WAIT_2定时器</a></li>
+<li><a href="#org3169780">7.1. FIN_WAIT_2定时器处理函数</a></li>
+<li><a href="#org5278270">7.2. 激活FIN_WAIT_2定时器</a></li>
 </ul>
 </li>
-<li><a href="#org093817c">8. TIME_WAIT定时器</a></li>
+<li><a href="#org0c0d33a">8. TIME_WAIT定时器</a></li>
 </ul>
 </div>
 </div>
@@ -315,39 +269,39 @@ for the JavaScript code in this tag.
 TCP为每条连接建立七个定时器，分别是： 连接建立定时器、重传定时器、延时ACK定时器、持续定时器、保活定时器、FIN_WAIT_2定时器和TIME_WAIT定时器。 实际上内核为了提高效率，只使用了四个定时器来完成七个定时器的功能。 FIN_WAIT_2和TIME_WAIT定时器比较特殊，当sock状态是FIN_WAIT_2和TIME_WAIT时，tcp_sock会转变为inet_timewait_sock，定时器也会由 inet_timewait_sock 来管理。
 </p>
 
-<div id="outline-container-orgf020d21" class="outline-2">
-<h2 id="orgf020d21"><span class="section-number-2">1</span> 初始化</h2>
+<div id="outline-container-org188c831" class="outline-2">
+<h2 id="org188c831"><span class="section-number-2">1.</span> 初始化</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 在创建套接口、传输控制块时，会调用tcp_init_xmit_timers()函数，进而调用 inet_csk_inet_xxmit_timers() 进行具体的初始化，主要是初始化 inet_connection_sock 结构中的 icsk_retransmit_timer 和 icsk_delack_timer，以及sock结构中的sk_timer定时器。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> * Using different timers for retransmit, delayed acks and probes</span>
-<span style="color: #8B8878;"> * We may wish use just one timer maintaining a list of expire jiffies</span>
-<span style="color: #8B8878;"> * to optimize.</span>
-<span style="color: #8B8878;"> */</span>
-<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">inet_csk_init_xmit_timers</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>,
-			       <span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">retransmit_handler</span>)(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>),
-			       <span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">delack_handler</span>)(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>),
-			       <span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">keepalive_handler</span>)(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>))
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> * Using different timers for retransmit, delayed acks and probes</span>
+<span style="color: #75715E;"> * We may wish use just one timer maintaining a list of expire jiffies</span>
+<span style="color: #75715E;"> * to optimize.</span>
+<span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">inet_csk_init_xmit_timers</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>,
+                               <span style="color: #66D9EF;">void</span> (*<span style="color: #A6E22E;">retransmit_handler</span>)(<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span>),
+                               <span style="color: #66D9EF;">void</span> (*<span style="color: #A6E22E;">delack_handler</span>)(<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span>),
+                               <span style="color: #66D9EF;">void</span> (*<span style="color: #A6E22E;">keepalive_handler</span>)(<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span>))
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#23450;&#26102;&#22120;</span>
-	init_timer(&amp;icsk-&gt;icsk_retransmit_timer);
-	init_timer(&amp;icsk-&gt;icsk_delack_timer);
-	init_timer(&amp;sk-&gt;sk_timer);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#23450;&#26102;&#22120;&#30340;&#22788;&#29702;&#20989;&#25968;</span>
-	icsk-&gt;icsk_retransmit_timer.function = retransmit_handler;
-	icsk-&gt;icsk_delack_timer.function     = delack_handler;
-	sk-&gt;sk_timer.function                = keepalive_handler;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#23450;&#26102;&#22120;&#22788;&#29702;&#20989;&#25968;&#30340;&#21442;&#25968;</span>
-	icsk-&gt;icsk_retransmit_timer.data =
-		icsk-&gt;icsk_delack_timer.data =
-			sk-&gt;sk_timer.data  = (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span>)sk;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;&#24310;&#26102;&#30830;&#35748;&#27169;&#24335;</span>
-	icsk-&gt;icsk_pending = icsk-&gt;icsk_ack.pending = 0;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21021;&#22987;&#21270;&#23450;&#26102;&#22120;</span>
+        init_timer(&amp;icsk-&gt;icsk_retransmit_timer);
+        init_timer(&amp;icsk-&gt;icsk_delack_timer);
+        init_timer(&amp;sk-&gt;sk_timer);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21021;&#22987;&#21270;&#23450;&#26102;&#22120;&#30340;&#22788;&#29702;&#20989;&#25968;</span>
+        icsk-&gt;icsk_retransmit_timer.function = retransmit_handler;
+        icsk-&gt;icsk_delack_timer.function     = delack_handler;
+        sk-&gt;sk_timer.function                = keepalive_handler;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21021;&#22987;&#21270;&#23450;&#26102;&#22120;&#22788;&#29702;&#20989;&#25968;&#30340;&#21442;&#25968;</span>
+        icsk-&gt;icsk_retransmit_timer.data =
+                icsk-&gt;icsk_delack_timer.data =
+                        sk-&gt;sk_timer.data  = (<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span>)sk;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21021;&#22987;&#21270;&#24310;&#26102;&#30830;&#35748;&#27169;&#24335;</span>
+        icsk-&gt;icsk_pending = icsk-&gt;icsk_ack.pending = 0;
 }
 </pre>
 </div>
@@ -355,8 +309,8 @@ TCP为每条连接建立七个定时器，分别是： 连接建立定时器、�
 </div>
 
 
-<div id="outline-container-orgca24dda" class="outline-2">
-<h2 id="orgca24dda"><span class="section-number-2">2</span> 连接建立定时器</h2>
+<div id="outline-container-orgd06eaeb" class="outline-2">
+<h2 id="orgd06eaeb"><span class="section-number-2">2.</span> 连接建立定时器</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 连接建立定时器用于被动建立连接时，在发送SYN+ACK之后启动定时器。
@@ -367,12 +321,12 @@ TCP为每条连接建立七个定时器，分别是： 连接建立定时器、�
 </p>
 </div>
 
-<div id="outline-container-org59c2060" class="outline-3">
-<h3 id="org59c2060"><span class="section-number-3">2.1</span> 连接建立定时器处理函数</h3>
+<div id="outline-container-org1c8889f" class="outline-3">
+<h3 id="org1c8889f"><span class="section-number-3">2.1.</span> 连接建立定时器处理函数</h3>
 <div class="outline-text-3" id="text-2-1">
 </div>
-<div id="outline-container-orgaaeead5" class="outline-4">
-<h4 id="orgaaeead5"><span class="section-number-4">2.1.1</span> tcp_keepalive_timer()</h4>
+<div id="outline-container-org9b3c6af" class="outline-4">
+<h4 id="org9b3c6af"><span class="section-number-4">2.1.1.</span> tcp_keepalive_timer()</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
 tcp_keepalive_timer() 实现了TCP中的三个定时器：连接建立定时器、保活定时器和FIN_WAIT_2定时器。这是由于这三个定时器分别处于 LISTEN、ESTABLISHED和FIN_WAIT_2三种状态，因此只需要通过当前TCP状态就能判断当前是何种定时器。
@@ -383,34 +337,34 @@ tcp_keepalive_timer() 实现了TCP中的三个定时器：连接建立定时器�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_keepalive_timer</span> (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">data</span><span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#23450;&#26102;&#22120;&#23545;&#24212;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span><span style="color: #8B8878;">*/</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_keepalive_timer</span> (<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">data</span><span style="color: #75715E;">/*</span><span style="color: #75715E;">&#23450;&#26102;&#22120;&#23545;&#24212;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span><span style="color: #75715E;">*/</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *) data;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">elapsed</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span> = (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *) data;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #66D9EF;">__u32</span> <span style="color: #FD971F;">elapsed</span>;
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Only process if socket is not in use.</span><span style="color: #8B8878;"> */</span>
-	bh_lock_sock(sk);
-	<span style="color: #FF1493;">if</span> (sock_owned_by_user(sk)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;&#65292;&#21017;0.05s&#21518;&#20877;&#27425;&#28608;&#27963;</span>
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Try again later.</span><span style="color: #8B8878;"> */</span>
-		inet_csk_reset_keepalive_timer (sk, HZ/20);
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">LISTEN&#29366;&#24577;&#21017;&#26159;&#36830;&#25509;&#24314;&#31435;&#23450;&#26102;&#22120;</span>
-	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state == TCP_LISTEN) {
-		tcp_synack_timer(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23454;&#38469;&#30340;&#22788;&#29702;&#36923;&#36753;</span>
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Only process if socket is not in use.</span><span style="color: #75715E;"> */</span>
+        bh_lock_sock(sk);
+        <span style="color: #F92672;">if</span> (sock_owned_by_user(sk)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#34987;&#29992;&#25143;&#36827;&#31243;&#38145;&#23450;&#65292;&#21017;0.05s&#21518;&#20877;&#27425;&#28608;&#27963;</span>
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Try again later.</span><span style="color: #75715E;"> */</span>
+                inet_csk_reset_keepalive_timer (sk, HZ/20);
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">LISTEN&#29366;&#24577;&#21017;&#26159;&#36830;&#25509;&#24314;&#31435;&#23450;&#26102;&#22120;</span>
+        <span style="color: #F92672;">if</span> (sk-&gt;sk_state == TCP_LISTEN) {
+                tcp_synack_timer(sk); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23454;&#38469;&#30340;&#22788;&#29702;&#36923;&#36753;</span>
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org0169ce7" class="outline-4">
-<h4 id="org0169ce7"><span class="section-number-4">2.1.2</span> tcp_synack_timer()</h4>
+<div id="outline-container-org7771513" class="outline-4">
+<h4 id="org7771513"><span class="section-number-4">2.1.2.</span> tcp_synack_timer()</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
 该函数调用 inet_csk_reqsk_queue_prune()，用来扫描半连接散列表。然后再设定建立连接定时器，间隔时间为 TCP_SYNQ_INTERVAL。
@@ -418,8 +372,8 @@ tcp_keepalive_timer() 实现了TCP中的三个定时器：连接建立定时器�
 </div>
 </div>
 
-<div id="outline-container-org512330c" class="outline-4">
-<h4 id="org512330c"><span class="section-number-4">2.1.3</span> inet_csk_reqsk_queue_prune()</h4>
+<div id="outline-container-org354c028" class="outline-4">
+<h4 id="org354c028"><span class="section-number-4">2.1.3.</span> inet_csk_reqsk_queue_prune()</h4>
 <div class="outline-text-4" id="text-2-1-3">
 <p>
 该函数扫描半连接散列表，当半连接队列的连接请求块个数超过最大个数的一半时，需要为接收没有重传过的连接保留一半的空间。半连接队列里面要尽量保持没有重传过的连接，并删除一些长时间空闲或没有接收的连接。
@@ -429,7 +383,7 @@ tcp_keepalive_timer() 实现了TCP中的三个定时器：连接建立定时器�
 半连接散列表轮询方式如下图：
 </p>
 
-<div class="figure">
+<div id="orge0bc755" class="figure">
 <p><img src="image/tcp-timer/half-con-hash.png" alt="half-con-hash.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>半连接散列表轮询方式</p>
@@ -437,97 +391,97 @@ tcp_keepalive_timer() 实现了TCP中的三个定时器：连接建立定时器�
 
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">inet_csk_reqsk_queue_prune</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">parent</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#34892;&#30417;&#21548;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
-<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">interval</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24314;&#31435;&#36830;&#25509;&#23450;&#26102;&#22120;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
-<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeout</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24448;&#36820;&#36229;&#26102;&#30340;&#21021;&#22987;&#20540;&#12290;&#27599;&#27425;&#36229;&#26102;&#37117;&#21152;&#20493;&#19978;&#27425;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
-<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">max_rto</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24448;&#36820;&#26102;&#38388;&#30340;&#26368;&#22823;&#20540;</span>
+<pre class="src src-c"><span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">inet_csk_reqsk_queue_prune</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">parent</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36827;&#34892;&#30417;&#21548;&#30340;&#20256;&#36755;&#25511;&#21046;&#22359;</span>
+<span style="color: #F92672;">const</span> <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">interval</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24314;&#31435;&#36830;&#25509;&#23450;&#26102;&#22120;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
+<span style="color: #F92672;">const</span> <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">timeout</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24448;&#36820;&#36229;&#26102;&#30340;&#21021;&#22987;&#20540;&#12290;&#27599;&#27425;&#36229;&#26102;&#37117;&#21152;&#20493;&#19978;&#27425;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
+<span style="color: #F92672;">const</span> <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">max_rto</span>) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24448;&#36820;&#26102;&#38388;&#30340;&#26368;&#22823;&#20540;</span>
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(parent);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_sock_queue</span> *<span style="color: #FF8C00;">queue</span> = &amp;icsk-&gt;icsk_accept_queue;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">listen_sock</span> *<span style="color: #FF8C00;">lopt</span> = queue-&gt;listen_opt;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#24314;&#31435;TCP&#36830;&#25509;&#26102;&#65292;&#20801;&#35768;&#37325;&#20256;SYN+ACK&#30340;&#26368;&#22823;&#27425;&#25968;</span>
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">max_retries</span> = icsk-&gt;icsk_syn_retries ? : sysctl_tcp_synack_retries;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">thresh</span> = max_retries;
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">now</span> = jiffies;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">request_sock</span> **<span style="color: #FF8C00;">reqp</span>, *<span style="color: #FF8C00;">req</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">i</span>, <span style="color: #FF8C00;">budget</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#22871;&#25509;&#21475;&#20013;&#20445;&#23384;&#36830;&#25509;&#35831;&#27714;&#22359;&#30340;&#25955;&#21015;&#34920;&#36824;&#26410;&#24314;&#31435;&#65292;&#25110;&#32773;&#36824;&#27809;&#26377;&#22788;&#20110;&#36830;&#25509;&#36807;&#31243;&#30340;&#36830;&#25509;&#35831;&#27714;&#22359;&#65292;&#30452;&#25509;&#36820;&#22238;</span>
-	<span style="color: #FF1493;">if</span> (lopt == <span style="color: #AF87FF;">NULL</span> || lopt-&gt;qlen == 0)
-		<span style="color: #FF1493;">return</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(parent);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">request_sock_queue</span> *<span style="color: #FD971F;">queue</span> = &amp;icsk-&gt;icsk_accept_queue;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">listen_sock</span> *<span style="color: #FD971F;">lopt</span> = queue-&gt;listen_opt;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#24314;&#31435;TCP&#36830;&#25509;&#26102;&#65292;&#20801;&#35768;&#37325;&#20256;SYN+ACK&#30340;&#26368;&#22823;&#27425;&#25968;</span>
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">max_retries</span> = icsk-&gt;icsk_syn_retries ? : sysctl_tcp_synack_retries;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">thresh</span> = max_retries;
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">now</span> = jiffies;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">request_sock</span> **<span style="color: #FD971F;">reqp</span>, *<span style="color: #FD971F;">req</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">i</span>, <span style="color: #FD971F;">budget</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35813;&#22871;&#25509;&#21475;&#20013;&#20445;&#23384;&#36830;&#25509;&#35831;&#27714;&#22359;&#30340;&#25955;&#21015;&#34920;&#36824;&#26410;&#24314;&#31435;&#65292;&#25110;&#32773;&#36824;&#27809;&#26377;&#22788;&#20110;&#36830;&#25509;&#36807;&#31243;&#30340;&#36830;&#25509;&#35831;&#27714;&#22359;&#65292;&#30452;&#25509;&#36820;&#22238;</span>
+        <span style="color: #F92672;">if</span> (lopt == <span style="color: #AE81FF;">NULL</span> || lopt-&gt;qlen == 0)
+                <span style="color: #F92672;">return</span>;
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Normally all the openreqs are young and become mature</span>
-<span style="color: #8B8878;">         * (i.e. converted to established socket) for first timeout.</span>
-<span style="color: #8B8878;">         * If synack was not acknowledged for 3 seconds, it means</span>
-<span style="color: #8B8878;">         * one of the following things: synack was lost, ack was lost,</span>
-<span style="color: #8B8878;">         * rtt is high or nobody planned to ack (i.e. synflood).</span>
-<span style="color: #8B8878;">         * When server is a bit loaded, queue is populated with old</span>
-<span style="color: #8B8878;">         * open requests, reducing effective size of queue.</span>
-<span style="color: #8B8878;">         * When server is well loaded, queue size reduces to zero</span>
-<span style="color: #8B8878;">         * after several minutes of work. It is not synflood,</span>
-<span style="color: #8B8878;">         * it is normal operation. The solution is pruning</span>
-<span style="color: #8B8878;">         * too old entries overriding normal timeout, when</span>
-<span style="color: #8B8878;">         * situation becomes dangerous.</span>
-<span style="color: #8B8878;">         *</span>
-<span style="color: #8B8878;">         * Essentially, we reserve half of room for young</span>
-<span style="color: #8B8878;">         * embrions; and abort old ones without pity, if old</span>
-<span style="color: #8B8878;">         * ones are about to clog our table.</span>
-<span style="color: #8B8878;">         */</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">qlen&#36229;&#36807;&#26368;&#22823;&#21322;&#36830;&#25509;&#25968;&#30340;&#19968;&#21322;</span>
-	<span style="color: #FF1493;">if</span> (lopt-&gt;qlen&gt;&gt;(lopt-&gt;max_qlen_log-1)) {
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27809;&#26377;&#37325;&#20256;&#36807;SYN+ACK&#30340;&#36830;&#25509;&#35831;&#27714;&#22359;&#25968;&#37327;&#30340;&#19968;&#21322;</span>
-		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">young</span> = (lopt-&gt;qlen_young&lt;&lt;1);
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Normally all the openreqs are young and become mature</span>
+<span style="color: #75715E;">         * (i.e. converted to established socket) for first timeout.</span>
+<span style="color: #75715E;">         * If synack was not acknowledged for 3 seconds, it means</span>
+<span style="color: #75715E;">         * one of the following things: synack was lost, ack was lost,</span>
+<span style="color: #75715E;">         * rtt is high or nobody planned to ack (i.e. synflood).</span>
+<span style="color: #75715E;">         * When server is a bit loaded, queue is populated with old</span>
+<span style="color: #75715E;">         * open requests, reducing effective size of queue.</span>
+<span style="color: #75715E;">         * When server is well loaded, queue size reduces to zero</span>
+<span style="color: #75715E;">         * after several minutes of work. It is not synflood,</span>
+<span style="color: #75715E;">         * it is normal operation. The solution is pruning</span>
+<span style="color: #75715E;">         * too old entries overriding normal timeout, when</span>
+<span style="color: #75715E;">         * situation becomes dangerous.</span>
+<span style="color: #75715E;">         *</span>
+<span style="color: #75715E;">         * Essentially, we reserve half of room for young</span>
+<span style="color: #75715E;">         * embrions; and abort old ones without pity, if old</span>
+<span style="color: #75715E;">         * ones are about to clog our table.</span>
+<span style="color: #75715E;">         */</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">qlen&#36229;&#36807;&#26368;&#22823;&#21322;&#36830;&#25509;&#25968;&#30340;&#19968;&#21322;</span>
+        <span style="color: #F92672;">if</span> (lopt-&gt;qlen&gt;&gt;(lopt-&gt;max_qlen_log-1)) {
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#27809;&#26377;&#37325;&#20256;&#36807;SYN+ACK&#30340;&#36830;&#25509;&#35831;&#27714;&#22359;&#25968;&#37327;&#30340;&#19968;&#21322;</span>
+                <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">young</span> = (lopt-&gt;qlen_young&lt;&lt;1);
 
-		<span style="color: #FF1493;">while</span> (thresh &gt; 2) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23581;&#35797;&#27425;&#25968;&#22823;&#20110;2</span>
-			<span style="color: #FF1493;">if</span> (lopt-&gt;qlen &lt; young)
-				<span style="color: #FF1493;">break</span>;
-			thresh--;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#25972;&#38408;&#20540;</span>
-			young &lt;&lt;= 1; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20877;&#27425;&#20943;&#21322;</span>
-		}
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22312;&#21551;&#29992;&#21152;&#36895;&#36830;&#25509;&#26102;&#65292; &#33719;&#21462;&#26368;&#22810;&#20801;&#35768;&#37325;&#20256;SYN&#27573;&#30340;&#27425;&#25968;</span>
-	<span style="color: #FF1493;">if</span> (queue-&gt;rskq_defer_accept)
-		max_retries = queue-&gt;rskq_defer_accept;
-	<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">&#35745;&#31639;&#38656;&#35201;&#26816;&#27979;&#30340;&#21322;&#36830;&#25509;&#38431;&#21015;&#30340;&#20010;&#25968;&#65292;&#24471;&#21040;&#39044;&#35745;&#20540;&#65292; &#30001;&#20110;&#21322;&#36830;&#25509;&#38431;&#21015;&#26159;&#20010;&#38142;&#34920;&#65292;&#25968;&#37327;&#21487;&#33021;&#36739;&#22823;&#65292;&#25152;&#20197;&#27599;&#27425;&#21482;&#26159;&#36941;&#21382;&#20960;&#20010;&#38142;&#34920;</span><span style="color: #8B8878;"> */</span>
-	budget = 2 * (lopt-&gt;nr_table_entries / (timeout / interval));
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">clock_hand&#21021;&#22987;&#20540;&#20026;0,&#27599;&#27425;&#36941;&#21382;&#23436;&#21322;&#36830;&#25509;&#38431;&#21015;&#65292;&#21543;&#26368;&#21518;&#30340;i&#20445;&#23384;&#21040;clock_hand&#20013;&#65292;&#19979;&#27425;&#20174;clock_hand&#24320;&#22987;</span>
-	i = lopt-&gt;clock_hand;
+                <span style="color: #F92672;">while</span> (thresh &gt; 2) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23581;&#35797;&#27425;&#25968;&#22823;&#20110;2</span>
+                        <span style="color: #F92672;">if</span> (lopt-&gt;qlen &lt; young)
+                                <span style="color: #F92672;">break</span>;
+                        thresh--;  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35843;&#25972;&#38408;&#20540;</span>
+                        young &lt;&lt;= 1; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20877;&#27425;&#20943;&#21322;</span>
+                }
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22312;&#21551;&#29992;&#21152;&#36895;&#36830;&#25509;&#26102;&#65292; &#33719;&#21462;&#26368;&#22810;&#20801;&#35768;&#37325;&#20256;SYN&#27573;&#30340;&#27425;&#25968;</span>
+        <span style="color: #F92672;">if</span> (queue-&gt;rskq_defer_accept)
+                max_retries = queue-&gt;rskq_defer_accept;
+        <span style="color: #75715E;">/*</span><span style="color: #75715E;">&#35745;&#31639;&#38656;&#35201;&#26816;&#27979;&#30340;&#21322;&#36830;&#25509;&#38431;&#21015;&#30340;&#20010;&#25968;&#65292;&#24471;&#21040;&#39044;&#35745;&#20540;&#65292; &#30001;&#20110;&#21322;&#36830;&#25509;&#38431;&#21015;&#26159;&#20010;&#38142;&#34920;&#65292;&#25968;&#37327;&#21487;&#33021;&#36739;&#22823;&#65292;&#25152;&#20197;&#27599;&#27425;&#21482;&#26159;&#36941;&#21382;&#20960;&#20010;&#38142;&#34920;</span><span style="color: #75715E;"> */</span>
+        budget = 2 * (lopt-&gt;nr_table_entries / (timeout / interval));
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">clock_hand&#21021;&#22987;&#20540;&#20026;0,&#27599;&#27425;&#36941;&#21382;&#23436;&#21322;&#36830;&#25509;&#38431;&#21015;&#65292;&#21543;&#26368;&#21518;&#30340;i&#20445;&#23384;&#21040;clock_hand&#20013;&#65292;&#19979;&#27425;&#20174;clock_hand&#24320;&#22987;</span>
+        i = lopt-&gt;clock_hand;
 
-	<span style="color: #FF1493;">do</span> {
-		reqp=&amp;lopt-&gt;syn_table[i]; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#24403;&#21069;&#22788;&#29702;&#20837;&#21475;&#30340;&#38142;&#34920;&#22836;</span>
-		<span style="color: #FF1493;">while</span> ((req = *reqp) != <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#38142;&#34920;</span>
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#24050;&#32463;&#36229;&#26102;&#65292;&#21017;&#21028;&#26029;&#37325;&#20256;&#27425;&#25968;</span>
-			<span style="color: #FF1493;">if</span> (time_after_eq(now, req-&gt;expires)) {
-				<span style="color: #FF1493;">if</span> ((req-&gt;retrans &lt; thresh || <span style="color: #8B8878;">//</span><span style="color: #8B8878;">SYN+ACK&#27573;&#37325;&#20256;&#27425;&#25968;&#26410;&#21040;&#19978;&#38480;</span>
-				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#25509;&#25910;&#21040;&#31532;&#19977;&#27425;&#25569;&#25163;&#30340;ACK&#27573;&#21518;&#65292;&#30001;&#20110;&#32321;&#24537;&#26410;&#33021;&#24314;&#31435;&#36830;&#25509;</span>
-				     (inet_rsk(req)-&gt;acked &amp;&amp; req-&gt;retrans &lt; max_retries))
-				    &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>req-&gt;rsk_ops-&gt;rtx_syn_ack(parent, req, <span style="color: #AF87FF;">NULL</span>)) {
-					<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">timeo</span>;
-					<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32047;&#35745;&#37325;&#20256;&#27425;&#25968;&#65292;&#22914;&#26524;&#26159;&#39318;&#27425;&#21017;&#38656;&#35201;&#36882;&#20943; young</span>
-					<span style="color: #FF1493;">if</span> (req-&gt;retrans++ == 0)
-						lopt-&gt;qlen_young--;
-					timeo = min((timeout &lt;&lt; req-&gt;retrans), max_rto);
-					req-&gt;expires = now + timeo;
-					reqp = &amp;req-&gt;dl_next;
-					<span style="color: #FF1493;">continue</span>;
-				}
-				<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#27425;&#25968;&#36229;&#36807;&#38480;&#21046;&#65292;&#21017;&#21462;&#28040;&#35813;&#36830;&#25509;&#35831;&#27714;&#12290;</span>
-				<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Drop this request</span><span style="color: #8B8878;"> */</span>
-				inet_csk_reqsk_queue_unlink(parent, req, reqp);
-				reqsk_queue_removed(queue, req);
-				reqsk_free(req);
-				<span style="color: #FF1493;">continue</span>;
-			}
-			reqp = &amp;req-&gt;dl_next; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#38142;&#34920;&#20013;&#30340;&#19979;&#20010;&#36830;&#25509;&#35831;&#27714;&#22359;</span>
-		}
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#19979;&#19968;&#20010;&#20837;&#21475;&#38142;&#34920;</span>
-		i = (i + 1) &amp; (lopt-&gt;nr_table_entries - 1);
+        <span style="color: #F92672;">do</span> {
+                reqp=&amp;lopt-&gt;syn_table[i]; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#24403;&#21069;&#22788;&#29702;&#20837;&#21475;&#30340;&#38142;&#34920;&#22836;</span>
+                <span style="color: #F92672;">while</span> ((req = *reqp) != <span style="color: #AE81FF;">NULL</span>) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36941;&#21382;&#38142;&#34920;</span>
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#24050;&#32463;&#36229;&#26102;&#65292;&#21017;&#21028;&#26029;&#37325;&#20256;&#27425;&#25968;</span>
+                        <span style="color: #F92672;">if</span> (time_after_eq(now, req-&gt;expires)) {
+                                <span style="color: #F92672;">if</span> ((req-&gt;retrans &lt; thresh || <span style="color: #75715E;">//</span><span style="color: #75715E;">SYN+ACK&#27573;&#37325;&#20256;&#27425;&#25968;&#26410;&#21040;&#19978;&#38480;</span>
+                                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24050;&#32463;&#25509;&#25910;&#21040;&#31532;&#19977;&#27425;&#25569;&#25163;&#30340;ACK&#27573;&#21518;&#65292;&#30001;&#20110;&#32321;&#24537;&#26410;&#33021;&#24314;&#31435;&#36830;&#25509;</span>
+                                     (inet_rsk(req)-&gt;acked &amp;&amp; req-&gt;retrans &lt; max_retries))
+                                    &amp;&amp; <span style="color: #E6DB74; font-weight: bold;">!</span>req-&gt;rsk_ops-&gt;rtx_syn_ack(parent, req, <span style="color: #AE81FF;">NULL</span>)) {
+                                        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">timeo</span>;
+                                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#32047;&#35745;&#37325;&#20256;&#27425;&#25968;&#65292;&#22914;&#26524;&#26159;&#39318;&#27425;&#21017;&#38656;&#35201;&#36882;&#20943; young</span>
+                                        <span style="color: #F92672;">if</span> (req-&gt;retrans++ == 0)
+                                                lopt-&gt;qlen_young--;
+                                        timeo = min((timeout &lt;&lt; req-&gt;retrans), max_rto);
+                                        req-&gt;expires = now + timeo;
+                                        reqp = &amp;req-&gt;dl_next;
+                                        <span style="color: #F92672;">continue</span>;
+                                }
+                                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#20256;&#27425;&#25968;&#36229;&#36807;&#38480;&#21046;&#65292;&#21017;&#21462;&#28040;&#35813;&#36830;&#25509;&#35831;&#27714;&#12290;</span>
+                                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Drop this request</span><span style="color: #75715E;"> */</span>
+                                inet_csk_reqsk_queue_unlink(parent, req, reqp);
+                                reqsk_queue_removed(queue, req);
+                                reqsk_free(req);
+                                <span style="color: #F92672;">continue</span>;
+                        }
+                        reqp = &amp;req-&gt;dl_next; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21462;&#38142;&#34920;&#20013;&#30340;&#19979;&#20010;&#36830;&#25509;&#35831;&#27714;&#22359;</span>
+                }
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21462;&#19979;&#19968;&#20010;&#20837;&#21475;&#38142;&#34920;</span>
+                i = (i + 1) &amp; (lopt-&gt;nr_table_entries - 1);
 
-	} <span style="color: #FF1493;">while</span> (--budget &gt; 0);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20445;&#23384;&#24403;&#21069;&#22788;&#29702;&#20837;&#21475;</span>
-	lopt-&gt;clock_hand = i;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36830;&#25509;&#35831;&#27714;&#25955;&#21015;&#34920;&#36824;&#26377;&#26410;&#23436;&#25104;&#36830;&#25509;&#30340;&#35831;&#27714;&#22359;&#65292;&#20877;&#27425;&#21551;&#21160;&#23450;&#26102;&#22120;</span>
-	<span style="color: #FF1493;">if</span> (lopt-&gt;qlen)
-		inet_csk_reset_keepalive_timer(parent, interval);
+        } <span style="color: #F92672;">while</span> (--budget &gt; 0);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20445;&#23384;&#24403;&#21069;&#22788;&#29702;&#20837;&#21475;</span>
+        lopt-&gt;clock_hand = i;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36830;&#25509;&#35831;&#27714;&#25955;&#21015;&#34920;&#36824;&#26377;&#26410;&#23436;&#25104;&#36830;&#25509;&#30340;&#35831;&#27714;&#22359;&#65292;&#20877;&#27425;&#21551;&#21160;&#23450;&#26102;&#22120;</span>
+        <span style="color: #F92672;">if</span> (lopt-&gt;qlen)
+                inet_csk_reset_keepalive_timer(parent, interval);
 }
 </pre>
 </div>
@@ -535,8 +489,8 @@ tcp_keepalive_timer() 实现了TCP中的三个定时器：连接建立定时器�
 </div>
 </div>
 
-<div id="outline-container-org5354030" class="outline-3">
-<h3 id="org5354030"><span class="section-number-3">2.2</span> 连接建立定时器的激活</h3>
+<div id="outline-container-orgc6b4abd" class="outline-3">
+<h3 id="orgc6b4abd"><span class="section-number-3">2.2.</span> 连接建立定时器的激活</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 在服务端，当监听套接字接收了一个新的连接请求后，会为该连接请求创建请求块，并将其添加到父传输控制块的连接请求散列表中，最后启动连接建立定时器。
@@ -546,61 +500,61 @@ tcp_keepalive_timer() 实现了TCP中的三个定时器：连接建立定时器�
 </div>
 
 
-<div id="outline-container-orgcf8ed18" class="outline-2">
-<h2 id="orgcf8ed18"><span class="section-number-2">3</span> 重传定时器</h2>
+<div id="outline-container-org537e9da" class="outline-2">
+<h2 id="org537e9da"><span class="section-number-2">3.</span> 重传定时器</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org60c503f" class="outline-3">
-<h3 id="org60c503f"><span class="section-number-3">3.1</span> 重传定时器处理函数</h3>
+<div id="outline-container-org2400540" class="outline-3">
+<h3 id="org2400540"><span class="section-number-3">3.1.</span> 重传定时器处理函数</h3>
 <div class="outline-text-3" id="text-3-1">
 </div>
-<div id="outline-container-org749223d" class="outline-4">
-<h4 id="org749223d"><span class="section-number-4">3.1.1</span> tcp_write_timer()</h4>
+<div id="outline-container-org40012f3" class="outline-4">
+<h4 id="org40012f3"><span class="section-number-4">3.1.1.</span> tcp_write_timer()</h4>
 <div class="outline-text-4" id="text-3-1-1">
 <p>
 TCP在发送数据时设置重传定时器，如果超时还未确认，则TCP重传数据。重传定时器的超时时间是动态计算的，取决于TCP为该连接测量的往返时间以及该段已经被重传的次数。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_write_timer</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">data</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_write_timer</span>(<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">data</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span>*)data;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">event</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span> = (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span>*)data;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">event</span>;
 
-	bh_lock_sock(sk);
-	<span style="color: #FF1493;">if</span> (sock_owned_by_user(sk)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#25511;&#21046;&#22359;&#34987;&#29992;&#25143;&#38145;&#23450;&#65292;0.05s&#21518;&#20877;&#27425;&#37325;&#35797;</span>
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Try again later</span><span style="color: #8B8878;"> */</span>
-		sk_reset_timer(sk, &amp;icsk-&gt;icsk_retransmit_timer, jiffies + (HZ / 20));
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_unlock</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#29366;&#24577;&#20026;CLOSE&#25110;&#32773;&#27809;&#26377;&#23450;&#26102;&#22120;&#20107;&#20214;</span>
-	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state == TCP_CLOSE || <span style="color: #CDC673; font-weight: bold;">!</span>icsk-&gt;icsk_pending)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23450;&#26102;&#22120;&#36824;&#26410;&#21040;&#26399;&#65292;&#37325;&#26032;&#35774;&#32622;&#23450;&#26102;&#22120;&#36229;&#26102;</span>
-	<span style="color: #FF1493;">if</span> (time_after(icsk-&gt;icsk_timeout, jiffies)) {
-		sk_reset_timer(sk, &amp;icsk-&gt;icsk_retransmit_timer, icsk-&gt;icsk_timeout);
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24050;&#32463;&#36807;&#26399;</span>
-	event = icsk-&gt;icsk_pending;
-	icsk-&gt;icsk_pending = 0;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#23450;&#26102;&#22120;&#20107;&#20214;&#21306;&#20998;&#26159;&#20160;&#20040;&#23450;&#26102;&#22120;&#65288;&#37325;&#20256;&#23450;&#26102;&#22120;&#21644;&#25345;&#32493;&#23450;&#26102;&#22120;&#20849;&#29992;&#29992;&#19968;&#20010;&#23450;&#26102;&#22120;&#65289;</span>
-	<span style="color: #FF1493;">switch</span> (event) {
-	<span style="color: #FF1493;">case</span> ICSK_TIME_RETRANS: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#23450;&#26102;&#22120;&#22788;&#29702;</span>
-		tcp_retransmit_timer(sk);
-		<span style="color: #FF1493;">break</span>;
-	<span style="color: #FF1493;">case</span> ICSK_TIME_PROBE0: <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25345;&#32493;&#23450;&#26102;&#22120;&#22788;&#29702;</span>
-		tcp_probe_timer(sk);
-		<span style="color: #FF1493;">break</span>;
-	}
-	TCP_CHECK_TIMER(sk);
+        bh_lock_sock(sk);
+        <span style="color: #F92672;">if</span> (sock_owned_by_user(sk)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20256;&#36755;&#25511;&#21046;&#22359;&#34987;&#29992;&#25143;&#38145;&#23450;&#65292;0.05s&#21518;&#20877;&#27425;&#37325;&#35797;</span>
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Try again later</span><span style="color: #75715E;"> */</span>
+                sk_reset_timer(sk, &amp;icsk-&gt;icsk_retransmit_timer, jiffies + (HZ / 20));
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_unlock</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">TCP&#29366;&#24577;&#20026;CLOSE&#25110;&#32773;&#27809;&#26377;&#23450;&#26102;&#22120;&#20107;&#20214;</span>
+        <span style="color: #F92672;">if</span> (sk-&gt;sk_state == TCP_CLOSE || <span style="color: #E6DB74; font-weight: bold;">!</span>icsk-&gt;icsk_pending)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23450;&#26102;&#22120;&#36824;&#26410;&#21040;&#26399;&#65292;&#37325;&#26032;&#35774;&#32622;&#23450;&#26102;&#22120;&#36229;&#26102;</span>
+        <span style="color: #F92672;">if</span> (time_after(icsk-&gt;icsk_timeout, jiffies)) {
+                sk_reset_timer(sk, &amp;icsk-&gt;icsk_retransmit_timer, icsk-&gt;icsk_timeout);
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24050;&#32463;&#36807;&#26399;</span>
+        event = icsk-&gt;icsk_pending;
+        icsk-&gt;icsk_pending = 0;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26681;&#25454;&#23450;&#26102;&#22120;&#20107;&#20214;&#21306;&#20998;&#26159;&#20160;&#20040;&#23450;&#26102;&#22120;&#65288;&#37325;&#20256;&#23450;&#26102;&#22120;&#21644;&#25345;&#32493;&#23450;&#26102;&#22120;&#20849;&#29992;&#29992;&#19968;&#20010;&#23450;&#26102;&#22120;&#65289;</span>
+        <span style="color: #F92672;">switch</span> (event) {
+        <span style="color: #F92672;">case</span> ICSK_TIME_RETRANS: <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#20256;&#23450;&#26102;&#22120;&#22788;&#29702;</span>
+                tcp_retransmit_timer(sk);
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> ICSK_TIME_PROBE0: <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25345;&#32493;&#23450;&#26102;&#22120;&#22788;&#29702;</span>
+                tcp_probe_timer(sk);
+                <span style="color: #F92672;">break</span>;
+        }
+        TCP_CHECK_TIMER(sk);
 
-<span style="color: #AF87FF;">out</span>:
-	sk_stream_mem_reclaim(sk);
-<span style="color: #AF87FF;">out_unlock</span>:
-	bh_unlock_sock(sk);
-	sock_put(sk);
+<span style="color: #AE81FF;">out</span>:
+        sk_stream_mem_reclaim(sk);
+<span style="color: #AE81FF;">out_unlock</span>:
+        bh_unlock_sock(sk);
+        sock_put(sk);
 }
 </pre>
 </div>
@@ -608,191 +562,191 @@ TCP在发送数据时设置重传定时器，如果超时还未确认，则TCP�
 </div>
 
 
-<div id="outline-container-orge9ca739" class="outline-4">
-<h4 id="orge9ca739"><span class="section-number-4">3.1.2</span> tcp_retransmit_timer</h4>
+<div id="outline-container-org162ffd5" class="outline-4">
+<h4 id="org162ffd5"><span class="section-number-4">3.1.2.</span> tcp_retransmit_timer</h4>
 <div class="outline-text-4" id="text-3-1-2">
 <p>
 该函数实现实际的重传逻辑。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_retransmit_timer</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_retransmit_timer</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25152;&#26377;&#25968;&#25454;&#21253;&#37117;&#34987;&#30830;&#35748;&#65292;&#21017;&#26080;&#38656;&#22788;&#29702;</span>
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tp-&gt;packets_out)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25152;&#26377;&#25968;&#25454;&#21253;&#37117;&#34987;&#30830;&#35748;&#65292;&#21017;&#26080;&#38656;&#22788;&#29702;</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>tp-&gt;packets_out)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
 
-	BUG_TRAP(<span style="color: #CDC673; font-weight: bold;">!</span>skb_queue_empty(&amp;sk-&gt;sk_write_queue));
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#31383;&#21475;&#20851;&#38381; &amp;&amp; &#22871;&#25509;&#21475;&#22788;&#20110;SOCK_DEAD&#29366;&#24577; &amp;&amp; &#19981;&#22788;&#20110;&#36830;&#25509;&#36807;&#31243;&#20013;</span>
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tp-&gt;snd_wnd &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>sock_flag(sk, SOCK_DEAD) &amp;&amp;
-	    <span style="color: #CDC673; font-weight: bold;">!</span>((1 &lt;&lt; sk-&gt;sk_state) &amp; (TCPF_SYN_SENT | TCPF_SYN_RECV))) {
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Receiver dastardly shrinks window. Our retransmits</span>
-<span style="color: #8B8878;">                 * become zero probes, but we should not timeout this</span>
-<span style="color: #8B8878;">                 * connection. If the socket is an orphan, time it out,</span>
-<span style="color: #8B8878;">                 * we cannot allow such beasts to hang infinitely.</span>
-<span style="color: #8B8878;">                 */</span>
-<span style="color: #FF1493;">#ifdef</span> TCP_DEBUG
-		<span style="color: #FF1493;">if</span> (net_ratelimit()) {
-			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_sock</span> *<span style="color: #FF8C00;">inet</span> = inet_sk(sk);
-			printk(KERN_DEBUG <span style="color: #CDC673;">"TCP: Treason uncloaked! Peer %u.%u.%u.%u:%u/%u shrinks window %u:%u. Repaired.\n"</span>,
-			       NIPQUAD(inet-&gt;daddr), ntohs(inet-&gt;dport),
-			       inet-&gt;num, tp-&gt;snd_una, tp-&gt;snd_nxt);
-		}
-<span style="color: #FF1493;">#endif</span>
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36229;&#36807;&#37325;&#20256;&#36229;&#26102;&#30340;&#19978;&#38480;&#65292;&#21017;&#35748;&#20026;&#20986;&#38169;</span>
-		<span style="color: #FF1493;">if</span> (tcp_time_stamp - tp-&gt;rcv_tstamp &gt; TCP_RTO_MAX) {
-			tcp_write_err(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25253;&#21578;&#38169;&#35823;&#65292;&#24182;&#20851;&#38381;&#22871;&#25509;&#21475;</span>
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-		}
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;&#25317;&#22622;&#25511;&#21046;&#30340;LOSS&#29366;&#24577;</span>
-		tcp_enter_loss(sk, 0);
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#38431;&#21015;&#20013;&#30340;&#31532;&#19968;&#20010;&#27573;</span>
-		tcp_retransmit_skb(sk, skb_peek(&amp;sk-&gt;sk_write_queue));
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;&#20110;&#21457;&#29983;&#37325;&#20256;&#65292;&#38656;&#35201;&#26356;&#26032;&#30446;&#30340;&#36335;&#30001;&#32531;&#23384;</span>
-		__sk_dst_reset(sk);
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_reset_timer</span>;
-	}
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21457;&#29983;&#37325;&#20256;&#21518;&#65292;&#38656;&#35201;&#26816;&#27979;&#24403;&#21069;&#36164;&#28304;&#20351;&#29992;&#24773;&#20917;&#21644;&#37325;&#20256;&#30340;&#27425;&#25968;&#65292;&#22914;&#26524;&#27425;&#25968;&#36798;&#21040;&#19978;&#38480;&#21017;&#25253;&#21578;&#38169;&#35823;</span>
-<span style="color: #8B8878;">        &#24182;&#20851;&#38381;&#22871;&#25509;&#21475;&#12290;&#22914;&#26524;&#20351;&#29992;&#36164;&#28304;&#36798;&#21040;&#19978;&#38480;&#65292;&#21017;&#19981;&#36827;&#34892;&#27492;&#27425;&#37325;&#20256;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">if</span> (tcp_write_timeout(sk))
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#27425;&#25968;&#20026;0, &#35828;&#26126;&#21018;&#21018;&#36827;&#20837;&#37325;&#20256;&#38454;&#27573;&#65292;&#26681;&#25454;&#19981;&#21516;&#30340;&#25317;&#22622;&#25511;&#21046;&#29366;&#24577;&#36827;&#34892;&#22788;&#29702;</span>
-	<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_retransmits == 0) {
-		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Disorder ||
-		    icsk-&gt;icsk_ca_state == TCP_CA_Recovery) {
-			<span style="color: #FF1493;">if</span> (tp-&gt;rx_opt.sack_ok) {
-				<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Recovery)
-					NET_INC_STATS_BH(LINUX_MIB_TCPSACKRECOVERYFAIL);
-				<span style="color: #FF1493;">else</span>
-					NET_INC_STATS_BH(LINUX_MIB_TCPSACKFAILURES);
-			} <span style="color: #FF1493;">else</span> {
-				<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Recovery)
-					NET_INC_STATS_BH(LINUX_MIB_TCPRENORECOVERYFAIL);
-				<span style="color: #FF1493;">else</span>
-					NET_INC_STATS_BH(LINUX_MIB_TCPRENOFAILURES);
-			}
-		} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Loss) {
-			NET_INC_STATS_BH(LINUX_MIB_TCPLOSSFAILURES);
-		} <span style="color: #FF1493;">else</span> {
-			NET_INC_STATS_BH(LINUX_MIB_TCPTIMEOUTS);
-		}
-	}
+        BUG_TRAP(<span style="color: #E6DB74; font-weight: bold;">!</span>skb_queue_empty(&amp;sk-&gt;sk_write_queue));
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#31383;&#21475;&#20851;&#38381; &amp;&amp; &#22871;&#25509;&#21475;&#22788;&#20110;SOCK_DEAD&#29366;&#24577; &amp;&amp; &#19981;&#22788;&#20110;&#36830;&#25509;&#36807;&#31243;&#20013;</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>tp-&gt;snd_wnd &amp;&amp; <span style="color: #E6DB74; font-weight: bold;">!</span>sock_flag(sk, SOCK_DEAD) &amp;&amp;
+            <span style="color: #E6DB74; font-weight: bold;">!</span>((1 &lt;&lt; sk-&gt;sk_state) &amp; (TCPF_SYN_SENT | TCPF_SYN_RECV))) {
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Receiver dastardly shrinks window. Our retransmits</span>
+<span style="color: #75715E;">                 * become zero probes, but we should not timeout this</span>
+<span style="color: #75715E;">                 * connection. If the socket is an orphan, time it out,</span>
+<span style="color: #75715E;">                 * we cannot allow such beasts to hang infinitely.</span>
+<span style="color: #75715E;">                 */</span>
+<span style="color: #F92672;">#ifdef</span> TCP_DEBUG
+                <span style="color: #F92672;">if</span> (net_ratelimit()) {
+                        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_sock</span> *<span style="color: #FD971F;">inet</span> = inet_sk(sk);
+                        printk(KERN_DEBUG <span style="color: #E6DB74;">"TCP: Treason uncloaked! Peer %u.%u.%u.%u:%u/%u shrinks window %u:%u. Repaired.\n"</span>,
+                               NIPQUAD(inet-&gt;daddr), ntohs(inet-&gt;dport),
+                               inet-&gt;num, tp-&gt;snd_una, tp-&gt;snd_nxt);
+                }
+<span style="color: #F92672;">#endif</span>
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36229;&#36807;&#37325;&#20256;&#36229;&#26102;&#30340;&#19978;&#38480;&#65292;&#21017;&#35748;&#20026;&#20986;&#38169;</span>
+                <span style="color: #F92672;">if</span> (tcp_time_stamp - tp-&gt;rcv_tstamp &gt; TCP_RTO_MAX) {
+                        tcp_write_err(sk); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25253;&#21578;&#38169;&#35823;&#65292;&#24182;&#20851;&#38381;&#22871;&#25509;&#21475;</span>
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+                }
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36827;&#20837;&#25317;&#22622;&#25511;&#21046;&#30340;LOSS&#29366;&#24577;</span>
+                tcp_enter_loss(sk, 0);
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#20256;&#38431;&#21015;&#20013;&#30340;&#31532;&#19968;&#20010;&#27573;</span>
+                tcp_retransmit_skb(sk, skb_peek(&amp;sk-&gt;sk_write_queue));
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#30001;&#20110;&#21457;&#29983;&#37325;&#20256;&#65292;&#38656;&#35201;&#26356;&#26032;&#30446;&#30340;&#36335;&#30001;&#32531;&#23384;</span>
+                __sk_dst_reset(sk);
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_reset_timer</span>;
+        }
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21457;&#29983;&#37325;&#20256;&#21518;&#65292;&#38656;&#35201;&#26816;&#27979;&#24403;&#21069;&#36164;&#28304;&#20351;&#29992;&#24773;&#20917;&#21644;&#37325;&#20256;&#30340;&#27425;&#25968;&#65292;&#22914;&#26524;&#27425;&#25968;&#36798;&#21040;&#19978;&#38480;&#21017;&#25253;&#21578;&#38169;&#35823;</span>
+<span style="color: #75715E;">        &#24182;&#20851;&#38381;&#22871;&#25509;&#21475;&#12290;&#22914;&#26524;&#20351;&#29992;&#36164;&#28304;&#36798;&#21040;&#19978;&#38480;&#65292;&#21017;&#19981;&#36827;&#34892;&#27492;&#27425;&#37325;&#20256;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">if</span> (tcp_write_timeout(sk))
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#20256;&#27425;&#25968;&#20026;0, &#35828;&#26126;&#21018;&#21018;&#36827;&#20837;&#37325;&#20256;&#38454;&#27573;&#65292;&#26681;&#25454;&#19981;&#21516;&#30340;&#25317;&#22622;&#25511;&#21046;&#29366;&#24577;&#36827;&#34892;&#22788;&#29702;</span>
+        <span style="color: #F92672;">if</span> (icsk-&gt;icsk_retransmits == 0) {
+                <span style="color: #F92672;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Disorder ||
+                    icsk-&gt;icsk_ca_state == TCP_CA_Recovery) {
+                        <span style="color: #F92672;">if</span> (tp-&gt;rx_opt.sack_ok) {
+                                <span style="color: #F92672;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Recovery)
+                                        NET_INC_STATS_BH(LINUX_MIB_TCPSACKRECOVERYFAIL);
+                                <span style="color: #F92672;">else</span>
+                                        NET_INC_STATS_BH(LINUX_MIB_TCPSACKFAILURES);
+                        } <span style="color: #F92672;">else</span> {
+                                <span style="color: #F92672;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Recovery)
+                                        NET_INC_STATS_BH(LINUX_MIB_TCPRENORECOVERYFAIL);
+                                <span style="color: #F92672;">else</span>
+                                        NET_INC_STATS_BH(LINUX_MIB_TCPRENOFAILURES);
+                        }
+                } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (icsk-&gt;icsk_ca_state == TCP_CA_Loss) {
+                        NET_INC_STATS_BH(LINUX_MIB_TCPLOSSFAILURES);
+                } <span style="color: #F92672;">else</span> {
+                        NET_INC_STATS_BH(LINUX_MIB_TCPTIMEOUTS);
+                }
+        }
 
-	<span style="color: #FF1493;">if</span> (tcp_use_frto(sk)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21487;&#20197;&#20351;&#29992;F-RTO&#31639;&#27861;&#22788;&#29702;</span>
-		tcp_enter_frto(sk);
-	} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;&#24120;&#35268;&#30340;RTO&#24930;&#21551;&#21160;&#37325;&#20256;&#24674;&#22797;&#38454;&#27573;</span>
-		tcp_enter_loss(sk, 0);
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#37325;&#20256;&#38431;&#21015;&#19978;&#30340;&#31532;&#19968;&#20010;SKB&#22833;&#36133;&#65292;&#21017;&#38656;&#35201;&#22797;&#20301;&#37325;&#20256;&#23450;&#26102;&#22120;&#65292;&#31561;&#24453;&#19979;&#27425;&#37325;&#20256;</span>
-	<span style="color: #FF1493;">if</span> (tcp_retransmit_skb(sk, skb_peek(&amp;sk-&gt;sk_write_queue)) &gt; 0) {
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Retransmission failed because of local congestion,</span>
-<span style="color: #8B8878;">                 * do not backoff.</span>
-<span style="color: #8B8878;">                 */</span>
-		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>icsk-&gt;icsk_retransmits)
-			icsk-&gt;icsk_retransmits = 1;
-		inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS,
-					  min(icsk-&gt;icsk_rto, TCP_RESOURCE_PROBE_INTERVAL),
-					  TCP_RTO_MAX);
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	}
+        <span style="color: #F92672;">if</span> (tcp_use_frto(sk)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21487;&#20197;&#20351;&#29992;F-RTO&#31639;&#27861;&#22788;&#29702;</span>
+                tcp_enter_frto(sk);
+        } <span style="color: #F92672;">else</span> {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#36827;&#20837;&#24120;&#35268;&#30340;RTO&#24930;&#21551;&#21160;&#37325;&#20256;&#24674;&#22797;&#38454;&#27573;</span>
+                tcp_enter_loss(sk, 0);
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#37325;&#20256;&#38431;&#21015;&#19978;&#30340;&#31532;&#19968;&#20010;SKB&#22833;&#36133;&#65292;&#21017;&#38656;&#35201;&#22797;&#20301;&#37325;&#20256;&#23450;&#26102;&#22120;&#65292;&#31561;&#24453;&#19979;&#27425;&#37325;&#20256;</span>
+        <span style="color: #F92672;">if</span> (tcp_retransmit_skb(sk, skb_peek(&amp;sk-&gt;sk_write_queue)) &gt; 0) {
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Retransmission failed because of local congestion,</span>
+<span style="color: #75715E;">                 * do not backoff.</span>
+<span style="color: #75715E;">                 */</span>
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>icsk-&gt;icsk_retransmits)
+                        icsk-&gt;icsk_retransmits = 1;
+                inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS,
+                                          min(icsk-&gt;icsk_rto, TCP_RESOURCE_PROBE_INTERVAL),
+                                          TCP_RTO_MAX);
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        }
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Increase the timeout each time we retransmit.  Note that</span>
-<span style="color: #8B8878;">         * we do not increase the rtt estimate.  rto is initialized</span>
-<span style="color: #8B8878;">         * from rtt, but increases here.  Jacobson (SIGCOMM 88) suggests</span>
-<span style="color: #8B8878;">         * that doubling rto each time is the least we can get away with.</span>
-<span style="color: #8B8878;">         * In KA9Q, Karn uses this for the first few times, and then</span>
-<span style="color: #8B8878;">         * goes to quadratic.  netBSD doubles, but only goes up to *64,</span>
-<span style="color: #8B8878;">         * and clamps at 1 to 64 sec afterwards.  Note that 120 sec is</span>
-<span style="color: #8B8878;">         * defined in the protocol as the maximum possible RTT.  I guess</span>
-<span style="color: #8B8878;">         * we'll have to use something other than TCP to talk to the</span>
-<span style="color: #8B8878;">         * University of Mars.</span>
-<span style="color: #8B8878;">         *</span>
-<span style="color: #8B8878;">         * PAWS allows us longer timeouts and large windows, so once</span>
-<span style="color: #8B8878;">         * implemented ftp to mars will work nicely. We will have to fix</span>
-<span style="color: #8B8878;">         * the 120 second clamps though!</span>
-<span style="color: #8B8878;">         */</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#25104;&#21151;&#21518;&#65292;&#36882;&#22686;&#25351;&#25968;&#36864;&#36991;&#31639;&#27861;&#25351;&#25968;</span>
-	icsk-&gt;icsk_backoff++;
-	icsk-&gt;icsk_retransmits++; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36882;&#22686;&#32047;&#35745;&#37325;&#20256;&#27425;&#25968;</span>
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Increase the timeout each time we retransmit.  Note that</span>
+<span style="color: #75715E;">         * we do not increase the rtt estimate.  rto is initialized</span>
+<span style="color: #75715E;">         * from rtt, but increases here.  Jacobson (SIGCOMM 88) suggests</span>
+<span style="color: #75715E;">         * that doubling rto each time is the least we can get away with.</span>
+<span style="color: #75715E;">         * In KA9Q, Karn uses this for the first few times, and then</span>
+<span style="color: #75715E;">         * goes to quadratic.  netBSD doubles, but only goes up to *64,</span>
+<span style="color: #75715E;">         * and clamps at 1 to 64 sec afterwards.  Note that 120 sec is</span>
+<span style="color: #75715E;">         * defined in the protocol as the maximum possible RTT.  I guess</span>
+<span style="color: #75715E;">         * we'll have to use something other than TCP to talk to the</span>
+<span style="color: #75715E;">         * University of Mars.</span>
+<span style="color: #75715E;">         *</span>
+<span style="color: #75715E;">         * PAWS allows us longer timeouts and large windows, so once</span>
+<span style="color: #75715E;">         * implemented ftp to mars will work nicely. We will have to fix</span>
+<span style="color: #75715E;">         * the 120 second clamps though!</span>
+<span style="color: #75715E;">         */</span> <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#25104;&#21151;&#21518;&#65292;&#36882;&#22686;&#25351;&#25968;&#36864;&#36991;&#31639;&#27861;&#25351;&#25968;</span>
+        icsk-&gt;icsk_backoff++;
+        icsk-&gt;icsk_retransmits++; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36882;&#22686;&#32047;&#35745;&#37325;&#20256;&#27425;&#25968;</span>
 
-<span style="color: #AF87FF;">out_reset_timer</span>:
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#35774;&#37325;&#20256;&#36229;&#26102;&#26102;&#38388;&#65292;&#24182;&#22797;&#20301;&#23450;&#26102;&#22120;</span>
-	icsk-&gt;icsk_rto = min(icsk-&gt;icsk_rto &lt;&lt; 1, TCP_RTO_MAX);
-	inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, icsk-&gt;icsk_rto, TCP_RTO_MAX);
-	<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_retransmits &gt; sysctl_tcp_retries1)
-		__sk_dst_reset(sk);
+<span style="color: #AE81FF;">out_reset_timer</span>:
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#35774;&#37325;&#20256;&#36229;&#26102;&#26102;&#38388;&#65292;&#24182;&#22797;&#20301;&#23450;&#26102;&#22120;</span>
+        icsk-&gt;icsk_rto = min(icsk-&gt;icsk_rto &lt;&lt; 1, TCP_RTO_MAX);
+        inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, icsk-&gt;icsk_rto, TCP_RTO_MAX);
+        <span style="color: #F92672;">if</span> (icsk-&gt;icsk_retransmits &gt; sysctl_tcp_retries1)
+                __sk_dst_reset(sk);
 
-<span style="color: #AF87FF;">out</span>:;
+<span style="color: #AE81FF;">out</span>:;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org8398e42" class="outline-4">
-<h4 id="org8398e42"><span class="section-number-4">3.1.3</span> tcp_write_timeout()</h4>
+<div id="outline-container-org182bf43" class="outline-4">
+<h4 id="org182bf43"><span class="section-number-4">3.1.3.</span> tcp_write_timeout()</h4>
 <div class="outline-text-4" id="text-3-1-3">
 <p>
 发生重传后，需要检测当前的资源使用情况。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">A write timeout has occurred. Process the after effects.</span><span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_write_timeout</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+<pre class="src src-c"><span style="color: #75715E;">/* </span><span style="color: #75715E;">A write timeout has occurred. Process the after effects.</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">tcp_write_timeout</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">retry_until</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">mss</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26159;&#24314;&#31435;&#36830;&#25509;&#38454;&#27573;&#36229;&#26102;&#65292;&#21017;&#38656;&#35201;&#26816;&#27979;&#20351;&#29992;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;&#65292;&#24182;&#33719;&#21462;&#37325;&#35797;&#27425;&#25968;&#30340;&#26368;&#22823;&#20540;</span>
-	<span style="color: #FF1493;">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; (TCPF_SYN_SENT | TCPF_SYN_RECV)) {
-		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_retransmits)
-			dst_negative_advice(&amp;sk-&gt;sk_dst_cache);
-		retry_until = icsk-&gt;icsk_syn_retries ? : sysctl_tcp_syn_retries;
-	} <span style="color: #FF1493;">else</span> {
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#27425;&#25968;&#36798;&#21040; tcp_retries1 ,&#21017;&#36827;&#34892;&#40657;&#27934;&#26816;&#27979;</span>
-		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_retransmits &gt;= sysctl_tcp_retries1) {
-			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Black hole detection</span><span style="color: #8B8878;"> */</span>
-			<span style="color: #FF1493;">if</span> (sysctl_tcp_mtu_probing) {
-				<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>icsk-&gt;icsk_mtup.enabled) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27809;&#26377;&#24320;&#21551;&#36335;&#24452;MTU&#21457;&#29616;</span>
-					icsk-&gt;icsk_mtup.enabled = 1; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24320;&#21551;&#36335;&#24452;MTU&#21457;&#29616;</span>
-					tcp_sync_mss(sk, icsk-&gt;icsk_pmtu_cookie); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;PMTU&#21516;&#27493;MSS</span>
-				} <span style="color: #FF1493;">else</span> {
-					<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#24403;&#21069;&#36335;&#24452;MTU&#21457;&#29616;&#21306;&#38388;&#24038;&#31471;&#28857;&#30340;&#19968;&#21322;&#20316;&#20026;&#26032;&#21306;&#38388;&#24038;&#31471;&#28857;</span>
-					mss = min(sysctl_tcp_base_mss,
-						  tcp_mtu_to_mss(sk, icsk-&gt;icsk_mtup.search_low)/2);
-					mss = max(mss, 68 - tp-&gt;tcp_header_len);
-					<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35774;&#23450;MTU&#21457;&#29616;&#21306;&#38388;&#12290;</span>
-					icsk-&gt;icsk_mtup.search_low = tcp_mss_to_mtu(sk, mss);
-					tcp_sync_mss(sk, icsk-&gt;icsk_pmtu_cookie); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;PMTU&#21516;&#27493;mss</span>
-				}
-			}
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26816;&#27979;&#20351;&#29992;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
-			dst_negative_advice(&amp;sk-&gt;sk_dst_cache);
-		}
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">retry_until</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">mss</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#26159;&#24314;&#31435;&#36830;&#25509;&#38454;&#27573;&#36229;&#26102;&#65292;&#21017;&#38656;&#35201;&#26816;&#27979;&#20351;&#29992;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;&#65292;&#24182;&#33719;&#21462;&#37325;&#35797;&#27425;&#25968;&#30340;&#26368;&#22823;&#20540;</span>
+        <span style="color: #F92672;">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; (TCPF_SYN_SENT | TCPF_SYN_RECV)) {
+                <span style="color: #F92672;">if</span> (icsk-&gt;icsk_retransmits)
+                        dst_negative_advice(&amp;sk-&gt;sk_dst_cache);
+                retry_until = icsk-&gt;icsk_syn_retries ? : sysctl_tcp_syn_retries;
+        } <span style="color: #F92672;">else</span> {
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#20256;&#27425;&#25968;&#36798;&#21040; tcp_retries1 ,&#21017;&#36827;&#34892;&#40657;&#27934;&#26816;&#27979;</span>
+                <span style="color: #F92672;">if</span> (icsk-&gt;icsk_retransmits &gt;= sysctl_tcp_retries1) {
+                        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Black hole detection</span><span style="color: #75715E;"> */</span>
+                        <span style="color: #F92672;">if</span> (sysctl_tcp_mtu_probing) {
+                                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>icsk-&gt;icsk_mtup.enabled) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#27809;&#26377;&#24320;&#21551;&#36335;&#24452;MTU&#21457;&#29616;</span>
+                                        icsk-&gt;icsk_mtup.enabled = 1; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24320;&#21551;&#36335;&#24452;MTU&#21457;&#29616;</span>
+                                        tcp_sync_mss(sk, icsk-&gt;icsk_pmtu_cookie); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26681;&#25454;PMTU&#21516;&#27493;MSS</span>
+                                } <span style="color: #F92672;">else</span> {
+                                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23558;&#24403;&#21069;&#36335;&#24452;MTU&#21457;&#29616;&#21306;&#38388;&#24038;&#31471;&#28857;&#30340;&#19968;&#21322;&#20316;&#20026;&#26032;&#21306;&#38388;&#24038;&#31471;&#28857;</span>
+                                        mss = min(sysctl_tcp_base_mss,
+                                                  tcp_mtu_to_mss(sk, icsk-&gt;icsk_mtup.search_low)/2);
+                                        mss = max(mss, 68 - tp-&gt;tcp_header_len);
+                                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#26032;&#35774;&#23450;MTU&#21457;&#29616;&#21306;&#38388;&#12290;</span>
+                                        icsk-&gt;icsk_mtup.search_low = tcp_mss_to_mtu(sk, mss);
+                                        tcp_sync_mss(sk, icsk-&gt;icsk_pmtu_cookie); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26681;&#25454;PMTU&#21516;&#27493;mss</span>
+                                }
+                        }
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26816;&#27979;&#20351;&#29992;&#30340;&#36335;&#30001;&#32531;&#23384;&#39033;</span>
+                        dst_negative_advice(&amp;sk-&gt;sk_dst_cache);
+                }
 
-		retry_until = sysctl_tcp_retries2;
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#24403;&#21069;&#22871;&#25509;&#21475;&#36830;&#25509;&#24050;&#32463;&#26029;&#24320;&#24182;&#21363;&#23558;&#20851;&#38381;&#65292;&#21017;&#38656;&#35201;&#26816;&#27979;&#24403;&#21069;&#20351;&#29992;&#30340;&#36164;&#28304;&#12290;&#65288;tcp_out_of_resources&#65289;</span>
-<span style="color: #8B8878;">                &#22914;&#26524;&#24403;&#21069;&#30340;&#23396;&#20799;&#22871;&#25509;&#21475;&#25968;&#37327;&#36798;&#21040;tcp_max_orphans &#25110;&#32773;&#24403;&#21069;&#24050;&#32463;&#20351;&#29992;&#30340;&#20869;&#23384;&#36798;&#21040;&#30828;&#24615;&#38480;&#21046;&#65292;</span>
-<span style="color: #8B8878;">                &#21017;&#31435;&#21363;&#20851;&#38381;&#22871;&#25509;&#21475; &#65288;&#34429;&#28982;&#19981;&#31526;&#21512;TCP&#35268;&#33539;&#65292;&#20294;&#26159;&#20026;&#38450;&#27490;Dos&#25915;&#20987;&#65292;&#24517;&#39035;&#20851;&#38381;&#65289;</span>
-<span style="color: #8B8878;">                */</span>
-		<span style="color: #FF1493;">if</span> (sock_flag(sk, SOCK_DEAD)) {
-			<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">alive</span> = (icsk-&gt;icsk_rto &lt; TCP_RTO_MAX);
+                retry_until = sysctl_tcp_retries2;
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#24403;&#21069;&#22871;&#25509;&#21475;&#36830;&#25509;&#24050;&#32463;&#26029;&#24320;&#24182;&#21363;&#23558;&#20851;&#38381;&#65292;&#21017;&#38656;&#35201;&#26816;&#27979;&#24403;&#21069;&#20351;&#29992;&#30340;&#36164;&#28304;&#12290;&#65288;tcp_out_of_resources&#65289;</span>
+<span style="color: #75715E;">                &#22914;&#26524;&#24403;&#21069;&#30340;&#23396;&#20799;&#22871;&#25509;&#21475;&#25968;&#37327;&#36798;&#21040;tcp_max_orphans &#25110;&#32773;&#24403;&#21069;&#24050;&#32463;&#20351;&#29992;&#30340;&#20869;&#23384;&#36798;&#21040;&#30828;&#24615;&#38480;&#21046;&#65292;</span>
+<span style="color: #75715E;">                &#21017;&#31435;&#21363;&#20851;&#38381;&#22871;&#25509;&#21475; &#65288;&#34429;&#28982;&#19981;&#31526;&#21512;TCP&#35268;&#33539;&#65292;&#20294;&#26159;&#20026;&#38450;&#27490;Dos&#25915;&#20987;&#65292;&#24517;&#39035;&#20851;&#38381;&#65289;</span>
+<span style="color: #75715E;">                */</span>
+                <span style="color: #F92672;">if</span> (sock_flag(sk, SOCK_DEAD)) {
+                        <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">alive</span> = (icsk-&gt;icsk_rto &lt; TCP_RTO_MAX);
 
-			retry_until = tcp_orphan_retries(sk, alive);
+                        retry_until = tcp_orphan_retries(sk, alive);
 
-			<span style="color: #FF1493;">if</span> (tcp_out_of_resources(sk, alive || icsk-&gt;icsk_retransmits &lt; retry_until))
-				<span style="color: #FF1493;">return</span> 1;
-		}
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#20256;&#27425;&#25968;&#36798;&#21040;&#38480;&#21046; &#65288;&#24314;&#31435;&#36830;&#25509;&#37325;&#20256;&#38480;&#21046;&#65292;&#36229;&#26102;&#37325;&#20256;&#38480;&#21046;&#65292;&#30830;&#35748;&#36830;&#25509;&#24322;&#24120;&#26399;&#38388;&#37325;&#35797;&#30340;&#38480;&#21046;&#65289;&#65292;&#21017;&#20851;&#38381;</span>
-	<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_retransmits &gt;= retry_until) {
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Has it gone just too far?</span><span style="color: #8B8878;"> */</span>
-		tcp_write_err(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19978;&#25253;&#38169;&#35823;</span>
-		<span style="color: #FF1493;">return</span> 1;
-	}
-	<span style="color: #FF1493;">return</span> 0;
+                        <span style="color: #F92672;">if</span> (tcp_out_of_resources(sk, alive || icsk-&gt;icsk_retransmits &lt; retry_until))
+                                <span style="color: #F92672;">return</span> 1;
+                }
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#20256;&#27425;&#25968;&#36798;&#21040;&#38480;&#21046; &#65288;&#24314;&#31435;&#36830;&#25509;&#37325;&#20256;&#38480;&#21046;&#65292;&#36229;&#26102;&#37325;&#20256;&#38480;&#21046;&#65292;&#30830;&#35748;&#36830;&#25509;&#24322;&#24120;&#26399;&#38388;&#37325;&#35797;&#30340;&#38480;&#21046;&#65289;&#65292;&#21017;&#20851;&#38381;</span>
+        <span style="color: #F92672;">if</span> (icsk-&gt;icsk_retransmits &gt;= retry_until) {
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Has it gone just too far?</span><span style="color: #75715E;"> */</span>
+                tcp_write_err(sk); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#19978;&#25253;&#38169;&#35823;</span>
+                <span style="color: #F92672;">return</span> 1;
+        }
+        <span style="color: #F92672;">return</span> 0;
 }
 </pre>
 </div>
@@ -800,8 +754,8 @@ TCP在发送数据时设置重传定时器，如果超时还未确认，则TCP�
 </div>
 </div>
 
-<div id="outline-container-orgd21bb84" class="outline-3">
-<h3 id="orgd21bb84"><span class="section-number-3">3.2</span> 重传定时器的激活</h3>
+<div id="outline-container-org6dc9333" class="outline-3">
+<h3 id="org6dc9333"><span class="section-number-3">3.2.</span> 重传定时器的激活</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 重传定时器一般在一下情况会被激活：
@@ -821,84 +775,84 @@ TCP在发送数据时设置重传定时器，如果超时还未确认，则TCP�
 </div>
 
 
-<div id="outline-container-orgd5769d5" class="outline-2">
-<h2 id="orgd5769d5"><span class="section-number-2">4</span> 延时确认定时器</h2>
+<div id="outline-container-org8c96e82" class="outline-2">
+<h2 id="org8c96e82"><span class="section-number-2">4.</span> 延时确认定时器</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-orgc62901f" class="outline-3">
-<h3 id="orgc62901f"><span class="section-number-3">4.1</span> 延时确认定时器的处理函数</h3>
+<div id="outline-container-org9ddd05a" class="outline-3">
+<h3 id="org9ddd05a"><span class="section-number-3">4.1.</span> 延时确认定时器的处理函数</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 “延时ACK定时器”在TCP收到必须被确认但又无需马上发出确认的段时设定，TCP在200ms后发送确认响应，如果200ms内，有数据要在连接上发送，则延时ACK可以随数据一起发送，称之为 捎带确认。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_delack_timer</span>(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">data</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_delack_timer</span>(<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">data</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span>*)data;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span> = (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span>*)data;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
 
-	bh_lock_sock(sk);
-	<span style="color: #FF1493;">if</span> (sock_owned_by_user(sk)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#25511;&#21046;&#22359;&#34987;&#29992;&#25143;&#38145;&#23450;</span>
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Try again later.</span><span style="color: #8B8878;"> */</span>
-		icsk-&gt;icsk_ack.blocked = 1;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;blocked&#26631;&#24535;</span>
-		NET_INC_STATS_BH(LINUX_MIB_DELAYEDACKLOCKED);
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#35774;&#23450;&#26102;&#22120;&#36229;&#26102;&#26102;&#38388;</span>
-		sk_reset_timer(sk, &amp;icsk-&gt;icsk_delack_timer, jiffies + TCP_DELACK_MIN);
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_unlock</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22238;&#25910;&#32531;&#23384;</span>
-	sk_stream_mem_reclaim(sk);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#29366;&#24577;&#20026;CLOSE,&#25110;&#32773;&#27809;&#26377;&#21551;&#21160; &#24310;&#26102;&#21457;&#36865;ACK&#23450;&#26102;&#22120; &#65292;&#21017;&#26080;&#38656;&#22788;&#29702;</span>
-	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state == TCP_CLOSE || <span style="color: #CDC673; font-weight: bold;">!</span>(icsk-&gt;icsk_ack.pending &amp; ICSK_ACK_TIMER))
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36824;&#27809;&#26377;&#36229;&#26102;&#65292;&#21017;&#22797;&#20301;&#23450;&#26102;&#22120;</span>
-	<span style="color: #FF1493;">if</span> (time_after(icsk-&gt;icsk_ack.timeout, jiffies)) {
-		sk_reset_timer(sk, &amp;icsk-&gt;icsk_delack_timer, icsk-&gt;icsk_ack.timeout);
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#20837;&#24310;&#26102;ACK&#22788;&#29702;&#21069;&#65292;&#38656;&#35201;&#21435;&#25481;ICSK_ACK_TIMER&#26631;&#24535;</span>
-	icsk-&gt;icsk_ack.pending &amp;= ~ICSK_ACK_TIMER;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ucopy&#25511;&#21046;&#22359;&#20013;&#30340;prequeue&#38431;&#21015;&#19981;&#20026;&#31354;&#65292;&#21017;&#36890;&#36807;sk_backlog_rcv&#20989;&#25968;&#22788;&#29702;sk_backlog_rcv&#38431;&#21015;&#30340;SKB</span>
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>skb_queue_empty(&amp;tp-&gt;ucopy.prequeue)) {
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
-		NET_INC_STATS_BH(LINUX_MIB_TCPSCHEDULERFAILED);
-		<span style="color: #FF1493;">while</span> ((skb = __skb_dequeue(&amp;tp-&gt;ucopy.prequeue)) != <span style="color: #AF87FF;">NULL</span>)
-			sk-&gt;sk_backlog_rcv(sk, skb); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">tcp_v4_do_rcv()</span>
-		tp-&gt;ucopy.memory = 0;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27492;&#26102;&#26377;ACK&#38656;&#35201;&#21457;&#36865;&#65292;&#21017;&#36890;&#36807;tcp_send_ack()&#21457;&#36865;</span>
-	<span style="color: #FF1493;">if</span> (inet_csk_ack_scheduled(sk)) {
-		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>icsk-&gt;icsk_ack.pingpong) {
-			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Delayed ACK missed: inflate ATO.</span><span style="color: #8B8878;"> */</span>
-			icsk-&gt;icsk_ack.ato = min(icsk-&gt;icsk_ack.ato &lt;&lt; 1, icsk-&gt;icsk_rto);
-		} <span style="color: #FF1493;">else</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#38656;&#35201;&#31163;&#24320;pingpong&#27169;&#24335;</span>
-			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Delayed ACK missed: leave pingpong mode and</span>
-<span style="color: #8B8878;">                         * deflate ATO.</span>
-<span style="color: #8B8878;">                         */</span>
-			icsk-&gt;icsk_ack.pingpong = 0;
-			icsk-&gt;icsk_ack.ato      = TCP_ATO_MIN;
-		}
-		tcp_send_ack(sk);
-		NET_INC_STATS_BH(LINUX_MIB_DELAYEDACKS);
-	}
-	TCP_CHECK_TIMER(sk);
+        bh_lock_sock(sk);
+        <span style="color: #F92672;">if</span> (sock_owned_by_user(sk)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20256;&#36755;&#25511;&#21046;&#22359;&#34987;&#29992;&#25143;&#38145;&#23450;</span>
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Try again later.</span><span style="color: #75715E;"> */</span>
+                icsk-&gt;icsk_ack.blocked = 1;  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#32622;blocked&#26631;&#24535;</span>
+                NET_INC_STATS_BH(LINUX_MIB_DELAYEDACKLOCKED);
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#35774;&#23450;&#26102;&#22120;&#36229;&#26102;&#26102;&#38388;</span>
+                sk_reset_timer(sk, &amp;icsk-&gt;icsk_delack_timer, jiffies + TCP_DELACK_MIN);
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_unlock</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22238;&#25910;&#32531;&#23384;</span>
+        sk_stream_mem_reclaim(sk);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">TCP&#29366;&#24577;&#20026;CLOSE,&#25110;&#32773;&#27809;&#26377;&#21551;&#21160; &#24310;&#26102;&#21457;&#36865;ACK&#23450;&#26102;&#22120; &#65292;&#21017;&#26080;&#38656;&#22788;&#29702;</span>
+        <span style="color: #F92672;">if</span> (sk-&gt;sk_state == TCP_CLOSE || <span style="color: #E6DB74; font-weight: bold;">!</span>(icsk-&gt;icsk_ack.pending &amp; ICSK_ACK_TIMER))
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36824;&#27809;&#26377;&#36229;&#26102;&#65292;&#21017;&#22797;&#20301;&#23450;&#26102;&#22120;</span>
+        <span style="color: #F92672;">if</span> (time_after(icsk-&gt;icsk_ack.timeout, jiffies)) {
+                sk_reset_timer(sk, &amp;icsk-&gt;icsk_delack_timer, icsk-&gt;icsk_ack.timeout);
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36827;&#20837;&#24310;&#26102;ACK&#22788;&#29702;&#21069;&#65292;&#38656;&#35201;&#21435;&#25481;ICSK_ACK_TIMER&#26631;&#24535;</span>
+        icsk-&gt;icsk_ack.pending &amp;= ~ICSK_ACK_TIMER;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">ucopy&#25511;&#21046;&#22359;&#20013;&#30340;prequeue&#38431;&#21015;&#19981;&#20026;&#31354;&#65292;&#21017;&#36890;&#36807;sk_backlog_rcv&#20989;&#25968;&#22788;&#29702;sk_backlog_rcv&#38431;&#21015;&#30340;SKB</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>skb_queue_empty(&amp;tp-&gt;ucopy.prequeue)) {
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>;
+                NET_INC_STATS_BH(LINUX_MIB_TCPSCHEDULERFAILED);
+                <span style="color: #F92672;">while</span> ((skb = __skb_dequeue(&amp;tp-&gt;ucopy.prequeue)) != <span style="color: #AE81FF;">NULL</span>)
+                        sk-&gt;sk_backlog_rcv(sk, skb); <span style="color: #75715E;">//</span><span style="color: #75715E;">tcp_v4_do_rcv()</span>
+                tp-&gt;ucopy.memory = 0;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#27492;&#26102;&#26377;ACK&#38656;&#35201;&#21457;&#36865;&#65292;&#21017;&#36890;&#36807;tcp_send_ack()&#21457;&#36865;</span>
+        <span style="color: #F92672;">if</span> (inet_csk_ack_scheduled(sk)) {
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>icsk-&gt;icsk_ack.pingpong) {
+                        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Delayed ACK missed: inflate ATO.</span><span style="color: #75715E;"> */</span>
+                        icsk-&gt;icsk_ack.ato = min(icsk-&gt;icsk_ack.ato &lt;&lt; 1, icsk-&gt;icsk_rto);
+                } <span style="color: #F92672;">else</span> {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#38656;&#35201;&#31163;&#24320;pingpong&#27169;&#24335;</span>
+                        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Delayed ACK missed: leave pingpong mode and</span>
+<span style="color: #75715E;">                         * deflate ATO.</span>
+<span style="color: #75715E;">                         */</span>
+                        icsk-&gt;icsk_ack.pingpong = 0;
+                        icsk-&gt;icsk_ack.ato      = TCP_ATO_MIN;
+                }
+                tcp_send_ack(sk);
+                NET_INC_STATS_BH(LINUX_MIB_DELAYEDACKS);
+        }
+        TCP_CHECK_TIMER(sk);
 
-<span style="color: #AF87FF;">out</span>:
-	<span style="color: #FF1493;">if</span> (tcp_memory_pressure)
-		sk_stream_mem_reclaim(sk);
-<span style="color: #AF87FF;">out_unlock</span>:
-	bh_unlock_sock(sk);
-	sock_put(sk);
+<span style="color: #AE81FF;">out</span>:
+        <span style="color: #F92672;">if</span> (tcp_memory_pressure)
+                sk_stream_mem_reclaim(sk);
+<span style="color: #AE81FF;">out_unlock</span>:
+        bh_unlock_sock(sk);
+        sock_put(sk);
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org832d95d" class="outline-3">
-<h3 id="org832d95d"><span class="section-number-3">4.2</span> 延时确认定时器的激活</h3>
+<div id="outline-container-org70042a4" class="outline-3">
+<h3 id="org70042a4"><span class="section-number-3">4.2.</span> 延时确认定时器的激活</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 延时确认定时器一般在以下情况被激活：
@@ -917,130 +871,130 @@ TCP在发送数据时设置重传定时器，如果超时还未确认，则TCP�
 </div>
 
 
-<div id="outline-container-org40466a0" class="outline-2">
-<h2 id="org40466a0"><span class="section-number-2">5</span> 持续定时器</h2>
+<div id="outline-container-orgf809727" class="outline-2">
+<h2 id="orgf809727"><span class="section-number-2">5.</span> 持续定时器</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 "持续"定时器在对端通告接收窗口为0，阻止TCP继续发送数据是设定。由于连接对端发送的窗口通告不可靠（只有数据才会确认），ACK不会被确认，允许TCP继续发送数据的后续窗口更新有可能丢失，因此，如果TCP有数据要发送，而对端通告接收窗口为0，则启动持续定时器，超时后向对端发送1字节的数据，以判断对端接收窗口是否已经打开。与重传定时器类似，持续定时器的超时时间也是动态计算，取决于连接的往返时间，在5～60s之间取值。
 </p>
 </div>
 
-<div id="outline-container-org15966cf" class="outline-3">
-<h3 id="org15966cf"><span class="section-number-3">5.1</span> 持续定时器处理函数</h3>
+<div id="outline-container-org8443dbf" class="outline-3">
+<h3 id="org8443dbf"><span class="section-number-3">5.1.</span> 持续定时器处理函数</h3>
 <div class="outline-text-3" id="text-5-1">
 <p>
 tcp_probe_timer()函数是持续定时器的处理函数。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_probe_timer</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_probe_timer</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">max_probes</span>;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#30001;&#20110;&#25345;&#32493;&#23450;&#26102;&#22120;&#20250;&#21608;&#26399;&#24615;&#30340;&#21457;&#36865;&#25506;&#27979;&#27573;&#65292;&#22240;&#27492;&#22914;&#26524;&#23384;&#22312;&#21457;&#36865;&#20986;&#21435;&#65292;&#20294;&#27809;&#26377;&#30830;&#35748;&#30340;&#27573;&#65292;</span>
-<span style="color: #8B8878;">        &#21017;&#26080;&#38656;&#21478;&#22806;&#32452;&#32455;&#25506;&#27979;&#27573;&#20102;&#65292;&#21482;&#38656;&#35201;&#23558;icsk_probes_out&#28165;&#38646;&#21518;&#36820;&#22238;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">if</span> (tp-&gt;packets_out || <span style="color: #CDC673; font-weight: bold;">!</span>sk-&gt;sk_send_head) {
-		icsk-&gt;icsk_probes_out = 0;
-		<span style="color: #FF1493;">return</span>;
-	}
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">max_probes</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#30001;&#20110;&#25345;&#32493;&#23450;&#26102;&#22120;&#20250;&#21608;&#26399;&#24615;&#30340;&#21457;&#36865;&#25506;&#27979;&#27573;&#65292;&#22240;&#27492;&#22914;&#26524;&#23384;&#22312;&#21457;&#36865;&#20986;&#21435;&#65292;&#20294;&#27809;&#26377;&#30830;&#35748;&#30340;&#27573;&#65292;</span>
+<span style="color: #75715E;">        &#21017;&#26080;&#38656;&#21478;&#22806;&#32452;&#32455;&#25506;&#27979;&#27573;&#20102;&#65292;&#21482;&#38656;&#35201;&#23558;icsk_probes_out&#28165;&#38646;&#21518;&#36820;&#22238;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">if</span> (tp-&gt;packets_out || <span style="color: #E6DB74; font-weight: bold;">!</span>sk-&gt;sk_send_head) {
+                icsk-&gt;icsk_probes_out = 0;
+                <span style="color: #F92672;">return</span>;
+        }
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">*WARNING* RFC 1122 forbids this</span>
-<span style="color: #8B8878;">         *</span>
-<span style="color: #8B8878;">         * It doesn't AFAIK, because we kill the retransmit timer -AK</span>
-<span style="color: #8B8878;">         *</span>
-<span style="color: #8B8878;">         * FIXME: We ought not to do it, Solaris 2.5 actually has fixing</span>
-<span style="color: #8B8878;">         * this behaviour in Solaris down as a bug fix. [AC]</span>
-<span style="color: #8B8878;">         *</span>
-<span style="color: #8B8878;">         * Let me to explain. icsk_probes_out is zeroed by incoming ACKs</span>
-<span style="color: #8B8878;">         * even if they advertise zero window. Hence, connection is killed only</span>
-<span style="color: #8B8878;">         * if we received no ACKs for normal connection timeout. It is not killed</span>
-<span style="color: #8B8878;">         * only because window stays zero for some time, window may be zero</span>
-<span style="color: #8B8878;">         * until armageddon and even later. We are in full accordance</span>
-<span style="color: #8B8878;">         * with RFCs, only probe timer combines both retransmission timeout</span>
-<span style="color: #8B8878;">         * and probe timeout in one bottle.                             --ANK</span>
-<span style="color: #8B8878;">         */</span> <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#26029;&#24320;&#36830;&#25509;&#21069;&#65292;&#25345;&#32493;&#23450;&#26102;&#22120;&#21608;&#26399;&#24615;&#25506;&#27979;&#21457;&#36865;TCP&#27573;&#30340;&#19978;&#38480;&#65292;&#29992;&#20110;&#25345;&#32493;&#23450;&#26102;&#22120;&#21457;&#20986;&#27573;&#25968;&#37327;&#30340;&#26816;&#27979;</span>
-	max_probes = sysctl_tcp_retries2;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36830;&#25509;&#24050;&#26029;&#24320;&#65292;&#22871;&#25509;&#21475;&#21363;&#23558;&#20851;&#38381;</span>
-	<span style="color: #FF1493;">if</span> (sock_flag(sk, SOCK_DEAD)) {
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">TCP&#21327;&#35758;&#35268;&#23450;RTT&#26368;&#22823;&#20540;&#20026;TCP_RTO_MAX&#65288;120s&#65289;&#65292;&#22240;&#27492;&#36890;&#36807;&#25351;&#25968;&#36864;&#36991;&#31639;&#27861;&#24471;&#20986;&#36229;&#26102;&#26102;&#38388;&#65292;</span>
-<span style="color: #8B8878;">                &#19982;RTT&#26368;&#22823;&#20540;&#27604;&#36739;&#65292;&#21028;&#23450;&#26159;&#21542;&#38656;&#35201;&#21457;&#36865;RST</span><span style="color: #8B8878;">*/</span>
-		<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">alive</span> = ((icsk-&gt;icsk_rto &lt;&lt; icsk-&gt;icsk_backoff) &lt; TCP_RTO_MAX);
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#20851;&#38381;TCP&#36830;&#25509;&#21069;&#37325;&#35797;&#27425;&#25968;&#19978;&#38480;</span>
-		max_probes = tcp_orphan_retries(sk, alive);
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37322;&#25918;&#36164;&#28304;&#65292;&#22914;&#26524;&#37322;&#25918;&#36807;&#31243;&#20013;&#65292;&#20851;&#38381;&#20102;&#22871;&#25509;&#21475;&#65292;&#21017;&#26080;&#38656;&#20877;&#21457;&#36865;&#25506;&#27979;&#27573;</span>
-		<span style="color: #FF1493;">if</span> (tcp_out_of_resources(sk, alive || icsk-&gt;icsk_probes_out &lt;= max_probes))
-			<span style="color: #FF1493;">return</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#36229;&#36807;&#19978;&#38480;</span>
-	<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_probes_out &gt; max_probes) {
-		tcp_write_err(sk);
-	} <span style="color: #FF1493;">else</span> {
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Only send another probe if we didn't close things up.</span><span style="color: #8B8878;"> */</span>
-		tcp_send_probe0(sk); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
-	}
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">*WARNING* RFC 1122 forbids this</span>
+<span style="color: #75715E;">         *</span>
+<span style="color: #75715E;">         * It doesn't AFAIK, because we kill the retransmit timer -AK</span>
+<span style="color: #75715E;">         *</span>
+<span style="color: #75715E;">         * FIXME: We ought not to do it, Solaris 2.5 actually has fixing</span>
+<span style="color: #75715E;">         * this behaviour in Solaris down as a bug fix. [AC]</span>
+<span style="color: #75715E;">         *</span>
+<span style="color: #75715E;">         * Let me to explain. icsk_probes_out is zeroed by incoming ACKs</span>
+<span style="color: #75715E;">         * even if they advertise zero window. Hence, connection is killed only</span>
+<span style="color: #75715E;">         * if we received no ACKs for normal connection timeout. It is not killed</span>
+<span style="color: #75715E;">         * only because window stays zero for some time, window may be zero</span>
+<span style="color: #75715E;">         * until armageddon and even later. We are in full accordance</span>
+<span style="color: #75715E;">         * with RFCs, only probe timer combines both retransmission timeout</span>
+<span style="color: #75715E;">         * and probe timeout in one bottle.                             --ANK</span>
+<span style="color: #75715E;">         */</span> <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#26029;&#24320;&#36830;&#25509;&#21069;&#65292;&#25345;&#32493;&#23450;&#26102;&#22120;&#21608;&#26399;&#24615;&#25506;&#27979;&#21457;&#36865;TCP&#27573;&#30340;&#19978;&#38480;&#65292;&#29992;&#20110;&#25345;&#32493;&#23450;&#26102;&#22120;&#21457;&#20986;&#27573;&#25968;&#37327;&#30340;&#26816;&#27979;</span>
+        max_probes = sysctl_tcp_retries2;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36830;&#25509;&#24050;&#26029;&#24320;&#65292;&#22871;&#25509;&#21475;&#21363;&#23558;&#20851;&#38381;</span>
+        <span style="color: #F92672;">if</span> (sock_flag(sk, SOCK_DEAD)) {
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">TCP&#21327;&#35758;&#35268;&#23450;RTT&#26368;&#22823;&#20540;&#20026;TCP_RTO_MAX&#65288;120s&#65289;&#65292;&#22240;&#27492;&#36890;&#36807;&#25351;&#25968;&#36864;&#36991;&#31639;&#27861;&#24471;&#20986;&#36229;&#26102;&#26102;&#38388;&#65292;</span>
+<span style="color: #75715E;">                &#19982;RTT&#26368;&#22823;&#20540;&#27604;&#36739;&#65292;&#21028;&#23450;&#26159;&#21542;&#38656;&#35201;&#21457;&#36865;RST</span><span style="color: #75715E;">*/</span>
+                <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">alive</span> = ((icsk-&gt;icsk_rto &lt;&lt; icsk-&gt;icsk_backoff) &lt; TCP_RTO_MAX);
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#20851;&#38381;TCP&#36830;&#25509;&#21069;&#37325;&#35797;&#27425;&#25968;&#19978;&#38480;</span>
+                max_probes = tcp_orphan_retries(sk, alive);
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37322;&#25918;&#36164;&#28304;&#65292;&#22914;&#26524;&#37322;&#25918;&#36807;&#31243;&#20013;&#65292;&#20851;&#38381;&#20102;&#22871;&#25509;&#21475;&#65292;&#21017;&#26080;&#38656;&#20877;&#21457;&#36865;&#25506;&#27979;&#27573;</span>
+                <span style="color: #F92672;">if</span> (tcp_out_of_resources(sk, alive || icsk-&gt;icsk_probes_out &lt;= max_probes))
+                        <span style="color: #F92672;">return</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26159;&#21542;&#36229;&#36807;&#19978;&#38480;</span>
+        <span style="color: #F92672;">if</span> (icsk-&gt;icsk_probes_out &gt; max_probes) {
+                tcp_write_err(sk);
+        } <span style="color: #F92672;">else</span> {
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Only send another probe if we didn't close things up.</span><span style="color: #75715E;"> */</span>
+                tcp_send_probe0(sk); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
+        }
 }
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org6354775" class="outline-4">
-<h4 id="org6354775"><span class="section-number-4">5.1.1</span> 输出持续探测段并重新设置定时器</h4>
+<div id="outline-container-org1e8500d" class="outline-4">
+<h4 id="org1e8500d"><span class="section-number-4">5.1.1.</span> 输出持续探测段并重新设置定时器</h4>
 <div class="outline-text-4" id="text-5-1-1">
 <p>
 在持续定时器超时后，会调用tcp_send_probe0()进行探测。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">A window probe timeout has occurred.  If window is not closed send</span>
-<span style="color: #8B8878;"> * a partial packet else a zero probe.</span>
-<span style="color: #8B8878;"> */</span>
-<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_send_probe0</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+<pre class="src src-c"><span style="color: #75715E;">/* </span><span style="color: #75715E;">A window probe timeout has occurred.  If window is not closed send</span>
+<span style="color: #75715E;"> * a partial packet else a zero probe.</span>
+<span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_send_probe0</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
-	err = tcp_write_wakeup(sk);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#26377;&#24050;&#21457;&#36865;&#19988;&#20026;&#30830;&#35748;&#30340;&#27573;&#65292;&#25110;&#32773;&#21457;&#36865;&#38431;&#21015;&#20026;&#31354;&#65292;&#21017;&#26080;&#38656;&#22312;&#21457;&#36865;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
-	<span style="color: #FF1493;">if</span> (tp-&gt;packets_out || <span style="color: #CDC673; font-weight: bold;">!</span>sk-&gt;sk_send_head) {
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Cancel probe timer, if it is not required.</span><span style="color: #8B8878;"> */</span>
-		icsk-&gt;icsk_probes_out = 0;
-		icsk-&gt;icsk_backoff = 0;
-		<span style="color: #FF1493;">return</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#25506;&#27979;&#27573;&#25104;&#21151;&#21457;&#20986;&#65292;&#25110;&#32773;&#19981;&#26159;&#30001;&#20110;&#26412;&#22320;&#25317;&#22622;&#32780;&#22833;&#36133;</span>
-	<span style="color: #FF1493;">if</span> (err &lt;= 0) {
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26410;&#36229;&#36807;&#19978;&#38480;</span>
-		<span style="color: #FF1493;">if</span> (icsk-&gt;icsk_backoff &lt; sysctl_tcp_retries2)
-			icsk-&gt;icsk_backoff++;
-		icsk-&gt;icsk_probes_out++;  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22686;&#21152;&#25506;&#27979;&#27425;&#25968;</span>
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22797;&#20301;&#25345;&#32493;&#23450;&#26102;&#22120;</span>
-		inet_csk_reset_xmit_timer(sk, ICSK_TIME_PROBE0,
-					  min(icsk-&gt;icsk_rto &lt;&lt; icsk-&gt;icsk_backoff, TCP_RTO_MAX),
-					  TCP_RTO_MAX);
-	} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30001;&#20110;&#26412;&#22320;&#25317;&#22622;&#32780;&#22833;&#36133;</span>
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If packet was not sent due to local congestion,</span>
-<span style="color: #8B8878;">                 * do not backoff and do not remember icsk_probes_out.</span>
-<span style="color: #8B8878;">                 * Let local senders to fight for local resources.</span>
-<span style="color: #8B8878;">                 *</span>
-<span style="color: #8B8878;">                 * Use accumulated backoff yet.</span>
-<span style="color: #8B8878;">                 */</span>
-		<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>icsk-&gt;icsk_probes_out)
-			icsk-&gt;icsk_probes_out = 1;
-		inet_csk_reset_xmit_timer(sk, ICSK_TIME_PROBE0,
-					  min(icsk-&gt;icsk_rto &lt;&lt; icsk-&gt;icsk_backoff,
-					      TCP_RESOURCE_PROBE_INTERVAL),
-					  TCP_RTO_MAX);
-	}
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">err</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36755;&#20986;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
+        err = tcp_write_wakeup(sk);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#26377;&#24050;&#21457;&#36865;&#19988;&#20026;&#30830;&#35748;&#30340;&#27573;&#65292;&#25110;&#32773;&#21457;&#36865;&#38431;&#21015;&#20026;&#31354;&#65292;&#21017;&#26080;&#38656;&#22312;&#21457;&#36865;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
+        <span style="color: #F92672;">if</span> (tp-&gt;packets_out || <span style="color: #E6DB74; font-weight: bold;">!</span>sk-&gt;sk_send_head) {
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Cancel probe timer, if it is not required.</span><span style="color: #75715E;"> */</span>
+                icsk-&gt;icsk_probes_out = 0;
+                icsk-&gt;icsk_backoff = 0;
+                <span style="color: #F92672;">return</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#25506;&#27979;&#27573;&#25104;&#21151;&#21457;&#20986;&#65292;&#25110;&#32773;&#19981;&#26159;&#30001;&#20110;&#26412;&#22320;&#25317;&#22622;&#32780;&#22833;&#36133;</span>
+        <span style="color: #F92672;">if</span> (err &lt;= 0) {
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26410;&#36229;&#36807;&#19978;&#38480;</span>
+                <span style="color: #F92672;">if</span> (icsk-&gt;icsk_backoff &lt; sysctl_tcp_retries2)
+                        icsk-&gt;icsk_backoff++;
+                icsk-&gt;icsk_probes_out++;  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22686;&#21152;&#25506;&#27979;&#27425;&#25968;</span>
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22797;&#20301;&#25345;&#32493;&#23450;&#26102;&#22120;</span>
+                inet_csk_reset_xmit_timer(sk, ICSK_TIME_PROBE0,
+                                          min(icsk-&gt;icsk_rto &lt;&lt; icsk-&gt;icsk_backoff, TCP_RTO_MAX),
+                                          TCP_RTO_MAX);
+        } <span style="color: #F92672;">else</span> { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#30001;&#20110;&#26412;&#22320;&#25317;&#22622;&#32780;&#22833;&#36133;</span>
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">If packet was not sent due to local congestion,</span>
+<span style="color: #75715E;">                 * do not backoff and do not remember icsk_probes_out.</span>
+<span style="color: #75715E;">                 * Let local senders to fight for local resources.</span>
+<span style="color: #75715E;">                 *</span>
+<span style="color: #75715E;">                 * Use accumulated backoff yet.</span>
+<span style="color: #75715E;">                 */</span>
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>icsk-&gt;icsk_probes_out)
+                        icsk-&gt;icsk_probes_out = 1;
+                inet_csk_reset_xmit_timer(sk, ICSK_TIME_PROBE0,
+                                          min(icsk-&gt;icsk_rto &lt;&lt; icsk-&gt;icsk_backoff,
+                                              TCP_RESOURCE_PROBE_INTERVAL),
+                                          TCP_RTO_MAX);
+        }
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc71d3ec" class="outline-4">
-<h4 id="orgc71d3ec"><span class="section-number-4">5.1.2</span> 输出持续探测段</h4>
+<div id="outline-container-orgb6af3d9" class="outline-4">
+<h4 id="orgb6af3d9"><span class="section-number-4">5.1.2.</span> 输出持续探测段</h4>
 <div class="outline-text-4" id="text-5-1-2">
 <p>
 tcp_write_wakeup()用来输出持续探测段。如果传输控制块处于关闭状态，则直接返回失败; 否则传输持续探测段。过程如下：
@@ -1083,61 +1037,61 @@ tcp_write_wakeup()用来输出持续探测段。如果传输控制块处于关�
 </table>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_write_wakeup</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>)
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">tcp_write_wakeup</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>)
 {
-	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state != TCP_CLOSE) {
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#38431;&#21015;&#19981;&#20026;&#31354;&#26102;&#30340;&#25506;&#27979;&#27573;&#36755;&#20986;</span>
-		<span style="color: #FF1493;">if</span> ((skb = sk-&gt;sk_send_head) != <span style="color: #AF87FF;">NULL</span> &amp;&amp;
-		    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30830;&#20445;&#24102;&#21457;&#36865;&#30340;&#27573;&#33267;&#23569;&#26377;&#19968;&#37096;&#20998;&#22312;&#23545;&#26041;&#25509;&#25910;&#31383;&#21475;&#20869;</span>
-		    before(TCP_SKB_CB(skb)-&gt;seq, tp-&gt;snd_una+tp-&gt;snd_wnd)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21033;&#29992;&#35813;&#27573;&#21457;&#36865;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
-			<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;MSS&#21450;&#20998;&#27573;&#27573;&#38271;</span>
-			<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">mss</span> = tcp_current_mss(sk, 0);
-			<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">seg_size</span> = tp-&gt;snd_una+tp-&gt;snd_wnd-TCP_SKB_CB(skb)-&gt;seq;
+        <span style="color: #F92672;">if</span> (sk-&gt;sk_state != TCP_CLOSE) {
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>;
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#38431;&#21015;&#19981;&#20026;&#31354;&#26102;&#30340;&#25506;&#27979;&#27573;&#36755;&#20986;</span>
+                <span style="color: #F92672;">if</span> ((skb = sk-&gt;sk_send_head) != <span style="color: #AE81FF;">NULL</span> &amp;&amp;
+                    <span style="color: #75715E;">//</span><span style="color: #75715E;">&#30830;&#20445;&#24102;&#21457;&#36865;&#30340;&#27573;&#33267;&#23569;&#26377;&#19968;&#37096;&#20998;&#22312;&#23545;&#26041;&#25509;&#25910;&#31383;&#21475;&#20869;</span>
+                    before(TCP_SKB_CB(skb)-&gt;seq, tp-&gt;snd_una+tp-&gt;snd_wnd)) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#21033;&#29992;&#35813;&#27573;&#21457;&#36865;&#25345;&#32493;&#25506;&#27979;&#27573;</span>
+                        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">err</span>;
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;MSS&#21450;&#20998;&#27573;&#27573;&#38271;</span>
+                        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">mss</span> = tcp_current_mss(sk, 0);
+                        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">seg_size</span> = tp-&gt;snd_una+tp-&gt;snd_wnd-TCP_SKB_CB(skb)-&gt;seq;
 
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#35813;&#27573;&#30340;&#24207;&#21495;&#24050;&#32463;&#22823;&#20110;pushed_seq&#65292;&#21017;&#38656;&#35201;&#26356;&#26032;</span>
-			<span style="color: #FF1493;">if</span> (before(tp-&gt;pushed_seq, TCP_SKB_CB(skb)-&gt;end_seq))
-				tp-&gt;pushed_seq = TCP_SKB_CB(skb)-&gt;end_seq;
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#35813;&#27573;&#30340;&#24207;&#21495;&#24050;&#32463;&#22823;&#20110;pushed_seq&#65292;&#21017;&#38656;&#35201;&#26356;&#26032;</span>
+                        <span style="color: #F92672;">if</span> (before(tp-&gt;pushed_seq, TCP_SKB_CB(skb)-&gt;end_seq))
+                                tp-&gt;pushed_seq = TCP_SKB_CB(skb)-&gt;end_seq;
 
-			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">We are probing the opening of a window</span>
-<span style="color: #8B8878;">                         * but the window size is != 0</span>
-<span style="color: #8B8878;">                         * must have been a result SWS avoidance ( sender )</span>
-<span style="color: #8B8878;">                         */</span>  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24453;&#20998;&#27573;&#27573;&#38271;&#23567;&#20110;&#21097;&#20313;&#24453;&#21457;&#36865;&#30340;&#25968;&#25454;</span>
-			<span style="color: #FF1493;">if</span> (seg_size &lt; TCP_SKB_CB(skb)-&gt;end_seq - TCP_SKB_CB(skb)-&gt;seq ||
-			   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25110;&#32773;&#27573;&#38271;&#22823;&#20110;&#24403;&#21069;MSS</span>
-			    skb-&gt;len &gt; mss) {
-			    <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27492;&#26102;&#38656;&#35201;&#20998;&#27573;&#65292;&#20998;&#27573;&#27573;&#38271;&#21462;&#24453;&#20998;&#27573;&#27573;&#38271;&#21644;&#24403;&#21069;MSS&#26368;&#23567;&#20540;</span>
-				seg_size = min(seg_size, mss);
-				TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_PSH;
-				<span style="color: #FF1493;">if</span> (tcp_fragment(sk, skb, seg_size, mss))
-					<span style="color: #FF1493;">return</span> -1;
-			} <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>tcp_skb_pcount(skb))
-				tcp_set_skb_tso_segs(sk, skb, mss);
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#25506;&#27979;&#27573;</span>
-			TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_PSH;
-			TCP_SKB_CB(skb)-&gt;when = tcp_time_stamp;
-			err = tcp_transmit_skb(sk, skb, 1, GFP_ATOMIC);
-			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>err) {
-				update_send_head(sk, tp, skb);
-			}
-			<span style="color: #FF1493;">return</span> err;
-		} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#38431;&#21015;&#20026;&#31354;</span>
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26500;&#36896;&#24182;&#21457;&#36865;&#19968;&#20010;&#24207;&#21495;&#24050;&#30830;&#35748;&#12289;&#38271;&#24230;&#20026;&#38646;&#30340;&#27573;&#32473;&#23545;&#31471;&#65292;&#22914;&#26524;&#22788;&#20110;&#32039;&#24613;&#27169;&#24335;&#65292;&#21017;&#22810;&#21457;&#36865;&#19968;&#20010;&#24207;&#21495;&#20026;SND.UNA&#30340;&#27573;&#32473;&#23545;&#31471;</span>
-			<span style="color: #FF1493;">if</span> (tp-&gt;urg_mode &amp;&amp;
-			    between(tp-&gt;snd_up, tp-&gt;snd_una+1, tp-&gt;snd_una+0xFFFF))
-				tcp_xmit_probe_skb(sk, TCPCB_URG);
-			<span style="color: #FF1493;">return</span> tcp_xmit_probe_skb(sk, 0);
-		}
-	}
-	<span style="color: #FF1493;">return</span> -1;
+                        <span style="color: #75715E;">/* </span><span style="color: #75715E;">We are probing the opening of a window</span>
+<span style="color: #75715E;">                         * but the window size is != 0</span>
+<span style="color: #75715E;">                         * must have been a result SWS avoidance ( sender )</span>
+<span style="color: #75715E;">                         */</span>  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#24453;&#20998;&#27573;&#27573;&#38271;&#23567;&#20110;&#21097;&#20313;&#24453;&#21457;&#36865;&#30340;&#25968;&#25454;</span>
+                        <span style="color: #F92672;">if</span> (seg_size &lt; TCP_SKB_CB(skb)-&gt;end_seq - TCP_SKB_CB(skb)-&gt;seq ||
+                           <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25110;&#32773;&#27573;&#38271;&#22823;&#20110;&#24403;&#21069;MSS</span>
+                            skb-&gt;len &gt; mss) {
+                            <span style="color: #75715E;">//</span><span style="color: #75715E;">&#27492;&#26102;&#38656;&#35201;&#20998;&#27573;&#65292;&#20998;&#27573;&#27573;&#38271;&#21462;&#24453;&#20998;&#27573;&#27573;&#38271;&#21644;&#24403;&#21069;MSS&#26368;&#23567;&#20540;</span>
+                                seg_size = min(seg_size, mss);
+                                TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_PSH;
+                                <span style="color: #F92672;">if</span> (tcp_fragment(sk, skb, seg_size, mss))
+                                        <span style="color: #F92672;">return</span> -1;
+                        } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>tcp_skb_pcount(skb))
+                                tcp_set_skb_tso_segs(sk, skb, mss);
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#25506;&#27979;&#27573;</span>
+                        TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_PSH;
+                        TCP_SKB_CB(skb)-&gt;when = tcp_time_stamp;
+                        err = tcp_transmit_skb(sk, skb, 1, GFP_ATOMIC);
+                        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>err) {
+                                update_send_head(sk, tp, skb);
+                        }
+                        <span style="color: #F92672;">return</span> err;
+                } <span style="color: #F92672;">else</span> { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#38431;&#21015;&#20026;&#31354;</span>
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26500;&#36896;&#24182;&#21457;&#36865;&#19968;&#20010;&#24207;&#21495;&#24050;&#30830;&#35748;&#12289;&#38271;&#24230;&#20026;&#38646;&#30340;&#27573;&#32473;&#23545;&#31471;&#65292;&#22914;&#26524;&#22788;&#20110;&#32039;&#24613;&#27169;&#24335;&#65292;&#21017;&#22810;&#21457;&#36865;&#19968;&#20010;&#24207;&#21495;&#20026;SND.UNA&#30340;&#27573;&#32473;&#23545;&#31471;</span>
+                        <span style="color: #F92672;">if</span> (tp-&gt;urg_mode &amp;&amp;
+                            between(tp-&gt;snd_up, tp-&gt;snd_una+1, tp-&gt;snd_una+0xFFFF))
+                                tcp_xmit_probe_skb(sk, TCPCB_URG);
+                        <span style="color: #F92672;">return</span> tcp_xmit_probe_skb(sk, 0);
+                }
+        }
+        <span style="color: #F92672;">return</span> -1;
 }
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="org435fc16" class="figure">
 <p><img src="image/tcp-timer/seg-len.png" alt="seg-len.png" />
 </p>
 <p><span class="figure-number">Figure 2: </span>段长</p>
@@ -1147,51 +1101,51 @@ tcp_write_wakeup()用来输出持续探测段。如果传输控制块处于关�
 </div>
 
 
-<div id="outline-container-orgb1e7bb0" class="outline-3">
-<h3 id="orgb1e7bb0"><span class="section-number-3">5.2</span> 激活持续定时器</h3>
+<div id="outline-container-orge963bdf" class="outline-3">
+<h3 id="orge963bdf"><span class="section-number-3">5.2.</span> 激活持续定时器</h3>
 <div class="outline-text-3" id="text-5-2">
 </div>
-<div id="outline-container-orgc6beb2a" class="outline-4">
-<h4 id="orgc6beb2a"><span class="section-number-4">5.2.1</span> 接收到ACK时</h4>
+<div id="outline-container-org30db3cd" class="outline-4">
+<h4 id="org30db3cd"><span class="section-number-4">5.2.1.</span> 接收到ACK时</h4>
 <div class="outline-text-4" id="text-5-2-1">
 <p>
 通常，TCP在接收到ACK后，会检测对方的接收窗口大小。此时，如果本段还有段需要发送，则会调用tcp_ack_probe()根据情况确认是否进行零窗口探测。tcp_ack()用来处理接收到的ACK。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This routine deals with incoming acks, but not outgoing ones.</span><span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">tcp_ack</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">flag</span>)
+<pre class="src src-c"><span style="color: #75715E;">/* </span><span style="color: #75715E;">This routine deals with incoming acks, but not outgoing ones.</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">tcp_ack</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">flag</span>)
 {
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#26377;&#24050;&#32463;&#21457;&#36865;&#20294;&#36824;&#26410;&#30830;&#35748;&#30340;&#27573;&#65292;&#27809;&#26377;&#21017;&#36339;&#36716;</span>
-	prior_packets = tp-&gt;packets_out;
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>prior_packets)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">no_queue</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26159;&#21542;&#26377;&#24050;&#32463;&#21457;&#36865;&#20294;&#36824;&#26410;&#30830;&#35748;&#30340;&#27573;&#65292;&#27809;&#26377;&#21017;&#36339;&#36716;</span>
+        prior_packets = tp-&gt;packets_out;
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>prior_packets)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">no_queue</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
 
-<span style="color: #AF87FF;">no_queue</span>:
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;&#21040;&#23545;&#27573;&#30340;ACK&#65292;&#23558;TCP&#20445;&#27963;&#25506;&#27979;&#27573;&#26410;&#30830;&#35748;&#20070;&#28165;&#38646;&#65292;&#35828;&#26126;&#27492;&#26102;TCP&#36830;&#25509;&#27491;&#24120;</span>
-	icsk-&gt;icsk_probes_out = 0;
+<span style="color: #AE81FF;">no_queue</span>:
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25509;&#25910;&#21040;&#23545;&#27573;&#30340;ACK&#65292;&#23558;TCP&#20445;&#27963;&#25506;&#27979;&#27573;&#26410;&#30830;&#35748;&#20070;&#28165;&#38646;&#65292;&#35828;&#26126;&#27492;&#26102;TCP&#36830;&#25509;&#27491;&#24120;</span>
+        icsk-&gt;icsk_probes_out = 0;
 
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If this ack opens up a zero window, clear backoff.  It was</span>
-<span style="color: #8B8878;">         * being used to time the probes, and is probably far higher than</span>
-<span style="color: #8B8878;">         * it needs to be for normal retransmission.</span>
-<span style="color: #8B8878;">         */</span>
-	<span style="color: #FF1493;">if</span> (sk-&gt;sk_send_head) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26377;&#24453;&#21457;&#36865;&#30340;&#25968;&#25454;</span>
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26681;&#25454;&#38656;&#35201;&#30830;&#35748;&#26159;&#21542;&#36827;&#34892;&#38646;&#31383;&#21475;&#30340;&#25506;&#27979;</span>
-<span style="color: #8B8878;">        &#25509;&#25910;&#21040;ACK&#26102;&#65292;&#22914;&#26524;&#23545;&#26041;&#25509;&#25910;&#31383;&#21475;&#26410;&#20851;&#38381;&#65292;&#21017;&#38656;&#35201;&#28165;&#26970;&#25345;&#32493;&#23450;&#26102;&#22120;&#20013;&#25351;&#25968;&#36864;&#36991;&#31639;&#27861;&#25351;&#25968;&#65292;</span>
-<span style="color: #8B8878;">        &#20572;&#27490;&#25345;&#32493;&#23450;&#26102;&#22120;; &#21542;&#21017;&#24320;&#21551;&#25345;&#32493;&#23450;&#26102;&#22120;</span><span style="color: #8B8878;"> */</span>
-		tcp_ack_probe(sk);
-	<span style="color: #FF1493;">return</span> 1;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">If this ack opens up a zero window, clear backoff.  It was</span>
+<span style="color: #75715E;">         * being used to time the probes, and is probably far higher than</span>
+<span style="color: #75715E;">         * it needs to be for normal retransmission.</span>
+<span style="color: #75715E;">         */</span>
+        <span style="color: #F92672;">if</span> (sk-&gt;sk_send_head) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26377;&#24453;&#21457;&#36865;&#30340;&#25968;&#25454;</span>
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26681;&#25454;&#38656;&#35201;&#30830;&#35748;&#26159;&#21542;&#36827;&#34892;&#38646;&#31383;&#21475;&#30340;&#25506;&#27979;</span>
+<span style="color: #75715E;">        &#25509;&#25910;&#21040;ACK&#26102;&#65292;&#22914;&#26524;&#23545;&#26041;&#25509;&#25910;&#31383;&#21475;&#26410;&#20851;&#38381;&#65292;&#21017;&#38656;&#35201;&#28165;&#26970;&#25345;&#32493;&#23450;&#26102;&#22120;&#20013;&#25351;&#25968;&#36864;&#36991;&#31639;&#27861;&#25351;&#25968;&#65292;</span>
+<span style="color: #75715E;">        &#20572;&#27490;&#25345;&#32493;&#23450;&#26102;&#22120;; &#21542;&#21017;&#24320;&#21551;&#25345;&#32493;&#23450;&#26102;&#22120;</span><span style="color: #75715E;"> */</span>
+                tcp_ack_probe(sk);
+        <span style="color: #F92672;">return</span> 1;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org28afe7a" class="outline-4">
-<h4 id="org28afe7a"><span class="section-number-4">5.2.2</span> 发送TCP段失败</h4>
+<div id="outline-container-org725c95a" class="outline-4">
+<h4 id="org725c95a"><span class="section-number-4">5.2.2.</span> 发送TCP段失败</h4>
 <div class="outline-text-4" id="text-5-2-2">
 <p>
 发送TCP段时，如果发送失败，则调用 tcp_check_probe_timer() 检测是否需要激活持续定时器，如有必要则将其激活。
@@ -1202,8 +1156,8 @@ tcp_write_wakeup()用来输出持续探测段。如果传输控制块处于关�
 </div>
 
 
-<div id="outline-container-org7c10cea" class="outline-2">
-<h2 id="org7c10cea"><span class="section-number-2">6</span> 保活定时器</h2>
+<div id="outline-container-orgd79f159" class="outline-2">
+<h2 id="orgd79f159"><span class="section-number-2">6.</span> 保活定时器</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 在应用进程设置了套接口的 SO_KEEPALIVE 选项时，启用保活定时器，如果连接的空闲时间超过2小时，则保活定时器超时，向对端发送连接探测段，强迫对端响应。
@@ -1216,81 +1170,81 @@ tcp_write_wakeup()用来输出持续探测段。如果传输控制块处于关�
 </ul>
 </div>
 
-<div id="outline-container-org1f1daa7" class="outline-3">
-<h3 id="org1f1daa7"><span class="section-number-3">6.1</span> 保活定时器处理函数</h3>
+<div id="outline-container-orgc03573c" class="outline-3">
+<h3 id="orgc03573c"><span class="section-number-3">6.1.</span> 保活定时器处理函数</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 tcp_keepalive_timer()实现了3个TCP定时器，通过TCP状态来区分当前处理的是哪种定时器，本节只关注保活定时器部分。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_keepalive_timer</span> (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">data</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_keepalive_timer</span> (<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">data</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *) data;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">elapsed</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span> = (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *) data;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #66D9EF;">__u32</span> <span style="color: #FD971F;">elapsed</span>;
 
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#27809;&#26377;&#21551;&#29992;&#20445;&#27963;&#21151;&#33021;&#65292;&#25110;&#32773;TCP&#29366;&#24577;&#26159;CLOSE&#65292; &#19981;&#20570;&#22788;&#29702;</span>
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>sock_flag(sk, SOCK_KEEPOPEN) || sk-&gt;sk_state == TCP_CLOSE)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#20445;&#27963;&#23450;&#26102;&#22120;&#36229;&#26102;&#26102;&#38388;&#25139;</span>
-	elapsed = keepalive_time_when(tp);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;&#24050;&#32463;&#36755;&#20986;&#20294;&#36824;&#26410;&#30830;&#35748;&#30340;&#27573;&#65292;&#25110;&#32773;&#21457;&#36865;&#38431;&#21015;&#23384;&#22312;&#26410;&#21457;&#36865;&#30340;&#27573;&#65292;&#21017;&#37325;&#26032;&#35774;&#23450;&#20445;&#27963;&#23450;&#26102;&#22120;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">It is alive without keepalive 8)</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">if</span> (tp-&gt;packets_out || sk-&gt;sk_send_head)
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">resched</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26368;&#36817;&#19968;&#27425;&#25910;&#21040;&#27573; &#21040; &#30446;&#21069;&#20026;&#27490;&#30340;&#26102;&#38388;&#65288;&#25345;&#32493;&#31354;&#38386;&#26102;&#38388;&#65289;</span>
-	elapsed = tcp_time_stamp - tp-&gt;rcv_tstamp;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25345;&#32493;&#31354;&#38386;&#26102;&#38388;&#36229;&#36807;&#20102;&#20801;&#35768;&#30340;&#26102;&#38388;&#38480;&#21046;</span>
-	<span style="color: #FF1493;">if</span> (elapsed &gt;= keepalive_time_when(tp)) {
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26410;&#35774;&#32622;&#20445;&#27963;&#25506;&#27979;&#27425;&#25968;&#65292;&#19988;&#24050;&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#27573;&#36229;&#36807;&#20102;&#19978;&#38480; tcp_keepalive_probes</span>
-		<span style="color: #FF1493;">if</span> ((<span style="color: #CDC673; font-weight: bold;">!</span>tp-&gt;keepalive_probes &amp;&amp; icsk-&gt;icsk_probes_out &gt;= sysctl_tcp_keepalive_probes) ||
-		     <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25110;&#32773;&#35774;&#32622;&#20102;&#20445;&#27963;&#25506;&#27979;&#27573;&#30340;&#27425;&#25968;&#65292;&#24182;&#19988;&#24050;&#21457;&#36865;&#27425;&#25968;&#36229;&#36807;&#20102;&#20445;&#27963;&#25506;&#27979;&#27425;&#25968;</span>
-		     (tp-&gt;keepalive_probes &amp;&amp; icsk-&gt;icsk_probes_out &gt;= tp-&gt;keepalive_probes)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27492;&#26102;&#38656;&#35201;&#26029;&#24320;&#36830;&#25509;</span>
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;RST&#27573;</span>
-			tcp_send_active_reset(sk, GFP_ATOMIC);
-			tcp_write_err(sk);
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-		}
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#27573;&#65292;&#24182;&#35745;&#31639;&#19979;&#27425;&#28608;&#27963;&#20445;&#27963;&#23450;&#26102;&#22120;&#30340;&#26102;&#38388;</span>
-		<span style="color: #FF1493;">if</span> (tcp_write_wakeup(sk) &lt;= 0) {
-			icsk-&gt;icsk_probes_out++;
-			elapsed = keepalive_intvl_when(tp);
-		} <span style="color: #FF1493;">else</span> {
-			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">If keepalive was lost due to local congestion,</span>
-<span style="color: #8B8878;">                         * try harder.</span>
-<span style="color: #8B8878;">                         */</span>
-			elapsed = TCP_RESOURCE_PROBE_INTERVAL;
-		}
-	} <span style="color: #FF1493;">else</span> { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25345;&#32493;&#31354;&#38386;&#26102;&#38388;&#36824;&#27809;&#26377;&#36229;&#36807;&#38480;&#21046;&#65292;&#21017;&#37325;&#26032;&#35745;&#31639;&#36229;&#26102;&#26102;&#38388;</span>
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">It is tp-&gt;rcv_tstamp + keepalive_time_when(tp)</span><span style="color: #8B8878;"> */</span>
-		elapsed = keepalive_time_when(tp) - elapsed;
-	}
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#27809;&#26377;&#21551;&#29992;&#20445;&#27963;&#21151;&#33021;&#65292;&#25110;&#32773;TCP&#29366;&#24577;&#26159;CLOSE&#65292; &#19981;&#20570;&#22788;&#29702;</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>sock_flag(sk, SOCK_KEEPOPEN) || sk-&gt;sk_state == TCP_CLOSE)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#20445;&#27963;&#23450;&#26102;&#22120;&#36229;&#26102;&#26102;&#38388;&#25139;</span>
+        elapsed = keepalive_time_when(tp);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23384;&#22312;&#24050;&#32463;&#36755;&#20986;&#20294;&#36824;&#26410;&#30830;&#35748;&#30340;&#27573;&#65292;&#25110;&#32773;&#21457;&#36865;&#38431;&#21015;&#23384;&#22312;&#26410;&#21457;&#36865;&#30340;&#27573;&#65292;&#21017;&#37325;&#26032;&#35774;&#23450;&#20445;&#27963;&#23450;&#26102;&#22120;&#30340;&#36229;&#26102;&#26102;&#38388;</span>
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">It is alive without keepalive 8)</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">if</span> (tp-&gt;packets_out || sk-&gt;sk_send_head)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">resched</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26368;&#36817;&#19968;&#27425;&#25910;&#21040;&#27573; &#21040; &#30446;&#21069;&#20026;&#27490;&#30340;&#26102;&#38388;&#65288;&#25345;&#32493;&#31354;&#38386;&#26102;&#38388;&#65289;</span>
+        elapsed = tcp_time_stamp - tp-&gt;rcv_tstamp;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25345;&#32493;&#31354;&#38386;&#26102;&#38388;&#36229;&#36807;&#20102;&#20801;&#35768;&#30340;&#26102;&#38388;&#38480;&#21046;</span>
+        <span style="color: #F92672;">if</span> (elapsed &gt;= keepalive_time_when(tp)) {
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26410;&#35774;&#32622;&#20445;&#27963;&#25506;&#27979;&#27425;&#25968;&#65292;&#19988;&#24050;&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#27573;&#36229;&#36807;&#20102;&#19978;&#38480; tcp_keepalive_probes</span>
+                <span style="color: #F92672;">if</span> ((<span style="color: #E6DB74; font-weight: bold;">!</span>tp-&gt;keepalive_probes &amp;&amp; icsk-&gt;icsk_probes_out &gt;= sysctl_tcp_keepalive_probes) ||
+                     <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25110;&#32773;&#35774;&#32622;&#20102;&#20445;&#27963;&#25506;&#27979;&#27573;&#30340;&#27425;&#25968;&#65292;&#24182;&#19988;&#24050;&#21457;&#36865;&#27425;&#25968;&#36229;&#36807;&#20102;&#20445;&#27963;&#25506;&#27979;&#27425;&#25968;</span>
+                     (tp-&gt;keepalive_probes &amp;&amp; icsk-&gt;icsk_probes_out &gt;= tp-&gt;keepalive_probes)) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#27492;&#26102;&#38656;&#35201;&#26029;&#24320;&#36830;&#25509;</span>
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;RST&#27573;</span>
+                        tcp_send_active_reset(sk, GFP_ATOMIC);
+                        tcp_write_err(sk);
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+                }
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#20445;&#27963;&#25506;&#27979;&#27573;&#65292;&#24182;&#35745;&#31639;&#19979;&#27425;&#28608;&#27963;&#20445;&#27963;&#23450;&#26102;&#22120;&#30340;&#26102;&#38388;</span>
+                <span style="color: #F92672;">if</span> (tcp_write_wakeup(sk) &lt;= 0) {
+                        icsk-&gt;icsk_probes_out++;
+                        elapsed = keepalive_intvl_when(tp);
+                } <span style="color: #F92672;">else</span> {
+                        <span style="color: #75715E;">/* </span><span style="color: #75715E;">If keepalive was lost due to local congestion,</span>
+<span style="color: #75715E;">                         * try harder.</span>
+<span style="color: #75715E;">                         */</span>
+                        elapsed = TCP_RESOURCE_PROBE_INTERVAL;
+                }
+        } <span style="color: #F92672;">else</span> { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25345;&#32493;&#31354;&#38386;&#26102;&#38388;&#36824;&#27809;&#26377;&#36229;&#36807;&#38480;&#21046;&#65292;&#21017;&#37325;&#26032;&#35745;&#31639;&#36229;&#26102;&#26102;&#38388;</span>
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">It is tp-&gt;rcv_tstamp + keepalive_time_when(tp)</span><span style="color: #75715E;"> */</span>
+                elapsed = keepalive_time_when(tp) - elapsed;
+        }
 
-	TCP_CHECK_TIMER(sk);
-	sk_stream_mem_reclaim(sk);  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22238;&#25910;&#32531;&#23384;</span>
+        TCP_CHECK_TIMER(sk);
+        sk_stream_mem_reclaim(sk);  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22238;&#25910;&#32531;&#23384;</span>
 
-<span style="color: #AF87FF;">resched</span>:
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#35774;&#23450;&#20445;&#27963;&#23450;&#26102;&#22120;&#36229;&#26102;&#26102;&#38388;</span>
-	inet_csk_reset_keepalive_timer (sk, elapsed);
-	<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+<span style="color: #AE81FF;">resched</span>:
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#26032;&#35774;&#23450;&#20445;&#27963;&#23450;&#26102;&#22120;&#36229;&#26102;&#26102;&#38388;</span>
+        inet_csk_reset_keepalive_timer (sk, elapsed);
+        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
 
-<span style="color: #AF87FF;">death</span>:
-	tcp_done(sk);
+<span style="color: #AE81FF;">death</span>:
+        tcp_done(sk);
 
-<span style="color: #AF87FF;">out</span>:
-	bh_unlock_sock(sk);
-	sock_put(sk);
+<span style="color: #AE81FF;">out</span>:
+        bh_unlock_sock(sk);
+        sock_put(sk);
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgb0973d8" class="outline-3">
-<h3 id="orgb0973d8"><span class="section-number-3">6.2</span> 激活保活定时器</h3>
+<div id="outline-container-org2b05c41" class="outline-3">
+<h3 id="org2b05c41"><span class="section-number-3">6.2.</span> 激活保活定时器</h3>
 <div class="outline-text-3" id="text-6-2">
 <p>
 在启用保活功能后，调用 inet_csk_reset_keepalive_timer() 激活保活定时器。
@@ -1300,57 +1254,57 @@ tcp_keepalive_timer()实现了3个TCP定时器，通过TCP状态来区分当前�
 </div>
 
 
-<div id="outline-container-org0318e56" class="outline-2">
-<h2 id="org0318e56"><span class="section-number-2">7</span> FIN_WAIT_2定时器</h2>
+<div id="outline-container-org46aef13" class="outline-2">
+<h2 id="org46aef13"><span class="section-number-2">7.</span> FIN_WAIT_2定时器</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 当某个连接从 FIN_WAIT_1 状态转换为 FIN_WAIT_2 状态，且不能在接收任何新数据时，则表示应用已经调用了close()而不是shutdown()，没有利用TCP的半关闭功能，此时FIN_WAIT_2定时器启动，超时时间为 10min ，在定时器首次超时后，重新设置超时时间为 75s，第二次超时后关闭连接。加入这个定时器的目的是为了避免对段一直不发FIN，某个连接会永远滞留在FIN_WAIT_2状态。
 </p>
 </div>
 
-<div id="outline-container-org604204f" class="outline-3">
-<h3 id="org604204f"><span class="section-number-3">7.1</span> FIN_WAIT_2定时器处理函数</h3>
+<div id="outline-container-org3169780" class="outline-3">
+<h3 id="org3169780"><span class="section-number-3">7.1.</span> FIN_WAIT_2定时器处理函数</h3>
 <div class="outline-text-3" id="text-7-1">
 <p>
 FIN_WAIT_2定时器并不是全部由tcp_keepalive_timer()来实现，只有在处于FIN_WAIT_2状态的定时器时间超过60s,在会将该传输控制块放到tcp_keepalive_timer()中处理，在sk_timer定时器中掩饰60s以后的部分，有tcp_timer_wait()继续处理。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">tcp_keepalive_timer</span> (<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">data</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">tcp_keepalive_timer</span> (<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">data</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *<span style="color: #FF8C00;">sk</span> = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sock</span> *) data;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_connection_sock</span> *<span style="color: #FF8C00;">icsk</span> = inet_csk(sk);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">tcp_sock</span> *<span style="color: #FF8C00;">tp</span> = tcp_sk(sk);
-	<span style="color: #5FD7FF;">__u32</span> <span style="color: #FF8C00;">elapsed</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">TCP&#29366;&#24577;&#24517;&#39035;&#26159;TCP_FIN_WAIT2&#65292;&#24182;&#19988;&#22871;&#25509;&#21475;&#29366;&#24577;&#26159;SOCK_DEAD&#12290;</span>
-	<span style="color: #FF1493;">if</span> (sk-&gt;sk_state == TCP_FIN_WAIT2 &amp;&amp; sock_flag(sk, SOCK_DEAD)) {
-		<span style="color: #FF1493;">if</span> (tp-&gt;linger2 &gt;= 0) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20572;&#30041;&#22312;FIN_WAIT_2&#29366;&#24577;&#30340;&#26102;&#38388;&#22823;&#20110;&#31561;&#20110;0&#26102;</span>
-			<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;FIN_WAIT_2&#23450;&#26102;&#22120;&#30340;&#21097;&#20313;&#26102;&#38388;&#65292;&#22914;&#26524;&#22823;&#20110;0,&#21017;&#35843;&#29992;tcp_time_wait()&#22788;&#29702;</span>
-			<span style="color: #FF1493;">const</span> <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">tmo</span> = tcp_fin_time(sk) - TCP_TIMEWAIT_LEN;
-			<span style="color: #FF1493;">if</span> (tmo &gt; 0) {
-				tcp_time_wait(sk, TCP_FIN_WAIT2, tmo);
-				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-			}
-		}
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21542;&#21017;&#21457;&#36865;RST&#21518;&#20851;&#38381;&#22871;&#25509;&#21475;</span>
-		tcp_send_active_reset(sk, GFP_ATOMIC);
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">death</span>;
-	}
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">......</span>
-<span style="color: #AF87FF;">death</span>:
-	tcp_done(sk);
-<span style="color: #AF87FF;">out</span>:
-	bh_unlock_sock(sk);
-	sock_put(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *<span style="color: #FD971F;">sk</span> = (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sock</span> *) data;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_connection_sock</span> *<span style="color: #FD971F;">icsk</span> = inet_csk(sk);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">tcp_sock</span> *<span style="color: #FD971F;">tp</span> = tcp_sk(sk);
+        <span style="color: #66D9EF;">__u32</span> <span style="color: #FD971F;">elapsed</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">TCP&#29366;&#24577;&#24517;&#39035;&#26159;TCP_FIN_WAIT2&#65292;&#24182;&#19988;&#22871;&#25509;&#21475;&#29366;&#24577;&#26159;SOCK_DEAD&#12290;</span>
+        <span style="color: #F92672;">if</span> (sk-&gt;sk_state == TCP_FIN_WAIT2 &amp;&amp; sock_flag(sk, SOCK_DEAD)) {
+                <span style="color: #F92672;">if</span> (tp-&gt;linger2 &gt;= 0) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20572;&#30041;&#22312;FIN_WAIT_2&#29366;&#24577;&#30340;&#26102;&#38388;&#22823;&#20110;&#31561;&#20110;0&#26102;</span>
+                        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35745;&#31639;FIN_WAIT_2&#23450;&#26102;&#22120;&#30340;&#21097;&#20313;&#26102;&#38388;&#65292;&#22914;&#26524;&#22823;&#20110;0,&#21017;&#35843;&#29992;tcp_time_wait()&#22788;&#29702;</span>
+                        <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">tmo</span> = tcp_fin_time(sk) - TCP_TIMEWAIT_LEN;
+                        <span style="color: #F92672;">if</span> (tmo &gt; 0) {
+                                tcp_time_wait(sk, TCP_FIN_WAIT2, tmo);
+                                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+                        }
+                }
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21542;&#21017;&#21457;&#36865;RST&#21518;&#20851;&#38381;&#22871;&#25509;&#21475;</span>
+                tcp_send_active_reset(sk, GFP_ATOMIC);
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">death</span>;
+        }
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">......</span>
+<span style="color: #AE81FF;">death</span>:
+        tcp_done(sk);
+<span style="color: #AE81FF;">out</span>:
+        bh_unlock_sock(sk);
+        sock_put(sk);
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org2c741ae" class="outline-3">
-<h3 id="org2c741ae"><span class="section-number-3">7.2</span> 激活FIN_WAIT_2定时器</h3>
+<div id="outline-container-org5278270" class="outline-3">
+<h3 id="org5278270"><span class="section-number-3">7.2.</span> 激活FIN_WAIT_2定时器</h3>
 <div class="outline-text-3" id="text-7-2">
 <p>
 通常是传输控制块在处于FIN_WAIT_2状态的时间超过60S后，才调用 inet_csk_reset_keepalive_timer()将该传输控制块放到 tcp_keepalive_timer() 中处理。
@@ -1359,8 +1313,8 @@ FIN_WAIT_2定时器并不是全部由tcp_keepalive_timer()来实现，只有在�
 </div>
 </div>
 
-<div id="outline-container-org093817c" class="outline-2">
-<h2 id="org093817c"><span class="section-number-2">8</span> TIME_WAIT定时器</h2>
+<div id="outline-container-org0c0d33a" class="outline-2">
+<h2 id="org0c0d33a"><span class="section-number-2">8.</span> TIME_WAIT定时器</h2>
 <div class="outline-text-2" id="text-8">
 <p>
 TIME_WAIT定时器一般也称为 2MSL 定时器。2MSL 代表两倍的MSL（最大生存时间）。当连接转换到TIME_WAIT状态，即连接主动关闭时，TIME_WAIT定时器启动，超时时间设定为1min，超时后，TCP控制块被删除，端口号可重新使用。
@@ -1371,8 +1325,8 @@ TIME_WAIT定时器一般也称为 2MSL 定时器。2MSL 代表两倍的MSL（最
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2022-04-25 Mon 22:45</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2024-06-23 Sun 15:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>tmux</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,62 +191,39 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">tmux</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgf1265c3">1. 简介</a>
+<li><a href="#orgc02065b">1. 简介</a>
 <ul>
-<li><a href="#org75f7f28">1.1. 介绍</a></li>
-<li><a href="#org88f3403">1.2. 安装</a></li>
+<li><a href="#org6bf6aad">1.1. 介绍</a></li>
+<li><a href="#org6cde71e">1.2. 安装</a></li>
 </ul>
 </li>
-<li><a href="#org77294a9">2. 使用</a>
+<li><a href="#org000d177">2. 使用</a>
 <ul>
-<li><a href="#orge507613">2.1. pane</a></li>
-<li><a href="#org49dbb3e">2.2. window</a></li>
+<li><a href="#org5b4b843">2.1. pane</a></li>
+<li><a href="#orgf56d37e">2.2. window</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgf1265c3" class="outline-2">
-<h2 id="orgf1265c3"><span class="section-number-2">1</span> 简介</h2>
+<div id="outline-container-orgc02065b" class="outline-2">
+<h2 id="orgc02065b"><span class="section-number-2">1.</span> 简介</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org75f7f28" class="outline-3">
-<h3 id="org75f7f28"><span class="section-number-3">1.1</span> 介绍</h3>
+<div id="outline-container-org6bf6aad" class="outline-3">
+<h3 id="org6bf6aad"><span class="section-number-3">1.1.</span> 介绍</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 命令行的典型使用方式是，打开一个终端窗口（terminal window，以下简称"窗口"），在里面输入命令。用户与计算机的这种临时的交互，称为一次"会话"（session）。
@@ -278,8 +256,8 @@ Tmux 就是会话与窗口的"解绑"工具，将它们彻底分离，其功能�
 </div>
 </div>
 
-<div id="outline-container-org88f3403" class="outline-3">
-<h3 id="org88f3403"><span class="section-number-3">1.2</span> 安装</h3>
+<div id="outline-container-org6cde71e" class="outline-3">
+<h3 id="org6cde71e"><span class="section-number-3">1.2.</span> 安装</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 Ubuntu 或 Debian
@@ -308,17 +286,17 @@ Mac
 </div>
 </div>
 
-<div id="outline-container-org77294a9" class="outline-2">
-<h2 id="org77294a9"><span class="section-number-2">2</span> 使用</h2>
+<div id="outline-container-org000d177" class="outline-2">
+<h2 id="org000d177"><span class="section-number-2">2.</span> 使用</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li><p>
 启动与退出
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux  <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#21551;&#21160; Tmux &#31383;&#21475;&#65292;&#24213;&#37096;&#26377;&#19968;&#20010;&#29366;&#24577;&#26639;&#12290;&#29366;&#24577;&#26639;&#30340;&#24038;&#20391;&#26159;&#31383;&#21475;&#20449;&#24687;&#65288;&#32534;&#21495;&#21644;&#21517;&#31216;&#65289;&#65292;&#21491;&#20391;&#26159;&#31995;&#32479;&#20449;&#24687;&#12290;</span>
+<pre class="src src-sh">$ tmux  <span style="color: #75715E;">#</span><span style="color: #75715E;">&#21551;&#21160; Tmux &#31383;&#21475;&#65292;&#24213;&#37096;&#26377;&#19968;&#20010;&#29366;&#24577;&#26639;&#12290;&#29366;&#24577;&#26639;&#30340;&#24038;&#20391;&#26159;&#31383;&#21475;&#20449;&#24687;&#65288;&#32534;&#21495;&#21644;&#21517;&#31216;&#65289;&#65292;&#21491;&#20391;&#26159;&#31995;&#32479;&#20449;&#24687;&#12290;</span>
 
-$ exit  <span style="color: #8B8878;">#</span><span style="color: #8B8878; font-style: italic;">&#25353;&#19979;Ctrl+d&#25110;&#32773;&#26174;&#24335;&#36755;&#20837;exit&#21629;&#20196;&#65292;&#23601;&#21487;&#20197;&#36864;&#20986; Tmux &#31383;&#21475;&#12290;</span>
+$ exit  <span style="color: #75715E;">#</span><span style="color: #75715E;">&#25353;&#19979;Ctrl+d&#25110;&#32773;&#26174;&#24335;&#36755;&#20837;exit&#21629;&#20196;&#65292;&#23601;&#21487;&#20197;&#36864;&#20986; Tmux &#31383;&#21475;&#12290;</span>
 </pre>
 </div></li>
 
@@ -386,8 +364,8 @@ tmux ls命令可以查看当前所有的 Tmux 会话。
 tmux attach命令用于重新接入某个已存在的会话。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux attach -t &lt;n&gt;  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
-$ tmux attach -t &lt;session-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
+<pre class="src src-sh">$ tmux attach -t &lt;n&gt;  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
+$ tmux attach -t &lt;session-name&gt; <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
 </pre>
 </div></li>
 
@@ -399,8 +377,8 @@ $ tmux attach -t &lt;session-name&gt; <span style="color: #8B8878;"># </span><sp
 tmux kill-session命令用于杀死某个会话。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux kill-session -t &lt;n&gt;  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
-$ tmux kill-session -t &lt;session-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
+<pre class="src src-sh">$ tmux kill-session -t &lt;n&gt;  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
+$ tmux kill-session -t &lt;session-name&gt; <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
 </pre>
 </div></li>
 
@@ -412,8 +390,8 @@ $ tmux kill-session -t &lt;session-name&gt; <span style="color: #8B8878;"># </sp
 tmux switch命令用于切换会话。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux switch -t &lt;n&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
-$ tmux switch -t &lt;session-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
+<pre class="src src-sh">$ tmux switch -t &lt;n&gt; <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20351;&#29992;&#20250;&#35805;&#32534;&#21495;</span>
+$ tmux switch -t &lt;session-name&gt; <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20351;&#29992;&#20250;&#35805;&#21517;&#31216;</span>
 </pre>
 </div></li>
 
@@ -442,8 +420,8 @@ tmux rename-session命令用于重命名会话。
 </ul>
 </div>
 
-<div id="outline-container-orge507613" class="outline-3">
-<h3 id="orge507613"><span class="section-number-3">2.1</span> pane</h3>
+<div id="outline-container-org5b4b843" class="outline-3">
+<h3 id="org5b4b843"><span class="section-number-3">2.1.</span> pane</h3>
 <div class="outline-text-3" id="text-2-1">
 <ul class="org-ul">
 <li><p>
@@ -454,8 +432,8 @@ tmux rename-session命令用于重命名会话。
 tmux split-window命令用来划分窗格。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux split-window   <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#21010;&#20998;&#19978;&#19979;&#20004;&#20010;&#31383;&#26684;</span>
-$ tmux split-window -h  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#21010;&#20998;&#24038;&#21491;&#20004;&#20010;&#31383;&#26684;</span>
+<pre class="src src-sh">$ tmux split-window   <span style="color: #75715E;"># </span><span style="color: #75715E;">&#21010;&#20998;&#19978;&#19979;&#20004;&#20010;&#31383;&#26684;</span>
+$ tmux split-window -h  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#21010;&#20998;&#24038;&#21491;&#20004;&#20010;&#31383;&#26684;</span>
 </pre>
 </div></li>
 
@@ -467,10 +445,10 @@ $ tmux split-window -h  <span style="color: #8B8878;"># </span><span style="colo
 tmux select-pane命令用来移动光标位置。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux select-pane -U  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#19978;&#26041;&#31383;&#26684;</span>
-$ tmux select-pane -D  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#19979;&#26041;&#31383;&#26684;</span>
-$ tmux select-pane -L  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#24038;&#36793;&#31383;&#26684;</span>
-$ tmux select-pane -R  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20809;&#26631;&#20999;&#25442;&#21040;&#21491;&#36793;&#31383;&#26684;</span>
+<pre class="src src-sh">$ tmux select-pane -U  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20809;&#26631;&#20999;&#25442;&#21040;&#19978;&#26041;&#31383;&#26684;</span>
+$ tmux select-pane -D  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20809;&#26631;&#20999;&#25442;&#21040;&#19979;&#26041;&#31383;&#26684;</span>
+$ tmux select-pane -L  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20809;&#26631;&#20999;&#25442;&#21040;&#24038;&#36793;&#31383;&#26684;</span>
+$ tmux select-pane -R  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20809;&#26631;&#20999;&#25442;&#21040;&#21491;&#36793;&#31383;&#26684;</span>
 </pre>
 </div></li>
 
@@ -482,8 +460,8 @@ $ tmux select-pane -R  <span style="color: #8B8878;"># </span><span style="color
 tmux swap-pane命令用来交换窗格位置。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux swap-pane -U  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#24403;&#21069;&#31383;&#26684;&#19978;&#31227;</span>
-$ tmux swap-pane -D  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#24403;&#21069;&#31383;&#26684;&#19979;&#31227;</span>
+<pre class="src src-sh">$ tmux swap-pane -U  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#24403;&#21069;&#31383;&#26684;&#19978;&#31227;</span>
+$ tmux swap-pane -D  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#24403;&#21069;&#31383;&#26684;&#19979;&#31227;</span>
 </pre>
 </div></li>
 
@@ -508,8 +486,8 @@ $ tmux swap-pane -D  <span style="color: #8B8878;"># </span><span style="color: 
 </div>
 </div>
 
-<div id="outline-container-org49dbb3e" class="outline-3">
-<h3 id="org49dbb3e"><span class="section-number-3">2.2</span> window</h3>
+<div id="outline-container-orgf56d37e" class="outline-3">
+<h3 id="orgf56d37e"><span class="section-number-3">2.2.</span> window</h3>
 <div class="outline-text-3" id="text-2-2">
 <ul class="org-ul">
 <li><p>
@@ -518,8 +496,8 @@ tmux new-window命令用来创建新窗口。
 </p>
 <div class="org-src-container">
 <pre class="src src-sh">$ tmux new-window
-<span style="color: #8B8878;">#  </span><span style="color: #8B8878; font-style: italic;">or</span>
-$ tmux new-window -n &lt;window-name&gt;  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#26032;&#24314;&#19968;&#20010;&#25351;&#23450;&#21517;&#31216;&#30340;&#31383;&#21475;</span>
+<span style="color: #75715E;">#  </span><span style="color: #75715E;">or</span>
+$ tmux new-window -n &lt;window-name&gt;  <span style="color: #75715E;"># </span><span style="color: #75715E;">&#26032;&#24314;&#19968;&#20010;&#25351;&#23450;&#21517;&#31216;&#30340;&#31383;&#21475;</span>
 </pre>
 </div></li>
 
@@ -531,11 +509,11 @@ $ tmux new-window -n &lt;window-name&gt;  <span style="color: #8B8878;"># </span
 tmux select-window命令用来切换窗口。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ tmux select-window -t &lt;window-number&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20999;&#25442;&#21040;&#25351;&#23450;&#32534;&#21495;&#30340;&#31383;&#21475;</span>
-$ tmux select-window -t &lt;window-name&gt; <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">&#20999;&#25442;&#21040;&#25351;&#23450;&#21517;&#31216;&#30340;&#31383;&#21475;</span>
-$ tmux select-window -l  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">last-window</span>
-$ tmux select-window -n  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">next-window</span>
-$ tmux select-window -p  <span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">previous-window</span>
+<pre class="src src-sh">$ tmux select-window -t &lt;window-number&gt; <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20999;&#25442;&#21040;&#25351;&#23450;&#32534;&#21495;&#30340;&#31383;&#21475;</span>
+$ tmux select-window -t &lt;window-name&gt; <span style="color: #75715E;"># </span><span style="color: #75715E;">&#20999;&#25442;&#21040;&#25351;&#23450;&#21517;&#31216;&#30340;&#31383;&#21475;</span>
+$ tmux select-window -l  <span style="color: #75715E;"># </span><span style="color: #75715E;">last-window</span>
+$ tmux select-window -n  <span style="color: #75715E;"># </span><span style="color: #75715E;">next-window</span>
+$ tmux select-window -p  <span style="color: #75715E;"># </span><span style="color: #75715E;">previous-window</span>
 </pre>
 </div></li>
 
@@ -568,7 +546,7 @@ tmux rename-window命令用于为当前窗口起名（或重命名）。
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

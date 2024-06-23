@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPPINFRA</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VPPINFRA</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org0ece7b5">1. Vectors</a></li>
+<li><a href="#org9ba38c5">2. Bitmaps</a></li>
+<li><a href="#orgff27844">3. Pools</a></li>
+<li><a href="#orgd3b045e">4. Hashes</a>
+<ul>
+<li><a href="#orgca8ec05">4.1. 数据结构</a></li>
+</ul>
+</li>
+<li><a href="#orgf7edba4">5. <span class="todo TODO">TODO</span> Timekeeping</a></li>
+<li><a href="#orgdbc18fc">6. 时间轮Timer Wheel</a>
+<ul>
+<li><a href="#orga35ac3f">6.1. 介绍</a></li>
+<li><a href="#org22355d1">6.2. 原理说明</a></li>
+<li><a href="#org544b6f8">6.3. 初始化宏</a></li>
+<li><a href="#org0b1efa2">6.4. 用法</a></li>
+</ul>
+</li>
+<li><a href="#org399d631">7. Format</a></li>
+<li><a href="#orgcb73936">8. UnFormat</a>
+<ul>
+<li>
+<ul>
+<li><a href="#orgfddf48f">8.0.1. How to parse a single input line</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgc9f983a">9. 错误和警告</a></li>
+<li><a href="#org79e905f">10. 序列化</a></li>
+</ul>
+</div>
+</div>
+<p>
+对应源码目录： ./src/vppinfra
+</p>
+
+<p>
+VPPinfra 是一个提供基础服务的c库的集合，能够在裸机上独立编译运行。其中提供了高性能的动态数组，hahses，bitmaps，高精度时钟，细粒度的日志事件记录，数据结构序列化。
+</p>
+
+<div id="outline-container-org0ece7b5" class="outline-2">
+<h2 id="org0ece7b5"><span class="section-number-2">1.</span> Vectors</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+vppinfra中的vectors是一个动态数组，由用户定义headers。vppinfra中的很多数据结构（hash、heap、pool）都是使用vector，其中header各不相同。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">                  User header (optional, uword aligned)
+                  Alignment padding (if needed)
+                  Vector length in elements
+User's pointer -&gt; Vector element 0
+                  Vector element 1
+                  ...
+                  Vector element N-1
+</pre>
+</div>
+
+<p>
+如上面所示，vector API从第0个元素开始处理， 空指针是一个有效的0长度的vector。
+</p>
+
+<p>
+为避免内存分配器的抖动，通常重置vector的长度以保留内存分配。通过宏定义 <code>vec_reset_length(v)</code> 来重置vector的长度字段。
+</p>
+
+<p>
+通常情况下 user header是不存在的。 User headers允许在vppinfra vector之上构建其他的数据结构。可以通过 <code>[vec]()*_aligned</code> 系列的宏来指定vector首个数据元素的对齐。
+</p>
+
+<p>
+Vector 元素可以是任意的c语言类型，在vector之上构建的数据结构（heap、pool等）也是如此。许多宏的 <code>_a</code> 变体支持vector元素的对齐， <code>_h</code> 变体支持非零长度的vector header， <code>_ha</code> 则都支持。此外可以在vector 元素结构中使用 <code>[CLIB_CACHE_LINE_ALIGN_MARK]()</code> 宏来指定缓存行对齐。
+</p>
+
+<p>
+对 header 和 alignment 相关宏的用法不一致，可能会导致后续出现一些奇怪的问题现象。
+</p>
+
+<p>
+常见的编程错误： 存储一个变量指向vector元素的指针，然后扩展vector，扩展后，原始的元素内存位置可能已经变换，此时使用原先的指针可能会导致非法引用，正确的方法是记住vector的索引，vector的索引总是保持不变的。
+</p>
+
+<p>
+由于调试时不能调用宏，因此提供一些函数以供调试使用：
+</p>
+<ul class="org-ul">
+<li>vl(v)  打印 vec_len(v)</li>
+<li>pe(p)  打印 pool_elts(p)</li>
+<li>pifi(p, index)  打印 pool_is_free_index(p, index)</li>
+<li>debug_hex_bytes(p, nbytes)  从p开始已十六进制输出nbytes长度内存。</li>
+</ul>
+
+<p>
+使用 “show gdb” cli调试命令来打印当前集合。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9ba38c5" class="outline-2">
+<h2 id="org9ba38c5"><span class="section-number-2">2.</span> Bitmaps</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+位图可以动态扩展，使用vppinfra vector构建。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgff27844" class="outline-2">
+<h2 id="orgff27844"><span class="section-number-2">3.</span> Pools</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+结合vectors和bitmaps，可以快速的分配及释放具有独立生存周期的固定大小的数据结构，pools很适合私有会话数据结构的分配。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd3b045e" class="outline-2">
+<h2 id="orgd3b045e"><span class="section-number-2">4.</span> Hashes</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+vppinfra提供了几种规格的hash表，数据平面常常使用 ./src/vppinfra/bihash_template.[ch] hash 进行的报文分类和会话查找。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">bihash_16_8.h
+bihash_16_8_32.h
+bihash_24_16.h
+bihash_24_8.h
+bihash_32_8.h
+bihash_40_8.h
+bihash_48_8.h
+bihash_8_16.h
+bihash_8_8.h
+</pre>
+</div>
+
+
+<p>
+Bihashes 线程安全，而且不需要读锁，只有在写入时才使用自旋锁保证一次写入一个条目。
+</p>
+
+<p>
+在目录 ./src/vppinfra/hash.[ch] 中包含了 vppinfra hash 的原始实现，通常用于控制面进行精确的字符串精确匹配。
+</p>
+
+
+<p>
+查找 hash表 时，需要提供 index 来获取相关的 vector 或者 pool。 Hash_set_mem (hash_table, key_pointer, value) 函数保存了 key_pointer。 一个常见的错误：使用 vector element 的内存地址作为 hash_set_mem 函数的第二个参数。 但是可以使用 text 段中的字符串地址作为 hash_set_mem 的第二个参数。
+</p>
+</div>
+
+
+<div id="outline-container-orgca8ec05" class="outline-3">
+<h3 id="orgca8ec05"><span class="section-number-3">4.1.</span> 数据结构</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+初始化参数
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf7edba4" class="outline-2">
+<h2 id="orgf7edba4"><span class="section-number-2">5.</span> <span class="todo TODO">TODO</span> Timekeeping</h2>
+</div>
+
+
+<div id="outline-container-orgdbc18fc" class="outline-2">
+<h2 id="orgdbc18fc"><span class="section-number-2">6.</span> 时间轮Timer Wheel</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-orga35ac3f" class="outline-3">
+<h3 id="orga35ac3f"><span class="section-number-3">6.1.</span> 介绍</h3>
+<div class="outline-text-3" id="text-6-1">
+<ol class="org-ol">
+<li><p>
+定义时间轮参数的宏
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26102;&#38388;&#36718;&#30340;&#36718;&#25968;&#37327;</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_TIMER_WHEELS</span> 1
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#27599;&#20010;&#26102;&#38388;&#36718;&#30340;&#27133;&#25968;&#37327;</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_SLOTS_PER_RING</span> 2048
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26102;&#38388;&#36718;&#27133;&#25968;&#25968;&#20540;&#23545;&#24212;&#30340;&#20301;&#31227;</span><span style="color: #75715E;">*/</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_RING_SHIFT</span> 11
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26102;&#38388;&#36718;&#27133;&#25968;&#30340;&#25513;&#30721;</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_RING_MASK</span> (TW_SLOTS_PER_RING -1)
+<span style="color: #75715E;">/*  */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_TIMERS_PER_OBJECT</span> 2
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">LOG2_TW_TIMERS_PER_OBJECT</span> 1
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20351;&#29992;&#27169;&#26495;&#23450;&#20041;&#30340;&#20989;&#25968;&#21518;&#32512;&#65292; &#29992;&#20197;&#21306;&#20998;&#19981;&#21516;&#21442;&#25968;&#23450;&#20041;&#30340;&#26102;&#38388;&#36718;&#20989;&#25968;</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_SUFFIX</span> _2t_1w_2048sl
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_FAST_WHEEL_BITMAP</span> 0
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">TW_TIMER_ALLOW_DUPLICATE_STOP</span> 0
+</pre>
+</div></li>
+
+<li><p>
+时间轮结构、函数介绍
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">typedef</span> <span style="color: #F92672;">enum</span>
+{
+        <span style="color: #E6DB74;">/** Fast timer ring ID */</span>
+        <span style="color: #FD971F;">TW_TIMER_RING_FAST</span>,
+        <span style="color: #E6DB74;">/** Slow timer ring ID */</span>
+        <span style="color: #FD971F;">TW_TIMER_RING_SLOW</span>,
+        <span style="color: #E6DB74;">/** Glacier ring ID */</span>
+        <span style="color: #FD971F;">TW_TIMER_RING_GLACIER</span>,
+} <span style="color: #66D9EF;">tw_ring_index_t</span>;
+
+<span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span>
+{
+        <span style="color: #E6DB74;">/** Timer pool */</span>
+        <span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer</span>) * timers;
+
+        <span style="color: #E6DB74;">/** Next time the wheel should run */</span>
+        <span style="color: #66D9EF;">f64</span> <span style="color: #FD971F;">next_run_time</span>;
+
+        <span style="color: #E6DB74;">/** Last time the wheel ran */</span>
+        <span style="color: #66D9EF;">f64</span> <span style="color: #FD971F;">last_run_time</span>;
+
+        <span style="color: #E6DB74;">/** &#27599;&#31186;&#38047;&#30340;timer&#28404;&#31572;&#25968; */</span>
+        <span style="color: #66D9EF;">f64</span> <span style="color: #FD971F;">ticks_per_second</span>;
+
+        <span style="color: #E6DB74;">/** Timer interval, also needed to avoid fp divide in speed path */</span>
+        <span style="color: #66D9EF;">f64</span> <span style="color: #FD971F;">timer_interval</span>;
+
+        <span style="color: #E6DB74;">/** current tick */</span>
+        <span style="color: #66D9EF;">u64</span> <span style="color: #FD971F;">current_tick</span>;
+
+        <span style="color: #E6DB74;">/** &#24403;&#21069;&#30340;&#26102;&#38388;&#36718;&#30340;&#20301;&#32622;&#26631;&#35782; */</span>
+        <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">current_index</span>[TW_TIMER_WHEELS];
+
+        <span style="color: #E6DB74;">/** &#27599;&#20010;&#26102;&#38388;&#36718;&#30340;&#27133;&#20301;&#25968;&#32452; */</span>
+        <span style="color: #66D9EF;">tw_timer_wheel_slot_t</span> <span style="color: #FD971F;">w</span>[TW_TIMER_WHEELS][TW_SLOTS_PER_RING];
+
+<span style="color: #F92672;">#if</span> TW_OVERFLOW_VECTOR &gt; 0
+        <span style="color: #66D9EF;">tw_timer_wheel_slot_t</span> <span style="color: #FD971F;">overflow</span>;
+<span style="color: #F92672;">#endif</span>
+
+<span style="color: #F92672;">#if</span> TW_FAST_WHEEL_BITMAP &gt; 0
+        <span style="color: #E6DB74;">/** Fast wheel slot occupancy bitmap */</span>
+        <span style="color: #66D9EF;">uword</span> *<span style="color: #FD971F;">fast_slot_bitmap</span>;
+<span style="color: #F92672;">#endif</span>
+
+        <span style="color: #E6DB74;">/** expired timer callback, receives a vector of handles */</span>
+        <span style="color: #66D9EF;">void</span> (*<span style="color: #A6E22E;">expired_timer_callback</span>) (<span style="color: #66D9EF;">u32</span> * <span style="color: #FD971F;">expired_timer_handles</span>);
+
+        <span style="color: #E6DB74;">/** &#22788;&#29702;&#36807;&#26399;timer&#26102;,&#29992;&#20110;&#23384;&#20648;timer handle&#30340;&#21521;&#37327; */</span>
+        <span style="color: #66D9EF;">u32</span> *<span style="color: #FD971F;">expired_timer_handles</span>;
+
+        <span style="color: #E6DB74;">/** &#36807;&#26399;&#30340;&#26368;&#22823;&#25968;&#37327; */</span>
+        <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">max_expirations</span>;
+} <span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>);
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21551;&#21160;&#19968;&#20010;timer&#30340;&#23439;&#23450;&#20041;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">u32</span> <span style="color: #A6E22E;">TW</span> (tw_timer_start) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">pool_index</span>, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">timer_id</span>, <span style="color: #66D9EF;">u64</span> <span style="color: #FD971F;">interval</span>);
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20572;&#27490;&#19968;&#20010;timer&#30340;&#23439;&#23450;&#20041;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">TW</span> (tw_timer_stop) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">handle</span>);
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">TW</span> (tw_timer_handle_is_free) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">handle</span>);
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26356;&#26032;&#26102;&#38388;&#25139;&#30340;&#23439;&#23450;&#20041;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">TW</span> (tw_timer_update) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">handle</span>, <span style="color: #66D9EF;">u64</span> <span style="color: #FD971F;">interval</span>);
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21021;&#22987;&#21270;&#26102;&#38388;&#36718;&#23454;&#20363;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">TW</span> (tw_timer_wheel_init) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw, <span style="color: #66D9EF;">void</span> *<span style="color: #FD971F;">expired_timer_callback</span>, <span style="color: #66D9EF;">f64</span> <span style="color: #FD971F;">timer_interval</span>, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">max_expirations</span>);
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#37322;&#25918;&#26102;&#38388;&#36718;&#23454;&#20363;</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">TW</span> (tw_timer_wheel_free) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw);
+
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20174;&#26102;&#38388;&#36718;&#20013;&#21462;&#20986;&#36807;&#26399;&#30340;timer</span><span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">u32</span> *<span style="color: #A6E22E;">TW</span> (tw_timer_expire_timers) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw, <span style="color: #66D9EF;">f64</span> <span style="color: #FD971F;">now</span>);
+<span style="color: #66D9EF;">u32</span> *<span style="color: #A6E22E;">TW</span> (tw_timer_expire_timers_vec) (<span style="color: #66D9EF;">TWT</span> (<span style="color: #FD971F;">tw_timer_wheel</span>) * tw, <span style="color: #66D9EF;">f64</span> <span style="color: #FD971F;">now</span>, <span style="color: #66D9EF;">u32</span> * <span style="color: #FD971F;">vec</span>);
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-org22355d1" class="outline-3">
+<h3 id="org22355d1"><span class="section-number-3">6.2.</span> 原理说明</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+tw_timer_wheel_init初始化的过程大致如下图：
+</p>
+
+<div id="orgce23496" class="figure">
+<p><img src="./dot/timer_wheel.svg" alt="timer_wheel.svg" class="org-svg" />
+</p>
+</div>
+
+<ol class="org-ol">
+<li>时间轮的轮数由宏 <code>TW_TIMER_WHEELS</code> 来指定， 最大为3轮。</li>
+<li>slot槽的数量由宏 <code>TW_SLOTS_PER_RING</code> 指定。</li>
+<li>slot槽中保存tw_timer结构的handle。用于索引timer结构。tw_timer结构全部从tw_timer_wheel结构的timers向量中申请。</li>
+<li>时间轮0（TW_TIMER_RING_FAST）中的slot之间的间隔时间由函数 <code>tw_timer_wheel_init</code> 的参数 <code>timer_interval_in_seconds</code> 提供。</li>
+<li>时间轮1（TW_TIMER_RING_SLOW）中的slot的时间间隔为时间轮0的slot间隔乘slot数量。</li>
+<li>时间轮2（TW_TIMER_RING_GLACIER）中的slot的时间间隔为时间轮1的slot间隔乘slot数量。</li>
+</ol>
+
+<p>
+tw_timer_start添加timer过程：
+</p>
+
+<div id="org50e82f8" class="figure">
+<p><img src="./dot/timer_wheel_start.svg" alt="timer_wheel_start.svg" class="org-svg" />
+</p>
+</div>
+
+
+<p>
+tw_timer_expire_timers处理过期timer的过程:
+</p>
+
+<div id="org226ba04" class="figure">
+<p><img src="./dot/timer_wheel_expire.svg" alt="timer_wheel_expire.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org544b6f8" class="outline-3">
+<h3 id="org544b6f8"><span class="section-number-3">6.3.</span> 初始化宏</h3>
+</div>
+
+
+<div id="outline-container-org0b1efa2" class="outline-3">
+<h3 id="org0b1efa2"><span class="section-number-3">6.4.</span> 用法</h3>
+<div class="outline-text-3" id="text-6-4">
+<div class="org-src-container">
+<pre class="src src-fundamental">tw_timer_16t_1w_2048sl.c
+tw_timer_16t_1w_2048sl.h
+tw_timer_16t_2w_512sl.c
+tw_timer_16t_2w_512sl.h
+tw_timer_1t_3w_1024sl_ov.c
+tw_timer_1t_3w_1024sl_ov.h
+tw_timer_2t_1w_2048sl.c
+tw_timer_2t_1w_2048sl.h
+tw_timer_2t_2w_512sl.c
+tw_timer_2t_2w_512sl.h
+tw_timer_4t_3w_256sl.c
+tw_timer_4t_3w_256sl.h
+tw_timer_4t_3w_4sl_ov.c
+tw_timer_4t_3w_4sl_ov.h
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org399d631" class="outline-2">
+<h2 id="org399d631"><span class="section-number-2">7.</span> Format</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Format 和 printf 的功能类似。其中有一些重要的属性需要了解。
+</p>
+
+<p>
+Format 首个参数result是（u8 *）类型的向量，当前format输出追加到向量中。以下是一个链式调用的示例：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">u8</span> * <span style="color: #FD971F;">result</span>;
+
+result = format (0, <span style="color: #E6DB74;">"junk = %d, "</span>, junk);
+result = format (result, <span style="color: #E6DB74;">"more junk = %d\n"</span>, more_junk);
+</pre>
+</div>
+<p>
+首次调用传入参数 NULL，NULL也是一个正确的零长度向量。Format会返回一个 (u8 *) 的向量，而非字符串。如果要打印 (u8 *) vector ，可以使用 “%v” 来格式化输出。
+</p>
+
+<p>
+如果需要 （u8 *）vector 作为字符串，则可以通过一下方式（末尾追加 '\0'）：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #A6E22E;">vec_add1</span> (result, 0)
+<span style="color: #66D9EF;">or</span>
+<span style="color: #FD971F;">result</span> = format (result, <span style="color: #E6DB74;">"&lt;whatever&gt;%c"</span>, 0);
+</pre>
+</div>
+
+<p>
+使用完成后记得使用 vec_free() 释放 result。注意不要释放为经过初始化的 （u8 *）vector。
+</p>
+
+
+<p>
+Format 还有一个较为方便的使用方式， “%U” ：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">u8</span> * <span style="color: #A6E22E;">format_junk</span> (<span style="color: #66D9EF;">u8</span> * <span style="color: #FD971F;">s</span>, <span style="color: #66D9EF;">va_list</span> *<span style="color: #FD971F;">va</span>)
+{
+  junk = va_arg (va, u32);
+  s = format (s, <span style="color: #E6DB74;">"%s"</span>, junk);
+  <span style="color: #F92672;">return</span> s;
+}
+
+result = format (0, <span style="color: #E6DB74;">"junk = %U, format_junk, "</span>This is some junk<span style="color: #FD971F; font-weight: bold; font-style: italic; text-decoration: underline;">"</span><span style="color: #E6DB74;">);</span>
+</pre>
+</div>
+
+<p>
+如果需要，format_junk() 可以调用自定义的 foamat 函数。要记得进行参数类型检查，因为 va_arg(va,type) 宏的参数如果比不匹配，会导致函数出错。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgcb73936" class="outline-2">
+<h2 id="orgcb73936"><span class="section-number-2">8.</span> UnFormat</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Unformat 和scanf类似，但更为通用。
+</p>
+
+<p>
+A typical use case involves initializing an unformat_input_t from either a C-string or a (u8 *) vector, then
+parsing via unformat() as follows:
+例如：从 C类型字符串 或者 （u8 *）vector 初始化 unformat_input_t ，然后通过 unfromat() 解析：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #66D9EF;">unformat_input_t</span> <span style="color: #FD971F;">input</span>;
+<span style="color: #66D9EF;">u8</span> *<span style="color: #FD971F;">s</span> = <span style="color: #E6DB74;">"&lt;some-C-string&gt;"</span>;
+
+unformat_init_string (&amp;input, (<span style="color: #66D9EF;">char</span> *) s, strlen((<span style="color: #66D9EF;">char</span> *) s));
+<span style="color: #75715E;">/* </span><span style="color: #75715E;">or</span><span style="color: #75715E;"> */</span>
+unformat_init_vector (&amp;input, &lt;u8-vector&gt;);
+</pre>
+</div>
+
+<p>
+循环解析:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">while</span> (unformat_check_input (&amp;input) != UNFORMAT_END_OF_INPUT)
+{
+  <span style="color: #F92672;">if</span> (unformat (&amp;input, <span style="color: #E6DB74;">"value1 %d"</span>, &amp;value1))
+    ;<span style="color: #75715E;">/* </span><span style="color: #75715E;">unformat sets value1</span><span style="color: #75715E;"> */</span>
+  <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (unformat (&amp;input, <span style="color: #E6DB74;">"value2 %d"</span>, &amp;value2)
+    ;<span style="color: #75715E;">/* </span><span style="color: #75715E;">unformat sets value2</span><span style="color: #75715E;"> */</span>
+  <span style="color: #F92672;">else</span>
+    <span style="color: #F92672;">return</span> clib_error_return (0, <span style="color: #E6DB74;">"unknown input '%U'"</span>,
+                              format_unformat_error, input);
+}
+</pre>
+</div>
+
+
+<p>
+unfroamt 可以通过 %U 实现自定义的 unformat 功能。 format 到 unformat之间的转换：“format (s,”foo %d”, foo) -&gt; “unformat (input,”foo %d”, &amp;foo)“
+</p>
+
+<p>
+Unformat implements a couple of handy non-scanf-like format specifiers:
+Unformat 实现了几个？？？？
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #A6E22E;">unformat</span> (input, <span style="color: #E6DB74;">"enable %="</span>, &amp;enable, 1 <span style="color: #75715E;">/* </span><span style="color: #75715E;">defaults to 1</span><span style="color: #75715E;"> */</span>);
+<span style="color: #A6E22E;">unformat</span> (input, <span style="color: #E6DB74;">"bitzero %|"</span>, &amp;mask, (1&lt;&lt;0));
+<span style="color: #A6E22E;">unformat</span> (input, <span style="color: #E6DB74;">"bitone %|"</span>, &amp;mask, (1&lt;&lt;1));
+&lt;etc&gt;
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>“enable %=” : 如果没有解析到对应格式字符串，则设置 enable为默认值，如果如果字符串为 “enable 123”，则设置enable为123。We could clean up a number of hand-rolled “verbose” + “verbose %d” argument parsing codes using “%=”.</li>
+
+<li>“bitzero %|” : means “set the specified bit in the supplied bitmask” if unformat parses “bitzero”. Although it looks like it could be fairly handy, it’s very lightly used in the code base.</li>
+
+<li>%_ : toggles whether or not to skip input white space.</li>
+</ul>
+
+<p>
+For transition from skip to no-skip in middle of format string, skip input white space. For example, the
+following:
+</p>
+<div class="org-src-container">
+<pre class="src src-c">fmt = <span style="color: #E6DB74;">"%_%d.%d%_-&gt;%_%d.%d%_"</span>
+unformat (input, fmt, &amp;one, &amp;two, &amp;three, &amp;four);
+</pre>
+</div>
+
+<p>
+matches input “1.2 -&gt; 3.4”. Without this, the space after -&gt; does not get skipped.
+</p>
+</div>
+
+<div id="outline-container-orgfddf48f" class="outline-4">
+<h4 id="orgfddf48f"><span class="section-number-4">8.0.1.</span> How to parse a single input line</h4>
+<div class="outline-text-4" id="text-8-0-1">
+<p>
+Debug CLI command functions MUST NOT accidentally consume input belonging to other debug CLI commands.
+Otherwise, it’s impossible to script a set of debug CLI commands which “work fine” when issued one at a time.
+</p>
+
+<p>
+This bit of code is NOT correct:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #75715E;">/* </span><span style="color: #75715E;">Eats script input NOT beloging to it, and chokes!</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">while</span> (unformat_check_input (input) != UNFORMAT_END_OF_INPUT)
+  {
+    <span style="color: #F92672;">if</span> (unformat (input, ...))
+  ;
+    <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (unformat (input, ...))
+  ;
+    <span style="color: #F92672;">else</span>
+      <span style="color: #F92672;">return</span> clib_error_return (0, <span style="color: #E6DB74;">"parse error: '%U'"</span>,
+                           format_unformat_error, input);
+  }
+  }
+</pre>
+</div>
+
+<p>
+When executed as part of a script, such a function will return “parse error: ‘’” every time, unless it happens to be the last command in the script.
+</p>
+
+<p>
+Instead, use “unformat_line_input” to consume the rest of a line’s worth of input - everything past the path specified in the VLIB_CLI_COMMAND declaration.
+</p>
+
+<p>
+For example, unformat_line_input with “my_command” set up as shown below and user input “my path is clear” will produce an unformat_input_t that contains “is clear”.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">VLIB_CLI_COMMAND (...) = {
+    .path = <span style="color: #E6DB74;">"my path"</span>,
+};
+</pre>
+</div>
+
+<p>
+Here’s a bit of code which shows the required mechanics, in full:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"> <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">clib_error_t</span> *
+ <span style="color: #A6E22E;">my_command_fn</span> (<span style="color: #66D9EF;">vlib_main_t</span> * <span style="color: #FD971F;">vm</span>,
+                <span style="color: #66D9EF;">unformat_input_t</span> * <span style="color: #FD971F;">input</span>,
+                <span style="color: #66D9EF;">vlib_cli_command_t</span> * <span style="color: #FD971F;">cmd</span>)
+ {
+   <span style="color: #66D9EF;">unformat_input_t</span> <span style="color: #FD971F;">_line_input</span>, *<span style="color: #FD971F;">line_input</span> = &amp;_line_input;
+   <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">this</span>, <span style="color: #FD971F;">that</span>;
+   <span style="color: #66D9EF;">clib_error_t</span> *<span style="color: #FD971F;">error</span> = 0;
+
+   <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>unformat_user (input, unformat_line_input, line_input))
+     <span style="color: #F92672;">return</span> 0;
+
+   <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">    * Here, UNFORMAT_END_OF_INPUT is at the end of the line we consumed,</span>
+<span style="color: #75715E;">    * not at the end of the script...</span>
+<span style="color: #75715E;">    */</span>
+   <span style="color: #F92672;">while</span> (unformat_check_input (line_input) != UNFORMAT_END_OF_INPUT)
+     {
+        <span style="color: #F92672;">if</span> (unformat (line_input, <span style="color: #E6DB74;">"this %u"</span>, &amp;this))
+          ;
+        <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (unformat (line_input, <span style="color: #E6DB74;">"that %u"</span>, &amp;that))
+          ;
+        <span style="color: #F92672;">else</span>
+          {
+            error = clib_error_return (0, <span style="color: #E6DB74;">"parse error: '%U'"</span>,
+                              format_unformat_error, line_input);
+            <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">done</span>;
+          }
+       }
+
+ &lt;<span style="color: #F92672;">do</span> something based on <span style="color: #E6DB74;">"this"</span> and <span style="color: #E6DB74;">"that"</span>, etc&gt;
+
+ done:
+   unformat_free (line_input);
+   <span style="color: #F92672;">return</span> error;
+ }
+<span style="color: #A6E22E;">VLIB_CLI_COMMAND</span> (my_command, <span style="color: #F92672;">static</span>) = {
+  .path = <span style="color: #E6DB74;">"my path"</span>,
+  .function = my_command_fn<span style="color: #FD971F; font-weight: bold; font-style: italic; text-decoration: underline;">"</span><span style="color: #E6DB74;">,</span>
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc9f983a" class="outline-2">
+<h2 id="orgc9f983a"><span class="section-number-2">9.</span> 错误和警告</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+vpp 数据面中的函数返回值的类型通常是 clib_error_t *。Clib_error_t是带有元数据 [fatal, warning] 的任意字符串，声明比较简单。返回 NULL 表示没有错误。
+</p>
+
+<p>
+Clib_warning(format-args) 提供了调试输出的便捷方法。 clib_warnings包含的输出警告的代码行. Clib_unix_warning() 增加了 perror()-style Linux system-call information。 在生产映像中, clib_warnings 会输出到syslog中。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org79e905f" class="outline-2">
+<h2 id="org79e905f"><span class="section-number-2">10.</span> 序列化</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Vppinfra 序列化：可以轻松序列化和反序列化复杂的数据结构。
+</p>
+
+<p>
+底层使用网络字节序进行序列化/反序列化，因此在小端主机上序列化和在大端主机上反序列化不存在结构问题。
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

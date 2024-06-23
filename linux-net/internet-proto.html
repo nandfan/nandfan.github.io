@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-31 Fri 22:55 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Internet 协议族</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,68 +191,21 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">Internet 协议族</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgda66b9c">1. net_proto_family结构</a></li>
-<li><a href="#org59b684a">2. inet_protosw结构</a></li>
-<li><a href="#org220f746">3. net_protocol结构</a></li>
-<li><a href="#org14e10bf">4. Internet协议族初始化</a></li>
+<li><a href="#org30a9a92">1. net_proto_family结构</a></li>
+<li><a href="#org63c7ff5">2. inet_protosw结构</a></li>
+<li><a href="#org8573959">3. net_protocol结构</a></li>
+<li><a href="#org03be287">4. Internet协议族初始化</a></li>
 </ul>
 </div>
 </div>
@@ -309,25 +263,25 @@ Linux支持多种协议族，每个协议族用一个net_proto_family 结构的�
 </tbody>
 </table>
 
-<div id="outline-container-orgda66b9c" class="outline-2">
-<h2 id="orgda66b9c"><span class="section-number-2">1</span> net_proto_family结构</h2>
+<div id="outline-container-org30a9a92" class="outline-2">
+<h2 id="org30a9a92"><span class="section-number-2">1.</span> net_proto_family结构</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 net_proto_family结构的实例通过 sock_register() 注册到 net_families 数组中。 不同的协议族，其传输层的结构和实现有较大差异，其套接口的创建函数也有较大区别，因此 net_proto_family 结构提供了一个协议族到套接口之间的接口。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_proto_family</span> {
-	<span style="color: #5FD7FF;">int</span>             <span style="color: #FF8C00;">family</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;&#26063;</span>
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21327;&#35758;&#26063;&#30340;&#22871;&#25509;&#21475;&#21019;&#24314;&#20989;&#25968;&#25351;&#38024;</span>
-	<span style="color: #5FD7FF;">int</span>             (*<span style="color: #87D700;">create</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">socket</span> *<span style="color: #FF8C00;">sock</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">protocol</span>);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">module</span>   *<span style="color: #FF8C00;">owner</span>;
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_proto_family</span> {
+        <span style="color: #66D9EF;">int</span>             <span style="color: #FD971F;">family</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21327;&#35758;&#26063;</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21327;&#35758;&#26063;&#30340;&#22871;&#25509;&#21475;&#21019;&#24314;&#20989;&#25968;&#25351;&#38024;</span>
+        <span style="color: #66D9EF;">int</span>             (*<span style="color: #A6E22E;">create</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">socket</span> *<span style="color: #FD971F;">sock</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">protocol</span>);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">module</span>   *<span style="color: #FD971F;">owner</span>;
 };
 </pre>
 </div>
 
 
-<div class="figure">
+<div id="orgdeb6dcc" class="figure">
 <p><img src="image/internet-proto/net-families.png" alt="net-families.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>net_families结构的定义</p>
@@ -335,25 +289,25 @@ net_proto_family结构的实例通过 sock_register() 注册到 net_families 数
 </div>
 </div>
 
-<div id="outline-container-org59b684a" class="outline-2">
-<h2 id="org59b684a"><span class="section-number-2">2</span> inet_protosw结构</h2>
+<div id="outline-container-org63c7ff5" class="outline-2">
+<h2 id="org63c7ff5"><span class="section-number-2">2.</span> inet_protosw结构</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 每次创建套接口时，都需要使用 inet_protosw 结构。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This is used to register socket interfaces for IP protocols.</span><span style="color: #8B8878;">  */</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span> {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> <span style="color: #FF8C00;">list</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#29992;&#20110;&#23558;type&#20540;&#30456;&#21516;&#30340;&#23454;&#20363;&#36830;&#25509;&#25104;&#38142;&#34920;</span>
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#20197;&#19979;&#20004;&#20010;&#23383;&#27573;&#26500;&#25104;&#26597;&#25214;key</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>   <span style="color: #FF8C00;">type</span>;     <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26631;&#35782;&#22871;&#25509;&#21475;&#31867;&#22411;&#65292;socket&#30340;&#31532;&#20108;&#20010;&#21442;&#25968;&#12290;&#23545;&#20110;Internet&#21327;&#35758;&#26063;&#21253;&#21547; SOCK_STREAM SOCK_DGRAM SOCK_RAW &#19977;&#31181;&#31867;&#22411;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">short</span>   <span style="color: #FF8C00;">protocol</span>; <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21327;&#35758;&#26063;&#20013;&#30340;&#22235;&#23618;&#21327;&#35758;&#21495;&#65292;Internet&#21327;&#35758;&#26063;&#21253;&#25324; IPPROTO_TCP&#12289;IPPROTO_UDP&#31561;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto</span>     *<span style="color: #FF8C00;">prot</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#30340;&#32593;&#32476;&#23618;&#25509;&#21475; &#65288;tcp_prot  udp_prot raw_prot&#65289;</span>
-	<span style="color: #FF1493;">const</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">proto_ops</span> *<span style="color: #FF8C00;">ops</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22871;&#25509;&#21475;&#20256;&#36755;&#23618;&#25509;&#21475;</span>
-	<span style="color: #5FD7FF;">int</span>              <span style="color: #FF8C00;">capability</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22823;&#20110;0&#26102;&#65292;&#38656;&#35201;&#26816;&#39564;&#36827;&#31243;&#26159;&#21542;&#20855;&#22791;&#36825;&#31181;&#33021;&#21147;</span>
-	<span style="color: #5FD7FF;">char</span>             <span style="color: #FF8C00;">no_check</span>;   <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26159;&#21542;&#38656;&#35201;&#25191;&#34892;&#26657;&#39564;&#21644;</span>
-	<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>    <span style="color: #FF8C00;">flags</span>;      <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36741;&#21161;&#26631;&#24535;&#65292;&#29992;&#20110;&#21021;&#22987;&#21270;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;is_icsk&#25104;&#21592;</span>
+<pre class="src src-c"><span style="color: #75715E;">/* </span><span style="color: #75715E;">This is used to register socket interfaces for IP protocols.</span><span style="color: #75715E;">  */</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_protosw</span> {
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">list_head</span> <span style="color: #FD971F;">list</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#29992;&#20110;&#23558;type&#20540;&#30456;&#21516;&#30340;&#23454;&#20363;&#36830;&#25509;&#25104;&#38142;&#34920;</span>
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#20197;&#19979;&#20004;&#20010;&#23383;&#27573;&#26500;&#25104;&#26597;&#25214;key</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">short</span>   <span style="color: #FD971F;">type</span>;     <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26631;&#35782;&#22871;&#25509;&#21475;&#31867;&#22411;&#65292;socket&#30340;&#31532;&#20108;&#20010;&#21442;&#25968;&#12290;&#23545;&#20110;Internet&#21327;&#35758;&#26063;&#21253;&#21547; SOCK_STREAM SOCK_DGRAM SOCK_RAW &#19977;&#31181;&#31867;&#22411;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">short</span>   <span style="color: #FD971F;">protocol</span>; <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21327;&#35758;&#26063;&#20013;&#30340;&#22235;&#23618;&#21327;&#35758;&#21495;&#65292;Internet&#21327;&#35758;&#26063;&#21253;&#25324; IPPROTO_TCP&#12289;IPPROTO_UDP&#31561;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proto</span>     *<span style="color: #FD971F;">prot</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22871;&#25509;&#21475;&#30340;&#32593;&#32476;&#23618;&#25509;&#21475; &#65288;tcp_prot  udp_prot raw_prot&#65289;</span>
+        <span style="color: #F92672;">const</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">proto_ops</span> *<span style="color: #FD971F;">ops</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22871;&#25509;&#21475;&#20256;&#36755;&#23618;&#25509;&#21475;</span>
+        <span style="color: #66D9EF;">int</span>              <span style="color: #FD971F;">capability</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22823;&#20110;0&#26102;&#65292;&#38656;&#35201;&#26816;&#39564;&#36827;&#31243;&#26159;&#21542;&#20855;&#22791;&#36825;&#31181;&#33021;&#21147;</span>
+        <span style="color: #66D9EF;">char</span>             <span style="color: #FD971F;">no_check</span>;   <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26631;&#35782;&#26159;&#21542;&#38656;&#35201;&#25191;&#34892;&#26657;&#39564;&#21644;</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span>    <span style="color: #FD971F;">flags</span>;      <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36741;&#21161;&#26631;&#24535;&#65292;&#29992;&#20110;&#21021;&#22987;&#21270;&#20256;&#36755;&#25511;&#21046;&#22359;&#30340;is_icsk&#25104;&#21592;</span>
 };
 </pre>
 </div>
@@ -432,7 +386,7 @@ inet_protosw结构的实例通过 inet_register_protosw() 函数注册，使用t
 </p>
 
 
-<div class="figure">
+<div id="org38c391a" class="figure">
 <p><img src="image/internet-proto/inetsw.png" alt="inetsw.png" />
 </p>
 <p><span class="figure-number">Figure 2: </span>inetsw散列表和inetsw_array数组</p>
@@ -440,25 +394,25 @@ inet_protosw结构的实例通过 inet_register_protosw() 函数注册，使用t
 </div>
 </div>
 
-<div id="outline-container-org220f746" class="outline-2">
-<h2 id="org220f746"><span class="section-number-2">3</span> net_protocol结构</h2>
+<div id="outline-container-org8573959" class="outline-2">
+<h2 id="org8573959"><span class="section-number-2">3.</span> net_protocol结构</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 net_protocol结构定义了协议族中支持的传输层协议，以及传输层的报文接收例程。 此结构是网络层和传输层的桥梁，网络数据报在从网络层流向传输层时，调用此结构的传输层协议数据报接收处理函数。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/* </span><span style="color: #8B8878;">This is used to register protocols.</span><span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_protocol</span> {
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#21327;&#35758;&#25968;&#25454;&#25253;&#25509;&#25910;&#20989;&#25968;&#25351;&#38024;</span>
-	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">handler</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">ICMP&#27169;&#22359;&#20013;&#25509;&#25910;&#21040;&#24046;&#38169;&#25253;&#25991;&#21518;&#65292;&#20250;&#35299;&#26512;&#24046;&#38169;&#25253;&#25991;&#65292;&#24182;&#26681;&#25454;&#24046;&#38169;&#20449;&#24687;&#35843;&#29992;&#23545;&#24212;&#20256;&#36755;&#23618;&#30340;&#24322;&#24120;&#22788;&#29702;&#20989;&#25968;</span>
-	<span style="color: #5FD7FF;">void</span>                    (*<span style="color: #87D700;">err_handler</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">u32</span> <span style="color: #FF8C00;">info</span>);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#22312;&#20998;&#27573;&#20043;&#21069;&#23545;&#20026;&#39318;&#37096;&#36827;&#34892;&#26657;&#39564;&#21644;&#30340;&#35745;&#31639;</span>
-	<span style="color: #5FD7FF;">int</span>                     (*<span style="color: #87D700;">gso_send_check</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20256;&#36755;&#23618;&#30340;GSO&#20998;&#27573;&#26041;&#27861;</span>
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span>       *(*<span style="color: #87D700;">gso_segment</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">features</span>);
-	<span style="color: #5FD7FF;">int</span>                     <span style="color: #FF8C00;">no_policy</span>; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26631;&#35782;&#26159;&#21542;&#36827;&#34892;&#31574;&#30053;&#36335;&#30001;</span>
+<pre class="src src-c"><span style="color: #75715E;">/* </span><span style="color: #75715E;">This is used to register protocols.</span><span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_protocol</span> {
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20256;&#36755;&#23618;&#21327;&#35758;&#25968;&#25454;&#25253;&#25509;&#25910;&#20989;&#25968;&#25351;&#38024;</span>
+        <span style="color: #66D9EF;">int</span>                     (*<span style="color: #A6E22E;">handler</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">ICMP&#27169;&#22359;&#20013;&#25509;&#25910;&#21040;&#24046;&#38169;&#25253;&#25991;&#21518;&#65292;&#20250;&#35299;&#26512;&#24046;&#38169;&#25253;&#25991;&#65292;&#24182;&#26681;&#25454;&#24046;&#38169;&#20449;&#24687;&#35843;&#29992;&#23545;&#24212;&#20256;&#36755;&#23618;&#30340;&#24322;&#24120;&#22788;&#29702;&#20989;&#25968;</span>
+        <span style="color: #66D9EF;">void</span>                    (*<span style="color: #A6E22E;">err_handler</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>, <span style="color: #66D9EF;">u32</span> <span style="color: #FD971F;">info</span>);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20256;&#36755;&#23618;&#22312;&#20998;&#27573;&#20043;&#21069;&#23545;&#20026;&#39318;&#37096;&#36827;&#34892;&#26657;&#39564;&#21644;&#30340;&#35745;&#31639;</span>
+        <span style="color: #66D9EF;">int</span>                     (*<span style="color: #A6E22E;">gso_send_check</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20256;&#36755;&#23618;&#30340;GSO&#20998;&#27573;&#26041;&#27861;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span>       *(*<span style="color: #A6E22E;">gso_segment</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">features</span>);
+        <span style="color: #66D9EF;">int</span>                     <span style="color: #FD971F;">no_policy</span>; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26631;&#35782;&#26159;&#21542;&#36827;&#34892;&#31574;&#30053;&#36335;&#30001;</span>
 };
 </pre>
 </div>
@@ -538,7 +492,7 @@ internet协议族中定义的四个net_protocol结构的实例： icmp_protocol 
 </p>
 
 
-<div class="figure">
+<div id="org486afd5" class="figure">
 <p><img src="image/internet-proto/inet-protos.png" alt="inet-protos.png" />
 </p>
 <p><span class="figure-number">Figure 3: </span>inet_protos结构</p>
@@ -552,66 +506,66 @@ internet协议族中定义的四个net_protocol结构的实例： icmp_protocol 
 例如：ip_local_deliver_finish
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">ip_local_deliver_finish</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">inline</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">ip_local_deliver_finish</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>)
 {
-		hash = protocol &amp; (MAX_INET_PROTOS - 1);
-		<span style="color: #FF1493;">if</span> ((ipprot = rcu_dereference(inet_protos[hash])) != <span style="color: #AF87FF;">NULL</span>) {
-			ret = ipprot-&gt;handler(skb);
-		} <span style="color: #FF1493;">else</span> {
-	}
- <span style="color: #AF87FF;">out</span>:
-	rcu_read_unlock();
-	<span style="color: #FF1493;">return</span> 0;
+                hash = protocol &amp; (MAX_INET_PROTOS - 1);
+                <span style="color: #F92672;">if</span> ((ipprot = rcu_dereference(inet_protos[hash])) != <span style="color: #AE81FF;">NULL</span>) {
+                        ret = ipprot-&gt;handler(skb);
+                } <span style="color: #F92672;">else</span> {
+        }
+ <span style="color: #AE81FF;">out</span>:
+        rcu_read_unlock();
+        <span style="color: #F92672;">return</span> 0;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org14e10bf" class="outline-2">
-<h2 id="org14e10bf"><span class="section-number-2">4</span> Internet协议族初始化</h2>
+<div id="outline-container-org03be287" class="outline-2">
+<h2 id="org03be287"><span class="section-number-2">4.</span> Internet协议族初始化</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Internet协议族的初始化函数为 inet_init()， 通过fs_initcall(inet_init)宏，将inet_init加入到内核的初始化列表中，以保证在系统初始化时调用。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">__init</span> inet_init(<span style="color: #5FD7FF;">void</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">__init</span> inet_init(<span style="color: #66D9EF;">void</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">dummy_skb</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">inet_protosw</span> *<span style="color: #FF8C00;">q</span>;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">list_head</span> *<span style="color: #FF8C00;">r</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rc</span> = -EINVAL;
-	rc = proto_register(&amp;tcp_prot, 1);
-	rc = proto_register(&amp;udp_prot, 1);
-	rc = proto_register(&amp;raw_prot, 1);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27880;&#20876;internet&#21327;&#35758;&#26063;</span>
-	(<span style="color: #5FD7FF;">void</span>)sock_register(&amp;inet_family_ops);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27880;&#20876;&#20256;&#36755;&#23618;&#21327;&#35758;&#21450;&#20854;&#25509;&#25910;&#20363;&#31243;</span>
-	<span style="color: #FF1493;">if</span> (inet_add_protocol(&amp;icmp_protocol, IPPROTO_ICMP) &lt; 0);
-	<span style="color: #FF1493;">if</span> (inet_add_protocol(&amp;udp_protocol, IPPROTO_UDP) &lt; 0);
-	<span style="color: #FF1493;">if</span> (inet_add_protocol(&amp;tcp_protocol, IPPROTO_TCP) &lt; 0);
-	<span style="color: #FF1493;">if</span> (inet_add_protocol(&amp;igmp_protocol, IPPROTO_IGMP) &lt; 0);
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#21021;&#22987;&#21270;inetsw&#25955;&#21015;&#34920;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">for</span> (r = &amp;inetsw[0]; r &lt; &amp;inetsw[SOCK_MAX]; ++r)
-		INIT_LIST_HEAD(r);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;inetsw_array&#20013;&#30340;&#23454;&#20363;&#27880;&#20876;&#21040;inetsw&#25955;&#21015;&#34920;</span>
-	<span style="color: #FF1493;">for</span> (q = inetsw_array; q &lt; &amp;inetsw_array[INETSW_ARRAY_LEN]; ++q)
-		inet_register_protosw(q);
-	arp_init();<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21021;&#22987;&#21270;arp&#27169;&#22359;</span>
-	ip_init();
-	tcp_v4_init(&amp;inet_family_ops);
-	tcp_init();
-	udplite4_register();
-	icmp_init(&amp;inet_family_ops);
-	ip_mr_init();
-	<span style="color: #FF1493;">if</span>(init_ipv4_mibs());
-	ipv4_proc_init();
-	ipfrag_init();
-	dev_add_pack(&amp;ip_packet_type); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#27880;&#20876;internet&#21327;&#35758;&#26063;&#25253;&#25991;&#31867;&#22411;&#21450;&#25509;&#25910;&#22788;&#29702;&#20989;&#25968;&#12290;</span>
-	rc = 0;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">dummy_skb</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">inet_protosw</span> *<span style="color: #FD971F;">q</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">list_head</span> *<span style="color: #FD971F;">r</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">rc</span> = -EINVAL;
+        rc = proto_register(&amp;tcp_prot, 1);
+        rc = proto_register(&amp;udp_prot, 1);
+        rc = proto_register(&amp;raw_prot, 1);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#27880;&#20876;internet&#21327;&#35758;&#26063;</span>
+        (<span style="color: #66D9EF;">void</span>)sock_register(&amp;inet_family_ops);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#27880;&#20876;&#20256;&#36755;&#23618;&#21327;&#35758;&#21450;&#20854;&#25509;&#25910;&#20363;&#31243;</span>
+        <span style="color: #F92672;">if</span> (inet_add_protocol(&amp;icmp_protocol, IPPROTO_ICMP) &lt; 0);
+        <span style="color: #F92672;">if</span> (inet_add_protocol(&amp;udp_protocol, IPPROTO_UDP) &lt; 0);
+        <span style="color: #F92672;">if</span> (inet_add_protocol(&amp;tcp_protocol, IPPROTO_TCP) &lt; 0);
+        <span style="color: #F92672;">if</span> (inet_add_protocol(&amp;igmp_protocol, IPPROTO_IGMP) &lt; 0);
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#21021;&#22987;&#21270;inetsw&#25955;&#21015;&#34920;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">for</span> (r = &amp;inetsw[0]; r &lt; &amp;inetsw[SOCK_MAX]; ++r)
+                INIT_LIST_HEAD(r);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23558;inetsw_array&#20013;&#30340;&#23454;&#20363;&#27880;&#20876;&#21040;inetsw&#25955;&#21015;&#34920;</span>
+        <span style="color: #F92672;">for</span> (q = inetsw_array; q &lt; &amp;inetsw_array[INETSW_ARRAY_LEN]; ++q)
+                inet_register_protosw(q);
+        arp_init();<span style="color: #75715E;">//</span><span style="color: #75715E;">&#21021;&#22987;&#21270;arp&#27169;&#22359;</span>
+        ip_init();
+        tcp_v4_init(&amp;inet_family_ops);
+        tcp_init();
+        udplite4_register();
+        icmp_init(&amp;inet_family_ops);
+        ip_mr_init();
+        <span style="color: #F92672;">if</span>(init_ipv4_mibs());
+        ipv4_proc_init();
+        ipfrag_init();
+        dev_add_pack(&amp;ip_packet_type); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#27880;&#20876;internet&#21327;&#35758;&#26063;&#25253;&#25991;&#31867;&#22411;&#21450;&#25509;&#25910;&#22788;&#29702;&#20989;&#25968;&#12290;</span>
+        rc = 0;
 }
-<span style="color: #87D700;">fs_initcall</span>(inet_init);
+<span style="color: #A6E22E;">fs_initcall</span>(inet_init);
 </pre>
 </div>
 </div>
@@ -620,8 +574,8 @@ Internet协议族的初始化函数为 inet_init()， 通过fs_initcall(inet_ini
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-31 Fri 22:55</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

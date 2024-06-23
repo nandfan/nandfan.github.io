@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-03-22 Mon 12:44 -->
+<!-- 2024-06-23 Sun 15:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux命名空间</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +42,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,113 +191,90 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.add("code-highlighted");
-	 target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-	 elem.classList.remove("code-highlighted");
-	 target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">Linux命名空间</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org7f33afd">1. 命名空间</a></li>
-<li><a href="#orge4dcc4a">2. mount namespace</a>
+<li><a href="#org2cbab21">1. 命名空间</a></li>
+<li><a href="#orgb1bbff8">2. mount namespace</a>
 <ul>
-<li><a href="#orge2dfed9">2.1. 描述</a></li>
-<li><a href="#org5427368">2.2. 共享子树</a></li>
-<li><a href="#org58b7c4e">2.3. 实例</a></li>
-<li><a href="#org8438522">2.4. 传播类型的转变</a></li>
-<li><a href="#org3b85b7e">2.5. Bind(MS_BIND)</a></li>
-<li><a href="#org6666b7b">2.6. Move(MS_MOVE)</a></li>
-<li><a href="#orgbec71f6">2.7. /proc/pid/mountinfo 的 propagate_from 标记</a></li>
+<li><a href="#org23719bd">2.1. 描述</a></li>
+<li><a href="#org2c42360">2.2. 共享子树</a></li>
+<li><a href="#org92cb4dd">2.3. 实例</a></li>
+<li><a href="#org4c75cf2">2.4. 传播类型的转变</a></li>
+<li><a href="#org4037d83">2.5. Bind(MS_BIND)</a></li>
+<li><a href="#org45bb152">2.6. Move(MS_MOVE)</a></li>
+<li><a href="#orgd1649b3">2.7. /proc/pid/mountinfo 的 propagate_from 标记</a></li>
 </ul>
 </li>
-<li><a href="#org5f36403">3. UTS namespace</a>
+<li><a href="#org734667f">3. UTS namespace</a>
 <ul>
-<li><a href="#orgf4915b6">3.1. 描述</a></li>
-<li><a href="#org9f79c6a">3.2. 创建</a></li>
-<li><a href="#org11e747f">3.3. 修改和查看</a></li>
+<li><a href="#org06d4313">3.1. 描述</a></li>
+<li><a href="#orgc9719f2">3.2. 创建</a></li>
+<li><a href="#orgab163bb">3.3. 修改和查看</a></li>
 </ul>
 </li>
-<li><a href="#orgfe4fbb6">4. IPC namespace</a>
+<li><a href="#orgcbe3e44">4. IPC namespace</a>
 <ul>
-<li><a href="#org846a489">4.1. 相关的/proc接口</a></li>
+<li><a href="#org0f67f6a">4.1. 相关的/proc接口</a></li>
 </ul>
 </li>
-<li><a href="#org5bc0f62">5. network namespace</a></li>
-<li><a href="#org55633a1">6. PID namespace</a>
+<li><a href="#org4deb6e9">5. network namespace</a></li>
+<li><a href="#org1c98092">6. PID namespace</a>
 <ul>
-<li><a href="#orge4c46b6">6.1. 命名空间中的init进程</a></li>
-<li><a href="#orga7408fc">6.2. 命名空间的嵌套</a></li>
-<li><a href="#orga33d958">6.3. setns和unshare</a></li>
-<li><a href="#org7f1b97b">6.4. CLONE_NEWPID和其他CLONE_*标志的兼容</a></li>
-<li><a href="#orgdfc5f11">6.5. /proc和PID namespace</a></li>
-<li><a href="#orga0e6438">6.6. /proc files</a></li>
-<li><a href="#org1dd22b0">6.7. 说明</a></li>
+<li><a href="#org9bd92a2">6.1. 命名空间中的init进程</a></li>
+<li><a href="#orga4181e3">6.2. 命名空间的嵌套</a></li>
+<li><a href="#org83d7a05">6.3. setns和unshare</a></li>
+<li><a href="#org07d4cbc">6.4. CLONE_NEWPID和其他CLONE_*标志的兼容</a></li>
+<li><a href="#org5811c18">6.5. /proc和PID namespace</a></li>
+<li><a href="#org093abf7">6.6. /proc files</a></li>
+<li><a href="#org9ded346">6.7. 说明</a></li>
 </ul>
 </li>
-<li><a href="#orgcc256d7">7. cgroup namespace</a>
+<li><a href="#org2c2d455">7. cgroup namespace</a>
 <ul>
-<li><a href="#orgee1e176">7.1. 描述</a></li>
+<li><a href="#org5340924">7.1. 描述</a></li>
 </ul>
 </li>
-<li><a href="#org974909f">8. user namespace</a>
+<li><a href="#org143245c">8. user namespace</a>
 <ul>
-<li><a href="#orgfafbf8a">8.1. 描述</a></li>
-<li><a href="#org553f47b">8.2. Capabilities</a></li>
-<li><a href="#orgf7dd7b7">8.3. 创建</a></li>
-<li><a href="#org5c76c66">8.4. 修改和查看</a></li>
+<li><a href="#org8dc40ed">8.1. 描述</a></li>
+<li><a href="#org5e310a3">8.2. Capabilities</a></li>
+<li><a href="#org508b5c8">8.3. 创建</a></li>
+<li><a href="#org0c0d8ad">8.4. 修改和查看</a></li>
 </ul>
 </li>
-<li><a href="#orgf0c5751">9. 创建相关</a>
+<li><a href="#orgdbc6501">9. 创建相关</a>
 <ul>
-<li><a href="#org7684bc2">9.1. 命令</a></li>
-<li><a href="#org67dbc63">9.2. 函数</a></li>
+<li><a href="#orgf796770">9.1. 命令</a></li>
+<li><a href="#org216600e">9.2. 函数</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org7f33afd" class="outline-2">
-<h2 id="org7f33afd"><span class="section-number-2">1</span> 命名空间</h2>
+<div id="outline-container-org2cbab21" class="outline-2">
+<h2 id="org2cbab21"><span class="section-number-2">1.</span> 命名空间</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 命名空间提供了一种虚拟化的轻量级形式，使得我们能够从不同的方面查看系统的全局属性，
 </p>
 </div>
 </div>
-<div id="outline-container-orge4dcc4a" class="outline-2">
-<h2 id="orge4dcc4a"><span class="section-number-2">2</span> mount namespace</h2>
+<div id="outline-container-orgb1bbff8" class="outline-2">
+<h2 id="orgb1bbff8"><span class="section-number-2">2.</span> mount namespace</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orge2dfed9" class="outline-3">
-<h3 id="orge2dfed9"><span class="section-number-3">2.1</span> 描述</h3>
+<div id="outline-container-org23719bd" class="outline-3">
+<h3 id="org23719bd"><span class="section-number-3">2.1.</span> 描述</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 Mount namespace在每个namespace实例中提供了进程可以看到的隔离的挂载点列表信息。进程在每个mount namespace实例中看到不同的单目录层次结构。
@@ -321,8 +299,8 @@ unshare会在新的mount namespace中设置 <code>propagation</code> 为 <code>p
 </div>
 </div>
 
-<div id="outline-container-org5427368" class="outline-3">
-<h3 id="org5427368"><span class="section-number-3">2.2</span> 共享子树</h3>
+<div id="outline-container-org2c42360" class="outline-3">
+<h3 id="org2c42360"><span class="section-number-3">2.2.</span> 共享子树</h3>
 <div class="outline-text-3" id="text-2-2">
 <dl class="org-dl">
 <dt>MS_SHARED</dt><dd></dd>
@@ -354,14 +332,14 @@ unshare会在新的mount namespace中设置 <code>propagation</code> 为 <code>p
 </div>
 </div>
 
-<div id="outline-container-org58b7c4e" class="outline-3">
-<h3 id="org58b7c4e"><span class="section-number-3">2.3</span> 实例</h3>
+<div id="outline-container-org92cb4dd" class="outline-3">
+<h3 id="org92cb4dd"><span class="section-number-3">2.3.</span> 实例</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 设置为共享装载
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-shared &#25346;&#36733;&#28857;&#30446;&#24405;</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-shared &#25346;&#36733;&#28857;&#30446;&#24405;</span>
 </pre>
 </div>
 
@@ -369,7 +347,7 @@ unshare会在新的mount namespace中设置 <code>propagation</code> 为 <code>p
 设置为私有装载
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-private &#25346;&#36733;&#28857;&#30446;&#24405;</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-private &#25346;&#36733;&#28857;&#30446;&#24405;</span>
 </pre>
 </div>
 
@@ -377,7 +355,7 @@ unshare会在新的mount namespace中设置 <code>propagation</code> 为 <code>p
 设置为从属装载
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-slave &#25346;&#36733;&#28857;&#30446;&#24405;</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-slave &#25346;&#36733;&#28857;&#30446;&#24405;</span>
 </pre>
 </div>
 
@@ -385,14 +363,14 @@ unshare会在新的mount namespace中设置 <code>propagation</code> 为 <code>p
 设置为不可绑定装载
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-unbindable &#25346;&#36733;&#28857;&#30446;&#24405;</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-unbindable &#25346;&#36733;&#28857;&#30446;&#24405;</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org8438522" class="outline-3">
-<h3 id="org8438522"><span class="section-number-3">2.4</span> 传播类型的转变</h3>
+<div id="outline-container-org4c75cf2" class="outline-3">
+<h3 id="org4c75cf2"><span class="section-number-3">2.4.</span> 传播类型的转变</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 对一个已经存在传播类型的挂载点应用新的传播类型时的属性转换如下表：
@@ -475,14 +453,14 @@ unshare会在新的mount namespace中设置 <code>propagation</code> 为 <code>p
 </div>
 </div>
 
-<div id="outline-container-org3b85b7e" class="outline-3">
-<h3 id="org3b85b7e"><span class="section-number-3">2.5</span> Bind(MS_BIND)</h3>
+<div id="outline-container-org4037d83" class="outline-3">
+<h3 id="org4037d83"><span class="section-number-3">2.5.</span> Bind(MS_BIND)</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 假设执行了以下命令：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --bind A/a B/b</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --bind A/a B/b</span>
 </pre>
 </div>
 
@@ -492,23 +470,23 @@ B/b的传播类型依赖装载点A和B的传播类型，如下表所示：
 
 <div class="org-src-container">
 <pre class="src src-fundamental">                            source(A)
-		     shared  private    slave         unbind
+                     shared  private    slave         unbind
 &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
 dest(B)  shared    | shared  shared     slave+shared  invalid
-	 nonshared | shared  private    slave         invalid
+         nonshared | shared  private    slave         invalid
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org6666b7b" class="outline-3">
-<h3 id="org6666b7b"><span class="section-number-3">2.6</span> Move(MS_MOVE)</h3>
+<div id="outline-container-org45bb152" class="outline-3">
+<h3 id="org45bb152"><span class="section-number-3">2.6.</span> Move(MS_MOVE)</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 假设执行了以下命令：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --move A B/b</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --move A B/b</span>
 </pre>
 </div>
 
@@ -518,17 +496,17 @@ B/b的传播类型依赖装载点A和B的传播类型，如下表所示：
 
 <div class="org-src-container">
 <pre class="src src-fundamental">                             source(A)
-		     shared  private    slave         unbind
+                     shared  private    slave         unbind
 &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
 dest(B)  shared    | shared  shared     slave+shared  invalid
-	 nonshared | shared  private    slave         unbindable
+         nonshared | shared  private    slave         unbindable
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgbec71f6" class="outline-3">
-<h3 id="orgbec71f6"><span class="section-number-3">2.7</span> /proc/pid/mountinfo 的 propagate_from 标记</h3>
+<div id="outline-container-orgd1649b3" class="outline-3">
+<h3 id="orgd1649b3"><span class="section-number-3">2.7.</span> /proc/pid/mountinfo 的 propagate_from 标记</h3>
 <div class="outline-text-3" id="text-2-7">
 <p>
 /proc/pid/mountinfo 文件的选项字段中显示了 propagate_from:X 标记，以防止进程无法看到从属装载的主装载（例如，从文件系统根目录无法访问主装载的路径），导致无法确定装载点之间的传播链。
@@ -542,9 +520,9 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 首先，绑定根目录到/mnt， 绑定/proc到/mnt/proc，以便在后续执行chroot后的环境中proc文件系统可以正常访问。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mkdir -p /mnt/proc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --bind / /mnt</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --bind /proc /mnt/proc</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mkdir -p /mnt/proc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">mount --bind / /mnt</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">mount --bind /proc /mnt/proc</span>
 </pre>
 </div>
 
@@ -553,9 +531,9 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 确保 /mnt 在新的peer group中是一个共享装载。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-private /mnt  # Isolate from any previous peer group</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-shared /mnt</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat /proc/self/mountinfo | grep '/mnt' | sed 's/ - .*//'</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-private /mnt  # Isolate from any previous peer group</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-shared /mnt</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">cat /proc/self/mountinfo | grep '/mnt' | sed 's/ - .*//'</span>
 567 27 8:2 / /mnt rw,relatime shared:284
 578 567 0:4 / /mnt/proc rw,nosuid,nodev,noexec,relatime shared:13
 </pre>
@@ -565,9 +543,9 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 绑定 /mnt/etc 到 /tmp/etc：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mkdir -p /tmp/etc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --bind /mnt/etc /tmp/etc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat /proc/self/mountinfo | egrep '/mnt|/tmp/' | sed 's/ - .*//'</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mkdir -p /tmp/etc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">mount --bind /mnt/etc /tmp/etc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">cat /proc/self/mountinfo | egrep '/mnt|/tmp/' | sed 's/ - .*//'</span>
 567 27 8:2 / /mnt rw,relatime shared:284
 578 567 0:4 / /mnt/proc rw,nosuid,nodev,noexec,relatime shared:13
 600 27 8:2 /etc /tmp/etc rw,relatime shared:284
@@ -579,9 +557,9 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-slave /tmp/etc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-shared /tmp/etc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat /proc/self/mountinfo | egrep '/mnt|/tmp/' | sed 's/ - .*//'</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-slave /tmp/etc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-shared /tmp/etc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">cat /proc/self/mountinfo | egrep '/mnt|/tmp/' | sed 's/ - .*//'</span>
 567 27 8:2 / /mnt rw,relatime shared:284
 578 567 0:4 / /mnt/proc rw,nosuid,nodev,noexec,relatime shared:13
 600 27 8:2 /etc /tmp/etc rw,relatime shared:293 master:284
@@ -593,10 +571,10 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 然后绑定 /tmp/etc 到 /mnt/tmp/etc. 此时， /mnt/tmp/etc 和 /tmp/etc 再次初始化为相同的peer group， 我们继续设置 /mnt/tmp/etc 作为 /tmp/etc 的从装载。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mkdir -p /mnt/tmp/etc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --bind /tmp/etc /mnt/tmp/etc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">mount --make-slave /mnt/tmp/etc</span>
-<span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat /proc/self/mountinfo | egrep '/mnt|/tmp/' | sed 's/ - .*//'</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">mkdir -p /mnt/tmp/etc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">mount --bind /tmp/etc /mnt/tmp/etc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">mount --make-slave /mnt/tmp/etc</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">cat /proc/self/mountinfo | egrep '/mnt|/tmp/' | sed 's/ - .*//'</span>
 567 27 8:2 / /mnt rw,relatime shared:284
 578 567 0:4 / /mnt/proc rw,nosuid,nodev,noexec,relatime shared:13
 600 27 8:2 /etc /tmp/etc rw,relatime shared:293 master:284
@@ -612,7 +590,7 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 现在，我们执行chroot到/mnt， ID为600的装载点在新的根目录（/mnt）中将不能访问。
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">chroot /mnt</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">chroot /mnt</span>
 </pre>
 </div>
 
@@ -620,7 +598,7 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 在新的根目录环境中查看mount挂载信息：
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878; font-style: italic;">cat /proc/self/mountinfo | sed 's/ - .*//'</span>
+<pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">cat /proc/self/mountinfo | sed 's/ - .*//'</span>
 567 27 8:2 / / rw,relatime shared:284
 578 567 0:4 / /proc rw,nosuid,nodev,noexec,relatime shared:13
 621 567 8:2 /etc /tmp/etc rw,relatime master:293 propagate_from:284
@@ -633,15 +611,15 @@ dest(B)  shared    | shared  shared     slave+shared  invalid
 </div>
 </div>
 
-<div id="outline-container-org5f36403" class="outline-2">
-<h2 id="org5f36403"><span class="section-number-2">3</span> UTS namespace</h2>
+<div id="outline-container-org734667f" class="outline-2">
+<h2 id="org734667f"><span class="section-number-2">3.</span> UTS namespace</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 要使用UTS namespaces，内核需要配置CONFIG_UTS_NS选项。
 </p>
 </div>
-<div id="outline-container-orgf4915b6" class="outline-3">
-<h3 id="orgf4915b6"><span class="section-number-3">3.1</span> 描述</h3>
+<div id="outline-container-org06d4313" class="outline-3">
+<h3 id="org06d4313"><span class="section-number-3">3.1.</span> 描述</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 UTS namespace实现了两个系统标识符的隔离， 配置hostname和domainname不会影响到系统的其他部分。
@@ -653,8 +631,8 @@ UTS namespace包含了所运行内核的名称、版本、底层体系结构类�
 </div>
 </div>
 
-<div id="outline-container-org9f79c6a" class="outline-3">
-<h3 id="org9f79c6a"><span class="section-number-3">3.2</span> 创建</h3>
+<div id="outline-container-orgc9719f2" class="outline-3">
+<h3 id="orgc9719f2"><span class="section-number-3">3.2.</span> 创建</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 在调用clone系统调用时，指定CLONE_NEWUTS将会在新进程中创建新的UTS namespace，并从调用进程UTS namespace复制到本进程中。这个标志可以用于实现容器。
@@ -666,8 +644,8 @@ UTS namespace包含了所运行内核的名称、版本、底层体系结构类�
 </div>
 </div>
 
-<div id="outline-container-org11e747f" class="outline-3">
-<h3 id="org11e747f"><span class="section-number-3">3.3</span> 修改和查看</h3>
+<div id="outline-container-orgab163bb" class="outline-3">
+<h3 id="orgab163bb"><span class="section-number-3">3.3.</span> 修改和查看</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 UTS namespace标识的集合可以通过umame系统调用获得， domain和hostname可以通过setdomainname和sethostname系统调用来设置，修改后只能在本UTS namespace中的进程可见。同时可以通过gethostname和getdomainname系统调用来查看。
@@ -676,8 +654,8 @@ UTS namespace标识的集合可以通过umame系统调用获得， domain和host
 </div>
 </div>
 
-<div id="outline-container-orgfe4fbb6" class="outline-2">
-<h2 id="orgfe4fbb6"><span class="section-number-2">4</span> IPC namespace</h2>
+<div id="outline-container-orgcbe3e44" class="outline-2">
+<h2 id="orgcbe3e44"><span class="section-number-2">4.</span> IPC namespace</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 IPC namespace隔离了IPC资源（System V IPC object 和POSIX消息队列）。这些IPC结构的共同特征是由文件路径名称之外的结构来标识。
@@ -696,8 +674,8 @@ IPC namespace隔离了IPC资源（System V IPC object 和POSIX消息队列）。
 </p>
 </div>
 
-<div id="outline-container-org846a489" class="outline-3">
-<h3 id="org846a489"><span class="section-number-3">4.1</span> 相关的/proc接口</h3>
+<div id="outline-container-org0f67f6a" class="outline-3">
+<h3 id="org0f67f6a"><span class="section-number-3">4.1.</span> 相关的/proc接口</h3>
 <div class="outline-text-3" id="text-4-1">
 <ul class="org-ul">
 <li>POSIX消息队列接口位于 /proc/sys/fs/mqueue 中。</li>
@@ -708,8 +686,8 @@ IPC namespace隔离了IPC资源（System V IPC object 和POSIX消息队列）。
 </div>
 </div>
 
-<div id="outline-container-org5bc0f62" class="outline-2">
-<h2 id="org5bc0f62"><span class="section-number-2">5</span> network namespace</h2>
+<div id="outline-container-org4deb6e9" class="outline-2">
+<h2 id="org4deb6e9"><span class="section-number-2">5.</span> network namespace</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 网络命名空间为进程提供了隔离的网络设备，ipv4/ipv6协议栈，路由表，防火墙规则，/proc/net（链接到/proc/pic/net）目录树，/sys/class/net目录树，/proc/sys/net目录下的多个文件，端口号（sockets）等等。另外，网络命名空间隔离了UNIX域抽象套接字命名空间。
@@ -730,8 +708,8 @@ IPC namespace隔离了IPC资源（System V IPC object 和POSIX消息队列）。
 </div>
 
 
-<div id="outline-container-org55633a1" class="outline-2">
-<h2 id="org55633a1"><span class="section-number-2">6</span> PID namespace</h2>
+<div id="outline-container-org1c98092" class="outline-2">
+<h2 id="org1c98092"><span class="section-number-2">6.</span> PID namespace</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 PID namespace隔离了进程的PID空间，即进程在不同的PID namespaces内可以有相同的PID。PID namespace允许容器提供暂停和唤醒容器内部的进程集合，迁移容器到新的宿主机而内部进程的PID保持不变。
@@ -746,8 +724,8 @@ PID namespace隔离了进程的PID空间，即进程在不同的PID namespaces�
 </p>
 </div>
 
-<div id="outline-container-orge4c46b6" class="outline-3">
-<h3 id="orge4c46b6"><span class="section-number-3">6.1</span> 命名空间中的init进程</h3>
+<div id="outline-container-org9bd92a2" class="outline-3">
+<h3 id="org9bd92a2"><span class="section-number-3">6.1.</span> 命名空间中的init进程</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 通过clone调用并指定CLONE_NEWPID创建的新PID命名空间，命名空间内首个创建的进程作为init进程，或者父进程通过unshare并指定CLONE_NEWPID创建的子进程作为init进程，其PID为1。命名空间内的子进程孤立后，由其内部的init进程作为父进程（除非同一个PID命名空间中的子进程的祖先调用了ptctl并指定PR_SET_CHILD_SUBREAPER指令来回收后代孤立进程）。
@@ -767,8 +745,8 @@ PID namespace隔离了进程的PID空间，即进程在不同的PID namespaces�
 </div>
 </div>
 
-<div id="outline-container-orga7408fc" class="outline-3">
-<h3 id="orga7408fc"><span class="section-number-3">6.2</span> 命名空间的嵌套</h3>
+<div id="outline-container-orga4181e3" class="outline-3">
+<h3 id="orga4181e3"><span class="section-number-3">6.2.</span> 命名空间的嵌套</h3>
 <div class="outline-text-3" id="text-6-2">
 <p>
 PID namespace可以嵌套：除了最初的根PID namespace，其他的PID namespaces都有一个父命名空间。调用clone或者unshare调用创建PID namespace时所在的PID namespace为父命名空间。因此PID namespaces形成一棵树，所有的命名空间都可以追溯到根命名空间。从Linux3.7开始，内核限制PID namespace嵌套深度最大为32。
@@ -796,8 +774,8 @@ PID namespace可以嵌套：除了最初的根PID namespace，其他的PID names
 </div>
 </div>
 
-<div id="outline-container-orga33d958" class="outline-3">
-<h3 id="orga33d958"><span class="section-number-3">6.3</span> setns和unshare</h3>
+<div id="outline-container-org83d7a05" class="outline-3">
+<h3 id="org83d7a05"><span class="section-number-3">6.3.</span> setns和unshare</h3>
 <div class="outline-text-3" id="text-6-3">
 <p>
 对指定的PID namespace 文件描述符调用setns或者调用unshare并且指定CLONE_NEWPID标志，会导致其随后创建的子进程处于另一个不同的PID namespace中（Linux 4.12开始，可以通过/proc/[pid]/ns/pid_for_children 文件查看，）。但是这些调用不会更改调用者的PID namespace，因为这会改变调用者自身的PID（通过getpid获取），这会破坏一些应用或者库。
@@ -809,8 +787,8 @@ PID namespace可以嵌套：除了最初的根PID namespace，其他的PID names
 </div>
 </div>
 
-<div id="outline-container-org7f1b97b" class="outline-3">
-<h3 id="org7f1b97b"><span class="section-number-3">6.4</span> CLONE_NEWPID和其他CLONE_*标志的兼容</h3>
+<div id="outline-container-org07d4cbc" class="outline-3">
+<h3 id="org07d4cbc"><span class="section-number-3">6.4.</span> CLONE_NEWPID和其他CLONE_*标志的兼容</h3>
 <div class="outline-text-3" id="text-6-4">
 <p>
 在当前版本的Linux中，CLONE_NEWPID不能与CLONE_THREAD结合使用。线程要求必须位于相同的PID namespace中，以便进程中的线程可以相互发送信号。同样，必须能够通过proc文件系统中查看进程的所有线程。（以下不是很理解 <code>此外，如果两个线程位于不同的PID namespace中，则发送信号时进程ID无法进行有效编码（请参见sigaction（2）中siginfo_t类型的说明），由于编码发生在信号放入队列时，因此多个PID namespace中的进程共享的信号队列将使其无效。）</code> ）
@@ -822,8 +800,8 @@ PID namespace可以嵌套：除了最初的根PID namespace，其他的PID names
 </div>
 </div>
 
-<div id="outline-container-orgdfc5f11" class="outline-3">
-<h3 id="orgdfc5f11"><span class="section-number-3">6.5</span> /proc和PID namespace</h3>
+<div id="outline-container-org5811c18" class="outline-3">
+<h3 id="org5811c18"><span class="section-number-3">6.5.</span> /proc和PID namespace</h3>
 <div class="outline-text-3" id="text-6-5">
 <p>
 <i>proc文件系统仅仅展示（/proc</i>[pid]目录）已经挂载到PID namespace中的可见进程，即使从其他的命名空间中查看/proc文件系统时也是如此。
@@ -847,8 +825,8 @@ PID namespace可以嵌套：除了最初的根PID namespace，其他的PID names
 </div>
 </div>
 
-<div id="outline-container-orga0e6438" class="outline-3">
-<h3 id="orga0e6438"><span class="section-number-3">6.6</span> /proc files</h3>
+<div id="outline-container-org093abf7" class="outline-3">
+<h3 id="org093abf7"><span class="section-number-3">6.6.</span> /proc files</h3>
 <div class="outline-text-3" id="text-6-6">
 <dl class="org-dl">
 <dt>/proc/sys/kernel/ns_last_pid</dt><dd><p>
@@ -862,8 +840,8 @@ PID namespace可以嵌套：除了最初的根PID namespace，其他的PID names
 </div>
 </div>
 
-<div id="outline-container-org1dd22b0" class="outline-3">
-<h3 id="org1dd22b0"><span class="section-number-3">6.7</span> 说明</h3>
+<div id="outline-container-org9ded346" class="outline-3">
+<h3 id="org9ded346"><span class="section-number-3">6.7.</span> 说明</h3>
 <div class="outline-text-3" id="text-6-7">
 <p>
 当一个进程ID通过UNIX域套接字发送到另一个PID namespace中的进程时（unix 的 SCM_CREDENTIALS），将自动转换为目标进程所在PID namespace中的对应的进程ID。
@@ -872,22 +850,22 @@ PID namespace可以嵌套：除了最初的根PID namespace，其他的PID names
 </div>
 </div>
 
-<div id="outline-container-orgcc256d7" class="outline-2">
-<h2 id="orgcc256d7"><span class="section-number-2">7</span> cgroup namespace</h2>
+<div id="outline-container-org2c2d455" class="outline-2">
+<h2 id="org2c2d455"><span class="section-number-2">7.</span> cgroup namespace</h2>
 <div class="outline-text-2" id="text-7">
 </div>
-<div id="outline-container-orgee1e176" class="outline-3">
-<h3 id="orgee1e176"><span class="section-number-3">7.1</span> 描述</h3>
+<div id="outline-container-org5340924" class="outline-3">
+<h3 id="org5340924"><span class="section-number-3">7.1.</span> 描述</h3>
 <div class="outline-text-3" id="text-7-1">
 </div>
 </div>
 </div>
-<div id="outline-container-org974909f" class="outline-2">
-<h2 id="org974909f"><span class="section-number-2">8</span> user namespace</h2>
+<div id="outline-container-org143245c" class="outline-2">
+<h2 id="org143245c"><span class="section-number-2">8.</span> user namespace</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-orgfafbf8a" class="outline-3">
-<h3 id="orgfafbf8a"><span class="section-number-3">8.1</span> 描述</h3>
+<div id="outline-container-org8dc40ed" class="outline-3">
+<h3 id="org8dc40ed"><span class="section-number-3">8.1.</span> 描述</h3>
 <div class="outline-text-3" id="text-8-1">
 <p>
 创建新的user namespace后，进程将拥有不同的UIDs、GIDs、capabilities集合。
@@ -915,8 +893,8 @@ user namespaces可以隔离一些安全相关的标识符和属性，尤其是�
 </div>
 </div>
 
-<div id="outline-container-org553f47b" class="outline-3">
-<h3 id="org553f47b"><span class="section-number-3">8.2</span> Capabilities</h3>
+<div id="outline-container-org5e310a3" class="outline-3">
+<h3 id="org5e310a3"><span class="section-number-3">8.2.</span> Capabilities</h3>
 <div class="outline-text-3" id="text-8-2">
 <p>
 通过clone调用并指定CLONE_NEWUSER标志，进程在新的用户命名空间中具有全部的capabilities。类似的，通过unshare创建用户命名空间或者通过setns加入一个已存在的用户命名空间，可以获取该命名空间的全部capabilities。另一方面，新进程在父用户命名空间或者先前的命名空间中不具备任何capabilities。
@@ -933,8 +911,8 @@ user namespaces可以隔离一些安全相关的标识符和属性，尤其是�
 </div>
 </div>
 
-<div id="outline-container-orgf7dd7b7" class="outline-3">
-<h3 id="orgf7dd7b7"><span class="section-number-3">8.3</span> 创建</h3>
+<div id="outline-container-org508b5c8" class="outline-3">
+<h3 id="org508b5c8"><span class="section-number-3">8.3.</span> 创建</h3>
 <div class="outline-text-3" id="text-8-3">
 <p>
 在调用clone系统调用时，指定CLONE_NEWUSER将会在新进程中创建新的user namespace。
@@ -951,8 +929,8 @@ CLONE_NEWUSER不能与CLONE_THREAD和CLONE_PARENT同时使用。处于安全的�
 </div>
 </div>
 
-<div id="outline-container-org5c76c66" class="outline-3">
-<h3 id="org5c76c66"><span class="section-number-3">8.4</span> 修改和查看</h3>
+<div id="outline-container-org0c0d8ad" class="outline-3">
+<h3 id="org0c0d8ad"><span class="section-number-3">8.4.</span> 修改和查看</h3>
 <div class="outline-text-3" id="text-8-4">
 <p>
 UTS namespace标识的集合可以通过umame系统调用获得， domain和hostname可以通过setdomainname和sethostname系统调用来设置，修改后只能在本UTS namespace中的进程可见。同时可以通过gethostname和getdomainname系统调用来查看。
@@ -960,12 +938,12 @@ UTS namespace标识的集合可以通过umame系统调用获得， domain和host
 </div>
 </div>
 </div>
-<div id="outline-container-orgf0c5751" class="outline-2">
-<h2 id="orgf0c5751"><span class="section-number-2">9</span> 创建相关</h2>
+<div id="outline-container-orgdbc6501" class="outline-2">
+<h2 id="orgdbc6501"><span class="section-number-2">9.</span> 创建相关</h2>
 <div class="outline-text-2" id="text-9">
 </div>
-<div id="outline-container-org7684bc2" class="outline-3">
-<h3 id="org7684bc2"><span class="section-number-3">9.1</span> 命令</h3>
+<div id="outline-container-orgf796770" class="outline-3">
+<h3 id="orgf796770"><span class="section-number-3">9.1.</span> 命令</h3>
 <div class="outline-text-3" id="text-9-1">
 <p>
 从父进程取消共享指定的命名空间，并执行指定的程序。如果未指定程序，则执行SHELL环境变量指定的shell（默认：/bin/sh）
@@ -980,15 +958,15 @@ UTS namespace标识的集合可以通过umame系统调用获得， domain和host
 
 
 
-<div id="outline-container-org67dbc63" class="outline-3">
-<h3 id="org67dbc63"><span class="section-number-3">9.2</span> 函数</h3>
+<div id="outline-container-org216600e" class="outline-3">
+<h3 id="org216600e"><span class="section-number-3">9.2.</span> 函数</h3>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-03-22 Mon 12:44</p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:54 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux内核调试</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Linux内核调试</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org64f0a4b">1. KGDB调试内核</a>
+<ul>
+<li><a href="#orge8960fa">1.1. 调试版内核编译</a></li>
+<li><a href="#org22798da">1.2. initramfs根文件系统的制作</a>
+<ul>
+<li><a href="#orgc65978d">1.2.1. busybox编译</a></li>
+<li><a href="#orgcb0216d">1.2.2. 创建initramfs</a></li>
+<li><a href="#org5f82e50">1.2.3. 创建根文件系统方法</a></li>
+</ul>
+</li>
+<li><a href="#orgacf6a09">1.3. qemu 启动</a></li>
+<li><a href="#org81476f4">1.4. gdb</a></li>
+</ul>
+</li>
+<li><a href="#org87d741e">2. LFS debug</a></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org64f0a4b" class="outline-2">
+<h2 id="org64f0a4b"><span class="section-number-2">1.</span> KGDB调试内核</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orge8960fa" class="outline-3">
+<h3 id="orge8960fa"><span class="section-number-3">1.1.</span> 调试版内核编译</h3>
+<div class="outline-text-3" id="text-1-1">
+<ul class="org-ul">
+<li><p>
+下载解压内核源文件
+<a href="https://www.kernel.org/">https://www.kernel.org/</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.11.16.tar.xz
+$ xz -d linux-5.11.16.tar.gz
+$ tar xvf ./linux-5.11.16.tar
+</pre>
+</div></li>
+<li><p>
+配置
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo apt install flex bison
+$ make nconfig
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><p>
+进入  Kernel hacking  &#x2014;&gt;
+</p>
+
+
+<div id="org4c7a33b" class="figure">
+<p><img src="image/debug/nconfig-kh.png" alt="nconfig-kh.png" />
+</p>
+</div></li>
+
+<li><p>
+进入  Compile-time checks and compiler options  &#x2014;&gt;
+</p>
+
+
+<div id="org050c183" class="figure">
+<p><img src="image/debug/nconfig-ctc.png" alt="nconfig-ctc.png" />
+</p>
+</div></li>
+
+<li><p>
+打开  [*] Compile the kernel with debug info  和  [*]   Provide GDB scripts for kernel debugging
+</p>
+
+
+<div id="org5c7dd9b" class="figure">
+<p><img src="image/debug/nconfig-cp.png" alt="nconfig-cp.png" />
+</p>
+</div></li>
+</ul></li>
+
+<li><p>
+编译内核
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo apt install bc
+$ make -j
+</pre>
+</div></li>
+</ul>
+
+
+<p>
+过程中可能遇到的问题：
+</p>
+<div class="org-src-container">
+<pre class="src src-fundamental">No rule to make target 'debian/certs/debian-uefi-certs.pem
+</pre>
+</div>
+
+<p>
+打开 .config 文件， 修改 CONFIG_SYSTEM_TRUSTED_KEYS=""
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ grep CONFIG_SYSTEM_TRUSTED_KEYS .config
+<span style="color: #FD971F;">CONFIG_SYSTEM_TRUSTED_KEYS</span>=<span style="color: #E6DB74;">""</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org22798da" class="outline-3">
+<h3 id="org22798da"><span class="section-number-3">1.2.</span> initramfs根文件系统的制作</h3>
+<div class="outline-text-3" id="text-1-2">
+</div>
+<div id="outline-container-orgc65978d" class="outline-4">
+<h4 id="orgc65978d"><span class="section-number-4">1.2.1.</span> busybox编译</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+busybox源码下载地址： <a href="https://www.busybox.net/downloads/">https://www.busybox.net/downloads/</a>
+github项目地址：<a href="https://git.busybox.net/busybox">https://git.busybox.net/busybox</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ git clone https://git.busybox.net/busybox
+$ cd busybox
+$ make menuconfig
+</pre>
+</div>
+
+<p>
+修改busybox编译选项为静态编译：
+</p>
+
+<p>
+<img src="./image/debug/bs-set.png" alt="bs-set.png" />
+<img src="./image/debug/bs-static.png" alt="bs-static.png" />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ make install
+</pre>
+</div>
+
+<p>
+编译完成后，会生成_install目录：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ ls _install
+bin  linuxrc  sbin  usr
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcb0216d" class="outline-4">
+<h4 id="orgcb0216d"><span class="section-number-4">1.2.2.</span> 创建initramfs</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<div class="org-src-container">
+<pre class="src src-sh">$ mkdir initramfs
+$ cd initramfs
+$ cp busybox/_install/  ./  -rf
+$ mkdir dev proc sys
+$ sudo cp -a /dev/{null,console,tty,tty1,tty2,tty3,tty4} dev/
+$ rm linuxrc
+$ touch init; chmod a+x init
+</pre>
+</div>
+
+<p>
+编辑init文件，拷贝以下内容：
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ cat init
+<span style="color: #75715E;">#</span><span style="color: #75715E;">!/bin/busybox sh</span>
+mount -t proc none /proc
+mount -t sysfs none /sys
+
+<span style="color: #F92672;">exec</span> /sbin/init
+</pre>
+</div>
+
+<p>
+在创建的initramfs中包含busybox可执行程序、必须的设备文件、启动脚本init，并且init只挂载了虚拟文件系统procfs和sysfs，没有挂载磁盘根文件系统，所有操作都在内存中进行，不会落地。
+</p>
+
+<p>
+打包initramfs：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">$ find . -print0 | cpio --null -ov --format=newc | gzip -9 &gt; ../initramfs.cpio.gz
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5f82e50" class="outline-4">
+<h4 id="org5f82e50"><span class="section-number-4">1.2.3.</span> 创建根文件系统方法</h4>
+<div class="outline-text-4" id="text-1-2-3">
+<p>
+待补充
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgacf6a09" class="outline-3">
+<h3 id="orgacf6a09"><span class="section-number-3">1.3.</span> qemu 启动</h3>
+<div class="outline-text-3" id="text-1-3">
+<ul class="org-ul">
+<li><p>
+安装qemu
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo apt-get install qemu
+$ sudo apt-get install qemu-system
+$ sudo apt-get install qemu-user-static
+</pre>
+</div></li>
+</ul>
+
+
+<ul class="org-ul">
+<li><p>
+使用内存盘启动 （-initrd参数指定内存盘文件）
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ qemu-system-x86_64 -kernel linux-5.11.16/arch/x86_64/boot/bzImage  -initrd initramfs.cpio.gz   -nographic -append <span style="color: #E6DB74;">"console=ttyS0 nokaslr"</span>  -S -s
+</pre>
+</div></li>
+
+<li>使用创建的根文件系统启动
+待补充</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org81476f4" class="outline-3">
+<h3 id="org81476f4"><span class="section-number-3">1.4.</span> gdb</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+<pre class="src src-sh">$ gdb linux-5.11.16/vmlinux
+(gdb) target remote localhost:1234
+(gdb) b start_kernel
+(gdb) c
+</pre>
+</div>
+
+
+
+<p>
+<a href="https://consen.github.io/2018/01/17/debug-linux-kernel-with-qemu-and-gdb/">https://consen.github.io/2018/01/17/debug-linux-kernel-with-qemu-and-gdb/</a>
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org87d741e" class="outline-2">
+<h2 id="org87d741e"><span class="section-number-2">2.</span> LFS debug</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+<code>-S -s</code> 参数
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">sudo qemu-system-x86_64  -nographic -drive <span style="color: #FD971F;">file</span>=/storage/kvm-img/kvm-fanyf/lfs/lfs-dbg.img,<span style="color: #FD971F;">aio</span>=io_uring,<span style="color: #FD971F;">index</span>=0,<span style="color: #FD971F;">media</span>=disk,<span style="color: #FD971F;">if</span>=virtio -kernel /home/fanyf/Workspace/Build/lfs/linux-6.1.11/arch/x86/boot/bzImage -append <span style="color: #E6DB74;">"root=/dev/vda console=ttyS0,115200 kgdboc=ttyS0,115200 nokaslr"</span> -S -s
+
+
+sudo qemu-system-x86_64  -nographic -drive <span style="color: #FD971F;">file</span>=/storage/kvm-img/kvm-fanyf/lfs/lfs-dbg.img,<span style="color: #FD971F;">aio</span>=io_uring,<span style="color: #FD971F;">index</span>=0,<span style="color: #FD971F;">media</span>=disk,<span style="color: #FD971F;">if</span>=virtio -kernel /home/fanyf/Workspace/Build/lfs/linux-6.1.11/arch/x86/boot/bzImage -append <span style="color: #E6DB74;">"root=/dev/vda console=ttyS0,115200 kgdboc=ttyS0,115200 nokaslr"</span> -smp <span style="color: #FD971F;">cpus</span>=1,<span style="color: #FD971F;">maxcpus</span>=1  -netdev bridge,<span style="color: #FD971F;">br</span>=virbr0,<span style="color: #FD971F;">id</span>=n1,<span style="color: #FD971F;">helper</span>=/usr/lib/qemu/qemu-bridge-helper -device virtio-net,<span style="color: #FD971F;">netdev</span>=n1  -S -s
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:54</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

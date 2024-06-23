@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VLIB</title>
+<meta name="author" content="nandfan" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VLIB</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org57a9114">1. 初始化函数</a></li>
+<li><a href="#orgda05df4">2. Vector 数据结构</a></li>
+<li><a href="#orgf6d93f6">3. Scheduling Vectors</a></li>
+<li><a href="#orgb78d7bb">4. COMMAND</a>
+<ul>
+<li><a href="#org42e3876">4.1. command注册</a></li>
+<li><a href="#org3fb997e">4.2. 宏定义</a></li>
+</ul>
+</li>
+<li><a href="#org4ff8226">5. process调度(协程)</a></li>
+</ul>
+</div>
+</div>
+<p>
+VLIB 相关源码目录： ./src/{vlib, vlibapi, vlibmemory}。
+</p>
+
+<p>
+VLIB库提供了了向量处理支持，包括： graph-node调度、可靠组播支持、轻量级的多任务协程、CLI、.DLL插件、物理内存以及linux epoll。
+</p>
+
+
+<div id="outline-container-org57a9114" class="outline-2">
+<h2 id="org57a9114"><span class="section-number-2">1.</span> 初始化函数</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+vlib应用通过注册各种 [initialization] 事件，将数据结构以及带有 __attribute__((constructor)) 属性的函数放置到程序映像中。在合适的时间，vlib框架遍历 构造函数，生成单链结构链表，并根据指定的约束对其进行排序，并调用指示的函数。 vlib 应用通过该机制实现许多功能：创建 graph nodes，添加CLI功能，启动多任务协程等等。
+</p>
+
+
+<p>
+vlib应用包含了许多 VLIB_INIT_FUNCTION (my_init_function) 宏。
+</p>
+
+<p>
+每个 init / configure / 等等 函数的返回值类型是 clib_error_t * 。函数执行成功返回0，其他返回值会导致框架报错并退出。
+</p>
+
+<p>
+vlib应用必须链接 vppinfra库，并且通常也会链接到其他库（VNET）。
+</p>
+
+<p>
+初始化构造函数、约束规范：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">clib_error_t</span> *<span style="color: #A6E22E;">my_init_function</span> (<span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span>)
+{
+   <span style="color: #75715E;">/* </span><span style="color: #75715E;">... initialize things ...</span><span style="color: #75715E;"> */</span>
+
+   <span style="color: #F92672;">return</span> 0; <span style="color: #75715E;">// </span><span style="color: #75715E;">or return clib_error_return (0, "BROKEN!");</span>
+}
+<span style="color: #A6E22E;">VLIB_INIT_FUNCTION</span>(my_init_function);
+</pre>
+</div>
+
+<p>
+以上示例中，my_init_function会在特定的点被执行，但是没有约定顺序。
+</p>
+
+<p>
+添加顺序约束：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #A6E22E;">VLIB_INIT_FUNCTION</span>(my_init_function) =
+{
+   .runs_before = VLIB_INITS(<span style="color: #E6DB74;">"we_run_before_function_1"</span>,
+                             <span style="color: #E6DB74;">"we_run_before_function_2"</span>),
+   .runs_after = VLIB_INITS(<span style="color: #E6DB74;">"we_run_after_function_1"</span>,
+                            <span style="color: #FD971F; font-weight: bold; font-style: italic; text-decoration: underline;">"</span><span style="color: #E6DB74;">we_run_after_function_2),</span>
+ };
+</pre>
+</div>
+
+<p>
+批量指定从 a -&gt; b -&gt; c -&gt; d 的顺序：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #A6E22E;">VLIB_INIT_FUNCTION</span>(my_init_function) =
+{
+   .init_order = VLIB_INITS(<span style="color: #E6DB74;">"a"</span>, <span style="color: #E6DB74;">"b"</span>, <span style="color: #E6DB74;">"c"</span>, <span style="color: #E6DB74;">"d"</span>),
+};
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgda05df4" class="outline-2">
+<h2 id="orgda05df4"><span class="section-number-2">2.</span> Vector 数据结构</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+vpp/vlib 中，我们使用 vlib_frame_t 类型来描述 vector 实例：
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">typedef</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">vlib_frame_t</span>
+{
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">Frame flags.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #66D9EF;">u16</span> <span style="color: #FD971F;">flags</span>;
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">Number of scalar bytes in arguments.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #66D9EF;">u8</span> <span style="color: #FD971F;">scalar_size</span>;
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">Number of bytes per vector argument.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #66D9EF;">u8</span> <span style="color: #FD971F;">vector_size</span>;
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">Number of vector elements currently in frame.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #66D9EF;">u16</span> <span style="color: #FD971F;">n_vectors</span>;
+
+  <span style="color: #75715E;">/* </span><span style="color: #75715E;">Scalar and vector arguments to next node.</span><span style="color: #75715E;"> */</span>
+  <span style="color: #66D9EF;">u8</span> <span style="color: #FD971F;">arguments</span>[0];
+} <span style="color: #66D9EF;">vlib_frame_t</span>;
+</pre>
+</div>
+
+<p>
+可以构造任意类型的 vectors ，带有一些相关的 scalar 数据也可以使用该结构构建。vpp应用中，vectors通常使用 4 字节来描述vector 元素大小，0字节描述单个frame的scalar数据。
+</p>
+
+<p>
+Frame 结构对齐 CLIB_CACHE_LINE_BYTES 边界。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf6d93f6" class="outline-2">
+<h2 id="orgf6d93f6"><span class="section-number-2">3.</span> Scheduling Vectors</h2>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="outline-container-orgb78d7bb" class="outline-2">
+<h2 id="orgb78d7bb"><span class="section-number-2">4.</span> COMMAND</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org42e3876" class="outline-3">
+<h3 id="org42e3876"><span class="section-number-3">4.1.</span> command注册</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #F92672;">#define</span> <span style="color: #A6E22E;">VLIB_CLI_COMMAND</span>(<span style="color: #FD971F;">x</span>, ...)                                               \
+        __VA_ARGS__ <span style="color: #66D9EF;">vlib_cli_command_t</span> <span style="color: #FD971F;">x</span>;                                      \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_cli_command_registration_</span>##x(<span style="color: #66D9EF;">void</span>)                  \
+                <span style="color: #F92672;">__attribute__</span>((__constructor__));                              \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_cli_command_registration_</span>##x(<span style="color: #66D9EF;">void</span>)                  \
+        {                                                                      \
+                <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();                             \
+                <span style="color: #66D9EF;">vlib_cli_main_t</span> *<span style="color: #FD971F;">cm</span> = &amp;vm-&gt;cli_main;                           \
+                x.next_cli_command = cm-&gt;cli_command_registrations;            \
+                cm-&gt;cli_command_registrations = &amp;x;                            \
+        }                                                                      \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_cli_command_unregistration_</span>##x(<span style="color: #66D9EF;">void</span>)                \
+                <span style="color: #F92672;">__attribute__</span>((__destructor__));                               \
+        <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_cli_command_unregistration_</span>##x(<span style="color: #66D9EF;">void</span>)                \
+        {                                                                      \
+                <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();                             \
+                <span style="color: #66D9EF;">vlib_cli_main_t</span> *<span style="color: #FD971F;">cm</span> = &amp;vm-&gt;cli_main;                           \
+                VLIB_REMOVE_FROM_LINKED_LIST(cm-&gt;cli_command_registrations,    \
+                                             &amp;x, next_cli_command);            \
+        }                                                                      \
+        __VA_ARGS__ <span style="color: #66D9EF;">vlib_cli_command_t</span> <span style="color: #FD971F;">x</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3fb997e" class="outline-3">
+<h3 id="org3fb997e"><span class="section-number-3">4.2.</span> 宏定义</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+利用gcc <span class="underline"><span class="underline">attribute__((__constructor</span></span>)) 属性进行构造初始化
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #A6E22E;">VLIB_INIT_FUNCTION</span>(dpdk_main_init) = {
+        .runs_after = VLIB_INITS(<span style="color: #E6DB74;">"dpdk_init"</span>),
+};
+
+<span style="color: #A6E22E;">VLIB_DECLARE_INIT_FUNCTION</span>(x, tag)
+
+<span style="color: #66D9EF;">vlib_init_function_t</span> *<span style="color: #A6E22E;">_VLIB_INIT_FUNCTION_SYMBOL</span>(x, tag) = dpdk_main_init;
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_init_function_dpdk_main_init</span>(<span style="color: #66D9EF;">void</span>)
+        <span style="color: #F92672;">__attribute__</span>((__constructor__));
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">_vlib_init_function_list_elt_t</span> <span style="color: #FD971F;">_vlib_init_function_init_dpdk_main_init</span>;
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_add_init_function_dpdk_main_init</span>(<span style="color: #66D9EF;">void</span>)
+{
+        <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();
+        _vlib_init_function_init_dpdk_main_init.next_init_function =
+                vm-&gt;init_function_registrations;
+        vm-&gt;init_function_registrations =
+                &amp;_vlib_init_function_init_dpdk_main_init;
+        _vlib_init_function_init_dpdk_main_init.f = &amp;dpdk_main_init;
+        _vlib_init_function_init_dpdk_main_init.name = <span style="color: #E6DB74;">"dpdk_main_init"</span>;
+}
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_init_function_dpdk_main_init</span>(<span style="color: #66D9EF;">void</span>)
+        <span style="color: #F92672;">__attribute__</span>((__destructor__));
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__vlib_rm_init_function_dpdk_main_init</span>(<span style="color: #66D9EF;">void</span>)
+{
+        <span style="color: #66D9EF;">vlib_main_t</span> *<span style="color: #FD971F;">vm</span> = vlib_get_main();
+        <span style="color: #66D9EF;">_vlib_init_function_list_elt_t</span> *<span style="color: #FD971F;">this</span>, *<span style="color: #FD971F;">prev</span>;
+        this = vm-&gt;init_function_registrations;
+        <span style="color: #F92672;">if</span> (this == 0)
+                <span style="color: #F92672;">return</span>;
+        <span style="color: #F92672;">if</span> (this-&gt;f == dpdk_main_init) {
+                vm-&gt;init_function_registrations =
+                        this-&gt;next_init_function;
+                <span style="color: #F92672;">return</span>;
+        }
+        prev = this;
+        this = this-&gt;next_init_function;
+        <span style="color: #F92672;">while</span> (this) {
+                <span style="color: #F92672;">if</span> (this-&gt;f == dpdk_main_init) {
+                        prev-&gt;next_init_function =
+                                this-&gt;next_init_function;
+                        <span style="color: #F92672;">return</span>;
+                }
+                prev = this;
+                this = this-&gt;next_init_function;
+        }
+}
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">_vlib_init_function_list_elt_t</span> <span style="color: #FD971F;">_vlib_init_function_init_dpdk_main_init</span>  = {
+        .runs_after = VLIB_INITS(<span style="color: #E6DB74;">"dpdk_init"</span>),
+};
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #A6E22E;">VNET_FEATURE_INIT</span>()
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4ff8226" class="outline-2">
+<h2 id="org4ff8226"><span class="section-number-2">5.</span> process调度(协程)</h2>
+<div class="outline-text-2" id="text-5">
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #A6E22E;">dispatch_process</span>();
+<span style="color: #A6E22E;">vlib_process_startup</span>();
+<span style="color: #A6E22E;">vlib_process_bootstrap</span>();
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

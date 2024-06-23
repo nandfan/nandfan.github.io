@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+<!-- 2024-06-23 Sun 15:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VPP</title>
+<meta name="author" content="nandfan" />
+<meta name="keywords" content="vpp" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">VPP</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org0d1e418">1. 向量包处理</a>
+<ul>
+<li><a href="#orgf60d9de">1.1. 标量包处理</a></li>
+<li><a href="#org02f2dce">1.2. 向量包处理</a></li>
+</ul>
+</li>
+<li><a href="#orge9f4779">2. Packet Processing Graph</a></li>
+<li><a href="#orgfa6828a">3. VPP网络栈特性</a></li>
+<li><a href="#orgb4d8bb8">4. Host Stack</a></li>
+<li><a href="#org7698663">5. 更多特性</a></li>
+<li><a href="#org27f76b4">6. 支持的平台和系统</a></li>
+<li><a href="#org1b3d541">7. 性能</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0d1e418" class="outline-2">
+<h2 id="org0d1e418"><span class="section-number-2">1.</span> 向量包处理</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgf60d9de" class="outline-3">
+<h3 id="orgf60d9de"><span class="section-number-3">1.1.</span> 标量包处理</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+使用标量包处理时，网络栈通常每次处理一个包，中断处理函数从网卡获取一个包，并将包传递给一系列函数进行处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">+---&gt; fooA(packet1) +---&gt; fooB(packet1) +---&gt; fooC(packet1)
++---&gt; fooA(packet2) +---&gt; fooB(packet2) +---&gt; fooC(packet2)
+...
++---&gt; fooA(packet3) +---&gt; fooB(packet3) +---&gt; fooC(packet3)
+</pre>
+</div>
+
+
+<p>
+标量包处理过程比较简单，易于使用，但效率较低，例如：
+</p>
+<ul class="org-ul">
+<li>处理包过程中，当代码路径的长度超过处理器的指令缓存（I-cache），由于处理器不停的加载新的指令导致出现颠簸现象<a href="https://en.wikipedia.org/wiki/Thrashing_(computer_science)">thrashing</a>。这种情况下，每个数据包都会产生相同集合的 I-cache MISS。</li>
+<li>调用栈较深时，栈中内容会从处理器一级数据缓存（D-cache）中挤出，从而会增加LSU（load-store-uint）压力。</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org02f2dce" class="outline-3">
+<h3 id="org02f2dce"><span class="section-number-3">1.2.</span> 向量包处理</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+使用向量包处理时，一次处理多个数据包，称作“包向量”或者向量。中断处理函数一次从网卡获取包向量（多个数据包），并将向量传递给处理函数进行处理。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">+---&gt; fooA([packet1, +---&gt; fooB([packet1, +---&gt; fooC([packet1, +---&gt;
+            packet2,             packet2,             packet2,
+            ...                  ...                  ...
+            packet256])          packet256])          packet256])
+
+</pre>
+</div>
+
+<p>
+这种方法可以解决标量包处理中问题：
+</p>
+<ul class="org-ul">
+<li>多个包分摊 I_cache 的负载，解决了I-cache颠簸问题（thrashing）。</li>
+<li>单次从网卡收取最大256的包向量，处理时，直接调用有向图的节点处理。有向图调度器 每次调用一个节点的发送函数，从而将调用栈的深度限定在较小的栈帧范围。</li>
+</ul>
+
+<p>
+这种方式可以进一步优化：开启 pipelining 和 prefetching（预取），最小化表数据的读取延迟，以及并行处理数据包的负载。
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge9f4779" class="outline-2">
+<h2 id="orge9f4779"><span class="section-number-2">2.</span> Packet Processing Graph</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+VPP 设计的核心是 Packet Processing Graph ，具有以下优点：
+</p>
+<ul class="org-ul">
+<li>可插拔，易于理解和扩展</li>
+<li>graph node 架构成熟</li>
+<li>pipeline过程可任意编排</li>
+</ul>
+
+<p>
+VPP 中，数据包处理过程分解到 prcket processing graph 中，任何人都可以将插入新的 graph node，因此可以通过插件实现特殊的需求。
+</p>
+
+<p>
+在运行过程中，VPP 从RX ring中获取 包向量，通常单个包向量最大为256。然后将包向量交给 graph，挨个执行 node 来处理包向量。
+</p>
+
+<p>
+Graph nodes 实现小巧，模块化，node和node之间关联性低，因此可以很容易引入新的node，改写 graph node 也很方便。
+</p>
+
+<p>
+插件使用 动态库 来实现，vpp启动时通过查找插件目录，动态加载插件。插件可以引入新的 graph node ，或者重新编排 packet processing graph 。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgfa6828a" class="outline-2">
+<h2 id="orgfa6828a"><span class="section-number-2">3.</span> VPP网络栈特性</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>Layer 2 - 4 Network Stack
+<ul class="org-ul">
+<li>Fast lookup tables for routes, bridge entries</li>
+<li>Arbitrary n-tuple classifiers</li>
+<li>Control Plane, Traffic Management and Overlays</li>
+</ul></li>
+
+<li>Linux and FreeBSD support
+<ul class="org-ul">
+<li>Support for standard Operating System Interfaces such as AF_Packet, Tun/Tap &amp; Netmap.</li>
+</ul></li>
+
+<li>Network and cryptographic hardware support with DPDK.</li>
+
+<li>Container and Virtualization support
+<ul class="org-ul">
+<li>Para-virtualized interfaces; Vhost and Virtio</li>
+<li>Network Adapters over PCI passthrough</li>
+<li>Native container interfaces; MemIF</li>
+</ul></li>
+
+<li>Host Stack</li>
+
+<li>Universal Data Plane: one code base, for many use cases
+<ul class="org-ul">
+<li>Discrete appliances; such as Routers and Switches.</li>
+<li>Cloud Infrastructure and Virtual Network Functions</li>
+<li>Cloud Native Infrastructure</li>
+<li>The same binary package for all use cases.</li>
+</ul></li>
+
+<li>Out of the box production quality, with thanks to CSIT.</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgb4d8bb8" class="outline-2">
+<h2 id="orgb4d8bb8"><span class="section-number-2">4.</span> Host Stack</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+依赖于 VPP 基于 graph 的转发模型，以及 vector packet processing，使得VPP Host Stack具有高吞吐。借助 host stack 开放的API，用户应用程序可以高效的读取以及发送数据，同时也为 内部app 提供了高效的通信机制。
+</p>
+
+<p>
+从上层看，VPP Host stack 主要包含3部分内容：
+</p>
+<ul class="org-ul">
+<li>session 层： 用于促进 传输层协议和应用层 之间的交互</li>
+<li>可插拔的传输层协议： TCP QUIC TLS UDP</li>
+<li>VCL (VPPComs library) ：一组通用库，目的是使应用与stack交互更加方便</li>
+</ul>
+
+<p>
+所有组件都是定制的，目的是为了适配VPP的架构，并能充分利用VPP优势。因此在以下方面投入了大量精力：
+</p>
+<ul class="org-ul">
+<li>抽象了一套可插拔的会话层，应用程序和传输层之间通过定制的共享内存组件交互。 有了会话层的存在，就能够在VPP中实现 QUIC、TLS 协议。</li>
+<li>TCP实现：支持向量包处理，并且延续了 VPP 的高度扩展的线程模型。遵循了RFC规范，支持高版本的 high-speed TCP 协议特性，并通过了 Defensic’s Codenomicon 1M+ tests suite 认证。</li>
+<li>VCL：在用户空间实现的类似传统异步通信的库。</li>
+<li>实现了高性能的 “cut-through” 通信机制： 允许应用关联到VPP，通过共享内存与VPP交换数据，并且不存在传统传输协议的带来的开销。通过测试，这种机制比传统的容器间网络传输更加高效。</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org7698663" class="outline-2">
+<h2 id="org7698663"><span class="section-number-2">5.</span> 更多特性</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+本小节介绍一些 VPP环境相关内容，以及开发者可以使用的特性。
+</p>
+
+<ul class="org-ul">
+<li>Extensive runtime counters; throughput, intructions per cycle, errors, events etc.</li>
+
+<li>Integrated pipeline tracing facilities</li>
+
+<li>Multi-language API bindings</li>
+
+<li>Integrated command line for debugging</li>
+
+<li><p>
+Fault-tolerant and upgradable
+</p>
+
+<ul class="org-ul">
+<li>Runs as a standard user-space process for fault tolerance, software crashes seldom require more than a process restart.</li>
+
+<li>Improved fault-tolerance and upgradability when compared to running similar packet processing in the</li>
+</ul>
+<p>
+kernel, software updates never require system reboots.
+</p>
+
+<ul class="org-ul">
+<li>Development experience is easier compared to similar kernel code</li>
+
+<li>Hardware isolation and protection (iommu)</li>
+</ul></li>
+
+<li>Built for security
+
+<ul class="org-ul">
+<li>Extensive white-box testing</li>
+
+<li>Image segment base address randomization</li>
+
+<li>Shared-memory segment base address randomization</li>
+
+<li>Stack bounds checking</li>
+
+<li>Static analysis with Coverity</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org27f76b4" class="outline-2">
+<h2 id="org27f76b4"><span class="section-number-2">6.</span> 支持的平台和系统</h2>
+<div class="outline-text-2" id="text-6">
+<ul class="org-ul">
+<li>Architectures
+<ul class="org-ul">
+<li>x86/64</li>
+<li>ARM-AArch64</li>
+</ul></li>
+
+<li>OS
+<ul class="org-ul">
+<li>Debian</li>
+<li>Ubuntu</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org1b3d541" class="outline-2">
+<h2 id="org1b3d541"><span class="section-number-2">7.</span> 性能</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: nandfan</p>
+<p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:56</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

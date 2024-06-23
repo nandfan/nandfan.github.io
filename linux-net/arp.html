@@ -3,14 +3,14 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2022-07-30 Sat 13:15 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ARP：地址解析协议</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,89 +191,42 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">ARP：地址解析协议</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org5b130f3">1. ARP报文格式</a></li>
-<li><a href="#org4e20e0f">2. 系统参数</a></li>
-<li><a href="#orgb6eee9b">3. ARP初始化</a></li>
-<li><a href="#org9676468">4. ARP的邻居项函数指针</a></li>
-<li><a href="#org5304ec8">5. ARP表</a></li>
-<li><a href="#org4bf18e1">6. 函数</a>
+<li><a href="#org6612730">1. ARP报文格式</a></li>
+<li><a href="#org6ce6cc2">2. 系统参数</a></li>
+<li><a href="#org42e413d">3. ARP初始化</a></li>
+<li><a href="#org9ca14c5">4. ARP的邻居项函数指针</a></li>
+<li><a href="#org5fddac9">5. ARP表</a></li>
+<li><a href="#orge9d91ad">6. 函数</a>
 <ul>
-<li><a href="#orge14290b">6.1. arp_error_report()</a></li>
-<li><a href="#orgc89ec06">6.2. arp_solicit()</a></li>
-<li><a href="#org0514602">6.3. arp_ignore()</a></li>
-<li><a href="#orgf82b0fa">6.4. arp_filter()</a></li>
+<li><a href="#org59e8412">6.1. arp_error_report()</a></li>
+<li><a href="#orgb9b89e1">6.2. arp_solicit()</a></li>
+<li><a href="#org48e59dc">6.3. arp_ignore()</a></li>
+<li><a href="#orgeb85eb2">6.4. arp_filter()</a></li>
 </ul>
 </li>
-<li><a href="#orgcd4a159">7. IPv4中邻居项的初始化</a></li>
-<li><a href="#org7941cc3">8. ARP报文创建</a></li>
-<li><a href="#orgf4d09f8">9. ARP的输出</a></li>
-<li><a href="#orgbc094fe">10. ARP的输入</a>
+<li><a href="#org4ed07c7">7. IPv4中邻居项的初始化</a></li>
+<li><a href="#orgc3ae748">8. ARP报文创建</a></li>
+<li><a href="#org41394eb">9. ARP的输出</a></li>
+<li><a href="#orgce9de9c">10. ARP的输入</a>
 <ul>
-<li><a href="#orgdf68459">10.1. arp_rcv()</a></li>
-<li><a href="#org78ecacb">10.2. arp_process()</a></li>
+<li><a href="#org9c94740">10.1. arp_rcv()</a></li>
+<li><a href="#orgeacdcb7">10.2. arp_process()</a></li>
 </ul>
 </li>
-<li><a href="#org86b67f2">11. ARP的ioctl</a></li>
-<li><a href="#orgd8398d2">12. 外部事件</a></li>
-<li><a href="#org66f181c">13. 路由表项与邻居项的绑定</a></li>
+<li><a href="#org6f02324">11. ARP的ioctl</a></li>
+<li><a href="#org0b88ea3">12. 外部事件</a></li>
+<li><a href="#org4727b47">13. 路由表项与邻居项的绑定</a></li>
 </ul>
 </div>
 </div>
@@ -280,11 +234,11 @@ for the JavaScript code in this tag.
 以太网传输IP数据报时需要48位的以太网地址，以太网帧的目的地址通过目的IP来查询得到，所以IP地址和以太网地址之间存在映射关系，ARP表就保存两者的对应关系，ARP协议用来确定两者的关系。
 </p>
 
-<div id="outline-container-org5b130f3" class="outline-2">
-<h2 id="org5b130f3"><span class="section-number-2">1</span> ARP报文格式</h2>
+<div id="outline-container-org6612730" class="outline-2">
+<h2 id="org6612730"><span class="section-number-2">1.</span> ARP报文格式</h2>
 <div class="outline-text-2" id="text-1">
 
-<div class="figure">
+<div id="org29f556c" class="figure">
 <p><img src="image/arp/ARP_format.png" alt="ARP_format.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>ARP报文格式</p>
@@ -423,26 +377,26 @@ for the JavaScript code in this tag.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      This structure defines an ethernet arp header.</span>
-<span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      This structure defines an ethernet arp header.</span>
+<span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">arphdr</span>
 {
-        <span style="color: #5FD7FF;">__be16</span>          <span style="color: #FF8C00;">ar_hrd</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">format of hardware address</span><span style="color: #8B8878;">   */</span>
-        <span style="color: #5FD7FF;">__be16</span>          <span style="color: #FF8C00;">ar_pro</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">format of protocol address</span><span style="color: #8B8878;">   */</span>
-        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">ar_hln</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">length of hardware address</span><span style="color: #8B8878;">   */</span>
-        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>   <span style="color: #FF8C00;">ar_pln</span>;         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">length of protocol address</span><span style="color: #8B8878;">   */</span>
-        <span style="color: #5FD7FF;">__be16</span>          <span style="color: #FF8C00;">ar_op</span>;          <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ARP opcode (command)</span><span style="color: #8B8878;">         */</span>
+        <span style="color: #66D9EF;">__be16</span>          <span style="color: #FD971F;">ar_hrd</span>;         <span style="color: #75715E;">/* </span><span style="color: #75715E;">format of hardware address</span><span style="color: #75715E;">   */</span>
+        <span style="color: #66D9EF;">__be16</span>          <span style="color: #FD971F;">ar_pro</span>;         <span style="color: #75715E;">/* </span><span style="color: #75715E;">format of protocol address</span><span style="color: #75715E;">   */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span>   <span style="color: #FD971F;">ar_hln</span>;         <span style="color: #75715E;">/* </span><span style="color: #75715E;">length of hardware address</span><span style="color: #75715E;">   */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span>   <span style="color: #FD971F;">ar_pln</span>;         <span style="color: #75715E;">/* </span><span style="color: #75715E;">length of protocol address</span><span style="color: #75715E;">   */</span>
+        <span style="color: #66D9EF;">__be16</span>          <span style="color: #FD971F;">ar_op</span>;          <span style="color: #75715E;">/* </span><span style="color: #75715E;">ARP opcode (command)</span><span style="color: #75715E;">         */</span>
 
-<span style="color: #FF1493;">#if</span> 0
-         <span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;">          *      Ethernet looks like this : This bit is variable sized however...</span>
-<span style="color: #8B8878;">          */</span>
-        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">ar_sha</span>[ETH_ALEN];       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sender hardware address</span><span style="color: #8B8878;">      */</span>
-        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">ar_sip</span>[4];              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">sender IP address</span><span style="color: #8B8878;">            */</span>
-        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">ar_tha</span>[ETH_ALEN];       <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">target hardware address</span><span style="color: #8B8878;">      */</span>
-        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span>           <span style="color: #FF8C00;">ar_tip</span>[4];              <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">target IP address</span><span style="color: #8B8878;">            */</span>
-<span style="color: #FF1493;">#endif</span>
+<span style="color: #F92672;">#if</span> 0
+         <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">          *      Ethernet looks like this : This bit is variable sized however...</span>
+<span style="color: #75715E;">          */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span>           <span style="color: #FD971F;">ar_sha</span>[ETH_ALEN];       <span style="color: #75715E;">/* </span><span style="color: #75715E;">sender hardware address</span><span style="color: #75715E;">      */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span>           <span style="color: #FD971F;">ar_sip</span>[4];              <span style="color: #75715E;">/* </span><span style="color: #75715E;">sender IP address</span><span style="color: #75715E;">            */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span>           <span style="color: #FD971F;">ar_tha</span>[ETH_ALEN];       <span style="color: #75715E;">/* </span><span style="color: #75715E;">target hardware address</span><span style="color: #75715E;">      */</span>
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span>           <span style="color: #FD971F;">ar_tip</span>[4];              <span style="color: #75715E;">/* </span><span style="color: #75715E;">target IP address</span><span style="color: #75715E;">            */</span>
+<span style="color: #F92672;">#endif</span>
 };
 </pre>
 </div>
@@ -450,8 +404,8 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-org4e20e0f" class="outline-2">
-<h2 id="org4e20e0f"><span class="section-number-2">2</span> 系统参数</h2>
+<div id="outline-container-org6ce6cc2" class="outline-2">
+<h2 id="org6ce6cc2"><span class="section-number-2">2.</span> 系统参数</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li>arp_filter  是否允许从其他网络设备输出ARP应答。
@@ -488,27 +442,27 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgb6eee9b" class="outline-2">
-<h2 id="orgb6eee9b"><span class="section-number-2">3</span> ARP初始化</h2>
+<div id="outline-container-org42e413d" class="outline-2">
+<h2 id="org42e413d"><span class="section-number-2">3.</span> ARP初始化</h2>
 <div class="outline-text-2" id="text-3">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      Called once on startup.</span>
-<span style="color: #8B8878;"> */</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      Called once on startup.</span>
+<span style="color: #75715E;"> */</span>
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">packet_type</span> <span style="color: #FF8C00;">arp_packet_type</span> = {
+<span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">packet_type</span> <span style="color: #FD971F;">arp_packet_type</span> = {
         .type = __constant_htons(ETH_P_ARP),
         .func = arp_rcv,
 };
 
-<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__init</span> arp_init(<span style="color: #5FD7FF;">void</span>)
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__init</span> arp_init(<span style="color: #66D9EF;">void</span>)
 {
         neigh_table_init(&amp;arp_tbl);
 
         dev_add_pack(&amp;arp_packet_type);
         arp_proc_init();
-        neigh_sysctl_register(<span style="color: #AF87FF;">NULL</span>, &amp;arp_tbl.parms, NET_IPV4,
-                              NET_IPV4_NEIGH, <span style="color: #CDC673;">"ipv4"</span>, <span style="color: #AF87FF;">NULL</span>, <span style="color: #AF87FF;">NULL</span>);
+        neigh_sysctl_register(<span style="color: #AE81FF;">NULL</span>, &amp;arp_tbl.parms, NET_IPV4,
+                              NET_IPV4_NEIGH, <span style="color: #E6DB74;">"ipv4"</span>, <span style="color: #AE81FF;">NULL</span>, <span style="color: #AE81FF;">NULL</span>);
         register_netdevice_notifier(&amp;arp_netdev_notifier);
 }
 </pre>
@@ -516,8 +470,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org9676468" class="outline-2">
-<h2 id="org9676468"><span class="section-number-2">4</span> ARP的邻居项函数指针</h2>
+<div id="outline-container-org9ca14c5" class="outline-2">
+<h2 id="org9ca14c5"><span class="section-number-2">4.</span> ARP的邻居项函数指针</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 ARP中，根据不同介质，提供了多种邻居项函数指针表的实例：
@@ -530,7 +484,7 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_ops</span> <span style="color: #FF8C00;">arp_generic_ops</span> = {
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neigh_ops</span> <span style="color: #FD971F;">arp_generic_ops</span> = {
         .family =               AF_INET,
         .solicit =              arp_solicit,
         .error_report =         arp_error_report,
@@ -540,7 +494,7 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
         .queue_xmit =           dev_queue_xmit,
 };
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_ops</span> <span style="color: #FF8C00;">arp_hh_ops</span> = {
+<span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neigh_ops</span> <span style="color: #FD971F;">arp_hh_ops</span> = {
         .family =               AF_INET,
         .solicit =              arp_solicit,
         .error_report =         arp_error_report,
@@ -550,7 +504,7 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
         .queue_xmit =           dev_queue_xmit,
 };
 
-<span style="color: #FF1493;">static</span> <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_ops</span> <span style="color: #FF8C00;">arp_direct_ops</span> = {
+<span style="color: #F92672;">static</span> <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neigh_ops</span> <span style="color: #FD971F;">arp_direct_ops</span> = {
         .family =               AF_INET,
         .output =               dev_queue_xmit,
         .connected_output =     dev_queue_xmit,
@@ -558,7 +512,7 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
         .queue_xmit =           dev_queue_xmit,
 };
 
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_ops</span> <span style="color: #FF8C00;">arp_broken_ops</span> = {
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neigh_ops</span> <span style="color: #FD971F;">arp_broken_ops</span> = {
         .family =               AF_INET,
         .solicit =              arp_solicit,
         .error_report =         arp_error_report,
@@ -572,19 +526,19 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
 </div>
 </div>
 
-<div id="outline-container-org5304ec8" class="outline-2">
-<h2 id="org5304ec8"><span class="section-number-2">5</span> ARP表</h2>
+<div id="outline-container-org5fddac9" class="outline-2">
+<h2 id="org5fddac9"><span class="section-number-2">5.</span> ARP表</h2>
 <div class="outline-text-2" id="text-5">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_table</span> <span style="color: #FF8C00;">arp_tbl</span> = {
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neigh_table</span> <span style="color: #FD971F;">arp_tbl</span> = {
         .family =       AF_INET,
-        .entry_size =   <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span>) + 4<span style="color: #8B8878;">/*</span><span style="color: #8B8878;">IPv4&#22320;&#22336;&#38271;&#24230;</span><span style="color: #8B8878;">*/</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">arp&#37051;&#23621;&#39033;&#22823;&#23567;</span>
+        .entry_size =   <span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neighbour</span>) + 4<span style="color: #75715E;">/*</span><span style="color: #75715E;">IPv4&#22320;&#22336;&#38271;&#24230;</span><span style="color: #75715E;">*/</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">arp&#37051;&#23621;&#39033;&#22823;&#23567;</span>
         .key_len =      4,
         .hash = arp_hash,
-        .constructor =arp_constructor,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#37051;&#23621;&#39033;&#21021;&#22987;&#21270;&#20989;&#25968;</span>
-        .proxy_redo =   parp_redo,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#20195;&#29702;&#25253;&#25991;&#30340;&#24310;&#26102;&#22788;&#29702;&#20989;&#25968;</span>
-        .id =           <span style="color: #CDC673;">"arp_cache"</span>,
-        .parms = {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">arp&#34920;&#29305;&#24615;&#30456;&#20851;&#21442;&#25968;</span>
+        .constructor =arp_constructor,  <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#37051;&#23621;&#39033;&#21021;&#22987;&#21270;&#20989;&#25968;</span>
+        .proxy_redo =   parp_redo,  <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#20195;&#29702;&#25253;&#25991;&#30340;&#24310;&#26102;&#22788;&#29702;&#20989;&#25968;</span>
+        .id =           <span style="color: #E6DB74;">"arp_cache"</span>,
+        .parms = {<span style="color: #75715E;">//</span><span style="color: #75715E;">arp&#34920;&#29305;&#24615;&#30456;&#20851;&#21442;&#25968;</span>
                 .tbl =          &amp;arp_tbl,
                 .base_reachable_time =30 * HZ,
                 .retrans_time = 1 * HZ,
@@ -609,12 +563,12 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
 </div>
 </div>
 
-<div id="outline-container-org4bf18e1" class="outline-2">
-<h2 id="org4bf18e1"><span class="section-number-2">6</span> 函数</h2>
+<div id="outline-container-orge9d91ad" class="outline-2">
+<h2 id="orge9d91ad"><span class="section-number-2">6.</span> 函数</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orge14290b" class="outline-3">
-<h3 id="orge14290b"><span class="section-number-3">6.1</span> arp_error_report()</h3>
+<div id="outline-container-org59e8412" class="outline-3">
+<h3 id="org59e8412"><span class="section-number-3">6.1.</span> arp_error_report()</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 当邻居项缓存中还存在有未发送的报文，而该邻居无法访问时会调用该函数。
@@ -625,7 +579,7 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">arp_error_report</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">arp_error_report</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neighbour</span> *<span style="color: #FD971F;">neigh</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>)
 {
         dst_link_failure(skb);
         kfree_skb(skb);
@@ -635,64 +589,64 @@ ARP中，根据不同介质，提供了多种邻居项函数指针表的实例�
 </div>
 </div>
 
-<div id="outline-container-orgc89ec06" class="outline-3">
-<h3 id="orgc89ec06"><span class="section-number-3">6.2</span> arp_solicit()</h3>
+<div id="outline-container-orgb9b89e1" class="outline-3">
+<h3 id="orgb9b89e1"><span class="section-number-3">6.2.</span> arp_solicit()</h3>
 <div class="outline-text-3" id="text-6-2">
 <p>
 arp_solicit()用来发送ARP请求，通过邻居项状态定时器的处理函数调用。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">// </span><span style="color: #8B8878;">neigh: ARP&#35831;&#27714;&#30340;&#30446;&#30340;&#37051;&#23621;&#39033;     skb: &#32531;&#23384;&#22312;&#35813;&#37051;&#23621;&#39033;&#20013;&#30340;&#24453;&#21457;&#36865;&#25253;&#25991;&#65292;&#29992;&#26469;&#33719;&#21462;&#35813;skb&#30340;&#28304;IP&#22320;&#22336;</span>
-<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">arp_solicit</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<pre class="src src-c"><span style="color: #75715E;">// </span><span style="color: #75715E;">neigh: ARP&#35831;&#27714;&#30340;&#30446;&#30340;&#37051;&#23621;&#39033;     skb: &#32531;&#23384;&#22312;&#35813;&#37051;&#23621;&#39033;&#20013;&#30340;&#24453;&#21457;&#36865;&#25253;&#25991;&#65292;&#29992;&#26469;&#33719;&#21462;&#35813;skb&#30340;&#28304;IP&#22320;&#22336;</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">arp_solicit</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neighbour</span> *<span style="color: #FD971F;">neigh</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>)
 {
-        <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">saddr</span> = 0;
-        <span style="color: #5FD7FF;">u8</span>  *<span style="color: #FF8C00;">dst_ha</span> = <span style="color: #AF87FF;">NULL</span>;
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = neigh-&gt;dev;
-        <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">target</span> = *(<span style="color: #5FD7FF;">__be32</span>*)neigh-&gt;primary_key;
-        <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">probes</span> = atomic_read(&amp;neigh-&gt;probes);
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span> = in_dev_get(dev);
-        <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>in_dev) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35813;&#37051;&#23621;&#39033;&#30340;&#32593;&#32476;&#35774;&#22791;&#30340;IP&#37197;&#32622;&#22359;&#26159;&#21542;&#26377;&#25928;</span>
-                <span style="color: #FF1493;">return</span>;
-        <span style="color: #FF1493;">switch</span> (IN_DEV_ARP_ANNOUNCE(in_dev)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462; arp_anournce &#31995;&#32479;&#21442;&#25968;&#65292;&#36873;&#25321;&#28304;IP&#22320;&#22336;</span>
-        <span style="color: #FF1493;">default</span>:
-        <span style="color: #FF1493;">case</span> 0: <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">By default announce any local IP</span><span style="color: #8B8878;"> */</span>
-                <span style="color: #FF1493;">if</span> (skb &amp;&amp; inet_addr_type(skb-&gt;nh.iph-&gt;saddr) == RTN_LOCAL)
+        <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">saddr</span> = 0;
+        <span style="color: #66D9EF;">u8</span>  *<span style="color: #FD971F;">dst_ha</span> = <span style="color: #AE81FF;">NULL</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span> = neigh-&gt;dev;
+        <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">target</span> = *(<span style="color: #66D9EF;">__be32</span>*)neigh-&gt;primary_key;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">probes</span> = atomic_read(&amp;neigh-&gt;probes);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">in_device</span> *<span style="color: #FD971F;">in_dev</span> = in_dev_get(dev);
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>in_dev) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35813;&#37051;&#23621;&#39033;&#30340;&#32593;&#32476;&#35774;&#22791;&#30340;IP&#37197;&#32622;&#22359;&#26159;&#21542;&#26377;&#25928;</span>
+                <span style="color: #F92672;">return</span>;
+        <span style="color: #F92672;">switch</span> (IN_DEV_ARP_ANNOUNCE(in_dev)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462; arp_anournce &#31995;&#32479;&#21442;&#25968;&#65292;&#36873;&#25321;&#28304;IP&#22320;&#22336;</span>
+        <span style="color: #F92672;">default</span>:
+        <span style="color: #F92672;">case</span> 0: <span style="color: #75715E;">/* </span><span style="color: #75715E;">By default announce any local IP</span><span style="color: #75715E;"> */</span>
+                <span style="color: #F92672;">if</span> (skb &amp;&amp; inet_addr_type(skb-&gt;nh.iph-&gt;saddr) == RTN_LOCAL)
                         saddr = skb-&gt;nh.iph-&gt;saddr;
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> 1:         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Restrict announcements of saddr in same subnet</span><span style="color: #8B8878;"> */</span>
-                <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>skb)
-                        <span style="color: #FF1493;">break</span>;
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> 1:         <span style="color: #75715E;">/* </span><span style="color: #75715E;">Restrict announcements of saddr in same subnet</span><span style="color: #75715E;"> */</span>
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>skb)
+                        <span style="color: #F92672;">break</span>;
                 saddr = skb-&gt;nh.iph-&gt;saddr;
-                <span style="color: #FF1493;">if</span> (inet_addr_type(saddr) == RTN_LOCAL) {
-                        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">saddr should be known to target</span><span style="color: #8B8878;"> */</span>
-                        <span style="color: #FF1493;">if</span> (inet_addr_onlink(in_dev, target, saddr))
-                                <span style="color: #FF1493;">break</span>;
+                <span style="color: #F92672;">if</span> (inet_addr_type(saddr) == RTN_LOCAL) {
+                        <span style="color: #75715E;">/* </span><span style="color: #75715E;">saddr should be known to target</span><span style="color: #75715E;"> */</span>
+                        <span style="color: #F92672;">if</span> (inet_addr_onlink(in_dev, target, saddr))
+                                <span style="color: #F92672;">break</span>;
                 }
                 saddr = 0;
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> 2:         <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Avoid secondary IPs, get a primary/preferred one</span><span style="color: #8B8878;"> */</span>
-                <span style="color: #FF1493;">break</span>;
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> 2:         <span style="color: #75715E;">/* </span><span style="color: #75715E;">Avoid secondary IPs, get a primary/preferred one</span><span style="color: #75715E;"> */</span>
+                <span style="color: #F92672;">break</span>;
         }
 
-        <span style="color: #FF1493;">if</span> (in_dev)
+        <span style="color: #F92672;">if</span> (in_dev)
                 in_dev_put(in_dev);
-        <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>saddr)
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>saddr)
                 saddr = inet_select_addr(dev, target, RT_SCOPE_LINK);
-        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#35831;&#27714;&#25253;&#25991;&#37325;&#20256;&#27425;&#25968;&#36229;&#36807;&#38408;&#20540;&#65292;&#21017;&#20572;&#27490;&#21457;&#36865;</span>
-        <span style="color: #FF1493;">if</span> ((probes -= neigh-&gt;parms-&gt;ucast_probes) &lt; 0) {
-                <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>(neigh-&gt;nud_state&amp;NUD_VALID))
-                        printk(KERN_DEBUG <span style="color: #CDC673;">"trying to ucast probe in NUD_INVALID\n"</span>);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#35831;&#27714;&#25253;&#25991;&#37325;&#20256;&#27425;&#25968;&#36229;&#36807;&#38408;&#20540;&#65292;&#21017;&#20572;&#27490;&#21457;&#36865;</span>
+        <span style="color: #F92672;">if</span> ((probes -= neigh-&gt;parms-&gt;ucast_probes) &lt; 0) {
+                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>(neigh-&gt;nud_state&amp;NUD_VALID))
+                        printk(KERN_DEBUG <span style="color: #E6DB74;">"trying to ucast probe in NUD_INVALID\n"</span>);
                 dst_ha = neigh-&gt;ha;
                 read_lock_bh(&amp;neigh-&gt;lock);
-        } <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> ((probes -= neigh-&gt;parms-&gt;app_probes) &lt; 0) {
+        } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> ((probes -= neigh-&gt;parms-&gt;app_probes) &lt; 0) {
                 neigh_app_ns(neigh);
-                <span style="color: #FF1493;">return</span>;
+                <span style="color: #F92672;">return</span>;
         }
-        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;ARP&#25253;&#25991;&#24182;&#23558;&#20854;&#36755;&#20986;</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21019;&#24314;ARP&#25253;&#25991;&#24182;&#23558;&#20854;&#36755;&#20986;</span>
         arp_send(ARPOP_REQUEST, ETH_P_ARP, target, dev, saddr,
-                 dst_ha, dev-&gt;dev_addr, <span style="color: #AF87FF;">NULL</span>);
-        <span style="color: #FF1493;">if</span> (dst_ha)
+                 dst_ha, dev-&gt;dev_addr, <span style="color: #AE81FF;">NULL</span>);
+        <span style="color: #F92672;">if</span> (dst_ha)
                 read_unlock_bh(&amp;neigh-&gt;lock);
 }
 </pre>
@@ -700,55 +654,55 @@ arp_solicit()用来发送ARP请求，通过邻居项状态定时器的处理函�
 </div>
 </div>
 
-<div id="outline-container-org0514602" class="outline-3">
-<h3 id="org0514602"><span class="section-number-3">6.3</span> arp_ignore()</h3>
+<div id="outline-container-org48e59dc" class="outline-3">
+<h3 id="org48e59dc"><span class="section-number-3">6.3.</span> arp_ignore()</h3>
 <div class="outline-text-3" id="text-6-3">
 <p>
 此函数用来根据过滤规则对输入的ARP报文的源、目的IP地址进行确认。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">arp_ignore</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,
-                      <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">sip</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">tip</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">arp_ignore</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">in_device</span> *<span style="color: #FD971F;">in_dev</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span>,
+                      <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">sip</span>, <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">tip</span>)
 {
-        <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">scope</span>;
-        <span style="color: #FF1493;">switch</span> (IN_DEV_ARP_IGNORE(in_dev)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#36807;&#28388;&#35268;&#21017;</span>
-        <span style="color: #FF1493;">case</span> 0: <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Reply, the tip is already validated</span><span style="color: #8B8878;"> */</span>
-                <span style="color: #FF1493;">return</span> 0;
-        <span style="color: #FF1493;">case</span> 1: <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Reply only if tip is configured on the incoming interface</span><span style="color: #8B8878;"> */</span>
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">scope</span>;
+        <span style="color: #F92672;">switch</span> (IN_DEV_ARP_IGNORE(in_dev)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#36807;&#28388;&#35268;&#21017;</span>
+        <span style="color: #F92672;">case</span> 0: <span style="color: #75715E;">/* </span><span style="color: #75715E;">Reply, the tip is already validated</span><span style="color: #75715E;"> */</span>
+                <span style="color: #F92672;">return</span> 0;
+        <span style="color: #F92672;">case</span> 1: <span style="color: #75715E;">/* </span><span style="color: #75715E;">Reply only if tip is configured on the incoming interface</span><span style="color: #75715E;"> */</span>
                 sip = 0;
                 scope = RT_SCOPE_HOST;
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> 2: <span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;">                 * Reply only if tip is configured on the incoming interface</span>
-<span style="color: #8B8878;">                 * and is in same subnet as sip</span>
-<span style="color: #8B8878;">                 */</span>
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> 2: <span style="color: #75715E;">/*</span>
+<span style="color: #75715E;">                 * Reply only if tip is configured on the incoming interface</span>
+<span style="color: #75715E;">                 * and is in same subnet as sip</span>
+<span style="color: #75715E;">                 */</span>
                 scope = RT_SCOPE_HOST;
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> 3: <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Do not reply for scope host addresses</span><span style="color: #8B8878;"> */</span>
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> 3: <span style="color: #75715E;">/* </span><span style="color: #75715E;">Do not reply for scope host addresses</span><span style="color: #75715E;"> */</span>
                 sip = 0;
                 scope = RT_SCOPE_LINK;
-                dev = <span style="color: #AF87FF;">NULL</span>;
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> 4: <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Reserved</span><span style="color: #8B8878;"> */</span>
-        <span style="color: #FF1493;">case</span> 5:
-        <span style="color: #FF1493;">case</span> 6:
-        <span style="color: #FF1493;">case</span> 7:
-                <span style="color: #FF1493;">return</span> 0;
-        <span style="color: #FF1493;">case</span> 8: <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Do not reply</span><span style="color: #8B8878;"> */</span>
-                <span style="color: #FF1493;">return</span> 1;
-        <span style="color: #FF1493;">default</span>:
-                <span style="color: #FF1493;">return</span> 0;
+                dev = <span style="color: #AE81FF;">NULL</span>;
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> 4: <span style="color: #75715E;">/* </span><span style="color: #75715E;">Reserved</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">case</span> 5:
+        <span style="color: #F92672;">case</span> 6:
+        <span style="color: #F92672;">case</span> 7:
+                <span style="color: #F92672;">return</span> 0;
+        <span style="color: #F92672;">case</span> 8: <span style="color: #75715E;">/* </span><span style="color: #75715E;">Do not reply</span><span style="color: #75715E;"> */</span>
+                <span style="color: #F92672;">return</span> 1;
+        <span style="color: #F92672;">default</span>:
+                <span style="color: #F92672;">return</span> 0;
         }
-        <span style="color: #FF1493;">return</span> <span style="color: #CDC673; font-weight: bold;">!</span>inet_confirm_addr(dev, sip, tip, scope);
+        <span style="color: #F92672;">return</span> <span style="color: #E6DB74; font-weight: bold;">!</span>inet_confirm_addr(dev, sip, tip, scope);
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgf82b0fa" class="outline-3">
-<h3 id="orgf82b0fa"><span class="section-number-3">6.4</span> arp_filter()</h3>
+<div id="outline-container-orgeb85eb2" class="outline-3">
+<h3 id="orgeb85eb2"><span class="section-number-3">6.4.</span> arp_filter()</h3>
 <div class="outline-text-3" id="text-6-4">
 <p>
 arp_filter根据ARP请求报文中的源IP地址和目的IP地址，查找输出路由，过滤掉查找路由失败，或者是查到的路由输出设备与ARP请求的输入设备不同的 ARP请求。
@@ -757,223 +711,223 @@ arp_filter根据ARP请求报文中的源IP地址和目的IP地址，查找输出
 </div>
 </div>
 
-<div id="outline-container-orgcd4a159" class="outline-2">
-<h2 id="orgcd4a159"><span class="section-number-2">7</span> IPv4中邻居项的初始化</h2>
+<div id="outline-container-org4ed07c7" class="outline-2">
+<h2 id="org4ed07c7"><span class="section-number-2">7.</span> IPv4中邻居项的初始化</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 arp_constructor()是ARP的邻居初始化函数， 用来初始化新的neighbour结构的实例，在邻居表创建函数neigh_create()中被调用。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">arp_constructor</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour</span> *<span style="color: #FF8C00;">neigh</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">arp_constructor</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neighbour</span> *<span style="color: #FD971F;">neigh</span>)
 {
-        <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">addr</span> = *(<span style="color: #5FD7FF;">__be32</span>*)neigh-&gt;primary_key;
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = neigh-&gt;dev;
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">in_device</span> *<span style="color: #FF8C00;">in_dev</span>;
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neigh_parms</span> *<span style="color: #FF8C00;">parms</span>;
-        neigh-&gt;type = inet_addr_type(addr); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#37051;&#23621;&#22320;&#22336;&#33719;&#21462;&#20854;&#31867;&#22411;</span>
-        <span style="color: #87D700;">rcu_read_lock</span>();
+        <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">addr</span> = *(<span style="color: #66D9EF;">__be32</span>*)neigh-&gt;primary_key;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span> = neigh-&gt;dev;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">in_device</span> *<span style="color: #FD971F;">in_dev</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neigh_parms</span> *<span style="color: #FD971F;">parms</span>;
+        neigh-&gt;type = inet_addr_type(addr); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26681;&#25454;&#37051;&#23621;&#22320;&#22336;&#33719;&#21462;&#20854;&#31867;&#22411;</span>
+        <span style="color: #A6E22E;">rcu_read_lock</span>();
         in_dev = __in_dev_get_rcu(dev);
-        <span style="color: #FF1493;">if</span> (in_dev == <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37051;&#23621;&#36755;&#20986;&#35774;&#22791;&#30340;IP&#37197;&#32622;&#22359;&#26159;&#21542;&#26377;&#25928;&#12290;</span>
+        <span style="color: #F92672;">if</span> (in_dev == <span style="color: #AE81FF;">NULL</span>) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37051;&#23621;&#36755;&#20986;&#35774;&#22791;&#30340;IP&#37197;&#32622;&#22359;&#26159;&#21542;&#26377;&#25928;&#12290;</span>
                 rcu_read_unlock();
-                <span style="color: #FF1493;">return</span> -EINVAL;
+                <span style="color: #F92672;">return</span> -EINVAL;
         }
 
-        parms = in_dev-&gt;arp_parms; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#37051;&#23621;&#37197;&#32622;&#21442;&#25968;</span>
-        <span style="color: #87D700;">__neigh_parms_put</span>(neigh-&gt;parms);
-        neigh-&gt;parms = neigh_parms_clone(parms); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20811;&#38534;&#37051;&#23621;&#37197;&#32622;&#21442;&#25968;</span>
-        <span style="color: #87D700;">rcu_read_unlock</span>();
+        parms = in_dev-&gt;arp_parms; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#37051;&#23621;&#37197;&#32622;&#21442;&#25968;</span>
+        <span style="color: #A6E22E;">__neigh_parms_put</span>(neigh-&gt;parms);
+        neigh-&gt;parms = neigh_parms_clone(parms); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20811;&#38534;&#37051;&#23621;&#37197;&#32622;&#21442;&#25968;</span>
+        <span style="color: #A6E22E;">rcu_read_unlock</span>();
 
-        <span style="color: #FF1493;">if</span> (dev-&gt;hard_header == <span style="color: #AF87FF;">NULL</span>) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26080;&#38656;&#25903;&#25345;ARP</span>
+        <span style="color: #F92672;">if</span> (dev-&gt;hard_header == <span style="color: #AE81FF;">NULL</span>) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26080;&#38656;&#25903;&#25345;ARP</span>
                 neigh-&gt;nud_state = NUD_NOARP;
-                neigh-&gt;ops = &amp;arp_direct_ops; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#37051;&#23621;&#39033;&#30340;&#20989;&#25968;&#25351;&#38024;&#34920;</span>
-                neigh-&gt;output = neigh-&gt;ops-&gt;queue_xmit; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;&#37051;&#23621;&#39033;&#36755;&#20986;&#25509;&#21475;</span>
-        } <span style="color: #FF1493;">else</span> {
-                <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Good devices (checked by reading texts, but only Ethernet is</span>
-<span style="color: #8B8878;">                   tested)</span>
+                neigh-&gt;ops = &amp;arp_direct_ops; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#32622;&#37051;&#23621;&#39033;&#30340;&#20989;&#25968;&#25351;&#38024;&#34920;</span>
+                neigh-&gt;output = neigh-&gt;ops-&gt;queue_xmit; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#32622;&#37051;&#23621;&#39033;&#36755;&#20986;&#25509;&#21475;</span>
+        } <span style="color: #F92672;">else</span> {
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Good devices (checked by reading texts, but only Ethernet is</span>
+<span style="color: #75715E;">                   tested)</span>
 
-<span style="color: #8B8878;">                   ARPHRD_ETHER: (ethernet, apfddi)</span>
-<span style="color: #8B8878;">                   ARPHRD_FDDI: (fddi)</span>
-<span style="color: #8B8878;">                   ARPHRD_IEEE802: (tr)</span>
-<span style="color: #8B8878;">                   ARPHRD_METRICOM: (strip)</span>
-<span style="color: #8B8878;">                   ARPHRD_ARCNET:</span>
-<span style="color: #8B8878;">                   etc. etc. etc.</span>
+<span style="color: #75715E;">                   ARPHRD_ETHER: (ethernet, apfddi)</span>
+<span style="color: #75715E;">                   ARPHRD_FDDI: (fddi)</span>
+<span style="color: #75715E;">                   ARPHRD_IEEE802: (tr)</span>
+<span style="color: #75715E;">                   ARPHRD_METRICOM: (strip)</span>
+<span style="color: #75715E;">                   ARPHRD_ARCNET:</span>
+<span style="color: #75715E;">                   etc. etc. etc.</span>
 
-<span style="color: #8B8878;">                   ARPHRD_IPDDP will also work, if author repairs it.</span>
-<span style="color: #8B8878;">                   I did not it, because this driver does not work even</span>
-<span style="color: #8B8878;">                   in old paradigm.</span>
-<span style="color: #8B8878;">                 */</span>
+<span style="color: #75715E;">                   ARPHRD_IPDDP will also work, if author repairs it.</span>
+<span style="color: #75715E;">                   I did not it, because this driver does not work even</span>
+<span style="color: #75715E;">                   in old paradigm.</span>
+<span style="color: #75715E;">                 */</span>
 
-<span style="color: #FF1493;">#if</span> 1
-                <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">So... these "amateur" devices are hopeless.</span>
-<span style="color: #8B8878;">                   The only thing, that I can say now:</span>
-<span style="color: #8B8878;">                   It is very sad that we need to keep ugly obsolete</span>
-<span style="color: #8B8878;">                   code to make them happy.</span>
+<span style="color: #F92672;">#if</span> 1
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">So... these "amateur" devices are hopeless.</span>
+<span style="color: #75715E;">                   The only thing, that I can say now:</span>
+<span style="color: #75715E;">                   It is very sad that we need to keep ugly obsolete</span>
+<span style="color: #75715E;">                   code to make them happy.</span>
 
-<span style="color: #8B8878;">                   They should be moved to more reasonable state, now</span>
-<span style="color: #8B8878;">                   they use rebuild_header INSTEAD OF hard_start_xmit!!!</span>
-<span style="color: #8B8878;">                   Besides that, they are sort of out of date</span>
-<span style="color: #8B8878;">                   (a lot of redundant clones/copies, useless in 2.1),</span>
-<span style="color: #8B8878;">                   I wonder why people believe that they work.</span>
-<span style="color: #8B8878;">                 */</span>
-                <span style="color: #FF1493;">switch</span> (dev-&gt;type) {
-                <span style="color: #FF1493;">default</span>:
-                        <span style="color: #FF1493;">break</span>;
-                <span style="color: #FF1493;">case</span> ARPHRD_ROSE:
-<span style="color: #FF1493;">#if</span> <span style="color: #FF1493;">defined</span>(CONFIG_AX25) || <span style="color: #FF1493;">defined</span>(CONFIG_AX25_MODULE)
-                <span style="color: #FF1493;">case</span> ARPHRD_AX25:
-<span style="color: #FF1493;">#if</span> <span style="color: #FF1493;">defined</span>(CONFIG_NETROM) || <span style="color: #FF1493;">defined</span>(CONFIG_NETROM_MODULE)
-                <span style="color: #FF1493;">case</span> ARPHRD_NETROM:
-<span style="color: #FF1493;">#endif</span>
+<span style="color: #75715E;">                   They should be moved to more reasonable state, now</span>
+<span style="color: #75715E;">                   they use rebuild_header INSTEAD OF hard_start_xmit!!!</span>
+<span style="color: #75715E;">                   Besides that, they are sort of out of date</span>
+<span style="color: #75715E;">                   (a lot of redundant clones/copies, useless in 2.1),</span>
+<span style="color: #75715E;">                   I wonder why people believe that they work.</span>
+<span style="color: #75715E;">                 */</span>
+                <span style="color: #F92672;">switch</span> (dev-&gt;type) {
+                <span style="color: #F92672;">default</span>:
+                        <span style="color: #F92672;">break</span>;
+                <span style="color: #F92672;">case</span> ARPHRD_ROSE:
+<span style="color: #F92672;">#if</span> <span style="color: #F92672;">defined</span>(CONFIG_AX25) || <span style="color: #F92672;">defined</span>(CONFIG_AX25_MODULE)
+                <span style="color: #F92672;">case</span> ARPHRD_AX25:
+<span style="color: #F92672;">#if</span> <span style="color: #F92672;">defined</span>(CONFIG_NETROM) || <span style="color: #F92672;">defined</span>(CONFIG_NETROM_MODULE)
+                <span style="color: #F92672;">case</span> ARPHRD_NETROM:
+<span style="color: #F92672;">#endif</span>
                         neigh-&gt;ops = &amp;arp_broken_ops;
                         neigh-&gt;output = neigh-&gt;ops-&gt;output;
-                        <span style="color: #FF1493;">return</span> 0;
-<span style="color: #FF1493;">#endif</span>
+                        <span style="color: #F92672;">return</span> 0;
+<span style="color: #F92672;">#endif</span>
                 ;}
-<span style="color: #FF1493;">#endif</span>
-                <span style="color: #FF1493;">if</span> (neigh-&gt;type == RTN_MULTICAST) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32452;&#25773;&#31867;&#22411; &#26080;&#38656;arp</span>
+<span style="color: #F92672;">#endif</span>
+                <span style="color: #F92672;">if</span> (neigh-&gt;type == RTN_MULTICAST) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#32452;&#25773;&#31867;&#22411; &#26080;&#38656;arp</span>
                         neigh-&gt;nud_state = NUD_NOARP;
                         arp_mc_map(addr, neigh-&gt;ha, dev, 1);
-                } <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (dev-&gt;flags&amp;(IFF_NOARP|IFF_LOOPBACK)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26080;&#38656;ARP&#25903;&#25345;&#25110;&#32773;&#22238;&#29615;&#35774;&#22791;</span>
+                } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (dev-&gt;flags&amp;(IFF_NOARP|IFF_LOOPBACK)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26080;&#38656;ARP&#25903;&#25345;&#25110;&#32773;&#22238;&#29615;&#35774;&#22791;</span>
                         neigh-&gt;nud_state = NUD_NOARP;
                         memcpy(neigh-&gt;ha, dev-&gt;dev_addr, dev-&gt;addr_len);
-                } <span style="color: #FF1493;">else</span> <span style="color: #FF1493;">if</span> (neigh-&gt;type == RTN_BROADCAST || dev-&gt;flags&amp;IFF_POINTOPOINT) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24191;&#25773;&#25110;&#32773;&#28857;&#23545;&#28857;</span>
+                } <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (neigh-&gt;type == RTN_BROADCAST || dev-&gt;flags&amp;IFF_POINTOPOINT) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#24191;&#25773;&#25110;&#32773;&#28857;&#23545;&#28857;</span>
                         neigh-&gt;nud_state = NUD_NOARP;
                         memcpy(neigh-&gt;ha, dev-&gt;broadcast, dev-&gt;addr_len);
                 }
-                <span style="color: #FF1493;">if</span> (dev-&gt;hard_header_cache) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#25903;&#25345;&#30828;&#20214;&#30828;&#20214;&#39318;&#37096;&#32531;&#23384;</span>
+                <span style="color: #F92672;">if</span> (dev-&gt;hard_header_cache) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#25903;&#25345;&#30828;&#20214;&#30828;&#20214;&#39318;&#37096;&#32531;&#23384;</span>
                         neigh-&gt;ops = &amp;arp_hh_ops;
-                <span style="color: #FF1493;">else</span>
+                <span style="color: #F92672;">else</span>
                         neigh-&gt;ops = &amp;arp_generic_ops;
-                <span style="color: #FF1493;">if</span> (neigh-&gt;nud_state&amp;NUD_VALID) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26681;&#25454;&#29366;&#24577;&#35774;&#32622;&#36755;&#20986;&#25509;&#21475;</span>
+                <span style="color: #F92672;">if</span> (neigh-&gt;nud_state&amp;NUD_VALID) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26681;&#25454;&#29366;&#24577;&#35774;&#32622;&#36755;&#20986;&#25509;&#21475;</span>
                         neigh-&gt;output = neigh-&gt;ops-&gt;connected_output;
-                <span style="color: #FF1493;">else</span>
+                <span style="color: #F92672;">else</span>
                         neigh-&gt;output = neigh-&gt;ops-&gt;output;
         }
-        <span style="color: #FF1493;">return</span> 0;
+        <span style="color: #F92672;">return</span> 0;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org7941cc3" class="outline-2">
-<h2 id="org7941cc3"><span class="section-number-2">8</span> ARP报文创建</h2>
+<div id="outline-container-orgc3ae748" class="outline-2">
+<h2 id="orgc3ae748"><span class="section-number-2">8.</span> ARP报文创建</h2>
 <div class="outline-text-2" id="text-8">
 <p>
 arp_create() 用来创建一个完整的ARP报文。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      Create an arp packet. If (dest_hw == NULL), we create a broadcast</span>
-<span style="color: #8B8878;"> *      message.</span>
-<span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">arp_create</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#21327;&#35758;&#25805;&#20316;&#30721; &#22914;ARPOP_REPLY&#12289;ARPOP_REQUEST&#31561;&#12290;</span>
-                           <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ptype</span>,<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#19977;&#23618;&#21327;&#35758;&#31867;&#22411;</span>
-                            <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">dest_ip</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30446;&#30340;IP</span>
-                           <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span>
-                           <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">src_ip</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#25253;&#25991;&#28304;IP</span>
-                           <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">dest_hw</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#25253;&#25991;&#30446;&#30340;&#30828;&#20214;&#22320;&#22336;</span>
-                           <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">src_hw</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#25253;&#25991;&#28304;&#30828;&#20214;&#22320;&#22336;</span>
-                           <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">target_hw</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">target_hw &#22635;&#20805;&#21040;ARP&#25253;&#25991;</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      Create an arp packet. If (dest_hw == NULL), we create a broadcast</span>
+<span style="color: #75715E;"> *      message.</span>
+<span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #A6E22E;">arp_create</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">type</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#21327;&#35758;&#25805;&#20316;&#30721; &#22914;ARPOP_REPLY&#12289;ARPOP_REQUEST&#31561;&#12290;</span>
+                           <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">ptype</span>,<span style="color: #75715E;">//</span><span style="color: #75715E;">&#19977;&#23618;&#21327;&#35758;&#31867;&#22411;</span>
+                            <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">dest_ip</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">&#30446;&#30340;IP</span>
+                           <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span>,  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;</span>
+                           <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">src_ip</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#25253;&#25991;&#28304;IP</span>
+                           <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">dest_hw</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#25253;&#25991;&#30446;&#30340;&#30828;&#20214;&#22320;&#22336;</span>
+                           <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">src_hw</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#25253;&#25991;&#28304;&#30828;&#20214;&#22320;&#22336;</span>
+                           <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">target_hw</span>) <span style="color: #75715E;">//</span><span style="color: #75715E;">target_hw &#22635;&#20805;&#21040;ARP&#25253;&#25991;</span>
 {
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span> *<span style="color: #FF8C00;">arp</span>;
-        <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">arp_ptr</span>;
-        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Allocate a buffer</span><span style="color: #8B8878;"> */</span>
-        skb = alloc_skb(<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span>)+ 2*(dev-&gt;addr_len+4)
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">arphdr</span> *<span style="color: #FD971F;">arp</span>;
+        <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">arp_ptr</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Allocate a buffer</span><span style="color: #75715E;"> */</span>
+        skb = alloc_skb(<span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">arphdr</span>)+ 2*(dev-&gt;addr_len+4)
                                 + LL_RESERVED_SPACE(dev), GFP_ATOMIC);
         skb_reserve(skb, LL_RESERVED_SPACE(dev));
         skb-&gt;nh.raw = skb-&gt;data;
-        arp = (<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span> *) skb_put(skb,<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span>) + 2*(dev-&gt;addr_len+4));
+        arp = (<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">arphdr</span> *) skb_put(skb,<span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">arphdr</span>) + 2*(dev-&gt;addr_len+4));
         skb-&gt;dev = dev;
         skb-&gt;protocol = htons(ETH_P_ARP);
-        <span style="color: #FF1493;">if</span> (src_hw == <span style="color: #AF87FF;">NULL</span>)
+        <span style="color: #F92672;">if</span> (src_hw == <span style="color: #AE81FF;">NULL</span>)
                 src_hw = dev-&gt;dev_addr;
-        <span style="color: #FF1493;">if</span> (dest_hw == <span style="color: #AF87FF;">NULL</span>)
+        <span style="color: #F92672;">if</span> (dest_hw == <span style="color: #AE81FF;">NULL</span>)
                 dest_hw = dev-&gt;broadcast;
 
-        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#22635;&#20805;ARP&#25253;&#25991;&#30340;&#30828;&#20214;&#39318;&#37096;</span><span style="color: #8B8878;"> */</span>
-        <span style="color: #FF1493;">if</span> (dev-&gt;hard_header &amp;&amp;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#22635;&#20805;ARP&#25253;&#25991;&#30340;&#30828;&#20214;&#39318;&#37096;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">if</span> (dev-&gt;hard_header &amp;&amp;
             dev-&gt;hard_header(skb,dev,ptype,dest_hw,src_hw,skb-&gt;len) &lt; 0)
-                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
 
-        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#26681;&#25454;&#32593;&#32476;&#35774;&#22791;&#31867;&#22411;&#65292;&#35774;&#32622;ARP&#25253;&#25991;&#30340;&#30828;&#20214;&#22320;&#22336;&#31867;&#22411;&#21644;&#21327;&#35758;&#31867;&#22411;&#12290;</span><span style="color: #8B8878;">*/</span>
-        <span style="color: #FF1493;">switch</span> (dev-&gt;type) {
-        <span style="color: #FF1493;">default</span>:
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#26681;&#25454;&#32593;&#32476;&#35774;&#22791;&#31867;&#22411;&#65292;&#35774;&#32622;ARP&#25253;&#25991;&#30340;&#30828;&#20214;&#22320;&#22336;&#31867;&#22411;&#21644;&#21327;&#35758;&#31867;&#22411;&#12290;</span><span style="color: #75715E;">*/</span>
+        <span style="color: #F92672;">switch</span> (dev-&gt;type) {
+        <span style="color: #F92672;">default</span>:
                 arp-&gt;ar_hrd = htons(dev-&gt;type);
                 arp-&gt;ar_pro = htons(ETH_P_IP);
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> ARPHRD_AX25:
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> ARPHRD_AX25:
                 arp-&gt;ar_hrd = htons(ARPHRD_AX25);
                 arp-&gt;ar_pro = htons(AX25_P_IP);
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> ARPHRD_NETROM:
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> ARPHRD_NETROM:
                 arp-&gt;ar_hrd = htons(ARPHRD_NETROM);
                 arp-&gt;ar_pro = htons(AX25_P_IP);
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> ARPHRD_FDDI:
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> ARPHRD_FDDI:
                 arp-&gt;ar_hrd = htons(ARPHRD_ETHER);
                 arp-&gt;ar_pro = htons(ETH_P_IP);
-                <span style="color: #FF1493;">break</span>;
-        <span style="color: #FF1493;">case</span> ARPHRD_IEEE802_TR:
+                <span style="color: #F92672;">break</span>;
+        <span style="color: #F92672;">case</span> ARPHRD_IEEE802_TR:
                 arp-&gt;ar_hrd = htons(ARPHRD_IEEE802);
                 arp-&gt;ar_pro = htons(ETH_P_IP);
-                <span style="color: #FF1493;">break</span>;
+                <span style="color: #F92672;">break</span>;
         }
-        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#32622;ARP&#25253;&#25991;&#39318;&#37096;&#21450;&#20854;&#20182;&#23383;&#27573;</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#32622;ARP&#25253;&#25991;&#39318;&#37096;&#21450;&#20854;&#20182;&#23383;&#27573;</span>
         arp-&gt;ar_hln = dev-&gt;addr_len;
         arp-&gt;ar_pln = 4;
         arp-&gt;ar_op = htons(type);
-        arp_ptr=(<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *)(arp+1);
+        arp_ptr=(<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *)(arp+1);
         memcpy(arp_ptr, src_hw, dev-&gt;addr_len);
         arp_ptr+=dev-&gt;addr_len;
         memcpy(arp_ptr, &amp;src_ip,4);
         arp_ptr+=4;
-        <span style="color: #FF1493;">if</span> (target_hw != <span style="color: #AF87FF;">NULL</span>)
+        <span style="color: #F92672;">if</span> (target_hw != <span style="color: #AE81FF;">NULL</span>)
                 memcpy(arp_ptr, target_hw, dev-&gt;addr_len);
-        <span style="color: #FF1493;">else</span>
+        <span style="color: #F92672;">else</span>
                 memset(arp_ptr, 0, dev-&gt;addr_len);
         arp_ptr+=dev-&gt;addr_len;
         memcpy(arp_ptr, &amp;dest_ip, 4);
 
-        <span style="color: #FF1493;">return</span> skb;
-<span style="color: #AF87FF;">out</span>:
+        <span style="color: #F92672;">return</span> skb;
+<span style="color: #AE81FF;">out</span>:
         kfree_skb(skb);
-        <span style="color: #FF1493;">return</span> <span style="color: #AF87FF;">NULL</span>;
+        <span style="color: #F92672;">return</span> <span style="color: #AE81FF;">NULL</span>;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgf4d09f8" class="outline-2">
-<h2 id="orgf4d09f8"><span class="section-number-2">9</span> ARP的输出</h2>
+<div id="outline-container-org41394eb" class="outline-2">
+<h2 id="org41394eb"><span class="section-number-2">9.</span> ARP的输出</h2>
 <div class="outline-text-2" id="text-9">
 <p>
 arp_send()先创建一个ARP报文，然后发送。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      Create and send an arp packet.</span>
-<span style="color: #8B8878;"> */</span>
-<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">arp_send</span>(<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">type</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">ptype</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">dest_ip</span>,
-              <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #5FD7FF;">__be32</span> <span style="color: #FF8C00;">src_ip</span>,
-              <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">dest_hw</span>, <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">src_hw</span>,
-              <span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">char</span> *<span style="color: #FF8C00;">target_hw</span>)
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      Create and send an arp packet.</span>
+<span style="color: #75715E;"> */</span>
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">arp_send</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">type</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">ptype</span>, <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">dest_ip</span>,
+              <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span>, <span style="color: #66D9EF;">__be32</span> <span style="color: #FD971F;">src_ip</span>,
+              <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">dest_hw</span>, <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">src_hw</span>,
+              <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">target_hw</span>)
 {
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>;
-        <span style="color: #FF1493;">if</span> (dev-&gt;flags&amp;IFF_NOARP) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26080;&#38656;ARP&#25903;&#25345;</span>
-                <span style="color: #FF1493;">return</span>;
-        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21019;&#24314;ARP&#25253;&#25991;</span>
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>;
+        <span style="color: #F92672;">if</span> (dev-&gt;flags&amp;IFF_NOARP) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26080;&#38656;ARP&#25903;&#25345;</span>
+                <span style="color: #F92672;">return</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21019;&#24314;ARP&#25253;&#25991;</span>
         skb = arp_create(type, ptype, dest_ip, dev, src_ip,
                          dest_hw, src_hw, target_hw);
-        <span style="color: #FF1493;">if</span> (skb == <span style="color: #AF87FF;">NULL</span>) {
-                <span style="color: #FF1493;">return</span>;
+        <span style="color: #F92672;">if</span> (skb == <span style="color: #AE81FF;">NULL</span>) {
+                <span style="color: #F92672;">return</span>;
         }
-        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;ARP&#25253;&#25991;</span>
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36755;&#20986;ARP&#25253;&#25991;</span>
         arp_xmit(skb);
 }
 </pre>
@@ -981,57 +935,57 @@ arp_send()先创建一个ARP报文，然后发送。
 </div>
 </div>
 
-<div id="outline-container-orgbc094fe" class="outline-2">
-<h2 id="orgbc094fe"><span class="section-number-2">10</span> ARP的输入</h2>
+<div id="outline-container-orgce9de9c" class="outline-2">
+<h2 id="orgce9de9c"><span class="section-number-2">10.</span> ARP的输入</h2>
 <div class="outline-text-2" id="text-10">
 </div>
-<div id="outline-container-orgdf68459" class="outline-3">
-<h3 id="orgdf68459"><span class="section-number-3">10.1</span> arp_rcv()</h3>
+<div id="outline-container-org9c94740" class="outline-3">
+<h3 id="org9c94740"><span class="section-number-3">10.1.</span> arp_rcv()</h3>
 <div class="outline-text-3" id="text-10-1">
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #8B8878;">/*</span>
-<span style="color: #8B8878;"> *      arp_rcv &#20174;&#20108;&#23618;&#25509;&#25910;&#24182;&#22788;&#29702;&#19968;&#20010;ARP&#25253;&#25991;&#12290;</span>
-<span style="color: #8B8878;"> */</span>
-<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">arp_rcv</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#25253;&#25991;&#30340;SKB</span>
-                   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>, <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;ARP&#25253;&#25991;&#30340;&#32593;&#32476;&#35774;&#22791;</span>
-                   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">packet_type</span> *<span style="color: #FF8C00;">pt</span>,  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">packet_type&#32467;&#26500;&#30340;&#23454;&#20363;&#65292; ARP&#20026; arp_packet_type</span>
-                   <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">orig_dev</span>) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25509;&#25910;ARP&#25253;&#25991;&#30340;&#21407;&#22987;&#32593;&#32476;&#35774;&#22791;</span>
+<pre class="src src-c"><span style="color: #75715E;">/*</span>
+<span style="color: #75715E;"> *      arp_rcv &#20174;&#20108;&#23618;&#25509;&#25910;&#24182;&#22788;&#29702;&#19968;&#20010;ARP&#25253;&#25991;&#12290;</span>
+<span style="color: #75715E;"> */</span>
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">arp_rcv</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>,  <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#25253;&#25991;&#30340;SKB</span>
+                   <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span>, <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25509;&#25910;ARP&#25253;&#25991;&#30340;&#32593;&#32476;&#35774;&#22791;</span>
+                   <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">packet_type</span> *<span style="color: #FD971F;">pt</span>,  <span style="color: #75715E;">//</span><span style="color: #75715E;">packet_type&#32467;&#26500;&#30340;&#23454;&#20363;&#65292; ARP&#20026; arp_packet_type</span>
+                   <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">orig_dev</span>) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25509;&#25910;ARP&#25253;&#25991;&#30340;&#21407;&#22987;&#32593;&#32476;&#35774;&#22791;</span>
 {
-        <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span> *<span style="color: #FF8C00;">arp</span>;
-        <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ARP header, plus 2 device addresses, plus 2 IP addresses.</span><span style="color: #8B8878;">  */</span>
-        <span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>pskb_may_pull(skb, (<span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">arphdr</span>) +
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">arphdr</span> *<span style="color: #FD971F;">arp</span>;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">ARP header, plus 2 device addresses, plus 2 IP addresses.</span><span style="color: #75715E;">  */</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>pskb_may_pull(skb, (<span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">arphdr</span>) +
                                  (2 * dev-&gt;addr_len) +
-                                 (2 * <span style="color: #FF1493;">sizeof</span>(u32)))))
-                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">freeskb</span>;
+                                 (2 * <span style="color: #F92672;">sizeof</span>(u32)))))
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">freeskb</span>;
 
         arp = skb-&gt;nh.arph;
-        <span style="color: #FF1493;">if</span> (arp-&gt;ar_hln != dev-&gt;addr_len <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30828;&#20214;&#22320;&#22336;&#38271;&#24230;&#26159;&#21542;&#21305;&#37197;</span>
-            dev-&gt;flags &amp; IFF_NOARP ||  <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#25903;&#25345;ARP</span>
-            skb-&gt;pkt_type == PACKET_OTHERHOST || <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#36716;&#21457;</span>
-            skb-&gt;pkt_type == PACKET_LOOPBACK || <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#26469;&#33258;&#22238;&#29615;&#25509;&#21475;</span>
-            arp-&gt;ar_pln != 4) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#30340;&#21327;&#35758;&#22320;&#22336;&#38271;&#24230;&#24517;&#39035;&#20026;4</span>
-                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">freeskb</span>;
-        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">ARP&#25253;&#25991;&#26159;&#21542;&#26159;&#20811;&#38534;&#30340;</span>
-        <span style="color: #FF1493;">if</span> ((skb = skb_share_check(skb, GFP_ATOMIC)) == <span style="color: #AF87FF;">NULL</span>)
-                <span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_of_mem</span>;
-        memset(NEIGH_CB(skb), 0, <span style="color: #FF1493;">sizeof</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">neighbour_cb</span>));
-        <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#32463;&#36807;netfilter &#30340;NF_ARP_IN&#22788;&#29702;&#65292;&#20043;&#21518;&#36716;&#21040;arp_process&#22788;&#29702;</span>
-        <span style="color: #FF1493;">return</span> NF_HOOK(NF_ARP, NF_ARP_IN, skb, dev, <span style="color: #AF87FF;">NULL</span>, arp_process);
-<span style="color: #AF87FF;">freeskb</span>:
+        <span style="color: #F92672;">if</span> (arp-&gt;ar_hln != dev-&gt;addr_len <span style="color: #75715E;">//</span><span style="color: #75715E;">&#30828;&#20214;&#22320;&#22336;&#38271;&#24230;&#26159;&#21542;&#21305;&#37197;</span>
+            dev-&gt;flags &amp; IFF_NOARP ||  <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26159;&#21542;&#25903;&#25345;ARP</span>
+            skb-&gt;pkt_type == PACKET_OTHERHOST || <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26159;&#21542;&#36716;&#21457;</span>
+            skb-&gt;pkt_type == PACKET_LOOPBACK || <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26159;&#21542;&#26469;&#33258;&#22238;&#29615;&#25509;&#21475;</span>
+            arp-&gt;ar_pln != 4) <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#30340;&#21327;&#35758;&#22320;&#22336;&#38271;&#24230;&#24517;&#39035;&#20026;4</span>
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">freeskb</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">ARP&#25253;&#25991;&#26159;&#21542;&#26159;&#20811;&#38534;&#30340;</span>
+        <span style="color: #F92672;">if</span> ((skb = skb_share_check(skb, GFP_ATOMIC)) == <span style="color: #AE81FF;">NULL</span>)
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_of_mem</span>;
+        memset(NEIGH_CB(skb), 0, <span style="color: #F92672;">sizeof</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">neighbour_cb</span>));
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#32463;&#36807;netfilter &#30340;NF_ARP_IN&#22788;&#29702;&#65292;&#20043;&#21518;&#36716;&#21040;arp_process&#22788;&#29702;</span>
+        <span style="color: #F92672;">return</span> NF_HOOK(NF_ARP, NF_ARP_IN, skb, dev, <span style="color: #AE81FF;">NULL</span>, arp_process);
+<span style="color: #AE81FF;">freeskb</span>:
         kfree_skb(skb);
-<span style="color: #AF87FF;">out_of_mem</span>:
-        <span style="color: #FF1493;">return</span> 0;
+<span style="color: #AE81FF;">out_of_mem</span>:
+        <span style="color: #F92672;">return</span> 0;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org78ecacb" class="outline-3">
-<h3 id="org78ecacb"><span class="section-number-3">10.2</span> arp_process()</h3>
+<div id="outline-container-orgeacdcb7" class="outline-3">
+<h3 id="orgeacdcb7"><span class="section-number-3">10.2.</span> arp_process()</h3>
 <div class="outline-text-3" id="text-10-2">
 
-<div class="figure">
+<div id="orgf3e9475" class="figure">
 <p><img src="image/arp/arp-process.png" alt="arp-process.png" />
 </p>
 <p><span class="figure-number">Figure 2: </span>arp_process流程图</p>
@@ -1040,8 +994,8 @@ arp_send()先创建一个ARP报文，然后发送。
 </div>
 </div>
 
-<div id="outline-container-org86b67f2" class="outline-2">
-<h2 id="org86b67f2"><span class="section-number-2">11</span> ARP的ioctl</h2>
+<div id="outline-container-org6f02324" class="outline-2">
+<h2 id="org6f02324"><span class="section-number-2">11.</span> ARP的ioctl</h2>
 <div class="outline-text-2" id="text-11">
 <ul class="org-ul">
 <li>SIOCDARP 调用arp_req_delete()删除ARP表的指定邻居项。</li>
@@ -1051,8 +1005,8 @@ arp_send()先创建一个ARP报文，然后发送。
 </div>
 </div>
 
-<div id="outline-container-orgd8398d2" class="outline-2">
-<h2 id="orgd8398d2"><span class="section-number-2">12</span> 外部事件</h2>
+<div id="outline-container-org0b88ea3" class="outline-2">
+<h2 id="org0b88ea3"><span class="section-number-2">12.</span> 外部事件</h2>
 <div class="outline-text-2" id="text-12">
 <p>
 设备IP地址变化时，ARP模块通过注册到通知链中的arp_netdev_notifier受到通知。arp_netdev_event()函数用来处理 NETDEV_CHANGEADDR 事件， 该函数删除并禁用网络设备相关的邻居项，同时刷新路由缓存，如果邻居项引用计数大于1，则设置 neigh_blackhole()作为邻居项的output， 之后该邻居项的输出接口会直接丢弃报文。
@@ -1060,8 +1014,8 @@ arp_send()先创建一个ARP报文，然后发送。
 </div>
 </div>
 
-<div id="outline-container-org66f181c" class="outline-2">
-<h2 id="org66f181c"><span class="section-number-2">13</span> 路由表项与邻居项的绑定</h2>
+<div id="outline-container-org4727b47" class="outline-2">
+<h2 id="org4727b47"><span class="section-number-2">13.</span> 路由表项与邻居项的绑定</h2>
 <div class="outline-text-2" id="text-13">
 <p>
 路由模块中，每当添加一条输出路由或者单播转发路由时，会尝试将该路由与该路由目的地址相对应的邻居项绑定。 arp_bind_neighhour() 实现了路由表项和邻居项的绑定，如果邻居项不存在则创建。绑定之后，就可以通过路由缓存获取邻居项的输出函数。
@@ -1072,8 +1026,8 @@ arp_send()先创建一个ARP报文，然后发送。
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2022-07-30 Sat 13:15</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

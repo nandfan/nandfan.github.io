@@ -3,25 +3,25 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2021-12-31 Fri 22:55 -->
+<!-- 2024-06-23 Sun 15:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>接口层的输出</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
-	     margin-bottom: .2em; }
+             margin-bottom: .2em; }
   .subtitle { text-align: center;
-	      font-size: medium;
-	      font-weight: bold;
-	      margin-top:0; }
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
   .done   { font-family: monospace; color: green; }
   .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
-	    padding: 2px; font-size: 80%; font-weight: normal; }
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
   .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,82 +191,35 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">接口层的输出</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgbc3d884">1. 输出接口</a>
+<li><a href="#orgdd4f10c">1. 输出接口</a>
 <ul>
-<li><a href="#orgefc43ec">1.1. dev_queue_xmit()</a></li>
-<li><a href="#org9815e31">1.2. dev_hard_start_xmit()</a></li>
-<li><a href="#org37926e4">1.3. e100的输出接口</a></li>
+<li><a href="#org25631d0">1.1. dev_queue_xmit()</a></li>
+<li><a href="#org8763cc1">1.2. dev_hard_start_xmit()</a></li>
+<li><a href="#orga73c469">1.3. e100的输出接口</a></li>
 </ul>
 </li>
-<li><a href="#orgf3df886">2. 网络输出软中断</a>
+<li><a href="#org5cb52c2">2. 网络输出软中断</a>
 <ul>
-<li><a href="#orgb3eb97f">2.1. netif_schedule()</a></li>
-<li><a href="#org59cda78">2.2. net_tx_action()</a></li>
+<li><a href="#org1a80a67">2.1. netif_schedule()</a></li>
+<li><a href="#org288f29f">2.2. net_tx_action()</a></li>
 </ul>
 </li>
-<li><a href="#org84e8cb6">3. 网络设备不支持GSO时的处理</a>
+<li><a href="#orgf548d6d">3. 网络设备不支持GSO时的处理</a>
 <ul>
-<li><a href="#org26375b2">3.1. dev_gso_cb私有控制块</a></li>
-<li><a href="#org3083dba">3.2. dev_gso_segment()</a></li>
-<li><a href="#org0b9a297">3.3. skb_gso_segment()</a></li>
+<li><a href="#org16cd713">3.1. dev_gso_cb私有控制块</a></li>
+<li><a href="#org208128a">3.2. dev_gso_segment()</a></li>
+<li><a href="#orge0d810b">3.3. skb_gso_segment()</a></li>
 </ul>
 </li>
 </ul>
@@ -276,18 +230,18 @@ for the JavaScript code in this tag.
 </p>
 
 
-<div class="figure">
+<div id="orgba56f0e" class="figure">
 <p><img src="image/itf-output/softnetdata-layer-tx.png" alt="softnetdata-layer-tx.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>softnet_data与接口层和网络层的关系</p>
 </div>
 
-<div id="outline-container-orgbc3d884" class="outline-2">
-<h2 id="orgbc3d884"><span class="section-number-2">1</span> 输出接口</h2>
+<div id="outline-container-orgdd4f10c" class="outline-2">
+<h2 id="orgdd4f10c"><span class="section-number-2">1.</span> 输出接口</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orgefc43ec" class="outline-3">
-<h3 id="orgefc43ec"><span class="section-number-3">1.1</span> dev_queue_xmit()</h3>
+<div id="outline-container-org25631d0" class="outline-3">
+<h3 id="org25631d0"><span class="section-number-3">1.1.</span> dev_queue_xmit()</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 如果支持流量控制，则将待输出的数据包根据规则加入到输出网络设备队列中排队，并在合适的时机激活网络输出软中断，将报文输出。如果不支持流量控制，则直接将数据包从网络设备输出。
@@ -298,145 +252,145 @@ for the JavaScript code in this tag.
 </p>
 
 
-<div class="figure">
+<div id="org2df92e1" class="figure">
 <p><img src="image/itf-output/dev-queue-xmit.png" alt="dev-queue-xmit.png" />
 </p>
 <p><span class="figure-number">Figure 2: </span>dev_queue_xmit()流程</p>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">dev_queue_xmit</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">dev_queue_xmit</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = skb-&gt;dev;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">Qdisc</span> *<span style="color: #FF8C00;">q</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rc</span> = -ENOMEM;
-	<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">&#25903;&#25345;GSO&#65292;&#21017;&#36339;&#36716;&#21040;gso&#26631;&#31614;</span><span style="color: #8B8878;"> */</span>
-	<span style="color: #FF1493;">if</span> (netif_needs_gso(dev, skb))
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">gso</span>;
-	<span style="color: #FF1493;">if</span> (skb_shinfo(skb)-&gt;frag_list &amp;&amp;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">FRAGLIST&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O&#25968;&#25454;&#21253;</span>
-	    <span style="color: #CDC673; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_FRAGLIST) &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#26159;&#21542;&#25903;&#25345;FRAGLIST&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O</span>
-	    __skb_linearize(skb)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;SKB&#38656;&#35201;&#32447;&#24615;&#21270;</span>
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_kfree_skb</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span> = skb-&gt;dev;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">Qdisc</span> *<span style="color: #FD971F;">q</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">rc</span> = -ENOMEM;
+        <span style="color: #75715E;">/* </span><span style="color: #75715E;">&#25903;&#25345;GSO&#65292;&#21017;&#36339;&#36716;&#21040;gso&#26631;&#31614;</span><span style="color: #75715E;"> */</span>
+        <span style="color: #F92672;">if</span> (netif_needs_gso(dev, skb))
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">gso</span>;
+        <span style="color: #F92672;">if</span> (skb_shinfo(skb)-&gt;frag_list &amp;&amp;<span style="color: #75715E;">//</span><span style="color: #75715E;">FRAGLIST&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O&#25968;&#25454;&#21253;</span>
+            <span style="color: #E6DB74; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_FRAGLIST) &amp;&amp; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#22791;&#26159;&#21542;&#25903;&#25345;FRAGLIST&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O</span>
+            __skb_linearize(skb)) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23545;SKB&#38656;&#35201;&#32447;&#24615;&#21270;</span>
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_kfree_skb</span>;
 
-	<span style="color: #FF1493;">if</span> (skb_shinfo(skb)-&gt;nr_frags &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">SG&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O&#25968;&#25454;&#21253;</span>
-	    (<span style="color: #CDC673; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_SG) || illegal_highdma(dev, skb)) &amp;&amp;
-	    __skb_linearize(skb)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23545;SKB&#32447;&#24615;&#21270;</span>
-		<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_kfree_skb</span>;
+        <span style="color: #F92672;">if</span> (skb_shinfo(skb)-&gt;nr_frags &amp;&amp; <span style="color: #75715E;">//</span><span style="color: #75715E;">SG&#31867;&#22411;&#30340;&#32858;&#21512;&#20998;&#25955;I/O&#25968;&#25454;&#21253;</span>
+            (<span style="color: #E6DB74; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_SG) || illegal_highdma(dev, skb)) &amp;&amp;
+            __skb_linearize(skb)) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23545;SKB&#32447;&#24615;&#21270;</span>
+                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_kfree_skb</span>;
 
-	<span style="color: #FF1493;">if</span> (skb-&gt;ip_summed == CHECKSUM_PARTIAL &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#30828;&#20214;&#25191;&#34892;&#26657;&#39564;&#21644;</span>
-	    (<span style="color: #CDC673; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_GEN_CSUM) &amp;&amp; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#19981;&#25903;&#25345;&#30828;&#20214;&#26657;&#39564;&#21644;</span>
-	     (<span style="color: #CDC673; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_IP_CSUM) ||
-	      skb-&gt;protocol != htons(ETH_P_IP))))
-		<span style="color: #FF1493;">if</span> (skb_checksum_help(skb)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35745;&#31639;&#26657;&#39564;&#21644;</span>
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_kfree_skb</span>;
-<span style="color: #AF87FF;">gso</span>:
-	spin_lock_prefetch(&amp;dev-&gt;queue_lock);
-	rcu_read_lock_bh();
-	q = rcu_dereference(dev-&gt;qdisc); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#33719;&#21462;&#25490;&#38431;&#35268;&#21017;</span>
-<span style="color: #FF1493;">#ifdef</span> CONFIG_NET_CLS_ACT
-	skb-&gt;tc_verd = SET_TC_AT(skb-&gt;tc_verd,AT_EGRESS);
-<span style="color: #FF1493;">#endif</span>
-	<span style="color: #FF1493;">if</span> (q-&gt;enqueue) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23450;&#20041;&#20102;&#20837;&#38431;&#25805;&#20316;</span>
-		<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Grab device queue</span><span style="color: #8B8878;"> */</span>
-		spin_lock(&amp;dev-&gt;queue_lock);
-		q = dev-&gt;qdisc;
-		<span style="color: #FF1493;">if</span> (q-&gt;enqueue) {
-			rc = q-&gt;enqueue(skb, q);
-			qdisc_run(dev);
-			spin_unlock(&amp;dev-&gt;queue_lock);
+        <span style="color: #F92672;">if</span> (skb-&gt;ip_summed == CHECKSUM_PARTIAL &amp;&amp; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#30828;&#20214;&#25191;&#34892;&#26657;&#39564;&#21644;</span>
+            (<span style="color: #E6DB74; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_GEN_CSUM) &amp;&amp; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#22791;&#19981;&#25903;&#25345;&#30828;&#20214;&#26657;&#39564;&#21644;</span>
+             (<span style="color: #E6DB74; font-weight: bold;">!</span>(dev-&gt;features &amp; NETIF_F_IP_CSUM) ||
+              skb-&gt;protocol != htons(ETH_P_IP))))
+                <span style="color: #F92672;">if</span> (skb_checksum_help(skb)) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35745;&#31639;&#26657;&#39564;&#21644;</span>
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_kfree_skb</span>;
+<span style="color: #AE81FF;">gso</span>:
+        spin_lock_prefetch(&amp;dev-&gt;queue_lock);
+        rcu_read_lock_bh();
+        q = rcu_dereference(dev-&gt;qdisc); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#33719;&#21462;&#25490;&#38431;&#35268;&#21017;</span>
+<span style="color: #F92672;">#ifdef</span> CONFIG_NET_CLS_ACT
+        skb-&gt;tc_verd = SET_TC_AT(skb-&gt;tc_verd,AT_EGRESS);
+<span style="color: #F92672;">#endif</span>
+        <span style="color: #F92672;">if</span> (q-&gt;enqueue) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23450;&#20041;&#20102;&#20837;&#38431;&#25805;&#20316;</span>
+                <span style="color: #75715E;">/* </span><span style="color: #75715E;">Grab device queue</span><span style="color: #75715E;"> */</span>
+                spin_lock(&amp;dev-&gt;queue_lock);
+                q = dev-&gt;qdisc;
+                <span style="color: #F92672;">if</span> (q-&gt;enqueue) {
+                        rc = q-&gt;enqueue(skb, q);
+                        qdisc_run(dev);
+                        spin_unlock(&amp;dev-&gt;queue_lock);
 
-			rc = rc == NET_XMIT_BYPASS ? NET_XMIT_SUCCESS : rc;
-			<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-		}
-		spin_unlock(&amp;dev-&gt;queue_lock);
-	}
+                        rc = rc == NET_XMIT_BYPASS ? NET_XMIT_SUCCESS : rc;
+                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+                }
+                spin_unlock(&amp;dev-&gt;queue_lock);
+        }
 
-	<span style="color: #FF1493;">if</span> (dev-&gt;flags &amp; IFF_UP) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35774;&#22791;&#21551;&#29992;&#29366;&#24577;</span>
-		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">cpu</span> = smp_processor_id(); <span style="color: #8B8878;">/* </span><span style="color: #8B8878;">ok because BHs are off</span><span style="color: #8B8878;"> */</span>
-		<span style="color: #FF1493;">if</span> (dev-&gt;xmit_lock_owner != cpu) {
-			HARD_TX_LOCK(dev, cpu); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">HARD_TX_LOCK/HARD_TX_UNLOCK&#20043;&#38388;&#21482;&#33021;&#35843;&#29992;&#19968;&#27425;dev_queue_xmit</span>
-			<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>netif_queue_stopped(dev)) {
-				rc = 0;
-				<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>dev_hard_start_xmit(skb, dev)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;&#25968;&#25454;&#21253;</span>
-					HARD_TX_UNLOCK(dev);
-					<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out</span>;
-				}
-			}
-			HARD_TX_UNLOCK(dev);
-			<span style="color: #FF1493;">if</span> (net_ratelimit())
-				printk(KERN_CRIT <span style="color: #CDC673;">"Virtual device %s asks to "</span>
-				       <span style="color: #CDC673;">"queue packet!\n"</span>, dev-&gt;name);
-		} <span style="color: #FF1493;">else</span> {
-			<span style="color: #8B8878;">/* </span><span style="color: #8B8878;">Recursion is detected! It is possible,</span>
-<span style="color: #8B8878;">                         * unfortunately</span><span style="color: #8B8878;"> */</span>
-			<span style="color: #FF1493;">if</span> (net_ratelimit())
-				printk(KERN_CRIT <span style="color: #CDC673;">"Dead loop on virtual device "</span>
-				       <span style="color: #CDC673;">"%s, fix it urgently!\n"</span>, dev-&gt;name);
-		}
-	}
-	rc = -ENETDOWN;
-	rcu_read_unlock_bh();
-<span style="color: #AF87FF;">out_kfree_skb</span>:
-	kfree_skb(skb);
-	<span style="color: #FF1493;">return</span> rc;
-<span style="color: #AF87FF;">out</span>:
-	rcu_read_unlock_bh();
-	<span style="color: #FF1493;">return</span> rc;
+        <span style="color: #F92672;">if</span> (dev-&gt;flags &amp; IFF_UP) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#35774;&#22791;&#21551;&#29992;&#29366;&#24577;</span>
+                <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">cpu</span> = smp_processor_id(); <span style="color: #75715E;">/* </span><span style="color: #75715E;">ok because BHs are off</span><span style="color: #75715E;"> */</span>
+                <span style="color: #F92672;">if</span> (dev-&gt;xmit_lock_owner != cpu) {
+                        HARD_TX_LOCK(dev, cpu); <span style="color: #75715E;">//</span><span style="color: #75715E;">HARD_TX_LOCK/HARD_TX_UNLOCK&#20043;&#38388;&#21482;&#33021;&#35843;&#29992;&#19968;&#27425;dev_queue_xmit</span>
+                        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>netif_queue_stopped(dev)) {
+                                rc = 0;
+                                <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>dev_hard_start_xmit(skb, dev)) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#36755;&#20986;&#25968;&#25454;&#21253;</span>
+                                        HARD_TX_UNLOCK(dev);
+                                        <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out</span>;
+                                }
+                        }
+                        HARD_TX_UNLOCK(dev);
+                        <span style="color: #F92672;">if</span> (net_ratelimit())
+                                printk(KERN_CRIT <span style="color: #E6DB74;">"Virtual device %s asks to "</span>
+                                       <span style="color: #E6DB74;">"queue packet!\n"</span>, dev-&gt;name);
+                } <span style="color: #F92672;">else</span> {
+                        <span style="color: #75715E;">/* </span><span style="color: #75715E;">Recursion is detected! It is possible,</span>
+<span style="color: #75715E;">                         * unfortunately</span><span style="color: #75715E;"> */</span>
+                        <span style="color: #F92672;">if</span> (net_ratelimit())
+                                printk(KERN_CRIT <span style="color: #E6DB74;">"Dead loop on virtual device "</span>
+                                       <span style="color: #E6DB74;">"%s, fix it urgently!\n"</span>, dev-&gt;name);
+                }
+        }
+        rc = -ENETDOWN;
+        rcu_read_unlock_bh();
+<span style="color: #AE81FF;">out_kfree_skb</span>:
+        kfree_skb(skb);
+        <span style="color: #F92672;">return</span> rc;
+<span style="color: #AE81FF;">out</span>:
+        rcu_read_unlock_bh();
+        <span style="color: #F92672;">return</span> rc;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org9815e31" class="outline-3">
-<h3 id="org9815e31"><span class="section-number-3">1.2</span> dev_hard_start_xmit()</h3>
+<div id="outline-container-org8763cc1" class="outline-3">
+<h3 id="org8763cc1"><span class="section-number-3">1.2.</span> dev_hard_start_xmit()</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 dev_hard_start_xmit()将待输出的数据包提交给网络设备的输出接口。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">dev_hard_start_xmit</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+<pre class="src src-c"><span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">dev_hard_start_xmit</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>, <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span>)
 {
-	<span style="color: #FF1493;">if</span> (likely(<span style="color: #CDC673; font-weight: bold;">!</span>skb-&gt;next)) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21333;&#20010;&#25968;&#25454;&#21253;</span>
-		<span style="color: #FF1493;">if</span> (netdev_nit) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;&#24212;&#29992;&#23618;&#36890;&#36807;socket(AF_PACKET,SOCK_RAW,htons(ETH_P_ALL))&#21019;&#24314;&#30340;&#21407;&#22987;&#22871;&#25509;&#21475;&#65292;&#21017;&#21521;&#20854;&#21457;&#36865;&#19968;&#20221;&#25968;&#25454;</span>
-			dev_queue_xmit_nit(skb, dev);
-		<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#25968;&#25454;&#21253;&#20026;GSO&#25968;&#25454;&#21253;&#65292;&#20294;&#26159;&#35774;&#22791;&#19981;&#25903;&#25345;</span>
-		<span style="color: #FF1493;">if</span> (netif_needs_gso(dev, skb)) {
-			<span style="color: #FF1493;">if</span> (unlikely(dev_gso_segment(skb))) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#34892;&#36719;&#20998;&#21106;</span>
-				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">out_kfree_skb</span>;
-			<span style="color: #FF1493;">if</span> (skb-&gt;next) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#21106;&#20026;&#22810;&#20010;&#25968;&#25454;&#21253;</span>
-				<span style="color: #FF1493;">goto</span> <span style="color: #AF87FF;">gso</span>;
-		}
-		<span style="color: #FF1493;">return</span> dev-&gt;hard_start_xmit(skb, dev); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#21106;&#21518;&#36824;&#26159;&#19968;&#20010;&#25968;&#25454;&#21253;&#65292;&#30452;&#25509;&#21457;&#36865;</span>
-	}
-<span style="color: #AF87FF;">gso</span>:
-	<span style="color: #FF1493;">do</span> {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36755;&#20986;gso&#25968;&#25454;&#21253;</span>
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">nskb</span> = skb-&gt;next;
-		<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">rc</span>;
-		skb-&gt;next = nskb-&gt;next;
-		nskb-&gt;next = <span style="color: #AF87FF;">NULL</span>;
-		rc = dev-&gt;hard_start_xmit(nskb, dev);
-		<span style="color: #FF1493;">if</span> (unlikely(rc)) {
-			nskb-&gt;next = skb-&gt;next;
-			skb-&gt;next = nskb;
-			<span style="color: #FF1493;">return</span> rc;
-		}
-		<span style="color: #FF1493;">if</span> (unlikely(netif_queue_stopped(dev) &amp;&amp; skb-&gt;next))
-			<span style="color: #FF1493;">return</span> NETDEV_TX_BUSY;
-	} <span style="color: #FF1493;">while</span> (skb-&gt;next);
-	skb-&gt;destructor = DEV_GSO_CB(skb)-&gt;destructor;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#24674;&#22797;SKB&#21407;&#20808;&#30340;&#26512;&#26500;&#20989;&#25968;</span>
-<span style="color: #AF87FF;">out_kfree_skb</span>:
-	kfree_skb(skb);
-	<span style="color: #FF1493;">return</span> 0;
+        <span style="color: #F92672;">if</span> (likely(<span style="color: #E6DB74; font-weight: bold;">!</span>skb-&gt;next)) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21333;&#20010;&#25968;&#25454;&#21253;</span>
+                <span style="color: #F92672;">if</span> (netdev_nit) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;&#24212;&#29992;&#23618;&#36890;&#36807;socket(AF_PACKET,SOCK_RAW,htons(ETH_P_ALL))&#21019;&#24314;&#30340;&#21407;&#22987;&#22871;&#25509;&#21475;&#65292;&#21017;&#21521;&#20854;&#21457;&#36865;&#19968;&#20221;&#25968;&#25454;</span>
+                        dev_queue_xmit_nit(skb, dev);
+                <span style="color: #75715E;">//</span><span style="color: #75715E;">&#25968;&#25454;&#21253;&#20026;GSO&#25968;&#25454;&#21253;&#65292;&#20294;&#26159;&#35774;&#22791;&#19981;&#25903;&#25345;</span>
+                <span style="color: #F92672;">if</span> (netif_needs_gso(dev, skb)) {
+                        <span style="color: #F92672;">if</span> (unlikely(dev_gso_segment(skb))) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36827;&#34892;&#36719;&#20998;&#21106;</span>
+                                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">out_kfree_skb</span>;
+                        <span style="color: #F92672;">if</span> (skb-&gt;next) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20998;&#21106;&#20026;&#22810;&#20010;&#25968;&#25454;&#21253;</span>
+                                <span style="color: #F92672;">goto</span> <span style="color: #AE81FF;">gso</span>;
+                }
+                <span style="color: #F92672;">return</span> dev-&gt;hard_start_xmit(skb, dev); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20998;&#21106;&#21518;&#36824;&#26159;&#19968;&#20010;&#25968;&#25454;&#21253;&#65292;&#30452;&#25509;&#21457;&#36865;</span>
+        }
+<span style="color: #AE81FF;">gso</span>:
+        <span style="color: #F92672;">do</span> {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#36755;&#20986;gso&#25968;&#25454;&#21253;</span>
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">nskb</span> = skb-&gt;next;
+                <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">rc</span>;
+                skb-&gt;next = nskb-&gt;next;
+                nskb-&gt;next = <span style="color: #AE81FF;">NULL</span>;
+                rc = dev-&gt;hard_start_xmit(nskb, dev);
+                <span style="color: #F92672;">if</span> (unlikely(rc)) {
+                        nskb-&gt;next = skb-&gt;next;
+                        skb-&gt;next = nskb;
+                        <span style="color: #F92672;">return</span> rc;
+                }
+                <span style="color: #F92672;">if</span> (unlikely(netif_queue_stopped(dev) &amp;&amp; skb-&gt;next))
+                        <span style="color: #F92672;">return</span> NETDEV_TX_BUSY;
+        } <span style="color: #F92672;">while</span> (skb-&gt;next);
+        skb-&gt;destructor = DEV_GSO_CB(skb)-&gt;destructor;<span style="color: #75715E;">//</span><span style="color: #75715E;">&#24674;&#22797;SKB&#21407;&#20808;&#30340;&#26512;&#26500;&#20989;&#25968;</span>
+<span style="color: #AE81FF;">out_kfree_skb</span>:
+        <span style="color: #A6E22E;">kfree_skb</span>(skb);
+        <span style="color: #F92672;">return</span> 0;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org37926e4" class="outline-3">
-<h3 id="org37926e4"><span class="section-number-3">1.3</span> e100的输出接口</h3>
+<div id="outline-container-orga73c469" class="outline-3">
+<h3 id="orga73c469"><span class="section-number-3">1.3.</span> e100的输出接口</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 e100_xmit_frame() 是e100网络设备的输出接口。
@@ -446,88 +400,88 @@ e100_xmit_frame() 是e100网络设备的输出接口。
 </div>
 
 
-<div id="outline-container-orgf3df886" class="outline-2">
-<h2 id="orgf3df886"><span class="section-number-2">2</span> 网络输出软中断</h2>
+<div id="outline-container-org5cb52c2" class="outline-2">
+<h2 id="org5cb52c2"><span class="section-number-2">2.</span> 网络输出软中断</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgb3eb97f" class="outline-3">
-<h3 id="orgb3eb97f"><span class="section-number-3">2.1</span> netif_schedule()</h3>
+<div id="outline-container-org1a80a67" class="outline-3">
+<h3 id="org1a80a67"><span class="section-number-3">2.1.</span> netif_schedule()</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 有多个接口可以激活数据包输出软中断，最常用的是netif_schedule()。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #FF1493;">inline</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">netif_schedule</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #F92672;">inline</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">netif_schedule</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span>)
 {
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>test_bit(__LINK_STATE_XOFF, &amp;dev-&gt;state)) <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#20851;&#38381;&#20102;&#25490;&#38431;&#21151;&#33021;</span>
-		__netif_schedule(dev);
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>test_bit(__LINK_STATE_XOFF, &amp;dev-&gt;state)) <span style="color: #75715E;">//</span><span style="color: #75715E;">&#26159;&#21542;&#20851;&#38381;&#20102;&#25490;&#38431;&#21151;&#33021;</span>
+                __netif_schedule(dev);
 }
 
-<span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">__netif_schedule</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span>)
+<span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__netif_schedule</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span>)
 {
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>test_and_set_bit(__LINK_STATE_SCHED, &amp;dev-&gt;state)) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#26159;&#21542;&#22788;&#20110;&#27969;&#37327;&#25511;&#21046;&#30340;&#35843;&#24230;&#20013;</span>
-		<span style="color: #5FD7FF;">unsigned</span> <span style="color: #5FD7FF;">long</span> <span style="color: #FF8C00;">flags</span>;
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">softnet_data</span> *<span style="color: #FF8C00;">sd</span>;
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>test_and_set_bit(__LINK_STATE_SCHED, &amp;dev-&gt;state)) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#26159;&#21542;&#22788;&#20110;&#27969;&#37327;&#25511;&#21046;&#30340;&#35843;&#24230;&#20013;</span>
+                <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">flags</span>;
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">softnet_data</span> *<span style="color: #FD971F;">sd</span>;
 
-		local_irq_save(flags);
-		sd = &amp;__get_cpu_var(softnet_data);
-		dev-&gt;next_sched = sd-&gt;output_queue;
-		sd-&gt;output_queue = dev; <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23558;&#35774;&#22791;&#25346;&#21040;softnet_data&#30340;output_queue&#38431;&#21015;&#12290;</span>
-		raise_softirq_irqoff(NET_TX_SOFTIRQ);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#28608;&#27963;&#32593;&#32476;&#36755;&#20986;&#36719;&#20013;&#26029;</span>
-		local_irq_restore(flags);
-	}
+                local_irq_save(flags);
+                sd = &amp;__get_cpu_var(softnet_data);
+                dev-&gt;next_sched = sd-&gt;output_queue;
+                sd-&gt;output_queue = dev; <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23558;&#35774;&#22791;&#25346;&#21040;softnet_data&#30340;output_queue&#38431;&#21015;&#12290;</span>
+                raise_softirq_irqoff(NET_TX_SOFTIRQ);<span style="color: #75715E;">//</span><span style="color: #75715E;">&#28608;&#27963;&#32593;&#32476;&#36755;&#20986;&#36719;&#20013;&#26029;</span>
+                local_irq_restore(flags);
+        }
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org59cda78" class="outline-3">
-<h3 id="org59cda78"><span class="section-number-3">2.2</span> net_tx_action()</h3>
+<div id="outline-container-org288f29f" class="outline-3">
+<h3 id="org288f29f"><span class="section-number-3">2.2.</span> net_tx_action()</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 net_tx_action()是数据包输出的软中断例程，激活后遍历output_queue队列的设备，调用 qdisc_run() 发送数据包。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">net_tx_action</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">softirq_action</span> *<span style="color: #FF8C00;">h</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">net_tx_action</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">softirq_action</span> *<span style="color: #FD971F;">h</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">softnet_data</span> *<span style="color: #FF8C00;">sd</span> = &amp;__get_cpu_var(softnet_data);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">softnet_data</span> *<span style="color: #FD971F;">sd</span> = &amp;__get_cpu_var(softnet_data);
 
-	<span style="color: #FF1493;">if</span> (sd-&gt;completion_queue) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;&#36755;&#20986;&#23436;&#25104;&#30340;&#25968;&#25454;&#21253;</span>
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">clist</span>;
-		local_irq_disable();
-		clist = sd-&gt;completion_queue;
-		sd-&gt;completion_queue = <span style="color: #AF87FF;">NULL</span>;
-		local_irq_enable();
-		<span style="color: #FF1493;">while</span> (clist) {<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#37322;&#25918;&#23436;&#25104;&#30340;&#25968;&#25454;&#21253;</span>
-			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span> = clist;
-			clist = clist-&gt;next;
-			BUG_TRAP(<span style="color: #CDC673; font-weight: bold;">!</span>atomic_read(&amp;skb-&gt;users));
-			__kfree_skb(skb);
-		}
-	}
+        <span style="color: #F92672;">if</span> (sd-&gt;completion_queue) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23384;&#22312;&#36755;&#20986;&#23436;&#25104;&#30340;&#25968;&#25454;&#21253;</span>
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">clist</span>;
+                local_irq_disable();
+                clist = sd-&gt;completion_queue;
+                sd-&gt;completion_queue = <span style="color: #AE81FF;">NULL</span>;
+                local_irq_enable();
+                <span style="color: #F92672;">while</span> (clist) {<span style="color: #75715E;">//</span><span style="color: #75715E;">&#36941;&#21382;&#37322;&#25918;&#23436;&#25104;&#30340;&#25968;&#25454;&#21253;</span>
+                        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span> = clist;
+                        clist = clist-&gt;next;
+                        BUG_TRAP(<span style="color: #E6DB74; font-weight: bold;">!</span>atomic_read(&amp;skb-&gt;users));
+                        __kfree_skb(skb);
+                }
+        }
 
-	<span style="color: #FF1493;">if</span> (sd-&gt;output_queue) { <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#23384;&#22312;&#24453;&#22788;&#29702;&#30340;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#65292;&#21017;&#36941;&#21382;&#21457;&#36865;</span>
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">head</span>;
-		local_irq_disable();
-		head = sd-&gt;output_queue;
-		sd-&gt;output_queue = <span style="color: #AF87FF;">NULL</span>;
-		local_irq_enable();
-		<span style="color: #FF1493;">while</span> (head) {
-			<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = head;
-			head = head-&gt;next_sched;
-			smp_mb__before_clear_bit();
-			clear_bit(__LINK_STATE_SCHED, &amp;dev-&gt;state);
-			<span style="color: #FF1493;">if</span> (spin_trylock(&amp;dev-&gt;queue_lock)) {
-				qdisc_run(dev); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21457;&#36865;&#25968;&#25454;&#21253;</span>
-				spin_unlock(&amp;dev-&gt;queue_lock);
-			} <span style="color: #FF1493;">else</span> {
-				netif_schedule(dev); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20877;&#27425;&#35843;&#24230;&#25968;&#25454;&#21253;&#36719;&#20013;&#26029;</span>
-			}
-		}
-	}
+        <span style="color: #F92672;">if</span> (sd-&gt;output_queue) { <span style="color: #75715E;">//</span><span style="color: #75715E;">&#23384;&#22312;&#24453;&#22788;&#29702;&#30340;&#36755;&#20986;&#32593;&#32476;&#35774;&#22791;&#65292;&#21017;&#36941;&#21382;&#21457;&#36865;</span>
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">head</span>;
+                local_irq_disable();
+                head = sd-&gt;output_queue;
+                sd-&gt;output_queue = <span style="color: #AE81FF;">NULL</span>;
+                local_irq_enable();
+                <span style="color: #F92672;">while</span> (head) {
+                        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span> = head;
+                        head = head-&gt;next_sched;
+                        smp_mb__before_clear_bit();
+                        clear_bit(__LINK_STATE_SCHED, &amp;dev-&gt;state);
+                        <span style="color: #F92672;">if</span> (spin_trylock(&amp;dev-&gt;queue_lock)) {
+                                qdisc_run(dev); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21457;&#36865;&#25968;&#25454;&#21253;</span>
+                                spin_unlock(&amp;dev-&gt;queue_lock);
+                        } <span style="color: #F92672;">else</span> {
+                                netif_schedule(dev); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#20877;&#27425;&#35843;&#24230;&#25968;&#25454;&#21253;&#36719;&#20013;&#26029;</span>
+                        }
+                }
+        }
 }
 </pre>
 </div>
@@ -536,128 +490,128 @@ net_tx_action()是数据包输出的软中断例程，激活后遍历output_queu
 </div>
 
 
-<div id="outline-container-org84e8cb6" class="outline-2">
-<h2 id="org84e8cb6"><span class="section-number-2">3</span> 网络设备不支持GSO时的处理</h2>
+<div id="outline-container-orgf548d6d" class="outline-2">
+<h2 id="orgf548d6d"><span class="section-number-2">3.</span> 网络设备不支持GSO时的处理</h2>
 <div class="outline-text-2" id="text-3">
 
-<div class="figure">
+<div id="orgd7b2f5a" class="figure">
 <p><img src="image/itf-output/out-gso.png" alt="out-gso.png" />
 </p>
 <p><span class="figure-number">Figure 3: </span>输出时网络设备不支持GSO时进行GSO分段的调用流程</p>
 </div>
 </div>
 
-<div id="outline-container-org26375b2" class="outline-3">
-<h3 id="org26375b2"><span class="section-number-3">3.1</span> dev_gso_cb私有控制块</h3>
+<div id="outline-container-org16cd713" class="outline-3">
+<h3 id="org16cd713"><span class="section-number-3">3.1.</span> dev_gso_cb私有控制块</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 GSO段经分段后得到的段通过skb-&gt;next链接在一起。当释放GSO段的时候需要将这些段同时释放，为此需要指定分段的析构函数&#x2013;dev_gso_skb_destructor()。原先的析构函数需要保存在SKB的dev_gso_cb结构中。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dev_gso_cb</span> {
-	<span style="color: #5FD7FF;">void</span> (*<span style="color: #87D700;">destructor</span>)(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>);
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">dev_gso_cb</span> {
+        <span style="color: #66D9EF;">void</span> (*<span style="color: #A6E22E;">destructor</span>)(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>);
 };
 
-<span style="color: #FF1493;">#define</span> <span style="color: #87D700;">DEV_GSO_CB</span>(<span style="color: #FF8C00;">skb</span>) ((<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dev_gso_cb</span> *)(skb)-&gt;cb)
+<span style="color: #F92672;">#define</span> <span style="color: #A6E22E;">DEV_GSO_CB</span>(<span style="color: #FD971F;">skb</span>) ((<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">dev_gso_cb</span> *)(skb)-&gt;cb)
 
-<span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">void</span> <span style="color: #87D700;">dev_gso_skb_destructor</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">dev_gso_skb_destructor</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">dev_gso_cb</span> *<span style="color: #FF8C00;">cb</span>;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">dev_gso_cb</span> *<span style="color: #FD971F;">cb</span>;
 
-	<span style="color: #FF1493;">do</span> {
-		<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">nskb</span> = skb-&gt;next;
+        <span style="color: #F92672;">do</span> {
+                <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">nskb</span> = skb-&gt;next;
 
-		skb-&gt;next = nskb-&gt;next;
-		nskb-&gt;next = <span style="color: #AF87FF;">NULL</span>;
-		kfree_skb(nskb);
-	} <span style="color: #FF1493;">while</span> (skb-&gt;next); <span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21024;&#38500;&#24182;&#37322;&#25918;&#20986;&#31532;&#19968;&#20010;&#20043;&#22806;&#30340;SKB</span>
+                skb-&gt;next = nskb-&gt;next;
+                nskb-&gt;next = <span style="color: #AE81FF;">NULL</span>;
+                kfree_skb(nskb);
+        } <span style="color: #F92672;">while</span> (skb-&gt;next); <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21024;&#38500;&#24182;&#37322;&#25918;&#20986;&#31532;&#19968;&#20010;&#20043;&#22806;&#30340;SKB</span>
 
-	cb = DEV_GSO_CB(skb);
-	<span style="color: #FF1493;">if</span> (cb-&gt;destructor)<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#35843;&#29992;&#21407;&#20808;&#30340;&#26512;&#26500;&#20989;&#25968;&#37322;&#25918;&#31532;&#19968;&#20010;SKB</span>
-		cb-&gt;destructor(skb);
+        cb = DEV_GSO_CB(skb);
+        <span style="color: #F92672;">if</span> (cb-&gt;destructor)<span style="color: #75715E;">//</span><span style="color: #75715E;">&#35843;&#29992;&#21407;&#20808;&#30340;&#26512;&#26500;&#20989;&#25968;&#37322;&#25918;&#31532;&#19968;&#20010;SKB</span>
+                cb-&gt;destructor(skb);
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org3083dba" class="outline-3">
-<h3 id="org3083dba"><span class="section-number-3">3.2</span> dev_gso_segment()</h3>
+<div id="outline-container-org208128a" class="outline-3">
+<h3 id="org208128a"><span class="section-number-3">3.2.</span> dev_gso_segment()</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 dev_gso_segment()通过调用skb_gso_segment()来分割GSO段。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">static</span> <span style="color: #5FD7FF;">int</span> <span style="color: #87D700;">dev_gso_segment</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>)
+<pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">dev_gso_segment</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">net_device</span> *<span style="color: #FF8C00;">dev</span> = skb-&gt;dev;
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">segs</span>;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">features</span> = dev-&gt;features &amp; ~(illegal_highdma(dev, skb) ?
-					 NETIF_F_SG : 0);
-	segs = skb_gso_segment(skb, features);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36827;&#34892;&#36719;&#20998;&#21106;</span>
-	<span style="color: #FF1493;">if</span> (<span style="color: #CDC673; font-weight: bold;">!</span>segs)
-		<span style="color: #FF1493;">return</span> 0;
-	<span style="color: #FF1493;">if</span> (unlikely(IS_ERR(segs)))
-		<span style="color: #FF1493;">return</span> PTR_ERR(segs);
-	skb-&gt;next = segs;
-	DEV_GSO_CB(skb)-&gt;destructor = skb-&gt;destructor;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20445;&#23384;&#21407;&#20808;&#30340;&#26512;&#26500;&#20989;&#25968;</span>
-	skb-&gt;destructor = dev_gso_skb_destructor;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">net_device</span> *<span style="color: #FD971F;">dev</span> = skb-&gt;dev;
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">segs</span>;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">features</span> = dev-&gt;features &amp; ~(illegal_highdma(dev, skb) ?
+                                         NETIF_F_SG : 0);
+        segs = skb_gso_segment(skb, features);<span style="color: #75715E;">//</span><span style="color: #75715E;">&#36827;&#34892;&#36719;&#20998;&#21106;</span>
+        <span style="color: #F92672;">if</span> (<span style="color: #E6DB74; font-weight: bold;">!</span>segs)
+                <span style="color: #F92672;">return</span> 0;
+        <span style="color: #F92672;">if</span> (unlikely(IS_ERR(segs)))
+                <span style="color: #F92672;">return</span> PTR_ERR(segs);
+        skb-&gt;next = segs;
+        DEV_GSO_CB(skb)-&gt;destructor = skb-&gt;destructor;<span style="color: #75715E;">//</span><span style="color: #75715E;">&#20445;&#23384;&#21407;&#20808;&#30340;&#26512;&#26500;&#20989;&#25968;</span>
+        skb-&gt;destructor = dev_gso_skb_destructor;
 
-	<span style="color: #FF1493;">return</span> 0;
+        <span style="color: #F92672;">return</span> 0;
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org0b9a297" class="outline-3">
-<h3 id="org0b9a297"><span class="section-number-3">3.3</span> skb_gso_segment()</h3>
+<div id="outline-container-orge0d810b" class="outline-3">
+<h3 id="orge0d810b"><span class="section-number-3">3.3.</span> skb_gso_segment()</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 skb_gso_segment()用于GSO分段，并将其通过skb的next链接，返回NULL则表示没有分段。
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #87D700;">skb_gso_segment</span>(<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">skb</span>, <span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">features</span>)
+<pre class="src src-c"><span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #A6E22E;">skb_gso_segment</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">skb</span>, <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">features</span>)
 {
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">sk_buff</span> *<span style="color: #FF8C00;">segs</span> = ERR_PTR(-EPROTONOSUPPORT);
-	<span style="color: #FF1493;">struct</span> <span style="color: #5FD7FF;">packet_type</span> *<span style="color: #FF8C00;">ptype</span>;
-	<span style="color: #5FD7FF;">__be16</span> <span style="color: #FF8C00;">type</span> = skb-&gt;protocol;
-	<span style="color: #5FD7FF;">int</span> <span style="color: #FF8C00;">err</span>;
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">frag_list&#19968;&#23450;&#20026;&#31354;</span>
-	BUG_ON(skb_shinfo(skb)-&gt;frag_list);
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#21462;&#20986;&#20197;&#22826;&#32593;&#24103;&#39318;&#37096;</span>
-	skb-&gt;mac.raw = skb-&gt;data;
-	skb-&gt;mac_len = skb-&gt;nh.raw - skb-&gt;data;
-	__skb_pull(skb, skb-&gt;mac_len);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">sk_buff</span> *<span style="color: #FD971F;">segs</span> = ERR_PTR(-EPROTONOSUPPORT);
+        <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">packet_type</span> *<span style="color: #FD971F;">ptype</span>;
+        <span style="color: #66D9EF;">__be16</span> <span style="color: #FD971F;">type</span> = skb-&gt;protocol;
+        <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">err</span>;
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">frag_list&#19968;&#23450;&#20026;&#31354;</span>
+        BUG_ON(skb_shinfo(skb)-&gt;frag_list);
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#21462;&#20986;&#20197;&#22826;&#32593;&#24103;&#39318;&#37096;</span>
+        skb-&gt;mac.raw = skb-&gt;data;
+        skb-&gt;mac_len = skb-&gt;nh.raw - skb-&gt;data;
+        __skb_pull(skb, skb-&gt;mac_len);
 
-	<span style="color: #FF1493;">if</span> (unlikely(skb-&gt;ip_summed != CHECKSUM_PARTIAL)) {
-		<span style="color: #FF1493;">if</span> (skb_header_cloned(skb) &amp;&amp;<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#22914;&#26524;skb&#26159;&#20811;&#38534;&#30340;&#65292;&#38656;&#35201;&#37325;&#26032;&#20998;&#37197;</span>
-		    (err = pskb_expand_head(skb, 0, 0, GFP_ATOMIC)))
-			<span style="color: #FF1493;">return</span> ERR_PTR(err);
-	}
+        <span style="color: #F92672;">if</span> (unlikely(skb-&gt;ip_summed != CHECKSUM_PARTIAL)) {
+                <span style="color: #F92672;">if</span> (skb_header_cloned(skb) &amp;&amp;<span style="color: #75715E;">//</span><span style="color: #75715E;">&#22914;&#26524;skb&#26159;&#20811;&#38534;&#30340;&#65292;&#38656;&#35201;&#37325;&#26032;&#20998;&#37197;</span>
+                    (err = pskb_expand_head(skb, 0, 0, GFP_ATOMIC)))
+                        <span style="color: #F92672;">return</span> ERR_PTR(err);
+        }
 
-	rcu_read_lock();
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#36941;&#21382;&#26597;&#25214;&#23545;&#24212;&#30340;GSO&#25509;&#21475;</span>
-	list_for_each_entry_rcu(ptype, &amp;ptype_base[ntohs(type) &amp; 15], list) {
-		<span style="color: #FF1493;">if</span> (ptype-&gt;type == type &amp;&amp; <span style="color: #CDC673; font-weight: bold;">!</span>ptype-&gt;dev &amp;&amp; ptype-&gt;gso_segment) {
-			<span style="color: #FF1493;">if</span> (unlikely(skb-&gt;ip_summed != CHECKSUM_PARTIAL)) {
-				err = ptype-&gt;gso_send_check(skb);
-				segs = ERR_PTR(err);
-				<span style="color: #FF1493;">if</span> (err || skb_gso_ok(skb, features))
-					<span style="color: #FF1493;">break</span>;
-				__skb_push(skb, skb-&gt;data - skb-&gt;nh.raw);
-			}
-			segs = ptype-&gt;gso_segment(skb, features);<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#20998;&#27573;</span>
-			<span style="color: #FF1493;">break</span>;
-		}
-	}
-	rcu_read_unlock();
-	<span style="color: #8B8878;">//</span><span style="color: #8B8878;">&#37325;&#26032;&#28155;&#21152;&#20197;&#22826;&#32593;&#24103;&#39318;&#37096;</span>
-	__skb_push(skb, skb-&gt;data - skb-&gt;mac.raw);
-	<span style="color: #FF1493;">return</span> segs;
+        rcu_read_lock();
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#36941;&#21382;&#26597;&#25214;&#23545;&#24212;&#30340;GSO&#25509;&#21475;</span>
+        list_for_each_entry_rcu(ptype, &amp;ptype_base[ntohs(type) &amp; 15], list) {
+                <span style="color: #F92672;">if</span> (ptype-&gt;type == type &amp;&amp; <span style="color: #E6DB74; font-weight: bold;">!</span>ptype-&gt;dev &amp;&amp; ptype-&gt;gso_segment) {
+                        <span style="color: #F92672;">if</span> (unlikely(skb-&gt;ip_summed != CHECKSUM_PARTIAL)) {
+                                err = ptype-&gt;gso_send_check(skb);
+                                segs = ERR_PTR(err);
+                                <span style="color: #F92672;">if</span> (err || skb_gso_ok(skb, features))
+                                        <span style="color: #F92672;">break</span>;
+                                __skb_push(skb, skb-&gt;data - skb-&gt;nh.raw);
+                        }
+                        segs = ptype-&gt;gso_segment(skb, features);<span style="color: #75715E;">//</span><span style="color: #75715E;">&#20998;&#27573;</span>
+                        <span style="color: #F92672;">break</span>;
+                }
+        }
+        rcu_read_unlock();
+        <span style="color: #75715E;">//</span><span style="color: #75715E;">&#37325;&#26032;&#28155;&#21152;&#20197;&#22826;&#32593;&#24103;&#39318;&#37096;</span>
+        __skb_push(skb, skb-&gt;data - skb-&gt;mac.raw);
+        <span style="color: #F92672;">return</span> segs;
 }
 </pre>
 </div>
@@ -668,8 +622,8 @@ skb_gso_segment()用于GSO分段，并将其通过skb的next链接，返回NULL�
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2021-12-31 Fri 22:55</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:55</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

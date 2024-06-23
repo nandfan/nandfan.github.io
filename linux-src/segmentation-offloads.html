@@ -3,14 +3,14 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
 <head>
-<!-- 2022-07-30 Sat 12:59 -->
+<!-- 2024-06-23 Sun 15:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>分段卸载</title>
-<meta name="generator" content="Org mode" />
 <meta name="author" content="nandfan" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -31,8 +31,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +41,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -190,110 +191,63 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
 <link rel="stylesheet" type="text/css" href="../styles/myself/css/worg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">分段卸载</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orga821b54">1. 报文格式</a>
+<li><a href="#orgbabefb0">1. 报文格式</a>
 <ul>
-<li><a href="#org79b9018">1.1. 以太网帧格式</a></li>
-<li><a href="#orgcc9eb6b">1.2. IP数据报</a></li>
-<li><a href="#org824adbb">1.3. TCP</a></li>
-<li><a href="#org1f2c7df">1.4. UDP</a></li>
+<li><a href="#org0d2dc6d">1.1. 以太网帧格式</a></li>
+<li><a href="#orgfd86f30">1.2. IP数据报</a></li>
+<li><a href="#org338e97e">1.3. TCP</a></li>
+<li><a href="#org52bf330">1.4. UDP</a></li>
 </ul>
 </li>
-<li><a href="#orgd28fa7d">2. IP分片</a></li>
-<li><a href="#org288baaa">3. TCP分段卸载 TSO</a>
+<li><a href="#org184f548">2. IP分片</a></li>
+<li><a href="#orge876edd">3. TCP分段卸载 TSO</a>
 <ul>
-<li><a href="#orgff6bf12">3.1. TCP数据段的发送</a>
+<li><a href="#org44d1f9c">3.1. TCP数据段的发送</a>
 <ul>
-<li><a href="#org9afa033">3.1.1. 文件描述符关联到传输控制块</a></li>
-<li><a href="#orgc690b50">3.1.2. 系统调用过程</a></li>
-<li><a href="#org9e62f80">3.1.3. 发送过程</a></li>
+<li><a href="#org351e313">3.1.1. 文件描述符关联到传输控制块</a></li>
+<li><a href="#orgc314dd1">3.1.2. 系统调用过程</a></li>
+<li><a href="#org3e35df0">3.1.3. 发送过程</a></li>
 </ul>
 </li>
-<li><a href="#orga613ec7">3.2. 未启用TSO</a></li>
-<li><a href="#orga119883">3.3. 启用TSO</a></li>
-<li><a href="#org9f0f1bc">3.4. 验证</a></li>
-<li><a href="#orge26334a">3.5. 如何配置tso</a></li>
+<li><a href="#org9cc2433">3.2. 未启用TSO</a></li>
+<li><a href="#org8cf7181">3.3. 启用TSO</a></li>
+<li><a href="#org2eacb38">3.4. 验证</a></li>
+<li><a href="#org4ab1376">3.5. 如何配置tso</a></li>
 </ul>
 </li>
-<li><a href="#org5297f26">4. UDP分片卸载 UFO</a></li>
-<li><a href="#orgeee1dc7">5. 通用分段卸载 GSO</a>
+<li><a href="#orgf3b83ea">4. UDP分片卸载 UFO</a></li>
+<li><a href="#orga773808">5. 通用分段卸载 GSO</a>
 <ul>
-<li><a href="#org8c2caba">5.1. TCP GSO</a></li>
-<li><a href="#org302a1e0">5.2. UDP GSO</a>
+<li><a href="#org47a9d18">5.1. TCP GSO</a></li>
+<li><a href="#org8fa40a3">5.2. UDP GSO</a>
 <ul>
-<li><a href="#org96e13c8">5.2.1. UDP和TCP的区别</a></li>
-<li><a href="#org3d6a190">5.2.2. UDP分段过程</a></li>
+<li><a href="#orgbd5ad34">5.2.1. UDP和TCP的区别</a></li>
+<li><a href="#org696d2f3">5.2.2. UDP分段过程</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org3ff6f67">6. 通用接收卸载 GRO</a>
+<li><a href="#org3b6ee15">6. 通用接收卸载 GRO</a>
 <ul>
-<li><a href="#orgfa6f0bc">6.1. 开启/关闭 GRO</a></li>
-<li><a href="#org5f23ce6">6.2. TCP GRO</a></li>
-<li><a href="#org5b19aba">6.3. UDP GRO</a>
+<li><a href="#org81f285c">6.1. 开启/关闭 GRO</a></li>
+<li><a href="#orgbc0fb58">6.2. TCP GRO</a></li>
+<li><a href="#orgac65ae4">6.3. UDP GRO</a>
 <ul>
-<li><a href="#orgbb9aa4a">6.3.1. 原理说明</a></li>
-<li><a href="#org4b3dc0b">6.3.2. 验证测试</a></li>
-<li><a href="#orgc36a47a">6.3.3. 代码示例</a></li>
-<li><a href="#org5417388">6.3.4. 抓包示例</a></li>
+<li><a href="#orgf293c88">6.3.1. 原理说明</a></li>
+<li><a href="#org43443d3">6.3.2. 验证测试</a></li>
+<li><a href="#org6b0af95">6.3.3. 代码示例</a></li>
+<li><a href="#orgd972949">6.3.4. 抓包示例</a></li>
 </ul>
 </li>
 </ul>
@@ -345,15 +299,15 @@ for the JavaScript code in this tag.
 </tbody>
 </table>
 
-<div id="outline-container-orga821b54" class="outline-2">
-<h2 id="orga821b54"><span class="section-number-2">1</span> 报文格式</h2>
+<div id="outline-container-orgbabefb0" class="outline-2">
+<h2 id="orgbabefb0"><span class="section-number-2">1.</span> 报文格式</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org79b9018" class="outline-3">
-<h3 id="org79b9018"><span class="section-number-3">1.1</span> 以太网帧格式</h3>
+<div id="outline-container-org0d2dc6d" class="outline-3">
+<h3 id="org0d2dc6d"><span class="section-number-3">1.1.</span> 以太网帧格式</h3>
 <div class="outline-text-3" id="text-1-1">
 
-<div class="figure">
+<div id="orgf18bd32" class="figure">
 <p><img src="image/segmentation-offloads/EtherentII-format.png" alt="EtherentII-format.png" />
 </p>
 </div>
@@ -424,11 +378,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgcc9eb6b" class="outline-3">
-<h3 id="orgcc9eb6b"><span class="section-number-3">1.2</span> IP数据报</h3>
+<div id="outline-container-orgfd86f30" class="outline-3">
+<h3 id="orgfd86f30"><span class="section-number-3">1.2.</span> IP数据报</h3>
 <div class="outline-text-3" id="text-1-2">
 
-<div class="figure">
+<div id="org1785daa" class="figure">
 <p><img src="image/segmentation-offloads/IP-format.png" alt="IP-format.png" />
 </p>
 </div>
@@ -585,11 +539,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org824adbb" class="outline-3">
-<h3 id="org824adbb"><span class="section-number-3">1.3</span> TCP</h3>
+<div id="outline-container-org338e97e" class="outline-3">
+<h3 id="org338e97e"><span class="section-number-3">1.3.</span> TCP</h3>
 <div class="outline-text-3" id="text-1-3">
 
-<div class="figure">
+<div id="orgf45a001" class="figure">
 <p><img src="image/segmentation-offloads/tcp-format.png" alt="tcp-format.png" />
 </p>
 </div>
@@ -783,11 +737,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org1f2c7df" class="outline-3">
-<h3 id="org1f2c7df"><span class="section-number-3">1.4</span> UDP</h3>
+<div id="outline-container-org52bf330" class="outline-3">
+<h3 id="org52bf330"><span class="section-number-3">1.4.</span> UDP</h3>
 <div class="outline-text-3" id="text-1-4">
 
-<div class="figure">
+<div id="orga1d62e3" class="figure">
 <p><img src="image/segmentation-offloads/udp-format.png" alt="udp-format.png" />
 </p>
 </div>
@@ -860,8 +814,8 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-orgd28fa7d" class="outline-2">
-<h2 id="orgd28fa7d"><span class="section-number-2">2</span> IP分片</h2>
+<div id="outline-container-org184f548" class="outline-2">
+<h2 id="org184f548"><span class="section-number-2">2.</span> IP分片</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 如果IP数据报长度超出最大传输单元MTU，并且允许分片时，就需要进行IP分片处理。 以太网MTU为1500B，通常UDP协议发送的数据报容易导致IP分片，而TCP协议通常不会产生分片。
@@ -893,7 +847,7 @@ IP数据报分片后，独立选择路由，在所有分片达到目的主机后
 </p>
 
 
-<div class="figure">
+<div id="orgd39fd50" class="figure">
 <p><img src="./ditaa/segmentation-offloads/ip-frag.png" alt="ip-frag.png" />
 </p>
 </div>
@@ -903,7 +857,7 @@ IP数据报分片后，独立选择路由，在所有分片达到目的主机后
 <li>分片格式</li>
 </ul>
 
-<div class="figure">
+<div id="orgb1d0c53" class="figure">
 <p><img src="image/segmentation-offloads/udp-fragmented.png" alt="udp-fragmented.png" />
 </p>
 </div>
@@ -911,8 +865,8 @@ IP数据报分片后，独立选择路由，在所有分片达到目的主机后
 </div>
 
 
-<div id="outline-container-org288baaa" class="outline-2">
-<h2 id="org288baaa"><span class="section-number-2">3</span> TCP分段卸载 TSO</h2>
+<div id="outline-container-orge876edd" class="outline-2">
+<h2 id="orge876edd"><span class="section-number-2">3.</span> TCP分段卸载 TSO</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 当网络设备支持TSO时，可以将TCP的单个帧分割为多个帧，数据的payload大小通过 skb_shinfo(skb)-&gt;gso_size 来指定。
@@ -924,19 +878,19 @@ IP数据报分片后，独立选择路由，在所有分片达到目的主机后
 </div>
 
 
-<div id="outline-container-orgff6bf12" class="outline-3">
-<h3 id="orgff6bf12"><span class="section-number-3">3.1</span> TCP数据段的发送</h3>
+<div id="outline-container-org44d1f9c" class="outline-3">
+<h3 id="org44d1f9c"><span class="section-number-3">3.1.</span> TCP数据段的发送</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 首先大概了解一下TCP数据的发送过程，tcp的传输层发送接口是 tcp_sendmsg() 函数。
 </p>
 </div>
 
-<div id="outline-container-org9afa033" class="outline-4">
-<h4 id="org9afa033"><span class="section-number-4">3.1.1</span> 文件描述符关联到传输控制块</h4>
+<div id="outline-container-org351e313" class="outline-4">
+<h4 id="org351e313"><span class="section-number-4">3.1.1.</span> 文件描述符关联到传输控制块</h4>
 <div class="outline-text-4" id="text-3-1-1">
 
-<div class="figure">
+<div id="orgfd5a4b5" class="figure">
 <p><img src="ditaa/segmentation-offloads/socket.png" alt="socket.png" />
 </p>
 </div>
@@ -972,22 +926,22 @@ IP数据报分片后，独立选择路由，在所有分片达到目的主机后
 </div>
 </div>
 
-<div id="outline-container-orgc690b50" class="outline-4">
-<h4 id="orgc690b50"><span class="section-number-4">3.1.2</span> 系统调用过程</h4>
+<div id="outline-container-orgc314dd1" class="outline-4">
+<h4 id="orgc314dd1"><span class="section-number-4">3.1.2.</span> 系统调用过程</h4>
 <div class="outline-text-4" id="text-3-1-2">
 
-<div class="figure">
+<div id="orge162a88" class="figure">
 <p><img src="ditaa/segmentation-offloads/tcp-sendmsg-call.png" alt="tcp-sendmsg-call.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org9e62f80" class="outline-4">
-<h4 id="org9e62f80"><span class="section-number-4">3.1.3</span> 发送过程</h4>
+<div id="outline-container-org3e35df0" class="outline-4">
+<h4 id="org3e35df0"><span class="section-number-4">3.1.3.</span> 发送过程</h4>
 <div class="outline-text-4" id="text-3-1-3">
 
-<div class="figure">
+<div id="orgdc171b7" class="figure">
 <p><img src="ditaa/segmentation-offloads/skb-list.png" alt="skb-list.png" />
 </p>
 </div>
@@ -1007,15 +961,15 @@ IP数据报分片后，独立选择路由，在所有分片达到目的主机后
 </div>
 </div>
 
-<div id="outline-container-orga613ec7" class="outline-3">
-<h3 id="orga613ec7"><span class="section-number-3">3.2</span> 未启用TSO</h3>
+<div id="outline-container-org9cc2433" class="outline-3">
+<h3 id="org9cc2433"><span class="section-number-3">3.2.</span> 未启用TSO</h3>
 <div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
 <li>数据发送过程</li>
 </ul>
 
 
-<div class="figure">
+<div id="org7914473" class="figure">
 <p><img src="ditaa/segmentation-offloads/tso-off-sending.png" alt="tso-off-sending.png" />
 </p>
 </div>
@@ -1023,23 +977,23 @@ IP数据报分片后，独立选择路由，在所有分片达到目的主机后
 </div>
 
 
-<div id="outline-container-orga119883" class="outline-3">
-<h3 id="orga119883"><span class="section-number-3">3.3</span> 启用TSO</h3>
+<div id="outline-container-org8cf7181" class="outline-3">
+<h3 id="org8cf7181"><span class="section-number-3">3.3.</span> 启用TSO</h3>
 <div class="outline-text-3" id="text-3-3">
 <ul class="org-ul">
 <li>数据发送过程</li>
 </ul>
 
 
-<div class="figure">
+<div id="orgb843a82" class="figure">
 <p><img src="ditaa/segmentation-offloads/tso-on-sending.png" alt="tso-on-sending.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org9f0f1bc" class="outline-3">
-<h3 id="org9f0f1bc"><span class="section-number-3">3.4</span> 验证</h3>
+<div id="outline-container-org2eacb38" class="outline-3">
+<h3 id="org2eacb38"><span class="section-number-3">3.4.</span> 验证</h3>
 <div class="outline-text-3" id="text-3-4">
 <p>
 利用 bpftrace 跟踪发送到网卡的SKB长度，下面的例子是访问一个2GB的文件时，统计发送的SKB长度区间。由于使用的虚拟机，其虚拟网卡（virtio_netdev）的发送接口使用的 start_xmit 函数。
@@ -1106,8 +1060,8 @@ Attaching 2 probes...
 </div>
 </div>
 
-<div id="outline-container-orge26334a" class="outline-3">
-<h3 id="orge26334a"><span class="section-number-3">3.5</span> 如何配置tso</h3>
+<div id="outline-container-org4ab1376" class="outline-3">
+<h3 id="org4ab1376"><span class="section-number-3">3.5.</span> 如何配置tso</h3>
 <div class="outline-text-3" id="text-3-5">
 <ul class="org-ul">
 <li>查看网卡特性</li>
@@ -1150,8 +1104,8 @@ generic-receive-offload: on
 </div>
 
 
-<div id="outline-container-org5297f26" class="outline-2">
-<h2 id="org5297f26"><span class="section-number-2">4</span> UDP分片卸载 UFO</h2>
+<div id="outline-container-orgf3b83ea" class="outline-2">
+<h2 id="orgf3b83ea"><span class="section-number-2">4.</span> UDP分片卸载 UFO</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 UDP分片卸载允许设备将过大的UDP数据报拆分为多个IPv4分片。 单个IPv4数据报被分片后，具有相同的 ID。
@@ -1164,8 +1118,8 @@ UDP分片卸载允许设备将过大的UDP数据报拆分为多个IPv4分片。 
 </div>
 
 
-<div id="outline-container-orgeee1dc7" class="outline-2">
-<h2 id="orgeee1dc7"><span class="section-number-2">5</span> 通用分段卸载 GSO</h2>
+<div id="outline-container-orga773808" class="outline-2">
+<h2 id="orga773808"><span class="section-number-2">5.</span> 通用分段卸载 GSO</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 GSO是一个纯软件实现的分段卸载，用于不支持硬件分段卸载的情况。
@@ -1177,8 +1131,8 @@ GSO是一个纯软件实现的分段卸载，用于不支持硬件分段卸载�
 </div>
 </div>
 
-<div id="outline-container-org8c2caba" class="outline-3">
-<h3 id="org8c2caba"><span class="section-number-3">5.1</span> TCP GSO</h3>
+<div id="outline-container-org47a9d18" class="outline-3">
+<h3 id="org47a9d18"><span class="section-number-3">5.1.</span> TCP GSO</h3>
 <div class="outline-text-3" id="text-5-1">
 <p>
 和TSO功能相同，只是用软件的形式来实现TSO功能。
@@ -1186,8 +1140,8 @@ GSO是一个纯软件实现的分段卸载，用于不支持硬件分段卸载�
 </div>
 </div>
 
-<div id="outline-container-org302a1e0" class="outline-3">
-<h3 id="org302a1e0"><span class="section-number-3">5.2</span> UDP GSO</h3>
+<div id="outline-container-org8fa40a3" class="outline-3">
+<h3 id="org8fa40a3"><span class="section-number-3">5.2.</span> UDP GSO</h3>
 <div class="outline-text-3" id="text-5-2">
 <p>
 UDP的GSO功能需要应用层配合使用，应用层首先需要通过 <b>setsockopt()</b> 接口设置分段大小，设置分段的选项为 <b>UDP_SEGMENT</b> ：
@@ -1232,8 +1186,8 @@ UDP的GSO功能需要应用层配合使用，应用层首先需要通过 <b>sets
 </div>
 </div>
 
-<div id="outline-container-org96e13c8" class="outline-4">
-<h4 id="org96e13c8"><span class="section-number-4">5.2.1</span> UDP和TCP的区别</h4>
+<div id="outline-container-orgbd5ad34" class="outline-4">
+<h4 id="orgbd5ad34"><span class="section-number-4">5.2.1.</span> UDP和TCP的区别</h4>
 <div class="outline-text-4" id="text-5-2-1">
 <p>
 为何TCP不需要应用层的参与，而UDP需要呢？
@@ -1297,11 +1251,11 @@ UDP是无连接的，发送过程中，保证不了先后顺序，每个数据�
 </div>
 </div>
 
-<div id="outline-container-org3d6a190" class="outline-4">
-<h4 id="org3d6a190"><span class="section-number-4">5.2.2</span> UDP分段过程</h4>
+<div id="outline-container-org696d2f3" class="outline-4">
+<h4 id="org696d2f3"><span class="section-number-4">5.2.2.</span> UDP分段过程</h4>
 <div class="outline-text-4" id="text-5-2-2">
 
-<div class="figure">
+<div id="orgcec7088" class="figure">
 <p><img src="plantuml/segmentation-offloads/udp-gso.png" alt="udp-gso.png" />
 </p>
 </div>
@@ -1339,16 +1293,16 @@ Date:   Thu Apr 26 13:42:16 2018 -0400
 </div>
 
 
-<div id="outline-container-org3ff6f67" class="outline-2">
-<h2 id="org3ff6f67"><span class="section-number-2">6</span> 通用接收卸载 GRO</h2>
+<div id="outline-container-org3b6ee15" class="outline-2">
+<h2 id="org3b6ee15"><span class="section-number-2">6.</span> 通用接收卸载 GRO</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 GRO是用来将网卡收到的多个数据包合并为一个大的数据段，提升协议栈处理性能。
 </p>
 </div>
 
-<div id="outline-container-orgfa6f0bc" class="outline-3">
-<h3 id="orgfa6f0bc"><span class="section-number-3">6.1</span> 开启/关闭 GRO</h3>
+<div id="outline-container-org81f285c" class="outline-3">
+<h3 id="org81f285c"><span class="section-number-3">6.1.</span> 开启/关闭 GRO</h3>
 <div class="outline-text-3" id="text-6-1">
 <div class="org-src-container">
 <pre class="src src-sh"><span style="color: #8B8878;"># </span><span style="color: #8B8878;">ethtool -k eth0 gro on/off</span>
@@ -1357,8 +1311,8 @@ GRO是用来将网卡收到的多个数据包合并为一个大的数据段，�
 </div>
 </div>
 
-<div id="outline-container-org5f23ce6" class="outline-3">
-<h3 id="org5f23ce6"><span class="section-number-3">6.2</span> TCP GRO</h3>
+<div id="outline-container-orgbc0fb58" class="outline-3">
+<h3 id="orgbc0fb58"><span class="section-number-3">6.2.</span> TCP GRO</h3>
 <div class="outline-text-3" id="text-6-2">
 <p>
 对于TCP来说，GRO选项开启后，就会进行数据的合并，无需应用层改动。
@@ -1367,8 +1321,8 @@ GRO是用来将网卡收到的多个数据包合并为一个大的数据段，�
 </div>
 
 
-<div id="outline-container-org5b19aba" class="outline-3">
-<h3 id="org5b19aba"><span class="section-number-3">6.3</span> UDP GRO</h3>
+<div id="outline-container-orgac65ae4" class="outline-3">
+<h3 id="orgac65ae4"><span class="section-number-3">6.3.</span> UDP GRO</h3>
 <div class="outline-text-3" id="text-6-3">
 <p>
 UDP不能随意合并，由于数据报本身没有顺序，如果将不同大小的数据合并后，应用层无法得知原始数据报的内容，并且也无法区分合并前的数据报。 长度相同的udp段合并后，通过控制消息通知到应用层，告知分段大小及数量。
@@ -1383,11 +1337,11 @@ UDP如果要使用GRO功能，需要通过配置socket的UDP_GRO选项来开启G
 </p>
 </div>
 
-<div id="outline-container-orgbb9aa4a" class="outline-4">
-<h4 id="orgbb9aa4a"><span class="section-number-4">6.3.1</span> 原理说明</h4>
+<div id="outline-container-orgf293c88" class="outline-4">
+<h4 id="orgf293c88"><span class="section-number-4">6.3.1.</span> 原理说明</h4>
 <div class="outline-text-4" id="text-6-3-1">
 
-<div class="figure">
+<div id="org60df219" class="figure">
 <p><img src="plantuml/segmentation-offloads/call-statck.png" alt="call-statck.png" />
 </p>
 </div>
@@ -1395,8 +1349,8 @@ UDP如果要使用GRO功能，需要通过配置socket的UDP_GRO选项来开启G
 </div>
 
 
-<div id="outline-container-org4b3dc0b" class="outline-4">
-<h4 id="org4b3dc0b"><span class="section-number-4">6.3.2</span> 验证测试</h4>
+<div id="outline-container-org43443d3" class="outline-4">
+<h4 id="org43443d3"><span class="section-number-4">6.3.2.</span> 验证测试</h4>
 <div class="outline-text-4" id="text-6-3-2">
 <p>
 linux内核源码中附带了两个测试工具，用来测试udpgso性能。
@@ -1472,8 +1426,8 @@ Detaching...
 
 
 
-<div id="outline-container-orgc36a47a" class="outline-4">
-<h4 id="orgc36a47a"><span class="section-number-4">6.3.3</span> 代码示例</h4>
+<div id="outline-container-org6b0af95" class="outline-4">
+<h4 id="org6b0af95"><span class="section-number-4">6.3.3.</span> 代码示例</h4>
 <div class="outline-text-4" id="text-6-3-3">
 <ul class="org-ul">
 <li>开启GRO选项</li>
@@ -1534,8 +1488,8 @@ Detaching...
 </div>
 
 
-<div id="outline-container-org5417388" class="outline-4">
-<h4 id="org5417388"><span class="section-number-4">6.3.4</span> 抓包示例</h4>
+<div id="outline-container-orgd972949" class="outline-4">
+<h4 id="orgd972949"><span class="section-number-4">6.3.4.</span> 抓包示例</h4>
 <div class="outline-text-4" id="text-6-3-4">
 <p>
 发送端发送数据包payload长度为20001，指定分段长度是1000，所以在收到数据包时，应当是 20(长度为1000)+1(长度为1)=21 个数据包。
@@ -1547,10 +1501,10 @@ Detaching...
 </ul>
 
 
-<div class="figure">
+<div id="org01d0285" class="figure">
 <p><img src="image/segmentation-offloads/udp-gro-off.png" alt="udp-gro-off.png" />
 </p>
-<p><span class="figure-number">Figure 14: </span>UDP关闭GRO</p>
+<p><span class="figure-number">Figure 1: </span>UDP关闭GRO</p>
 </div>
 
 
@@ -1559,10 +1513,10 @@ Detaching...
 </ul>
 
 
-<div class="figure">
+<div id="orgc3eb2e9" class="figure">
 <p><img src="image/segmentation-offloads/udp-gro.png" alt="udp-gro.png" />
 </p>
-<p><span class="figure-number">Figure 15: </span>UDP开启GRO</p>
+<p><span class="figure-number">Figure 2: </span>UDP开启GRO</p>
 </div>
 </div>
 </div>
@@ -1572,8 +1526,8 @@ Detaching...
 <div id="postamble" class="status">
 <p class="author">Author: nandfan</p>
 <p class="email">Email: <a href="mailto:nanders.fan@outlook.com">nanders.fan@outlook.com</a></p>
-<p class="date">Created: 2022-07-30 Sat 12:59</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2024-06-23 Sun 15:53</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>
